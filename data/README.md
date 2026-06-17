@@ -1,51 +1,55 @@
-# data/ — the extraction layer
+# data/ — the extraction & map layer
 
-Two datasets, two different methods. Phase 3 docs are written *from these*, not by
-hand-reading std source.
+Toolchain: **Zig** does the extraction (it needs the real compiler/types), **Nushell**
+does the glue and the querying. No Python, no duckdb — the CSV/TSV/JSON files are the
+source of truth, and Nushell queries them natively.
 
-## `crypto_raw.{csv,duckdb}` — the text inventory (breadth)
+## Datasets
 
-Produced by `scripts/parse_crypto.py`: a regex scan of every `.zig` file under
-`/usr/lib/zig/std/crypto`. One row per `pub` declaration, exactly as written in
-source — name, kind, file, line, the declaration line, doc comment. 1932 rows.
+### `crypto_raw.csv` — text inventory (breadth)
+`scripts/parse_crypto.nu`: a regex scan of every `.zig` under `/usr/lib/zig/std/crypto`,
+one row per `pub` declaration exactly as written. ~1932 rows. Answers *what exists,
+where*. Cannot resolve aliases/generics.
 
-Use it for: *what exists and where*. It is the complete map. It cannot resolve
-aliases or generics — `ChaCha20Poly1305 = ChaChaPoly(...)` shows only the alias line.
+### `primitives.tsv` — resolved use-surface (depth)
+`src/dump.zig` + `scripts/build_primitives.nu`: the **compiler** reflects over a curated
+list of the primitives you actually instantiate, giving resolved byte sizes and fully
+typed signatures (incl. error sets) through every alias and generic. ~518 rows.
+Columns: `family · primitive · decl · kind · detail`.
+Known gap: inferred error sets show as `error{inferred}` (not exposed via `@typeName`).
 
-## `primitives.{tsv,duckdb}` — the resolved use-surface (depth)
+### `crypto_tree.{tsv,json}` — structural map (no interpretation)
+`src/maptree.zig` + `scripts/build_tree.nu`: every container in the public tree with
+exact counts — `n_decls / n_fields / n_types / n_fns / n_consts`. 400 containers.
+The `.json` is the same data nested by path. Rendered human-readable in
+`docs/structure.md`. (codecs/tls/Certificate are recorded but not descended — their
+ASN.1/DER writer decls break reflection.)
 
-Produced by `scripts/build_primitives.py`, which runs `src/dump.zig` — a Zig program
-that imports std.crypto and reflects over a curated list of the primitives you
-actually instantiate. Because the **compiler** resolves the types, this gives the
-real API through every alias and generic: concrete byte sizes and fully-typed
-function signatures, including error sets. ~518 rows.
-
-Columns: `family · primitive · decl · kind · detail`
-- `kind` ∈ {const_int, fn, type, const_other}
-- `detail` = the integer value (const_int), the resolved signature (fn), or the
-  type name (type / const_other)
-- nested usage types are dotted: `Ed25519.KeyPair`, `Ed25519.Signature`
-
-Known gap: Zig does not expose *inferred* error sets via `@typeName`, so a few
-signatures show `error{inferred}` rather than the resolved set.
+### `clusters.tsv` — shape clusters
+`scripts/cluster_shapes.nu`: each container's shape cluster (math / scheme / namespace /
+config / stateful / ops / other), by explicit rules. Visual in `docs/clusters.svg`.
 
 ## Regenerate
 
-```sh
-python3 scripts/parse_crypto.py        # text inventory
-python3 scripts/build_primitives.py    # resolved use-surface (needs zig on PATH)
+```nu
+nu scripts/parse_crypto.nu       # text inventory  → crypto_raw.csv
+nu scripts/build_primitives.nu   # resolved surface → primitives.tsv   (needs zig)
+nu scripts/build_tree.nu         # structural map   → crypto_tree.* + docs/structure.md
+nu scripts/cluster_shapes.nu     # shape clusters   → clusters.tsv + docs/clusters.{svg,md}
 ```
 
-## Example queries (duckdb)
+## Query examples (Nushell)
 
-```sql
--- every key/nonce/tag/digest size, by family
-SELECT family, primitive, decl, detail FROM primitives
-WHERE kind='const_int' AND decl LIKE '%length%' ORDER BY 1,2,3;
+```nu
+# every key/nonce/tag/digest size, by family
+open data/primitives.tsv | where kind == 'const_int' and ($it.decl | str ends-with 'length')
 
--- the full usable API of one primitive
-SELECT decl, kind, detail FROM primitives WHERE primitive='ChaCha20Poly1305';
+# the full usable API of one primitive
+open data/primitives.tsv | where primitive == 'ChaCha20Poly1305'
 
--- confirm every AEAD shares the same encrypt shape
-SELECT primitive, detail FROM primitives WHERE family='aead' AND decl='encrypt';
+# confirm every AEAD shares the same encrypt shape
+open data/primitives.tsv | where family == 'aead' and decl == 'encrypt'
+
+# structural map: the pure namespaces (hold only sub-types)
+open data/crypto_tree.tsv | where n_fns == 0 and n_consts == 0 and n_types > 0
 ```

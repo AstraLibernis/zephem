@@ -174,12 +174,14 @@ Steps:
 Hand-reading std source per primitive does not scale to ~180 symbols. So the data
 is extracted by script, two layers (see `data/README.md`):
 
-- **`scripts/parse_crypto.py` → `crypto_raw.*`** — text scan, full breadth inventory.
-- **`src/dump.zig` + `scripts/build_primitives.py` → `primitives.*`** — compiler
+- **`scripts/parse_crypto.nu` → `crypto_raw.*`** — text scan, full breadth inventory.
+- **`src/dump.zig` + `scripts/build_primitives.nu` → `primitives.*`** — compiler
   reflection over the curated "use" set, giving *resolved* sizes and signatures
   through aliases/generics. This is what text parsing fundamentally cannot do.
 
-Phase 3 docs are written by querying `primitives.duckdb`, not by re-reading source.
+Toolchain is Zig (extraction) + Nushell (glue/query) only — no Python, no duckdb.
+Phase 3 docs are written by querying `primitives.tsv` in Nushell, not by re-reading
+source (e.g. `open data/primitives.tsv | where primitive == 'ChaCha20Poly1305'`).
 
 ## Current status
 
@@ -195,7 +197,7 @@ Phase 3 docs are written by querying `primitives.duckdb`, not by re-reading sour
 | 7 — Publish | not started |
 
 **Start here:** Phase 3 — write `docs/<family>.md` per family, sourced from
-`primitives.duckdb`. Order: hash → mac → stream → aead → kdf → kex/kem → sign →
+`primitives.tsv` (query in Nushell). Order: hash → mac → stream → aead → kdf → kex/kem → sign →
 pwhash → curve. Inventory correction to fold in: `KT128`/`KT256` and
 `MlKem768X25519` are **not** top-level exports (text-parse artifacts); real path
 is `crypto.kem.hybrid.MlKem768X25519`, and KT is not cleanly exposed via std.crypto.
