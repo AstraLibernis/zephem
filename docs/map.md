@@ -3,6 +3,9 @@
 This is the mental model. Before reading any of the detailed docs, read this page.
 It answers: *what exists, how the pieces relate, and what you actually reach for.*
 
+**Complete primitive listing:** → [inventory.md](inventory.md) — all 154 named
+primitives grouped by family, generated from `zfact` against Zig 0.16.
+
 ---
 
 ## The three jobs crypto does
