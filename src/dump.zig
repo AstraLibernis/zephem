@@ -70,6 +70,10 @@ const primitives = [_]Entry{
     .{ .family = "sign", .name = "Ed25519", .T = crypto.sign.Ed25519 },
     .{ .family = "sign", .name = "EcdsaP256Sha256", .T = crypto.sign.ecdsa.EcdsaP256Sha256 },
     .{ .family = "sign", .name = "MLDSA65", .T = crypto.sign.mldsa.MLDSA65 },
+    // NaCl boxes (high-level compositions of key exchange + authenticated encryption)
+    .{ .family = "nacl", .name = "Box", .T = crypto.nacl.Box },
+    .{ .family = "nacl", .name = "SecretBox", .T = crypto.nacl.SecretBox },
+    .{ .family = "nacl", .name = "SealedBox", .T = crypto.nacl.SealedBox },
     // Password hashing (namespaces of functions, not instantiable types)
     .{ .family = "pwhash", .name = "argon2", .T = crypto.pwhash.argon2 },
     .{ .family = "pwhash", .name = "scrypt", .T = crypto.pwhash.scrypt },
@@ -79,6 +83,7 @@ const primitives = [_]Entry{
     .{ .family = "curve", .name = "Edwards25519", .T = crypto.ecc.Edwards25519 },
     .{ .family = "curve", .name = "Ristretto255", .T = crypto.ecc.Ristretto255 },
     .{ .family = "curve", .name = "P256", .T = crypto.ecc.P256 },
+    .{ .family = "curve", .name = "P384", .T = crypto.ecc.P384 },
     .{ .family = "curve", .name = "Secp256k1", .T = crypto.ecc.Secp256k1 },
 };
 

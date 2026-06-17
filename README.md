@@ -1,64 +1,52 @@
 # zcrypto
 
-A faithful map of `std.crypto` as it exists in Zig 0.16 — a wiki over the standard
-library. It presents what std already contains in a readable, navigable form and adds
-**nothing**: no advice, no recommendations, no security claims of its own. Every value
-traces to std source or to a generated dataset under `data/`. Where std is silent, so
-is this map.
+Pristine, queryable **datasets** of exactly what `std.crypto` contains in Zig 0.16.
 
-See **[PLAN.md](PLAN.md)** for the charter — the rule every page obeys.
+Not a guide. The goal is not to explain what crypto is *for* — it is to record what is
+*actually in Zig*, including detailed, cross-cutting facts that Zig's autodoc doesn't
+surface well: resolved byte sizes and full signatures (through aliases and generics),
+which primitives share an interface, and the complete structural tree. Built by compiler
+reflection, so the data is the compiler's truth, not a guess.
 
-## Families
+## The datasets (`data/`)
 
-std splits crypto across namespaces, in two layers.
+| dataset | answers |
+|---|---|
+| `primitives.tsv` | resolved sizes & signatures per primitive (depth) |
+| `crypto_raw.csv` | every `pub` decl as written, and where (breadth) |
+| `crypto_tree.{tsv,json}` | the full structural tree with per-container counts |
+| `surface.tsv` | the developer-facing surface, labelled |
+| `clusters.tsv` | containers grouped by structural shape |
 
-### Developer-facing — primitives you call directly
+Query with Nushell — schema + cookbook in **[data/README.md](data/README.md)**:
 
-| family | std namespace | page |
-|---|---|---|
-| hashing | `std.crypto.hash` | [hash](docs/hash.md) |
-| message auth (MAC) | `std.crypto.auth`, `std.crypto.onetimeauth` | [mac](docs/mac.md) |
-| AEAD | `std.crypto.aead` | [aead](docs/aead.md) |
-| stream ciphers | `std.crypto.stream` | [stream](docs/stream.md) |
-| key derivation | `std.crypto.kdf` | [kdf](docs/kdf.md) |
-| key exchange | `std.crypto.dh` | [kex](docs/kex.md) |
-| signatures | `std.crypto.sign` | [sign](docs/sign.md) |
-| key encapsulation | `std.crypto.kem` | [kem](docs/kem.md) |
-| password hashing | `std.crypto.pwhash` | _pending_ |
-| NaCl boxes | `std.crypto.nacl` | _pending_ |
+```nu
+# every key/nonce/tag/digest size, by family
+open data/primitives.tsv | where kind == 'const_int' and ($it.decl | str ends-with 'length')
 
-### Building blocks (machinery) — what the above are made of
+# the full resolved API of one primitive
+open data/primitives.tsv | where primitive == 'ChaCha20Poly1305'
 
-std exposes these publicly, but the surface analysis (`data/surface.tsv`) classes them
-as internal — you rarely call them directly.
-
-| family | std namespace | page |
-|---|---|---|
-| elliptic curves | `std.crypto.ecc` | _pending_ |
-
-## Datasets — the source of truth
-
-Two kinds of extraction: a **text scan** for breadth, **compiler reflection** for depth.
-Full detail in **[data/README.md](data/README.md)**.
-
-```
-data/crypto_raw.csv   text scan   — every pub decl as written      (~1932 rows)
-data/primitives.tsv   reflection  — resolved sizes & signatures     (~518 rows)
-data/crypto_tree.*    reflection  — structural tree, 400 containers
-data/surface.tsv      reflection  — the developer-facing surface    (134 primitives)
-data/clusters.tsv     rules       — containers grouped by shape
+# confirm every AEAD shares the same encrypt shape
+open data/primitives.tsv | where family == 'aead' and decl == 'encrypt'
 ```
 
-Generated reports: **[surface.md](docs/surface.md)** (dev-facing surface),
-**[structure.md](docs/structure.md)** (full tree), **[clusters.md](docs/clusters.md)**.
+## How it's built
+
+Zig reflection (the compiler resolves the real types) + a text scan for breadth, glued
+by Nushell. Three phases — extraction, organization, dataset creation — described in
+**[PLAN.md](PLAN.md)**. Every dataset is regenerable and idempotent.
+
+## Quality bar
+
+Datasets aim to be **deterministic** (byte-identical per Zig version), **complete or
+explicitly scoped**, **self-verifying**, and **pinned** to a Zig commit. See PLAN.md.
 
 ## Toolchain
 
-**Zig** (reflection-based extraction) + **Nushell** (glue and querying) only. Every
-dataset under `data/` is regenerable and idempotent.
+**Zig** (reflection extraction) + **Nushell** (glue / query) only.
 
 ## Reference
 
 - Zig 0.16 std source: `lib/std/crypto.zig`
-- Frank Denis, "A tour of std.crypto in Zig 0.7.0" (2020) — the prior guide, now dated:
-  https://www.youtube.com/watch?v=9t6Y7KoCvyk
+- Prior human-readable docs (retired): `docs/archive/` (see its README)

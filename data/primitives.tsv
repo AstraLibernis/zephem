@@ -361,7 +361,7 @@ sign	MLDSA65.SecretKey	fromBytes	fn	"fn ([4032]u8) @typeInfo(@typeInfo(@TypeOf(M
 sign	MLDSA65.SecretKey	public	fn	fn (*const MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).SecretKey) MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).PublicKey
 sign	MLDSA65.SecretKey	signer	fn	"fn (*const MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).SecretKey, ?[32]u8) @typeInfo(@typeInfo(@TypeOf(MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).SecretKey.signer)).@""fn"".return_type.?).error_union.error_set!MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signer"
 sign	MLDSA65.SecretKey	signerWithContext	fn	fn (*const MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).SecretKey, ?[32]u8, []const u8) error{ContextTooLong}!MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signer
-sign	MLDSA65	newKeyFromSeed	fn	fn (*const [32]u8) MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).newKeyFromSeed__struct_40456
+sign	MLDSA65	newKeyFromSeed	fn	fn (*const [32]u8) MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).newKeyFromSeed__struct_40489
 sign	MLDSA65	Signature	type	MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signature
 sign	MLDSA65.Signature	encoded_length	const_int	3309
 sign	MLDSA65.Signature	toBytes	fn	fn (MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signature) [3309]u8
@@ -390,6 +390,34 @@ sign	MLDSA65.KeyPair	signer	fn	"fn (*const MLDSAImpl(.{ .name = &.{ ... }[0..(..
 sign	MLDSA65.KeyPair	signerWithContext	fn	fn (*const MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).KeyPair, ?[32]u8, []const u8) error{ContextTooLong}!MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signer
 sign	MLDSA65.KeyPair	sign	fn	"fn (MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).KeyPair, []const u8, ?[32]u8) @typeInfo(@typeInfo(@TypeOf(MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).KeyPair.sign)).@""fn"".return_type.?).error_union.error_set!MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signature"
 sign	MLDSA65.KeyPair	signWithContext	fn	fn (MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).KeyPair, []const u8, ?[32]u8, []const u8) error{ContextTooLong}!MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signature
+nacl	Box	public_length	const_int	32
+nacl	Box	secret_length	const_int	32
+nacl	Box	shared_length	const_int	32
+nacl	Box	seed_length	const_int	32
+nacl	Box	nonce_length	const_int	24
+nacl	Box	tag_length	const_int	16
+nacl	Box	KeyPair	type	X25519.KeyPair
+nacl	Box.KeyPair	generateDeterministic	fn	fn ([32]u8) error{IdentityElement}!X25519.KeyPair
+nacl	Box.KeyPair	generate	fn	fn (Io) X25519.KeyPair
+nacl	Box.KeyPair	fromEd25519	fn	fn (Ed25519.KeyPair) error{IdentityElement,InvalidEncoding}!X25519.KeyPair
+nacl	Box	createSharedSecret	fn	fn ([32]u8, [32]u8) error{IdentityElement,WeakPublicKey}![32]u8
+nacl	Box	seal	fn	fn ([]u8, []const u8, [24]u8, [32]u8, [32]u8) error{IdentityElement,WeakPublicKey}!void
+nacl	Box	open	fn	fn ([]u8, []const u8, [24]u8, [32]u8, [32]u8) error{AuthenticationFailed,IdentityElement,WeakPublicKey}!void
+nacl	SecretBox	key_length	const_int	32
+nacl	SecretBox	nonce_length	const_int	24
+nacl	SecretBox	tag_length	const_int	16
+nacl	SecretBox	seal	fn	fn ([]u8, []const u8, [24]u8, [32]u8) void
+nacl	SecretBox	open	fn	fn ([]u8, []const u8, [24]u8, [32]u8) error{AuthenticationFailed}!void
+nacl	SealedBox	public_length	const_int	32
+nacl	SealedBox	secret_length	const_int	32
+nacl	SealedBox	seed_length	const_int	32
+nacl	SealedBox	seal_length	const_int	48
+nacl	SealedBox	KeyPair	type	X25519.KeyPair
+nacl	SealedBox.KeyPair	generateDeterministic	fn	fn ([32]u8) error{IdentityElement}!X25519.KeyPair
+nacl	SealedBox.KeyPair	generate	fn	fn (Io) X25519.KeyPair
+nacl	SealedBox.KeyPair	fromEd25519	fn	fn (Ed25519.KeyPair) error{IdentityElement,InvalidEncoding}!X25519.KeyPair
+nacl	SealedBox	seal	fn	fn (Io, []u8, []const u8, [32]u8) error{IdentityElement,WeakPublicKey}!void
+nacl	SealedBox	open	fn	fn ([]u8, []const u8, X25519.KeyPair) error{AuthenticationFailed,IdentityElement,WeakPublicKey}!void
 pwhash	argon2	Mode	type	Mode
 pwhash	argon2	Params	type	Params
 pwhash	argon2	kdf	fn	fn (mem.Allocator, []u8, []const u8, []const u8, Params, Mode, Io) error{AuthenticationFailed,Canceled,ContextTooLong,IdentityElement,InvalidEncoding,KeyMismatch,LockedMemoryLimitExceeded,NonCanonical,NotSquare,OutOfMemory,OutputTooLong,PasswordVerificationFailed,SignatureVerificationFailed,SystemResources,ThreadQuotaExceeded,Unexpected,UnexpectedSubgroup,WeakParameters,WeakPublicKey}!void
@@ -450,7 +478,7 @@ curve	Edwards25519	mulPublic	fn	fn (Edwards25519, [32]u8) error{IdentityElement,
 curve	Edwards25519	mulDoubleBasePublic	fn	fn (Edwards25519, [32]u8, Edwards25519, [32]u8) error{WeakPublicKey}!Edwards25519
 curve	Edwards25519	mulMulti	fn	fn (comptime usize, anytype, anytype) error{IdentityElement,WeakPublicKey}!Edwards25519
 curve	Edwards25519	clampedMul	fn	fn (Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!Edwards25519
-curve	Edwards25519	elligator2	fn	fn (Fe) Edwards25519.elligator2__struct_42349
+curve	Edwards25519	elligator2	fn	fn (Fe) Edwards25519.elligator2__struct_42708
 curve	Edwards25519	fromHash	fn	fn ([64]u8) Edwards25519
 curve	Edwards25519	fromString	fn	fn (comptime bool, []const u8, []const u8) Edwards25519
 curve	Edwards25519	fromUniform	fn	fn ([32]u8) Edwards25519
@@ -492,6 +520,30 @@ curve	P256	equivalent	fn	fn (P256, P256) bool
 curve	P256	mul	fn	fn (P256, [32]u8, builtin.Endian) error{IdentityElement}!P256
 curve	P256	mulPublic	fn	fn (P256, [32]u8, builtin.Endian) error{IdentityElement}!P256
 curve	P256	mulDoubleBasePublic	fn	fn (P256, [32]u8, P256, [32]u8, builtin.Endian) error{IdentityElement}!P256
+curve	P384	Fe	type	Field(.{ .fiat = p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })
+curve	P384	scalar	type	scalar
+curve	P384	basePoint	const_other	P384
+curve	P384	identityElement	const_other	P384
+curve	P384	B	const_other	Field(.{ .fiat = p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })
+curve	P384	rejectIdentity	fn	fn (P384) error{IdentityElement}!void
+curve	P384	fromAffineCoordinates	fn	fn (AffineCoordinates) error{InvalidEncoding}!P384
+curve	P384	fromSerializedAffineCoordinates	fn	fn ([48]u8, [48]u8, builtin.Endian) error{InvalidEncoding,NonCanonical}!P384
+curve	P384	recoverY	fn	fn (Field(.{ .fiat = p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 }), bool) error{NotSquare}!Field(.{ .fiat = p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })
+curve	P384	fromSec1	fn	fn ([]const u8) error{InvalidEncoding,NonCanonical,NotSquare}!P384
+curve	P384	toCompressedSec1	fn	fn (P384) [49]u8
+curve	P384	toUncompressedSec1	fn	fn (P384) [97]u8
+curve	P384	random	fn	fn (Io) P384
+curve	P384	neg	fn	fn (P384) P384
+curve	P384	dbl	fn	fn (P384) P384
+curve	P384	addMixed	fn	fn (P384, AffineCoordinates) P384
+curve	P384	add	fn	fn (P384, P384) P384
+curve	P384	sub	fn	fn (P384, P384) P384
+curve	P384	subMixed	fn	fn (P384, AffineCoordinates) P384
+curve	P384	affineCoordinates	fn	fn (P384) AffineCoordinates
+curve	P384	equivalent	fn	fn (P384, P384) bool
+curve	P384	mul	fn	fn (P384, [48]u8, builtin.Endian) error{IdentityElement}!P384
+curve	P384	mulPublic	fn	fn (P384, [48]u8, builtin.Endian) error{IdentityElement}!P384
+curve	P384	mulDoubleBasePublic	fn	fn (P384, [48]u8, P384, [48]u8, builtin.Endian) error{IdentityElement}!P384
 curve	Secp256k1	Fe	type	Field(.{ .fiat = secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })
 curve	Secp256k1	scalar	type	scalar
 curve	Secp256k1	basePoint	const_other	Secp256k1

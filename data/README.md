@@ -14,7 +14,7 @@ where*. Cannot resolve aliases/generics.
 ### `primitives.tsv` — resolved use-surface (depth)
 `src/dump.zig` + `scripts/build_primitives.nu`: the **compiler** reflects over a curated
 list of the primitives you actually instantiate, giving resolved byte sizes and fully
-typed signatures (incl. error sets) through every alias and generic. ~518 rows.
+typed signatures (incl. error sets) through every alias and generic. ~570 rows.
 Columns: `family · primitive · decl · kind · detail`.
 Known gap: inferred error sets show as `error{inferred}` (not exposed via `@typeName`).
 
@@ -22,18 +22,18 @@ Known gap: inferred error sets show as `error{inferred}` (not exposed via `@type
 `src/maptree.zig` + `scripts/build_tree.nu`: every container in the public tree with
 exact counts — `n_decls / n_fields / n_types / n_fns / n_consts`. 400 containers.
 The `.json` is the same data nested by path. Rendered human-readable in
-`docs/structure.md`. (codecs/tls/Certificate are recorded but not descended — their
+`docs/archive/structure.md` (rendered snapshot). (codecs/tls/Certificate are recorded but not descended — their
 ASN.1/DER writer decls break reflection.)
 
 ### `clusters.tsv` — shape clusters
 `scripts/cluster_shapes.nu`: each container's shape cluster (math / scheme / namespace /
-config / stateful / ops / other), by explicit rules. Visual in `docs/clusters.svg`.
+config / stateful / ops / other), by explicit rules. Visual snapshot in `docs/archive/clusters.svg`.
 
 ### `surface.tsv` — developer-facing surface
 `src/surface.zig` + `scripts/build_surface.nu`: reflection over the public namespaces
 labelling each decl PRIMITIVE / BUILDER / free-fn / namespace — what a dev reaches for,
-without the math/protocol machinery. 134 primitives across families. Report in
-`docs/surface.md`.
+without the math/protocol machinery. 134 primitives across families. Rendered snapshot
+in `docs/archive/surface.md`.
 
 ## Regenerate
 
