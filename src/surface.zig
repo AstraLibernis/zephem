@@ -79,6 +79,7 @@ fn walk(w: anytype, comptime path: []const u8, comptime NS: type, comptime depth
 }
 
 pub fn main(init: std.process.Init) !void {
+    @setEvalBranchQuota(1_000_000); // the comptime walk over many namespaces × decls
     var wbuf: [4096]u8 = undefined;
     var fw = std.Io.File.stdout().writer(init.io, &wbuf);
     const w = &fw.interface;
