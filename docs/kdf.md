@@ -1,5 +1,7 @@
 # std.crypto — kdf
 
+**Layer:** developer-facing — present in `data/surface.tsv` (primitives a developer calls directly).
+
 A map of the key-derivation primitives in `std.crypto.kdf` for Zig 0.16. This page
 adds **nothing** to the standard library — it presents what is already there in a
 readable form, with every value traceable to source:

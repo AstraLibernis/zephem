@@ -1,3 +1,12 @@
+> **ARCHIVED 2026-06-17 — superseded.** Hand-authored under the original
+> "explain the why" charter, this contains judgement the current charter forbids
+> (a decision guide, "danger zones", "current recommendation"). The project is now
+> a faithful map that states nothing std doesn't. The factual content it gestured at
+> lives in the per-family docs + the generated `surface.md` / `structure.md`. Kept
+> for provenance, per archive-don't-delete. See `PLAN.md` and `README.md`.
+
+---
+
 # std.crypto — The Map
 
 This is the mental model. Before reading any of the detailed docs, read this page.

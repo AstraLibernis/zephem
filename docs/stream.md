@@ -1,5 +1,7 @@
 # std.crypto — stream
 
+**Layer:** developer-facing — present in `data/surface.tsv` (primitives a developer calls directly).
+
 A map of the stream-cipher primitives in `std.crypto.stream` for Zig 0.16. This page
 adds **nothing** to the standard library — it presents what is already there in a
 readable form, with every value traceable to source:

@@ -1,3 +1,11 @@
+> **ARCHIVED 2026-06-17 — superseded.** Hand-authored annotated inventory; the
+> per-primitive notes ("faster", "experimental", "best choice", "avoid") are
+> judgement the current charter forbids. The factual list lives in the generated
+> `surface.md`; resolved sizes/signatures in the per-family docs. Kept for
+> provenance, per archive-don't-delete. See `PLAN.md` and `README.md`.
+
+---
+
 # std.crypto inventory — Zig 0.16
 
 > **Role:** this is a *hand-authored* annotated reference — each entry with a

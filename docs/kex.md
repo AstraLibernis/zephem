@@ -1,5 +1,7 @@
 # std.crypto — kex (key exchange)
 
+**Layer:** developer-facing — present in `data/surface.tsv` (primitives a developer calls directly).
+
 A map of the key-exchange primitives in `std.crypto` for Zig 0.16. This page adds
 **nothing** to the standard library — it presents what is already there in a
 readable form, with every value traceable to source:

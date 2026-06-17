@@ -45,8 +45,9 @@ nu scripts/cluster_shapes.nu     # shape clusters   → clusters.tsv + docs/clus
 nu scripts/build_surface.nu      # dev-facing list  → surface.tsv + docs/surface.md  (needs zig)
 ```
 
-`docs/inventory.md` and `docs/map.md` are **hand-authored** (annotated reference and
-mental model); they are not generated. Everything else above is generated and idempotent.
+Everything above is generated and idempotent. (The former hand-authored
+`docs/inventory.md` and `docs/map.md` were archived 2026-06-17 under the map-only
+charter — see `docs/archive/`.)
 
 ## Query examples (Nushell)
 

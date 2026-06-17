@@ -1,5 +1,7 @@
 # std.crypto — aead
 
+**Layer:** developer-facing — present in `data/surface.tsv` (primitives a developer calls directly).
+
 A map of the AEAD (authenticated encryption with associated data) primitives in
 `std.crypto.aead` for Zig 0.16. This page adds **nothing** to the standard library —
 it presents what is already there in a readable form, with every value traceable to

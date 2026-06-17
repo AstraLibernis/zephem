@@ -44,7 +44,7 @@ referenced by every page. **TODO: record the pinned commit.** Until then, pages 
 
 | phase | status |
 |---|---|
-| 1 — Map (inventory, mental tree) | ✅ `inventory.md`, `map.md`, `structure.md` |
+| 1 — Map (structural) | ✅ `structure.md` + `crypto_tree.*` (generated); old hand-authored `map.md`/`inventory.md` archived |
 | 2 — Group by std namespace | ✅ `surface.md` (std's namespaces, not our taxonomy) |
 | (system) — Extraction engine | ✅ Zig reflection + Nushell glue; datasets idempotent |
 | 3 — Transcribe per family | ⬜ **in progress** — `hash.md` is the template |
