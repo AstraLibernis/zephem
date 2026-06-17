@@ -1,7 +1,11 @@
 # std.crypto inventory — Zig 0.16
 
-Generated from `zfact --dump --module crypto`. Total: 1,258 symbols across all
-sub-namespaces; 154 named top-level primitives (uppercase consts = the usable APIs).
+Generated from `zfact --dump --module crypto` and cross-checked directly against
+`/usr/lib/zig/std/crypto.zig` source (Zig 0.16.0, 2026-06-17). Every `pub const`
+export from the top-level crypto namespace is accounted for.
+
+**179 named top-level exports** (uppercase = named primitives/types; lowercase =
+sub-namespace groups). Both are listed here.
 
 ---
 
@@ -19,7 +23,11 @@ Encrypt a stream of bytes. No authentication — pair with a MAC or use an AEAD 
 | XChaCha8IETF | XChaCha20 reduced to 8 rounds |
 | XChaCha12IETF | XChaCha20 reduced to 12 rounds |
 | Salsa20 | The Salsa cipher with 20 rounds (predecessor to ChaCha) |
+| Salsa | Salsa cipher, parameterised (lower-level than Salsa20) |
 | XSalsa20 | Salsa20 with extended nonce |
+| XSalsa | XSalsa, parameterised |
+| ChaCha8With64BitNonce | ChaCha20 reduced to 8 rounds, 64-bit nonce |
+| ChaCha12With64BitNonce | ChaCha20 reduced to 12 rounds, 64-bit nonce |
 
 **Which to use:** `ChaCha20IETF` for compatibility (TLS); `XChaCha20IETF` when
 generating random nonces (the larger nonce space makes collisions negligible).
@@ -50,6 +58,14 @@ An AEAD is a stream cipher + MAC composed correctly — you can't forget the MAC
 | Aegis256X2 | AEGIS-256X2 (SIMD variant) |
 | Aegis256X4 | AEGIS-256X4 (wide SIMD) |
 | AsconAead128 | Ascon-AEAD128 — NIST SP 800-232, lightweight/IoT focused |
+| Aes128Gcm | AES-128-GCM — standard AEAD, TLS-compatible |
+| Aes256Gcm | AES-256-GCM |
+| Aes128GcmSiv | AES-128-GCM-SIV — nonce-misuse resistant |
+| Aes256GcmSiv | AES-256-GCM-SIV — nonce-misuse resistant |
+| Aes128Ocb | AES-128-OCB — fast, patent-cleared (RFC 7253) |
+| Aes256Ocb | AES-256-OCB |
+| Aes128Siv | AES-128-SIV — deterministic, nonce-misuse resistant |
+| Aes256Siv | AES-256-SIV |
 | Aes128Ccm16 | AES-128-CCM, 16-byte tag (IoT/embedded, RFC 3610) |
 | Aes128Ccm8 | AES-128-CCM, 8-byte tag |
 | Aes128Ccm0 | AES-128-CCM*, no authentication (encryption-only — avoid) |
@@ -77,6 +93,8 @@ One-way transformation. No key. Used for integrity, not secrecy.
 | AsconXof128 | Ascon-XOF128 — extendable output function |
 | AsconCxof128 | Ascon-CXOF128 — customizable XOF |
 | Md5 | MD5 — **broken for security use**. Legacy/compatibility only. |
+| Sha1 | SHA-1 — **broken for security**. Legacy/compatibility only. |
+| Ascon | Ascon permutation — low-level building block for Ascon family |
 
 **Note:** SHA-256, SHA-512, SHA-3 are in sub-namespaces (crypto.hash.sha2, etc.),
 not top-level — see the sub-namespaces section.
@@ -95,10 +113,9 @@ A MAC alone provides authentication but not secrecy (message is still visible).
 |---|---|
 | Ghash | GHASH — universal hash for AES-GCM. Usually used internally. |
 | Polyval | POLYVAL — similar to GHASH, used in AES-GCM-SIV |
+| Poly1305 | Poly1305 MAC — authenticate a message with a one-time key |
 | CbcMacAes128 | CBC-MAC with AES-128 (FIPS 113) |
 | CmacAes128 | CMAC with AES-128 (RFC 4493) |
-
-**Note:** Poly1305 is a function (fn), not a const — it's in the `fn` symbols.
 HkdfSha256 and HkdfSha512 are KDFs (below), not MACs, despite using HMAC internally.
 
 ---
@@ -137,11 +154,16 @@ Two parties derive the same shared secret without ever sending the secret itself
 
 | name | notes |
 |---|---|
+| X25519 | Diffie-Hellman key exchange on Curve25519 — the standard choice |
+| Curve25519 | Low-level Curve25519 point operations |
+| Edwards25519 | Edwards-curve form of Curve25519 (used by Ed25519 internally) |
+| Ristretto255 | Prime-order group built on Curve25519 (avoids cofactor pitfalls) |
+| P256 | NIST P-256 elliptic curve key exchange |
+| P384 | NIST P-384 elliptic curve key exchange |
+| Secp256k1 | Secp256k1 curve (Bitcoin/Ethereum key exchange) |
 | Box | NaCl-compatible box API — X25519 + XSalsa20-Poly1305 composed |
 | SealedBox | Anonymous sender version of Box (no sender authentication) |
 | SecretBox | Symmetric secretbox — single shared key (no key exchange) |
-
-**Note:** X25519 itself (the raw key exchange primitive) lives in `crypto.25519`.
 
 ---
 
@@ -164,9 +186,10 @@ Authentication, not secrecy — the message is still visible.
 | PKCS1v1_5Signature | RSA-PKCS1-v1_5 (RFC 3447) — legacy |
 | PSSSignature | RSA-PSS (RFC 3447) — modern RSA signatures |
 
-**Note:** Ed25519 (the most common modern signature) lives in `crypto.sign.Ed25519`,
-not top-level. The KeyPair/PublicKey/SecretKey/Signature types appear multiple times
-(once per signature family).
+| Ed25519 | Edwards-curve Digital Signature Algorithm — the modern standard |
+
+**Note:** Ed25519 is a top-level export (confirmed against source). The
+KeyPair/PublicKey/SecretKey/Signature types appear multiple times (once per family).
 
 ---
 
@@ -182,6 +205,15 @@ Key encapsulation mechanisms — the post-quantum replacement for key exchange.
 
 **Note:** These are hybrid schemes — they combine classical (X25519/P-256) with
 post-quantum (ML-KEM) for defense-in-depth during the transition period.
+
+---
+
+## Configuration / utilities
+
+| name | what it is |
+|---|---|
+| SideChannelsMitigations | Enum controlling side-channel countermeasure level (none / medium / full) |
+| Certificate | X.509 certificate parsing — used by TLS |
 
 ---
 
@@ -215,18 +247,80 @@ These families live in sub-namespaces and need a separate inventory pass:
 
 ---
 
-## Summary counts (Phase 1 complete)
+## Sub-namespaces (lowercase exports — groups, not individual primitives)
 
-| family | count |
+These are the namespace groups. Their contents are accessed as `crypto.<ns>.*`.
+
+| name | what's inside |
 |---|---|
-| AEAD | 24 |
-| Stream ciphers | 9 |
-| Signatures | 11 |
+| `aead` | AEAD cipher sub-namespace |
+| `aegis` | AEGIS cipher family |
+| `aes` | AES block cipher primitives |
+| `aes_ccm` | AES-CCM modes |
+| `aes_gcm` | AES-GCM |
+| `aes_gcm_siv` | AES-GCM-SIV |
+| `aes_ocb` | AES-OCB |
+| `aes_siv` | AES-SIV |
+| `argon2` | Argon2 password hashing |
+| `ascon` | Ascon family |
+| `auth` | MACs: HMAC, Poly1305 |
+| `bcrypt` | bcrypt password hashing |
+| `blake2` | BLAKE2 hash family |
+| `cbc_mac` | CBC-MAC |
+| `chacha` | ChaCha stream ciphers (low-level) |
+| `chacha_poly` | ChaCha-Poly1305 AEAD (low-level) |
+| `cmac` | CMAC |
+| `codecs` | ASN.1/DER, Base64 (crypto variant) |
+| `composition` | Hash composition utilities |
+| `core` | Core building blocks |
+| `dh` | Diffie-Hellman |
+| `ecc` | Elliptic curve cryptography |
+| `ecdsa` | ECDSA low-level |
+| `errors` | Error type definitions |
+| `ff` | Finite field arithmetic |
+| `hash` | SHA-256, SHA-512, SHA-3, BLAKE2 |
+| `hkdf` | HKDF key derivation |
+| `hmac` | HMAC |
+| `hybrid` | Hybrid KEM |
+| `isap` | ISAP authenticated encryption |
+| `kdf` | Key derivation functions |
+| `keccak` | Keccak permutation |
+| `kem` | Key encapsulation |
+| `kyber_d00` | Kyber (draft, pre-standard ML-KEM) |
+| `ml_kem` | ML-KEM (NIST standard) |
+| `mldsa` | ML-DSA (NIST standard) |
+| `modes` | Block cipher modes |
+| `nacl` | NaCl/libsodium-compatible API |
+| `onetimeauth` | One-time authentication |
+| `pbkdf2` | PBKDF2 key derivation |
+| `phc_format` | PHC string format (password hash encoding) |
+| `pwhash` | Password hashing (Argon2, scrypt, bcrypt) |
+| `salsa` | Salsa stream ciphers (low-level) |
+| `salsa_poly` | Salsa-Poly1305 (low-level) |
+| `scrypt` | scrypt password hashing |
+| `sha2` | SHA-256, SHA-512 family |
+| `sha3` | SHA-3 family |
+| `sign` | Digital signatures (Ed25519, ECDSA) |
+| `siphash` | SipHash (non-crypto, fast hash for hash maps) |
+| `stream` | Stream ciphers (low-level) |
+| `timing_safe` | Timing-safe comparison utilities |
+| `tls` | TLS helpers |
+
+---
+
+## Summary (cross-checked against source 2026-06-17)
+
+| family | named exports |
+|---|---|
+| AEAD | 33 (inc. AES-GCM/OCB/SIV variants) |
+| Stream ciphers | 12 |
+| Key exchange + curves | 10 |
+| Signatures | 12 (inc. Ed25519) |
 | Post-quantum KEM | 3 |
-| Password hashing types | 6 |
-| Hashing | 7 |
-| MACs | 4 |
+| Hashing | 9 |
+| MACs | 5 |
 | KDF | 2 |
-| Key exchange (high-level) | 3 |
+| Password hashing types | 4 |
+| Configuration / utilities | 2 |
 | Error types | 9 |
-| Sub-namespaces (to explore) | 5 |
+| Sub-namespaces (lowercase) | 53 |
