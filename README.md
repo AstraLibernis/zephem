@@ -22,8 +22,8 @@ std splits crypto across namespaces, in two layers.
 | stream ciphers | `std.crypto.stream` | [stream](docs/stream.md) |
 | key derivation | `std.crypto.kdf` | [kdf](docs/kdf.md) |
 | key exchange | `std.crypto.dh` | [kex](docs/kex.md) |
-| signatures | `std.crypto.sign` | _pending_ |
-| key encapsulation | `std.crypto.kem` | _pending_ |
+| signatures | `std.crypto.sign` | [sign](docs/sign.md) |
+| key encapsulation | `std.crypto.kem` | [kem](docs/kem.md) |
 | password hashing | `std.crypto.pwhash` | _pending_ |
 | NaCl boxes | `std.crypto.nacl` | _pending_ |
 
