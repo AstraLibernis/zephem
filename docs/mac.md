@@ -18,18 +18,17 @@ a readable form, with every value traceable to source:
 
 ## The map
 
-tag / key / block are in **bytes**. "—" means std ships no doc-comment, or the size
-is not in the resolved set.
+tag / key / block are in **bytes**. "—" means the size is not in the resolved set.
 
-| primitive | public path | tag | key | block | defined in | std doc-comment (verbatim) |
-|---|---|--:|--:|--:|---|---|
-| HmacSha256 | `std.crypto.auth.hmac.sha2.HmacSha256` | 32 | 32 | — | `crypto/hmac.zig:11` | — |
-| HmacSha512 | `std.crypto.auth.hmac.sha2.HmacSha512` | 64 | 64 | — | `crypto/hmac.zig:13` | — |
-| Poly1305 | `std.crypto.onetimeauth.Poly1305` | 16 | 32 | 16 | `crypto/poly1305.zig` | — |
-| Ghash | `std.crypto.onetimeauth.Ghash` | 16 | 16 | 16 | `crypto/ghash_polyval.zig:15` | "GHASH is a universal hash function that uses multiplication by a fixed parameter within a Galois field. It is not a general purpose hash function - The key must be secret, unpredictable and never reused. GHASH is typically used to compute the authentication tag in the AES-GCM construction." |
+| primitive | public path | tag | key | block | defined in |
+|---|---|--:|--:|--:|---|
+| HmacSha256 | `std.crypto.auth.hmac.sha2.HmacSha256` | 32 | 32 | — | `crypto/hmac.zig:11` |
+| HmacSha512 | `std.crypto.auth.hmac.sha2.HmacSha512` | 64 | 64 | — | `crypto/hmac.zig:13` |
+| Poly1305 | `std.crypto.onetimeauth.Poly1305` | 16 | 32 | 16 | `crypto/poly1305.zig` |
+| Ghash | `std.crypto.onetimeauth.Ghash` | 16 | 16 | 16 | `crypto/ghash_polyval.zig:15` |
 
-`tag` = `mac_length`, `key` = `key_length`, `block` = `block_length` (resolved names
-in `data/primitives.tsv`). `HmacSha256` and `HmacSha512` additionally define
+`tag`/`key`/`block` = `mac_length`/`key_length`/`block_length` (resolved in
+`data/primitives.tsv`). `HmacSha256` and `HmacSha512` additionally define
 `key_length_min = 0` (resolved).
 
 ## The common interface
@@ -38,13 +37,13 @@ Reflection shows all 4 types expose the same four entry points (resolved shapes,
 from `data/primitives.tsv`):
 
 ```
-init(key) Self                  // keyed init
+init(key) Self
 update(*Self, []const u8) void
 final(*Self, out) void
-create(out, msg, key) void      // one-shot
+create(out, msg, key) void
 ```
 
-Note the one-shot here is `create` (keyed), where the hash family used `hash`.
+Note the one-shot here is `create` (keyed) — where the hash family used `hash`.
 
 Some types expose additional resolved methods:
 
@@ -54,6 +53,12 @@ Some types expose additional resolved methods:
 | Ghash | `pad`, `initForBlockCount` |
 
 Exact per-type signatures are in `data/primitives.tsv`.
+
+## std doc-comments (verbatim)
+
+`HmacSha256`, `HmacSha512` and `Poly1305` ship no doc-comment in std.
+
+- **Ghash** (`crypto/ghash_polyval.zig`) — "GHASH is a universal hash function that uses multiplication by a fixed parameter within a Galois field. It is not a general purpose hash function - The key must be secret, unpredictable and never reused. GHASH is typically used to compute the authentication tag in the AES-GCM construction."
 
 ---
 

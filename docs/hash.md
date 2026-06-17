@@ -10,28 +10,27 @@ readable form, with every value traceable to source:
 
 > **Coverage.** This page covers the 13 primitives for which reflection has
 > resolved sizes/signatures. The `hash` namespace exposes more variants
-> (full list in `docs/surface.md`) — they are pending resolution, not omitted
-> by choice.
+> (full list in `docs/surface.md`) — pending resolution, not omitted by choice.
 
 ## The map
 
-digest / block are in **bytes**. "—" means std ships no doc-comment for that type.
+digest / block are in **bytes**.
 
-| primitive | public path | digest | block | defined in | std doc-comment (verbatim) |
-|---|---|--:|--:|---|---|
-| Blake3 | `std.crypto.hash.Blake3` | 32 | 64 | `crypto/blake3.zig:952` | "BLAKE3 is a cryptographic hash function that produces a 256-bit digest by default but also supports extendable output." |
-| Md5 | `std.crypto.hash.Md5` | 16 | 64 | `crypto/md5.zig:30` | "The MD5 function is now considered cryptographically broken. Namely, it is trivial to find multiple inputs producing the same hash. For a fast-performing, cryptographically secure hash function, see SHA512/256, BLAKE2 or BLAKE3." |
-| Sha1 | `std.crypto.hash.Sha1` | 20 | 64 | `crypto/sha1.zig` | — |
-| Sha256 | `std.crypto.hash.sha2.Sha256` | 32 | 64 | `crypto/sha2.zig:23` | — |
-| Sha384 | `std.crypto.hash.sha2.Sha384` | 48 | 128 | `crypto/sha2.zig:24` | — |
-| Sha512 | `std.crypto.hash.sha2.Sha512` | 64 | 128 | `crypto/sha2.zig:25` | — |
-| Sha3_256 | `std.crypto.hash.sha3.Sha3_256` | 32 | 136 | `crypto/sha3.zig:12` | — |
-| Sha3_512 | `std.crypto.hash.sha3.Sha3_512` | 64 | 72 | `crypto/sha3.zig:14` | — |
-| Shake128 | `std.crypto.hash.sha3.Shake128` | 32 | 168 | `crypto/sha3.zig:19` | — |
-| Shake256 | `std.crypto.hash.sha3.Shake256` | 64 | 136 | `crypto/sha3.zig:20` | — |
-| Blake2b256 | `std.crypto.hash.blake2.Blake2b256` | 32 | 128 | `crypto/blake2.zig:453` | — |
-| Blake2s256 | `std.crypto.hash.blake2.Blake2s256` | 32 | 64 | `crypto/blake2.zig:33` | — |
-| AsconHash256 | `std.crypto.hash.ascon.AsconHash256` | 32 | 8 | `crypto/ascon.zig:587` | "Ascon-Hash256 as specified in NIST SP 800-232 Section 5" |
+| primitive | public path | digest | block | defined in |
+|---|---|--:|--:|---|
+| Blake3 | `std.crypto.hash.Blake3` | 32 | 64 | `crypto/blake3.zig:952` |
+| Md5 | `std.crypto.hash.Md5` | 16 | 64 | `crypto/md5.zig:30` |
+| Sha1 | `std.crypto.hash.Sha1` | 20 | 64 | `crypto/sha1.zig` |
+| Sha256 | `std.crypto.hash.sha2.Sha256` | 32 | 64 | `crypto/sha2.zig:23` |
+| Sha384 | `std.crypto.hash.sha2.Sha384` | 48 | 128 | `crypto/sha2.zig:24` |
+| Sha512 | `std.crypto.hash.sha2.Sha512` | 64 | 128 | `crypto/sha2.zig:25` |
+| Sha3_256 | `std.crypto.hash.sha3.Sha3_256` | 32 | 136 | `crypto/sha3.zig:12` |
+| Sha3_512 | `std.crypto.hash.sha3.Sha3_512` | 64 | 72 | `crypto/sha3.zig:14` |
+| Shake128 | `std.crypto.hash.sha3.Shake128` | 32 | 168 | `crypto/sha3.zig:19` |
+| Shake256 | `std.crypto.hash.sha3.Shake256` | 64 | 136 | `crypto/sha3.zig:20` |
+| Blake2b256 | `std.crypto.hash.blake2.Blake2b256` | 32 | 128 | `crypto/blake2.zig:453` |
+| Blake2s256 | `std.crypto.hash.blake2.Blake2s256` | 32 | 64 | `crypto/blake2.zig:33` |
+| AsconHash256 | `std.crypto.hash.ascon.AsconHash256` | 32 | 8 | `crypto/ascon.zig:587` |
 
 ## The common interface
 
@@ -58,6 +57,14 @@ One resolved-signature difference recorded by reflection: Blake3's `hash` writes
 into a `[]u8` slice (`out` is a slice), while the SHA-2 types' `hash` writes into a
 fixed `*[N]u8` pointer sized to the digest. Exact per-type signatures are in
 `data/primitives.tsv`.
+
+## std doc-comments (verbatim)
+
+The other 10 primitives ship no doc-comment in std.
+
+- **Blake3** (`crypto/blake3.zig`) — "BLAKE3 is a cryptographic hash function that produces a 256-bit digest by default but also supports extendable output."
+- **AsconHash256** (`crypto/ascon.zig`) — "Ascon-Hash256 as specified in NIST SP 800-232 Section 5"
+- **Md5** (`crypto/md5.zig`) — "The MD5 function is now considered cryptographically broken. Namely, it is trivial to find multiple inputs producing the same hash. For a fast-performing, cryptographically secure hash function, see SHA512/256, BLAKE2 or BLAKE3."
 
 ---
 
