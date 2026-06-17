@@ -16,12 +16,11 @@ know what's available or how the pieces fit together.
 **Goal:** A complete inventory of every symbol in std.crypto for Zig 0.16.
 No explanations yet — just *what exists*.
 
-Steps:
-- [ ] Run `zfact --dump --module crypto` to extract every symbol from std.crypto
-- [ ] List all symbols: name, kind (fn / type / const), file, signature
-- [ ] Record the raw list in `docs/inventory.md`
+Steps (done — via `scripts/parse_crypto.nu`, a text scan of the std source; no zfact):
+- [x] Extract every `pub` decl: name, kind, file, signature, doc → `data/crypto_raw.csv`
+- [x] Record the annotated listing in `docs/inventory.md`
 
-**Deliverable:** `docs/inventory.md` — the full flat list, unfiltered.
+**Deliverable:** `docs/inventory.md` (annotated) + `data/crypto_raw.csv` (raw flat list).
 
 ---
 
@@ -55,11 +54,11 @@ Steps:
 ## Phase 3 — Investigate: understand each family deeply
 
 **Goal:** For each family, understand the *internals* well enough to explain them.
-Use zfact to read signatures, read the std source, understand what each parameter
-means and what happens if you use it wrong.
+Query `data/primitives.tsv` for resolved signatures/sizes and read the std source to
+understand what each parameter means and what happens if you use it wrong.
 
 For each family:
-- [ ] Read the std.crypto source for that family (via zfact or directly)
+- [ ] Read the resolved API from `data/primitives.tsv` and the std source directly
 - [ ] Identify: what are the inputs? What are the outputs? What are the danger zones?
 - [ ] Write a short explanation in `docs/<family>.md`:
       - What this is for (one paragraph)
@@ -187,9 +186,10 @@ source (e.g. `open data/primitives.tsv | where primitive == 'ChaCha20Poly1305'`)
 
 | phase | status |
 |---|---|
-| 1 — Map | ✅ inventory.md + map.md (179 top-level exports, cross-checked) |
-| 2 — Group | ✅ families assigned in inventory.md |
-| (system) — Extraction | ✅ reflection dumper + clean datasets (518 resolved rows) |
+| 1 — Map | ✅ inventory.md (annotated) + map.md (mental model) |
+| 2 — Group | ✅ families assigned; surface.md = 134 dev-facing primitives by family |
+| (system) — Extraction | ✅ Zig reflection (dump/maptree/surface) + Nushell glue; datasets idempotent |
+| (system) — Structural map | ✅ structure.md (400 containers) + clusters.md/svg (shape clusters) |
 | 3 — Investigate | ⬜ next — data-driven per-family docs |
 | 4 — Examples | not started |
 | 5 — Composition | not started |

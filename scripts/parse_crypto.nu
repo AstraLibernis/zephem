@@ -7,7 +7,7 @@
 #   nu scripts/parse_crypto.nu                  # parse + regenerate inventory
 #   nu scripts/parse_crypto.nu --skip-inventory # parse only
 
-def main [--gen-inventory] {   # opt-in only — gen_inventory.nu emits a DRAFT, not the curated docs/inventory.md
+def main [] {
     let std_root   = "/usr/lib/zig/std"
     let out_csv    = "data/crypto_raw.csv"
     let crypto_dir = $"($std_root)/crypto"
@@ -73,11 +73,4 @@ def main [--gen-inventory] {   # opt-in only — gen_inventory.nu emits a DRAFT,
     mkdir data
     $rows | save -f $out_csv
     print $"CSV written → ($out_csv)"
-
-    # docs/inventory.md is hand-cross-checked; gen_inventory.nu only emits a sparse
-    # draft, so regenerate it only when explicitly asked.
-    if $gen_inventory {
-        print ""
-        nu scripts/gen_inventory.nu
-    }
 }

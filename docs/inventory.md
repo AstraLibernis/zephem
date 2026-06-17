@@ -1,11 +1,18 @@
 # std.crypto inventory — Zig 0.16
 
-Generated from `zfact --dump --module crypto` and cross-checked directly against
-`/usr/lib/zig/std/crypto.zig` source (Zig 0.16.0, 2026-06-17). Every `pub const`
-export from the top-level crypto namespace is accounted for.
+> **Role:** this is a *hand-authored* annotated reference — each entry with a
+> plain-English note — and a peer of [`map.md`](map.md). It is intentionally not
+> generated. The **machine-generated, authoritative** list and counts live in
+> [`surface.md`](surface.md) (dev-facing primitives, by reflection) and
+> [`structure.md`](structure.md) (full container map). If a number here and a
+> generated count ever disagree, the generated one wins.
 
-**179 named top-level exports** (uppercase = named primitives/types; lowercase =
-sub-namespace groups). Both are listed here.
+Cross-checked by hand against `/usr/lib/zig/std/crypto.zig` (Zig 0.16.0, 2026-06-17).
+It lists the **top-level `crypto.*` exports** — uppercase = named primitives/types,
+lowercase = sub-namespace groups. Note this is a different lens from `surface.md`'s
+**134 developer-facing primitives**: the top-level count below also includes
+sub-namespace groups, error sets, and config types, and excludes primitives that
+live one level down (e.g. `crypto.hash.sha2.Sha256`).
 
 ---
 
@@ -309,6 +316,11 @@ These are the namespace groups. Their contents are accessed as `crypto.<ns>.*`.
 ---
 
 ## Summary (cross-checked against source 2026-06-17)
+
+These are **top-level-only** counts (what `crypto.<family>` exports directly), so they
+differ from `surface.md` — e.g. Hashing shows 9 here (Blake3, Md5, …) but `surface.md`
+reports 43 because it also reaches `crypto.hash.sha2.*`, `sha3.*`, `blake2.*`. For the
+authoritative dev-facing counts, use `surface.md`.
 
 | family | named exports |
 |---|---|

@@ -29,6 +29,12 @@ ASN.1/DER writer decls break reflection.)
 `scripts/cluster_shapes.nu`: each container's shape cluster (math / scheme / namespace /
 config / stateful / ops / other), by explicit rules. Visual in `docs/clusters.svg`.
 
+### `surface.tsv` — developer-facing surface
+`src/surface.zig` + `scripts/build_surface.nu`: reflection over the public namespaces
+labelling each decl PRIMITIVE / BUILDER / free-fn / namespace — what a dev reaches for,
+without the math/protocol machinery. 134 primitives across families. Report in
+`docs/surface.md`.
+
 ## Regenerate
 
 ```nu
@@ -36,7 +42,11 @@ nu scripts/parse_crypto.nu       # text inventory  → crypto_raw.csv
 nu scripts/build_primitives.nu   # resolved surface → primitives.tsv   (needs zig)
 nu scripts/build_tree.nu         # structural map   → crypto_tree.* + docs/structure.md
 nu scripts/cluster_shapes.nu     # shape clusters   → clusters.tsv + docs/clusters.{svg,md}
+nu scripts/build_surface.nu      # dev-facing list  → surface.tsv + docs/surface.md  (needs zig)
 ```
+
+`docs/inventory.md` and `docs/map.md` are **hand-authored** (annotated reference and
+mental model); they are not generated. Everything else above is generated and idempotent.
 
 ## Query examples (Nushell)
 
