@@ -169,16 +169,33 @@ Steps:
 
 ---
 
+## The extraction system (the engine for Phase 3+)
+
+Hand-reading std source per primitive does not scale to ~180 symbols. So the data
+is extracted by script, two layers (see `data/README.md`):
+
+- **`scripts/parse_crypto.py` → `crypto_raw.*`** — text scan, full breadth inventory.
+- **`src/dump.zig` + `scripts/build_primitives.py` → `primitives.*`** — compiler
+  reflection over the curated "use" set, giving *resolved* sizes and signatures
+  through aliases/generics. This is what text parsing fundamentally cannot do.
+
+Phase 3 docs are written by querying `primitives.duckdb`, not by re-reading source.
+
 ## Current status
 
 | phase | status |
 |---|---|
-| 1 — Map | not started |
-| 2 — Group | not started |
-| 3 — Investigate | not started |
+| 1 — Map | ✅ inventory.md + map.md (179 top-level exports, cross-checked) |
+| 2 — Group | ✅ families assigned in inventory.md |
+| (system) — Extraction | ✅ reflection dumper + clean datasets (518 resolved rows) |
+| 3 — Investigate | ⬜ next — data-driven per-family docs |
 | 4 — Examples | not started |
 | 5 — Composition | not started |
 | 6 — zsnag rules | not started |
 | 7 — Publish | not started |
 
-**Start here:** Phase 1 — run zfact against the crypto namespace and build the inventory.
+**Start here:** Phase 3 — write `docs/<family>.md` per family, sourced from
+`primitives.duckdb`. Order: hash → mac → stream → aead → kdf → kex/kem → sign →
+pwhash → curve. Inventory correction to fold in: `KT128`/`KT256` and
+`MlKem768X25519` are **not** top-level exports (text-parse artifacts); real path
+is `crypto.kem.hybrid.MlKem768X25519`, and KT is not cleanly exposed via std.crypto.
