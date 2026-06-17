@@ -1,0 +1,3739 @@
+{
+  "crypto": {
+    "kind": "struct",
+    "n_decls": 22,
+    "n_fields": 0,
+    "n_types": 20,
+    "n_fns": 1,
+    "n_consts": 1,
+    "children": {
+      "timing_safe": {
+        "kind": "struct",
+        "n_decls": 6,
+        "n_fields": 0,
+        "n_types": 0,
+        "n_fns": 6,
+        "n_consts": 0,
+        "children": {}
+      },
+      "aead": {
+        "kind": "struct",
+        "n_decls": 10,
+        "n_fields": 0,
+        "n_types": 10,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "aegis": {
+            "kind": "struct",
+            "n_decls": 12,
+            "n_fields": 0,
+            "n_types": 12,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aegis128X4": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128X2": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128L": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X4": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X2": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128X4_256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128X2_256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128L_256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X4_256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X2_256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256_256": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              }
+            }
+          },
+          "aes_gcm": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aes128Gcm": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes256Gcm": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "aes_gcm_siv": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aes128GcmSiv": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes256GcmSiv": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "aes_siv": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aes128Siv": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {}
+              },
+              "Aes256Siv": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {}
+              }
+            }
+          },
+          "aes_ocb": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aes128Ocb": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes256Ocb": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "aes_ccm": {
+            "kind": "struct",
+            "n_decls": 6,
+            "n_fields": 0,
+            "n_types": 6,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aes128Ccm0": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes128Ccm8": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes128Ccm16": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes256Ccm0": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes256Ccm8": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "Aes256Ccm16": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "ascon": {
+            "kind": "struct",
+            "n_decls": 1,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "AsconAead128": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 4,
+                "children": {}
+              }
+            }
+          },
+          "chacha_poly": {
+            "kind": "struct",
+            "n_decls": 6,
+            "n_fields": 0,
+            "n_types": 6,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "ChaCha20Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha12Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha8Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "XChaCha20Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "XChaCha12Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "XChaCha8Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "isap": {
+            "kind": "struct",
+            "n_decls": 1,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "IsapA128A": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "salsa_poly": {
+            "kind": "struct",
+            "n_decls": 1,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "XSalsa20Poly1305": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          }
+        }
+      },
+      "auth": {
+        "kind": "struct",
+        "n_decls": 5,
+        "n_fields": 0,
+        "n_types": 5,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "hmac": {
+            "kind": "struct",
+            "n_decls": 4,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "HmacMd5": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 3,
+                "children": {}
+              },
+              "HmacSha1": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 3,
+                "children": {}
+              },
+              "sha2": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {
+                  "HmacSha224": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 3,
+                    "children": {}
+                  },
+                  "HmacSha256": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 3,
+                    "children": {}
+                  },
+                  "HmacSha384": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 3,
+                    "children": {}
+                  },
+                  "HmacSha512": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 3,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "siphash": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 0,
+            "n_fns": 2,
+            "n_consts": 0,
+            "children": {}
+          },
+          "aegis": {
+            "kind": "struct",
+            "n_decls": 12,
+            "n_fields": 0,
+            "n_types": 12,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Aegis128X4Mac": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128X2Mac": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128LMac": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X4Mac": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X2Mac": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256Mac": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128X4Mac_128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128X2Mac_128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis128LMac_128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X4Mac_128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256X2Mac_128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              },
+              "Aegis256Mac_128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 4,
+                "children": {}
+              }
+            }
+          },
+          "cmac": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "CmacAes128": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 5,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "cbc_mac": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "CbcMacAes128": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 3,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          }
+        }
+      },
+      "core": {
+        "kind": "struct",
+        "n_decls": 4,
+        "n_fields": 0,
+        "n_types": 3,
+        "n_fns": 1,
+        "n_consts": 0,
+        "children": {
+          "aes": {
+            "kind": "struct",
+            "n_decls": 7,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 3,
+            "n_consts": 1,
+            "children": {
+              "Block": {
+                "kind": "struct",
+                "n_decls": 13,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 11,
+                "n_consts": 1,
+                "children": {
+                  "parallel": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "Aes128": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 1,
+                "n_fns": 2,
+                "n_consts": 2,
+                "children": {
+                  "block": {
+                    "kind": "struct",
+                    "n_decls": 13,
+                    "n_fields": 1,
+                    "n_types": 1,
+                    "n_fns": 11,
+                    "n_consts": 1,
+                    "children": {
+                      "parallel": {
+                        "kind": "struct",
+                        "n_decls": 7,
+                        "n_fields": 0,
+                        "n_types": 0,
+                        "n_fns": 6,
+                        "n_consts": 1,
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "Aes256": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 1,
+                "n_fns": 2,
+                "n_consts": 2,
+                "children": {
+                  "block": {
+                    "kind": "struct",
+                    "n_decls": 13,
+                    "n_fields": 1,
+                    "n_types": 1,
+                    "n_fns": 11,
+                    "n_consts": 1,
+                    "children": {
+                      "parallel": {
+                        "kind": "struct",
+                        "n_decls": 7,
+                        "n_fields": 0,
+                        "n_types": 0,
+                        "n_fns": 6,
+                        "n_consts": 1,
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "keccak": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 0,
+            "n_fns": 2,
+            "n_consts": 0,
+            "children": {}
+          },
+          "modes": {
+            "kind": "struct",
+            "n_decls": 2,
+            "n_fields": 0,
+            "n_types": 0,
+            "n_fns": 2,
+            "n_consts": 0,
+            "children": {}
+          }
+        }
+      },
+      "dh": {
+        "kind": "struct",
+        "n_decls": 1,
+        "n_fields": 0,
+        "n_types": 1,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "X25519": {
+            "kind": "struct",
+            "n_decls": 9,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 3,
+            "n_consts": 4,
+            "children": {
+              "Curve": {
+                "kind": "struct",
+                "n_decls": 12,
+                "n_fields": 1,
+                "n_types": 2,
+                "n_fns": 9,
+                "n_consts": 1,
+                "children": {
+                  "Fe": {
+                    "kind": "struct",
+                    "n_decls": 34,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 21,
+                    "n_consts": 13,
+                    "children": {}
+                  },
+                  "scalar": {
+                    "kind": "struct",
+                    "n_decls": 15,
+                    "n_fields": 0,
+                    "n_types": 2,
+                    "n_fns": 11,
+                    "n_consts": 2,
+                    "children": {
+                      "Scalar": {
+                        "kind": "struct",
+                        "n_decls": 9,
+                        "n_fields": 1,
+                        "n_types": 0,
+                        "n_fns": 9,
+                        "n_consts": 0,
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "KeyPair": {
+                "kind": "struct",
+                "n_decls": 3,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 3,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          }
+        }
+      },
+      "kem": {
+        "kind": "struct",
+        "n_decls": 3,
+        "n_fields": 0,
+        "n_types": 3,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "hybrid": {
+            "kind": "struct",
+            "n_decls": 5,
+            "n_fields": 0,
+            "n_types": 4,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "MlKem768X25519": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 2,
+                    "children": {}
+                  }
+                }
+              },
+              "MlKem768P256": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 2,
+                    "children": {}
+                  }
+                }
+              },
+              "MlKem1024P384": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 2,
+                    "children": {}
+                  }
+                }
+              },
+              "Params": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 11,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "kyber_d00": {
+            "kind": "struct",
+            "n_decls": 3,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Kyber512": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 5,
+                "children": {
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Kyber768": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 5,
+                "children": {
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Kyber1024": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 5,
+                "children": {
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "ml_kem": {
+            "kind": "struct",
+            "n_decls": 3,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "MLKem512": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 5,
+                "children": {
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "MLKem768": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 5,
+                "children": {
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "MLKem1024": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 0,
+                "n_types": 4,
+                "n_fns": 0,
+                "n_consts": 5,
+                "children": {
+                  "EncapsulatedSecret": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 4,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ecc": {
+        "kind": "struct",
+        "n_decls": 6,
+        "n_fields": 0,
+        "n_types": 6,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "Curve25519": {
+            "kind": "struct",
+            "n_decls": 12,
+            "n_fields": 1,
+            "n_types": 2,
+            "n_fns": 9,
+            "n_consts": 1,
+            "children": {
+              "Fe": {
+                "kind": "struct",
+                "n_decls": 34,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 21,
+                "n_consts": 13,
+                "children": {}
+              },
+              "scalar": {
+                "kind": "struct",
+                "n_decls": 15,
+                "n_fields": 0,
+                "n_types": 2,
+                "n_fns": 11,
+                "n_consts": 2,
+                "children": {
+                  "Scalar": {
+                    "kind": "struct",
+                    "n_decls": 9,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 9,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "Edwards25519": {
+            "kind": "struct",
+            "n_decls": 25,
+            "n_fields": 5,
+            "n_types": 2,
+            "n_fns": 20,
+            "n_consts": 3,
+            "children": {
+              "Fe": {
+                "kind": "struct",
+                "n_decls": 34,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 21,
+                "n_consts": 13,
+                "children": {}
+              },
+              "scalar": {
+                "kind": "struct",
+                "n_decls": 15,
+                "n_fields": 0,
+                "n_types": 2,
+                "n_fns": 11,
+                "n_consts": 2,
+                "children": {
+                  "Scalar": {
+                    "kind": "struct",
+                    "n_decls": 9,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 9,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "P256": {
+            "kind": "struct",
+            "n_decls": 24,
+            "n_fields": 4,
+            "n_types": 2,
+            "n_fns": 19,
+            "n_consts": 3,
+            "children": {
+              "Fe": {
+                "kind": "struct",
+                "n_decls": 27,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 20,
+                "n_consts": 6,
+                "children": {}
+              },
+              "scalar": {
+                "kind": "struct",
+                "n_decls": 13,
+                "n_fields": 0,
+                "n_types": 2,
+                "n_fns": 9,
+                "n_consts": 2,
+                "children": {
+                  "Scalar": {
+                    "kind": "struct",
+                    "n_decls": 20,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 18,
+                    "n_consts": 2,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "P384": {
+            "kind": "struct",
+            "n_decls": 24,
+            "n_fields": 4,
+            "n_types": 2,
+            "n_fns": 19,
+            "n_consts": 3,
+            "children": {
+              "Fe": {
+                "kind": "struct",
+                "n_decls": 27,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 20,
+                "n_consts": 6,
+                "children": {}
+              },
+              "scalar": {
+                "kind": "struct",
+                "n_decls": 12,
+                "n_fields": 0,
+                "n_types": 2,
+                "n_fns": 8,
+                "n_consts": 2,
+                "children": {
+                  "Scalar": {
+                    "kind": "struct",
+                    "n_decls": 19,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 17,
+                    "n_consts": 2,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "Ristretto255": {
+            "kind": "struct",
+            "n_decls": 14,
+            "n_fields": 1,
+            "n_types": 3,
+            "n_fns": 9,
+            "n_consts": 2,
+            "children": {
+              "Curve": {
+                "kind": "struct",
+                "n_decls": 25,
+                "n_fields": 5,
+                "n_types": 2,
+                "n_fns": 20,
+                "n_consts": 3,
+                "children": {
+                  "Fe": {
+                    "kind": "struct",
+                    "n_decls": 34,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 21,
+                    "n_consts": 13,
+                    "children": {}
+                  },
+                  "scalar": {
+                    "kind": "struct",
+                    "n_decls": 15,
+                    "n_fields": 0,
+                    "n_types": 2,
+                    "n_fns": 11,
+                    "n_consts": 2,
+                    "children": {
+                      "Scalar": {
+                        "kind": "struct",
+                        "n_decls": 9,
+                        "n_fields": 1,
+                        "n_types": 0,
+                        "n_fns": 9,
+                        "n_consts": 0,
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "Fe": {
+                "kind": "struct",
+                "n_decls": 34,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 21,
+                "n_consts": 13,
+                "children": {}
+              },
+              "scalar": {
+                "kind": "struct",
+                "n_decls": 15,
+                "n_fields": 0,
+                "n_types": 2,
+                "n_fns": 11,
+                "n_consts": 2,
+                "children": {
+                  "Scalar": {
+                    "kind": "struct",
+                    "n_decls": 9,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 9,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "Secp256k1": {
+            "kind": "struct",
+            "n_decls": 25,
+            "n_fields": 4,
+            "n_types": 3,
+            "n_fns": 19,
+            "n_consts": 3,
+            "children": {
+              "Fe": {
+                "kind": "struct",
+                "n_decls": 27,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 20,
+                "n_consts": 6,
+                "children": {}
+              },
+              "scalar": {
+                "kind": "struct",
+                "n_decls": 13,
+                "n_fields": 0,
+                "n_types": 2,
+                "n_fns": 9,
+                "n_consts": 2,
+                "children": {
+                  "Scalar": {
+                    "kind": "struct",
+                    "n_decls": 20,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 18,
+                    "n_consts": 2,
+                    "children": {}
+                  }
+                }
+              },
+              "Endormorphism": {
+                "kind": "struct",
+                "n_decls": 2,
+                "n_fields": 0,
+                "n_types": 1,
+                "n_fns": 1,
+                "n_consts": 0,
+                "children": {
+                  "SplitScalar": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "hash": {
+        "kind": "struct",
+        "n_decls": 8,
+        "n_fields": 0,
+        "n_types": 8,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "ascon": {
+            "kind": "struct",
+            "n_decls": 3,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "AsconHash256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "AsconXof128": {
+                "kind": "struct",
+                "n_decls": 6,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 1,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "AsconCxof128": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "blake2": {
+            "kind": "struct",
+            "n_decls": 11,
+            "n_fields": 0,
+            "n_types": 9,
+            "n_fns": 2,
+            "n_consts": 0,
+            "children": {
+              "Blake2s128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2s160": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2s224": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2s256": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2b128": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2b160": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2b256": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2b384": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Blake2b512": {
+                "kind": "struct",
+                "n_decls": 10,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 4,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "Blake3": {
+            "kind": "struct",
+            "n_decls": 13,
+            "n_fields": 4,
+            "n_types": 2,
+            "n_fns": 8,
+            "n_consts": 3,
+            "children": {
+              "Options": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "KdfOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "Md5": {
+            "kind": "struct",
+            "n_decls": 8,
+            "n_fields": 4,
+            "n_types": 1,
+            "n_fns": 5,
+            "n_consts": 2,
+            "children": {
+              "Options": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "Sha1": {
+            "kind": "struct",
+            "n_decls": 9,
+            "n_fields": 4,
+            "n_types": 1,
+            "n_fns": 6,
+            "n_consts": 2,
+            "children": {
+              "Options": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "sha2": {
+            "kind": "struct",
+            "n_decls": 9,
+            "n_fields": 0,
+            "n_types": 9,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "Sha224": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha256": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha384": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha512": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha256T192": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha512T224": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha512T256": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha512_224": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha512_256": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 0,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "sha3": {
+            "kind": "struct",
+            "n_decls": 25,
+            "n_fields": 0,
+            "n_types": 17,
+            "n_fns": 8,
+            "n_consts": 0,
+            "children": {
+              "Sha3_224": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha3_256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha3_384": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha3_512": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Keccak256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Keccak512": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Shake128": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Shake256": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 4,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "CShake128": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "CShake256": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 1,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "KMac128": {
+                "kind": "struct",
+                "n_decls": 13,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 7,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "KMac256": {
+                "kind": "struct",
+                "n_decls": 13,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 7,
+                "n_consts": 5,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "TupleHash128": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "TupleHash256": {
+                "kind": "struct",
+                "n_decls": 9,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 6,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "KT128": {
+                "kind": "struct",
+                "n_decls": 8,
+                "n_fields": 10,
+                "n_types": 1,
+                "n_fns": 5,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "KT256": {
+                "kind": "struct",
+                "n_decls": 8,
+                "n_fields": 10,
+                "n_types": 1,
+                "n_fns": 5,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "NistLengthEncoding": {
+                "kind": "enum",
+                "n_decls": 2,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 1,
+                "n_consts": 0,
+                "children": {
+                  "Length": {
+                    "kind": "struct",
+                    "n_decls": 1,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 1,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "composition": {
+            "kind": "struct",
+            "n_decls": 4,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "Sha256oSha256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha384oSha384": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              },
+              "Sha512oSha512": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 4,
+                "n_consts": 2,
+                "children": {
+                  "Options": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "kdf": {
+        "kind": "struct",
+        "n_decls": 1,
+        "n_fields": 0,
+        "n_types": 1,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "hkdf": {
+            "kind": "struct",
+            "n_decls": 3,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "HkdfSha256": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 3,
+                "n_consts": 1,
+                "children": {}
+              },
+              "HkdfSha512": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 3,
+                "n_consts": 1,
+                "children": {}
+              }
+            }
+          }
+        }
+      },
+      "onetimeauth": {
+        "kind": "struct",
+        "n_decls": 3,
+        "n_fields": 0,
+        "n_types": 3,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "Ghash": {
+            "kind": "struct",
+            "n_decls": 9,
+            "n_fields": 4,
+            "n_types": 0,
+            "n_fns": 6,
+            "n_consts": 3,
+            "children": {}
+          },
+          "Polyval": {
+            "kind": "struct",
+            "n_decls": 9,
+            "n_fields": 4,
+            "n_types": 0,
+            "n_fns": 6,
+            "n_consts": 3,
+            "children": {}
+          },
+          "Poly1305": {
+            "kind": "struct",
+            "n_decls": 8,
+            "n_fields": 5,
+            "n_types": 0,
+            "n_fns": 5,
+            "n_consts": 3,
+            "children": {}
+          }
+        }
+      },
+      "pwhash": {
+        "kind": "struct",
+        "n_decls": 9,
+        "n_fields": 0,
+        "n_types": 8,
+        "n_fns": 1,
+        "n_consts": 0,
+        "children": {
+          "Encoding": {
+            "kind": "enum",
+            "n_decls": 0,
+            "n_fields": 2,
+            "n_types": 0,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {}
+          },
+          "argon2": {
+            "kind": "struct",
+            "n_decls": 7,
+            "n_fields": 0,
+            "n_types": 4,
+            "n_fns": 3,
+            "n_consts": 0,
+            "children": {
+              "Mode": {
+                "kind": "enum",
+                "n_decls": 0,
+                "n_fields": 3,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "Params": {
+                "kind": "struct",
+                "n_decls": 8,
+                "n_fields": 5,
+                "n_types": 0,
+                "n_fns": 1,
+                "n_consts": 7,
+                "children": {}
+              },
+              "HashOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "VerifyOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "bcrypt": {
+            "kind": "struct",
+            "n_decls": 12,
+            "n_fields": 0,
+            "n_types": 4,
+            "n_fns": 6,
+            "n_consts": 2,
+            "children": {
+              "State": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "Params": {
+                "kind": "struct",
+                "n_decls": 1,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {}
+              },
+              "HashOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 3,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "VerifyOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "scrypt": {
+            "kind": "struct",
+            "n_decls": 8,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 4,
+            "n_consts": 1,
+            "children": {
+              "Params": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 3,
+                "n_types": 0,
+                "n_fns": 1,
+                "n_consts": 3,
+                "children": {}
+              },
+              "HashOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 3,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "VerifyOptions": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "phc_format": {
+            "kind": "struct",
+            "n_decls": 5,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 4,
+            "n_consts": 0,
+            "children": {}
+          }
+        }
+      },
+      "sign": {
+        "kind": "struct",
+        "n_decls": 3,
+        "n_fields": 0,
+        "n_types": 3,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "Ed25519": {
+            "kind": "struct",
+            "n_decls": 11,
+            "n_fields": 0,
+            "n_types": 9,
+            "n_fns": 1,
+            "n_consts": 1,
+            "children": {
+              "Curve": {
+                "kind": "struct",
+                "n_decls": 25,
+                "n_fields": 5,
+                "n_types": 2,
+                "n_fns": 20,
+                "n_consts": 3,
+                "children": {
+                  "Fe": {
+                    "kind": "struct",
+                    "n_decls": 34,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 21,
+                    "n_consts": 13,
+                    "children": {}
+                  },
+                  "scalar": {
+                    "kind": "struct",
+                    "n_decls": 15,
+                    "n_fields": 0,
+                    "n_types": 2,
+                    "n_fns": 11,
+                    "n_consts": 2,
+                    "children": {
+                      "Scalar": {
+                        "kind": "struct",
+                        "n_decls": 9,
+                        "n_fields": 1,
+                        "n_types": 0,
+                        "n_fns": 9,
+                        "n_consts": 0,
+                        "children": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "SecretKey": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 4,
+                "n_consts": 1,
+                "children": {}
+              },
+              "Signer": {
+                "kind": "struct",
+                "n_decls": 2,
+                "n_fields": 4,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 0,
+                "children": {}
+              },
+              "PublicKey": {
+                "kind": "struct",
+                "n_decls": 3,
+                "n_fields": 1,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 1,
+                "children": {}
+              },
+              "Verifier": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 4,
+                "n_types": 2,
+                "n_fns": 3,
+                "n_consts": 0,
+                "children": {}
+              },
+              "Signature": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 1,
+                "n_fns": 5,
+                "n_consts": 1,
+                "children": {}
+              },
+              "KeyPair": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 6,
+                "n_consts": 1,
+                "children": {}
+              },
+              "BatchElement": {
+                "kind": "struct",
+                "n_decls": 0,
+                "n_fields": 3,
+                "n_types": 0,
+                "n_fns": 0,
+                "n_consts": 0,
+                "children": {}
+              },
+              "key_blinding": {
+                "kind": "struct",
+                "n_decls": 4,
+                "n_fields": 0,
+                "n_types": 3,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "BlindSecretKey": {
+                    "kind": "struct",
+                    "n_decls": 0,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 0,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "BlindPublicKey": {
+                    "kind": "struct",
+                    "n_decls": 1,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 1,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "BlindKeyPair": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "ecdsa": {
+            "kind": "struct",
+            "n_decls": 7,
+            "n_fields": 0,
+            "n_types": 6,
+            "n_fns": 1,
+            "n_consts": 0,
+            "children": {
+              "EcdsaP256Sha256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 10,
+                    "n_fields": 2,
+                    "n_types": 1,
+                    "n_fns": 7,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 2,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "EcdsaP256Sha3_256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 10,
+                    "n_fields": 2,
+                    "n_types": 1,
+                    "n_fns": 7,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 2,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "EcdsaP384Sha384": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 10,
+                    "n_fields": 2,
+                    "n_types": 1,
+                    "n_fns": 7,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 2,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "EcdsaP384Sha3_384": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 10,
+                    "n_fields": 2,
+                    "n_types": 1,
+                    "n_fns": 7,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 2,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "EcdsaSecp256k1Sha256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 10,
+                    "n_fields": 2,
+                    "n_types": 1,
+                    "n_fns": 7,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 2,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "EcdsaSecp256k1Sha256oSha256": {
+                "kind": "struct",
+                "n_decls": 7,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 0,
+                "n_consts": 1,
+                "children": {
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 1,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 10,
+                    "n_fields": 2,
+                    "n_types": 1,
+                    "n_fns": 7,
+                    "n_consts": 2,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 2,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 4,
+                    "n_fields": 4,
+                    "n_types": 2,
+                    "n_fns": 2,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 7,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          },
+          "mldsa": {
+            "kind": "struct",
+            "n_decls": 3,
+            "n_fields": 0,
+            "n_types": 3,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "MLDSA44": {
+                "kind": "struct",
+                "n_decls": 17,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 1,
+                "n_consts": 10,
+                "children": {
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 5,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 6,
+                    "n_fields": 10,
+                    "n_types": 0,
+                    "n_fns": 5,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 8,
+                    "n_fields": 3,
+                    "n_types": 1,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 3,
+                    "n_types": 2,
+                    "n_fns": 3,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 8,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 7,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "MLDSA65": {
+                "kind": "struct",
+                "n_decls": 17,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 1,
+                "n_consts": 10,
+                "children": {
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 5,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 6,
+                    "n_fields": 10,
+                    "n_types": 0,
+                    "n_fns": 5,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 8,
+                    "n_fields": 3,
+                    "n_types": 1,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 3,
+                    "n_types": 2,
+                    "n_fns": 3,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 8,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 7,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              },
+              "MLDSA87": {
+                "kind": "struct",
+                "n_decls": 17,
+                "n_fields": 0,
+                "n_types": 6,
+                "n_fns": 1,
+                "n_consts": 10,
+                "children": {
+                  "PublicKey": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 5,
+                    "n_types": 0,
+                    "n_fns": 2,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "SecretKey": {
+                    "kind": "struct",
+                    "n_decls": 6,
+                    "n_fields": 10,
+                    "n_types": 0,
+                    "n_fns": 5,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "Signature": {
+                    "kind": "struct",
+                    "n_decls": 8,
+                    "n_fields": 3,
+                    "n_types": 1,
+                    "n_fns": 6,
+                    "n_consts": 1,
+                    "children": {}
+                  },
+                  "Signer": {
+                    "kind": "struct",
+                    "n_decls": 3,
+                    "n_fields": 3,
+                    "n_types": 0,
+                    "n_fns": 3,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "Verifier": {
+                    "kind": "struct",
+                    "n_decls": 5,
+                    "n_fields": 3,
+                    "n_types": 2,
+                    "n_fns": 3,
+                    "n_consts": 0,
+                    "children": {}
+                  },
+                  "KeyPair": {
+                    "kind": "struct",
+                    "n_decls": 8,
+                    "n_fields": 2,
+                    "n_types": 0,
+                    "n_fns": 7,
+                    "n_consts": 1,
+                    "children": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "stream": {
+        "kind": "struct",
+        "n_decls": 2,
+        "n_fields": 0,
+        "n_types": 2,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "chacha": {
+            "kind": "struct",
+            "n_decls": 9,
+            "n_fields": 0,
+            "n_types": 9,
+            "n_fns": 0,
+            "n_consts": 0,
+            "children": {
+              "ChaCha20IETF": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha12IETF": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha8IETF": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha20With64BitNonce": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha12With64BitNonce": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "ChaCha8With64BitNonce": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "XChaCha20IETF": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "XChaCha12IETF": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              },
+              "XChaCha8IETF": {
+                "kind": "struct",
+                "n_decls": 5,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 2,
+                "n_consts": 3,
+                "children": {}
+              }
+            }
+          },
+          "salsa": {
+            "kind": "struct",
+            "n_decls": 4,
+            "n_fields": 0,
+            "n_types": 2,
+            "n_fns": 2,
+            "n_consts": 0,
+            "children": {
+              "Salsa20": {
+                "kind": "struct",
+                "n_decls": 3,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 1,
+                "n_consts": 2,
+                "children": {}
+              },
+              "XSalsa20": {
+                "kind": "struct",
+                "n_decls": 3,
+                "n_fields": 0,
+                "n_types": 0,
+                "n_fns": 1,
+                "n_consts": 2,
+                "children": {}
+              }
+            }
+          }
+        }
+      },
+      "nacl": {
+        "kind": "struct",
+        "n_decls": 3,
+        "n_fields": 0,
+        "n_types": 3,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {
+          "Box": {
+            "kind": "struct",
+            "n_decls": 10,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 3,
+            "n_consts": 6,
+            "children": {
+              "KeyPair": {
+                "kind": "struct",
+                "n_decls": 3,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 3,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          },
+          "SecretBox": {
+            "kind": "struct",
+            "n_decls": 5,
+            "n_fields": 0,
+            "n_types": 0,
+            "n_fns": 2,
+            "n_consts": 3,
+            "children": {}
+          },
+          "SealedBox": {
+            "kind": "struct",
+            "n_decls": 7,
+            "n_fields": 0,
+            "n_types": 1,
+            "n_fns": 2,
+            "n_consts": 4,
+            "children": {
+              "KeyPair": {
+                "kind": "struct",
+                "n_decls": 3,
+                "n_fields": 2,
+                "n_types": 0,
+                "n_fns": 3,
+                "n_consts": 0,
+                "children": {}
+              }
+            }
+          }
+        }
+      },
+      "ff": {
+        "kind": "struct",
+        "n_decls": 8,
+        "n_fields": 0,
+        "n_types": 6,
+        "n_fns": 2,
+        "n_consts": 0,
+        "children": {}
+      },
+      "errors": {
+        "kind": "struct",
+        "n_decls": 14,
+        "n_fields": 0,
+        "n_types": 14,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {}
+      },
+      "SideChannelsMitigations": {
+        "kind": "enum",
+        "n_decls": 0,
+        "n_fields": 4,
+        "n_types": 0,
+        "n_fns": 0,
+        "n_consts": 0,
+        "children": {}
+      }
+    }
+  }
+}
