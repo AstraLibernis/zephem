@@ -170,7 +170,7 @@ a separate dataset keyed to the map by `path`:
 | **L0 structure** ✅ | where is it, how is it shaped | parse (AST) | total |
 | **L1 signatures-as-written** | what does this fn take / return / error | parse (AST) | total |
 | **L2 doc-comments** | what do std's authors say it is | parse (`///`) | total |
-| **L3 references** | what uses / pulls in what | parse (resolve idents) | total |
+| **L3 references / tunnels** | what links to what (followable to an address) | parse (resolve names) | edges |
 | **L4 examples (tests)** | how is it actually used, *and does it run* | parse + **execute** | where tests exist |
 | **L5 resolved depth** | the real size / expanded generic / concrete type | reflect, on demand | targeted |
 | **L6 version diff** | what changed between Zig versions | transform two snapshots | total |
@@ -182,12 +182,49 @@ Two hard rules keep every layer honest:
 2. **Self-verifying.** No layer ships without a backward check (count reconciliation,
    referential integrity, reversibility, or — best of all — *executing* the fact).
 
+### The shape of it: positions, overlays, tunnels
+
+The layers aren't a flat stack — they form a navigable structure with three kinds of geometry:
+
+- **Positions (the x/y).** The containment tree. Every decl has a coordinate (`path`), and the
+  index turns that into a literal address (`line`, `span`). This is the ground plane.
+- **Overlays (the stack at a position).** L1 / L2 / L5 attach more facts *at the same
+  coordinate* — read "straight down" through them (a join on `path`) to get everything known
+  about one decl. Overlays are **sparse**: signatures only at functions, docs only where a
+  `///` exists. Perfectly registered, partially filled — the *holes* are themselves useful
+  (the gaps in the doc overlay = every undocumented public decl).
+- **Tunnels (the Z-links across positions).** L3. Not data *at* a position — *links between*
+  them. They are the connective tissue that turns the overlay-stack into a graph.
+
+**Tunnels resolve to addresses, not just names.** A reference is only a tunnel if you can
+*follow* it: each link resolves a referenced name to a canonical `path`, and through the index
+to a `line` — so traversing it is one O(1) jump, no scan. We already emit embryonic tunnels
+the map leaves dangling — `nsref` (→ a file expanded elsewhere), `modref` (→ a module),
+`alias` (→ a canonical definition) — plus, once L1 lands, every type name in a signature
+(→ its definition). Resolving those targets is what makes them traversable.
+
+**A tunnel is usually shorter than the tree route.** Tree distance is "climb to the common
+ancestor, descend the far side" — many hops; a resolved edge is one. Std is *built* from these
+shortcuts: the root re-exports deep definitions under short names (`std.ArrayList` → wherever
+it really lives), which our `alias` kind already captures. Resolving them makes std's own
+shortcut wiring explicit and followable — effectively "go to definition" as a data lookup.
+
+Link types to record (all `from_path → to_path`, both endpoints in the map, so it
+self-verifies the same way): **alias tunnel** (re-export), **import tunnel** (nsref/modref),
+**usage edge** (a type/fn referenced in a signature or body).
+
 ---
 
 ## Roadmap (extraction · transformation · verification)
 
 Ordered by value-per-effort; each is an independent dataset, none blocks another — except the
 foundational item below, which every layer plugs into.
+
+**Build the overlays first, link them last.** The attribute layers (L1/L2, and L5 on demand)
+fill positions and can land in any order. Linking (L3) comes *after*, because a tunnel weaves
+*between* layers — a usage edge runs from a type name living in the L1 signature layer to a
+definition in the map, so the things a tunnel connects must already exist before it can be
+resolved and verified. Lay the planes, then drill the wormholes.
 
 ### 0 — Reproducibility harness (foundational, buildable now) · verification
 Make "provably rebuildable" a checked invariant. Add a `--check` mode to the build that
@@ -223,11 +260,18 @@ Extract `test "..." {}` blocks and which decls they exercise. **Verify (the stro
 run `zig test` and record pass/fail — the knowledge doesn't just *claim*, it *executes green*.
 *Why:* real, compiling, passing usage is the highest-grade knowledge an LLM can be handed.
 
-### 5 — Reference graph (L3) · extraction → transformation
-Edges of which decl references which other decl (resolve identifiers + import targets in the
-AST). A graph layered over the containment tree. **Verify:** every edge endpoint is a node in
-`nodes.tsv` (no dangling); edge count stable. *Why:* coupling and impact — "what depends on
-X," "what does Y pull in" — which structure alone can't show.
+### 5 — Reference graph / tunnels (L3) · extraction → transformation
+The linking layer (see *positions, overlays, tunnels* above). Resolve referenced names —
+identifiers, import targets, alias targets, the type names L1 surfaces — to canonical `path`s,
+and emit edges `from_path → to_path` tagged by kind (**alias** / **import** / **usage**).
+Each resolved edge also carries the destination's `line` (via the index), so following it is
+one O(1) jump, not a search — a real tunnel, usually far shorter than the tree route. Build
+this *after* the overlays exist, since a usage edge connects a type in the signature layer to
+a definition in the map. **Verify:** every edge endpoint is a node in `nodes.tsv` (no dangling
+— same registration proof as the overlays); names that cannot be resolved are recorded
+explicitly, never silently dropped; edge count stable. *Why:* turns the layer-stack into a
+navigable graph — "go to definition," "what uses X," "what does Y pull in" — that the
+containment tree alone cannot express.
 
 ### 6 — Version diff (L6) · transformation
 Diff two pinned snapshots → added / removed / changed decls: a true changelog, computed not
