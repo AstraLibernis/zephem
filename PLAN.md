@@ -151,25 +151,37 @@ and a Zig upgrade produces an additive, diffable delta (which L6 version-diff th
 | **std map** (`scan.zig` + bundle) | ✅ full std mapped, self-verifying, deterministic, pinned |
 | **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways |
 | **decls overlay** (`enrich.zig`, L1+L2) | ✅ signatures + doc-comments, registers on the map (sig ⇔ fns) |
-| **reproducibility harness** (`--check` + `SHA256SUMS`) | ✅ proves rebuildability: intrinsic + regression + integrity |
+| **depth overlay** (`resolve.zig` + `build_depth.nu`, L5) | 🚧 generated & verify-✓ (1,338 resolved / 61 redirect / 96 poison); refinements pending — see checkpoint |
+| **reproducibility harness** (`--check` + `SHA256SUMS`) | ✅ proves rebuildability: intrinsic + regression + integrity (map + decls; **L5 not yet wired in**) |
 | crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (the on-demand depth layer revives its technique) |
 
 We can now say *where* anything in std is and *how it is shaped*, completely and provably.
 That is the skeleton. Everything below adds flesh to it — deeper true facts, one layer at a
 time, each held to the same pristine bar.
 
-### Checkpoint — paused 2026-06-17
+### Checkpoint — L5 depth overlay generated 2026-06-18
 
-**Done & pushed:** L0 map + index, L1+L2 decls overlay (signatures + doc-comments), and the
-reproducibility harness (roadmap item 0). On Zig 0.16.0: 16,631 decls / 1,495 indexed
-containers / 7,118 overlay rows. `nu scripts/build_std.nu --check` is green.
+**Done & pushed:** L0 map + index, L1+L2 decls overlay, reproducibility harness (item 0), and
+now the **L5 depth overlay** — `resolve.zig` reflects each container in its own isolated
+subprocess (poison contained), `build_depth.nu` sorts the full sweep into resolved / redirect /
+poison, `verify_depth.nu` reconciles it with the map a second way. On Zig 0.16.0: 1,495
+containers swept → **1,338 resolved (15,559 rows) / 61 redirect / 96 poison**, all six checks
+green (partition, conservation, registration, no-data-lost, pristine, coverage).
 
-**Next up (when resuming), in recommended order:**
-1. **L5 — depth on demand** (roadmap §1): resolved sizes / expanded generics for one module
-   the map points at. Highest value; reflection scoped to avoid poison decls.
-2. **L4 — examples from tests** (§4): extract + *run* `test {}` blocks (executing verification).
-3. **L3 — tunnels** (§5): resolve references to addresses — build *after* the overlays exist.
-4. **L6 — version diff** (§6): needs a second pinned snapshot to be interesting.
+**L5 refinements still open (next session):**
+- **Poison taxonomy** — 74 of the 96 "poison" are doubled-alias artifacts (`X25519.X25519.KeyPair`),
+  not genuine poison (~22 real: foreign-lib, reached-unreachable, type-mismatch). Split into a
+  distinct `alias` status (reason recorded, no canonical claimed → can't trip no-data-lost).
+- **Dedup** — 69 identical rows: realias fns emitted by both their own `emitValue` pass and their
+  parent. A `uniq` + a conservation-check tweak.
+- **Reproducibility wiring** — add `resolved/redirects/poison/status.tsv` to `NAMES` + `SHA256SUMS`
+  so `--check` proves the overlay rebuilds too. (Watch determinism of anonymous-struct `@typeName`s.)
+
+**Then, remaining layers, in order:**
+1. **L4 — examples from tests** (§4): extract + *run* `test {}` blocks (executing verification).
+2. **L3 — tunnels** (§5): resolve references to addresses — also the right home for alias
+   canonicalization (the doubled-alias paths L5 records as redirects/artifacts).
+3. **L6 — version diff** (§6): needs a second pinned snapshot to be interesting.
 
 Each new dataset registers with the harness (add its name to the `NAMES` list in
 `build_std.nu`) and ships its own backward check in `verify_std.nu`.
