@@ -150,6 +150,7 @@ and a Zig upgrade produces an additive, diffable delta (which L6 version-diff th
 |---|---|
 | **std map** (`scan.zig` + bundle) | ✅ full std mapped, self-verifying, deterministic, pinned |
 | **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways |
+| **decls overlay** (`enrich.zig`, L1+L2) | ✅ signatures + doc-comments, registers on the map (sig ⇔ fns) |
 | crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (the on-demand depth layer revives its technique) |
 
 We can now say *where* anything in std is and *how it is shaped*, completely and provably.
@@ -168,8 +169,8 @@ a separate dataset keyed to the map by `path`:
 | layer | the question it answers | source of truth | coverage |
 |---|---|---|---|
 | **L0 structure** ✅ | where is it, how is it shaped | parse (AST) | total |
-| **L1 signatures-as-written** | what does this fn take / return / error | parse (AST) | total |
-| **L2 doc-comments** | what do std's authors say it is | parse (`///`) | total |
+| **L1 signatures-as-written** ✅ | what does this fn take / return / error | parse (AST) | total |
+| **L2 doc-comments** ✅ | what do std's authors say it is | parse (`///`) | total |
 | **L3 references / tunnels** | what links to what (followable to an address) | parse (resolve names) | edges |
 | **L4 examples (tests)** | how is it actually used, *and does it run* | parse + **execute** | where tests exist |
 | **L5 resolved depth** | the real size / expanded generic / concrete type | reflect, on demand | targeted |
@@ -243,17 +244,14 @@ killed blanket reflection. **Verify:** every leaf in the subtree is either resol
 explicitly recorded unresolvable — the two counts must reconcile with the map's subtree.
 *Why:* stops the LLM hallucinating sizes/types once it has drilled to a specific primitive.
 
-### 2 — Doc-comments (L2) · extraction
-Extract `///` comments per decl into a companion dataset keyed by `path`. This is the std
-authors' own documentation — direct truth, not our prose, fully within charter. **Verify:**
-every doc block attaches to exactly one existing node; doc'd-decl count is stable. *Why:*
-cheap, total, and enormously useful — the official "what is this" inline with the map.
-
-### 3 — Signatures-as-written (L1) · extraction
-Upgrade `fn` rows from a bare param count to the as-written signature (param names + types,
-return type, error union) straight from the AST — no reflection. **Verify:** the parsed
-param count must equal the existing `n` already in the map (cross-check against L0). *Why:*
-answers most signature questions without paying for reflection; L5 only for the resolved form.
+### 2 + 3 — Doc-comments (L2) + signatures-as-written (L1) · extraction ✅ DONE
+Shipped together as one overlay: `src/enrich.zig` → `data/std/decls.tsv`
+(`path · doc · sig`), keyed to the map. `doc` = the decl's `///` lines verbatim (the std
+authors' own words); `sig` = a `fn`'s as-written signature `fn name(params) ret`. A *sparse*
+overlay — a row only where there's something to say (every fn, plus any documented decl).
+On Zig 0.16.0: 7,118 rows (5,321 signatures, 4,131 docs). **Verified** by `verify_std.nu`:
+every overlay path exists in the map (registration), paths are unique, and signature coverage
+is *exactly* the map's set of functions (5,321 ⇔ 5,321). Byte-identical reruns.
 
 ### 4 — Examples from tests (L4) · extraction + verification
 Extract `test "..." {}` blocks and which decls they exercise. **Verify (the strong one):**

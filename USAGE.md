@@ -1,11 +1,12 @@
 # Using the std map
 
-Two files, produced together by `nu scripts/build_std.nu`:
+Three files, produced together by `nu scripts/build_std.nu`:
 
 | file | what it is | size |
 |---|---|---|
 | `data/std/nodes.tsv` | the full map — one row per public decl in std | ~16.6k rows / ~221k tokens |
 | `data/std/index.tsv` | the table of contents — where each container's block lives | ~1.5k rows / ~5k tokens |
+| `data/std/decls.tsv` | overlay — signature (L1) + doc-comment (L2) per decl, keyed by `path` | ~7.1k rows |
 
 The point: **never read `nodes.tsv` whole.** Read the small `index.tsv`, find what you want,
 then pull only that block. Every subtree is a contiguous run of rows, so a block is just
@@ -15,6 +16,7 @@ then pull only that block. Every subtree is a contiguous run of rows, so a block
 
 `nodes.tsv` — `path · depth · kind · name · n_children · detail`
 `index.tsv` — `path · line · span · depth · kind · n_children`  (containers only)
+`decls.tsv` — `path · doc · sig`  (sparse: a row per fn, plus any documented decl; `doc` lines joined with literal `\n`)
 
 `kind`: `ns` (an @import'd file) · `nsref` (ref to a file expanded elsewhere) · `nserr`
 (unreadable) · `struct`/`enum`/`union`/`opaque` (inline container) · `fn` · `const` ·
@@ -46,6 +48,20 @@ open data/std/index.tsv | where depth == 1 | select path span n_children | sort-
 ```nu
 open data/std/nodes.tsv | where kind == 'fn' and name == 'parse'     # every pub fn named parse
 open data/std/nodes.tsv | where path =~ '^std\.mem\.' and kind == 'fn'
+```
+
+**5 — Read *down* the stack: signature + doc for each fn in a module.** Join the overlay.
+```nu
+let nodes = (open data/std/nodes.tsv)
+let decls = (open data/std/decls.tsv)
+$nodes | where kind == 'fn' and ($it.path | str starts-with 'std.BitStack.')
+  | select path | join $decls path | select path sig doc
+```
+
+**6 — The undocumented public API** (holes in the doc overlay).
+```nu
+let documented = (open data/std/decls.tsv | where doc != '' | get path)
+open data/std/nodes.tsv | where kind == 'fn' and ($it.path not-in $documented) | get path
 ```
 
 ## From any tool (not just Nushell)

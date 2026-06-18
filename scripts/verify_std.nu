@@ -86,6 +86,29 @@ def main [file: string = "data/std/nodes.tsv"] {
         if $iok { print "  ✓ every block re-derived from nodes.tsv — line+span land exactly on each subtree" } else { $ok = false }
     }
 
+    # 6. DECLS OVERLAY (L1 signatures + L2 doc-comments) — the overlay must register
+    #    onto the map: every path it carries exists in nodes.tsv, and its signature
+    #    coverage is exactly the map's set of functions (no more, no less).
+    if ("data/std/decls.tsv" | path exists) {
+        let d = (open data/std/decls.tsv)
+        print $"decls overlay:  ($d | length) rows   \(sig: ($d | where sig != '' | length)   doc: ($d | where doc != '' | length)\)"
+        mut dok = true
+        # registration — every decl path is a real node (no dangling overlay rows)
+        let reg = ($d | select path | join ($t | select path) path)
+        if ($reg | length) != ($d | length) { print $"  ✗ (($d | length) - ($reg | length)) overlay rows reference paths not in the map"; $dok = false }
+        # uniqueness — one overlay row per path
+        let dups = ($d | get path | uniq -d)
+        if ($dups | length) > 0 { print $"  ✗ ($dups | length) duplicated paths in the overlay"; $dok = false }
+        # L1 coverage — sig rows are exactly the map's functions
+        let sigset = ($d | where sig != "" | select path)
+        let fnset = ($t | where kind == "fn" | select path)
+        let inter = ($sigset | join $fnset path)
+        if (($inter | length) != ($sigset | length)) or (($inter | length) != ($fnset | length)) {
+            print $"  ✗ signatures (($sigset | length)) ≠ map functions (($fnset | length))"; $dok = false
+        }
+        if $dok { print "  ✓ overlay registers on the map — every path real, signatures ⇔ functions" } else { $ok = false }
+    }
+
     print ""
     if $ok { print "VERDICT: ✓ all integrity checks pass" } else { print "VERDICT: ✗ integrity FAILED"; exit 1 }
 }

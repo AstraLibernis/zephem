@@ -38,6 +38,28 @@ straight from `nodes.tsv` depths and confirms `line`+`span` land exactly on each
 
 Full recipes: **[../USAGE.md](../USAGE.md)**.
 
+### `std/decls.tsv` — signatures (L1) + doc-comments (L2) overlay
+`src/enrich.zig` (run inside `build_std.nu`): a sparse overlay keyed by `path`, adding the
+two facts the map omits. Columns: `path · doc · sig`.
+- `sig` — a function's as-written signature `fn name(params) ret` (whitespace collapsed);
+  empty for non-functions.
+- `doc` — the decl's `///` doc-comment lines verbatim, joined with a literal `\n`
+  (backslash/tab escaped); empty if undocumented.
+
+A row exists only where there's something to say (every `fn`, plus any documented decl) —
+on Zig 0.16.0, 7,118 rows (5,321 signatures, 4,131 docs). Join it to `nodes.tsv` by `path`
+to "read down" the stack — every fn under a module with its signature and doc:
+
+```nu
+let nodes = (open data/std/nodes.tsv)
+let decls = (open data/std/decls.tsv)
+$nodes | where kind == 'fn' and ($it.path | str starts-with 'std.BitStack.')
+  | select path | join $decls path | select path sig doc
+```
+
+`verify_std.nu` proves the overlay *registers* on the map: every path is a real node, paths
+are unique, and the set of signatures equals exactly the map's set of functions.
+
 ## Regenerate
 
 ```nu

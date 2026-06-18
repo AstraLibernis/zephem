@@ -40,6 +40,13 @@ def main [--depth: int = 24] {
     let it = (open data/std/index.tsv)
     print $"           containers: (($it | length))   root span: (($it | get span | math max))"
 
+    # ---- ENRICH: the L1 (signatures) + L2 (doc-comments) overlay -------------
+    print "[enrich]   extracting signatures (L1) + doc-comments (L2)..."
+    let dec = (^zig run src/enrich.zig -- $root ($depth | into string) | into string)
+    $dec | save -f data/std/decls.tsv
+    let dt = (open data/std/decls.tsv)
+    print $"           decl rows: (($dt | length))   with sig: (($dt | where sig != '' | length))   with doc: (($dt | where doc != '' | length))"
+
     # ---- BACKWARD: read the data the other way; it must agree ----------------
     print "[backward] re-reading nodes.tsv by parent — must reconcile..."
     let v = (^nu scripts/verify_std.nu data/std/nodes.tsv | complete)
