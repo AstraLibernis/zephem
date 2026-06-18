@@ -158,6 +158,22 @@ We can now say *where* anything in std is and *how it is shaped*, completely and
 That is the skeleton. Everything below adds flesh to it — deeper true facts, one layer at a
 time, each held to the same pristine bar.
 
+### Checkpoint — paused 2026-06-17
+
+**Done & pushed:** L0 map + index, L1+L2 decls overlay (signatures + doc-comments), and the
+reproducibility harness (roadmap item 0). On Zig 0.16.0: 16,631 decls / 1,495 indexed
+containers / 7,118 overlay rows. `nu scripts/build_std.nu --check` is green.
+
+**Next up (when resuming), in recommended order:**
+1. **L5 — depth on demand** (roadmap §1): resolved sizes / expanded generics for one module
+   the map points at. Highest value; reflection scoped to avoid poison decls.
+2. **L4 — examples from tests** (§4): extract + *run* `test {}` blocks (executing verification).
+3. **L3 — tunnels** (§5): resolve references to addresses — build *after* the overlays exist.
+4. **L6 — version diff** (§6): needs a second pinned snapshot to be interesting.
+
+Each new dataset registers with the harness (add its name to the `NAMES` list in
+`build_std.nu`) and ships its own backward check in `verify_std.nu`.
+
 ---
 
 ## The principle: true / direct knowledge, in layers
