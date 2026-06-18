@@ -151,7 +151,7 @@ and a Zig upgrade produces an additive, diffable delta (which L6 version-diff th
 | **std map** (`scan.zig` + bundle) | ✅ full std mapped, self-verifying, deterministic, pinned |
 | **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways |
 | **decls overlay** (`enrich.zig`, L1+L2) | ✅ signatures + doc-comments, registers on the map (sig ⇔ fns) |
-| **depth overlay** (`resolve.zig` + `build_depth.nu`, L5) | 🚧 generated & verify-✓ (1,338 resolved / 61 redirect / 96 poison); refinements pending — see checkpoint |
+| **depth overlay** (`resolve.zig` + `build_depth.nu`, L5) | ✅ clean & verify-✓ (1,324 resolved / 0 redirect / 31 genuine poison; **zero duplicates, zero alias artifacts**) |
 | **reproducibility harness** (`--check` + `SHA256SUMS`) | ✅ proves rebuildability: intrinsic + regression + integrity (map + decls; **L5 not yet wired in**) |
 | crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (the on-demand depth layer revives its technique) |
 
@@ -159,28 +159,32 @@ We can now say *where* anything in std is and *how it is shaped*, completely and
 That is the skeleton. Everything below adds flesh to it — deeper true facts, one layer at a
 time, each held to the same pristine bar.
 
-### Checkpoint — L5 depth overlay generated 2026-06-18
+### Checkpoint — L5 depth overlay clean 2026-06-18
 
-**Done & pushed:** L0 map + index, L1+L2 decls overlay, reproducibility harness (item 0), and
-now the **L5 depth overlay** — `resolve.zig` reflects each container in its own isolated
-subprocess (poison contained), `build_depth.nu` sorts the full sweep into resolved / redirect /
-poison, `verify_depth.nu` reconciles it with the map a second way. On Zig 0.16.0: 1,495
-containers swept → **1,338 resolved (15,559 rows) / 61 redirect / 96 poison**, all six checks
-green (partition, conservation, registration, no-data-lost, pristine, coverage).
+**Done & pushed:** L0 map + index, L1+L2 decls overlay, reproducibility harness (item 0), and the
+**L5 depth overlay** — `resolve.zig` reflects each container in its own isolated subprocess
+(poison contained), `build_depth.nu` sorts the sweep into resolved / redirect / poison,
+`verify_depth.nu` reconciles it with the map a second way. On Zig 0.16.0: 1,355 containers swept
+→ **1,324 resolved (15,720 rows) / 0 redirect / 31 genuine poison**, all six checks green; the
+overlay is fully pristine (15,720 distinct == 15,720 rows — zero duplicates).
 
-**L5 refinements still open (next session):**
-- **Poison taxonomy** — 74 of the 96 "poison" are doubled-alias artifacts (`X25519.X25519.KeyPair`),
-  not genuine poison (~22 real: foreign-lib, reached-unreachable, type-mismatch). Split into a
-  distinct `alias` status (reason recorded, no canonical claimed → can't trip no-data-lost).
-- **Dedup** — 69 identical rows: realias fns emitted by both their own `emitValue` pass and their
-  parent. A `uniq` + a conservation-check tweak.
+**Root-caused, not patched.** The first sweep on the *old* map showed 1,338 / 61 / 96 with 69
+duplicate rows and 74 doubled-alias "poison" (`X25519.X25519.KeyPair`). Rather than add an alias
+bucket + dedup downstream, we fixed the cause in `scan.zig`/`enrich.zig`: a selective re-export
+`@import("f").X` was being mislabeled a namespace import and walked into as a file. Collapsing it
+(A *becomes* what the selector resolves to) removed the doubled paths and the duplicate reads at
+the source. The remaining 31 poison are all genuine (platform-conditional, integer overflow,
+reached-unreachable, foreign-lib) — each carries the compiler's exact reason.
+
+**L5 follow-up still open:**
 - **Reproducibility wiring** — add `resolved/redirects/poison/status.tsv` to `NAMES` + `SHA256SUMS`
-  so `--check` proves the overlay rebuilds too. (Watch determinism of anonymous-struct `@typeName`s.)
+  so `--check` proves the overlay rebuilds too. (Watch determinism of anonymous-struct `@typeName`s
+  in resolved.tsv before relying on byte-identical reruns.)
 
 **Then, remaining layers, in order:**
 1. **L4 — examples from tests** (§4): extract + *run* `test {}` blocks (executing verification).
-2. **L3 — tunnels** (§5): resolve references to addresses — also the right home for alias
-   canonicalization (the doubled-alias paths L5 records as redirects/artifacts).
+2. **L3 — tunnels** (§5): resolve references to addresses — cross-reference edges (the re-export
+   *collapse* now lives in the map itself, so L3 is just the linking layer, not alias cleanup).
 3. **L6 — version diff** (§6): needs a second pinned snapshot to be interesting.
 
 Each new dataset registers with the harness (add its name to the `NAMES` list in
