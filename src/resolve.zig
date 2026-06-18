@@ -24,16 +24,28 @@
 
 const std = @import("std");
 
-// ── rewritten per-container by scripts/build_depth.nu (matched by `const TARGET` prefix) ──
+// ── rewritten per-container by scripts/build_depth.nu (matched by line prefix) ──
 const TARGET_PATH = "std.crypto.hash.sha2";
 const TARGET = @import("std").crypto.hash.sha2;
-// ──────────────────────────────────────────────────────────────────────────────────────
+// SKIP = this container's DIRECT child decls that are themselves map containers. We don't
+// descend into them — they get reflected on their own turn, and descending here would emit
+// their decls a second time (with a divergent @typeName), the dup/conflict the verifier rejects.
+const SKIP = [_][]const u8{};
+// ────────────────────────────────────────────────────────────────────────────────────────
 
 /// How many levels of nested *type* decls to descend. 1 = the container's own decls plus,
-/// for each type it declares, that type's scalar decls (so a hash namespace yields not just
-/// `Sha256` but `Sha256.digest_length = 32`). Kept shallow on purpose: deeper descent both
-/// explodes output and widens the poison surface of a single container.
+/// for each NON-container type it declares (a generic/alias the map left as a leaf), that
+/// type's scalar decls — so `sha2` yields not just `Sha256` but `Sha256.digest_length = 32`,
+/// the resolved value the map cannot compute. Kept shallow on purpose.
 const DESCEND: u8 = 1;
+
+/// True if `name` is one of this container's direct child containers (don't descend into it).
+fn inSkip(comptime name: []const u8) bool {
+    inline for (SKIP) |s| {
+        if (comptime std.mem.eql(u8, name, s)) return true;
+    }
+    return false;
+}
 
 /// The public decls of a container type, or null if `T` is not a decl-bearing container.
 fn declsOf(comptime T: type) ?[]const std.builtin.Type.Declaration {
@@ -50,9 +62,12 @@ fn isContainer(comptime T: type) bool {
     return declsOf(T) != null;
 }
 
-/// Reflect one container, emitting a row per public decl, recursing `descend` levels into
-/// nested type decls. `path` is the logical map path of `T`.
-fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime descend: u8) !void {
+/// Reflect one container, emitting a row per public decl. For a type decl, descend `descend`
+/// levels — but only into types that are NOT themselves map containers: at the top level a
+/// child container is in SKIP (it reflects itself); deeper, generic/alias internals are never
+/// map containers, so they descend freely. `top` gates the SKIP check to direct children.
+fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime descend: u8, comptime top: bool) !void {
+    @setEvalBranchQuota(2_000_000); // big namespaces (std, os.linux) blow past the 1000 default
     const decls = comptime declsOf(T) orelse return;
     inline for (decls) |d| {
         const field = @field(T, d.name);
@@ -61,8 +76,9 @@ fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime
 
         if (FT == type) {
             try w.print("{s}\ttype\t{s}\n", .{ child, @typeName(field) });
-            if (descend > 0 and comptime isContainer(field)) {
-                try emit(w, child, field, descend - 1);
+            const skip = top and comptime inSkip(d.name);
+            if (descend > 0 and comptime isContainer(field) and !skip) {
+                try emit(w, child, field, descend - 1, false);
             }
             continue;
         }
@@ -81,6 +97,6 @@ pub fn main(init: std.process.Init) !void {
     const w = &fw.interface;
 
     try w.print("path\tkind\tdetail\n", .{});
-    try emit(w, TARGET_PATH, TARGET, DESCEND);
+    try emit(w, TARGET_PATH, TARGET, DESCEND, true);
     try w.flush();
 }

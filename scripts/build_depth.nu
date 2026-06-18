@@ -29,15 +29,27 @@
 const TEMPLATE = "src/resolve.zig"
 const SCRATCH = "/tmp/zephem-depth"
 
+# turn a list of container paths into {parent, child} rows (child = last segment).
+def insert-parent [] {
+    each {|p| {parent: ($p | split row "." | drop 1 | str join "."), child: ($p | split row "." | last)} }
+}
+
 # Rewrite resolve.zig's two TARGET lines for `path`. The access chain is the path tail
 # appended to @import("std") (path[3..] drops the leading "std").
-def gen [path: string] {
+# `skip` = the names of this container's DIRECT child containers (don't descend into them).
+def gen [path: string, skip: list<string>] {
     # plain (non-interpolated) concat so the literal parens in @import("std") survive
     let tail = (if $path == "std" { "" } else { ($path | str substring 3..) })
     let access = ('@import("std")' + $tail)
+    let skip_lit = (if ($skip | is-empty) {
+        "[_][]const u8{}"
+    } else {
+        '[_][]const u8{ ' + ($skip | each {|n| '"' + $n + '"' } | str join ", ") + ' }'
+    })
     (open --raw $TEMPLATE
         | str replace --regex '(?m)^const TARGET_PATH = .*$' $'const TARGET_PATH = "($path)";'
-        | str replace --regex '(?m)^const TARGET = .*$' ('const TARGET = ' + $access + ';'))
+        | str replace --regex '(?m)^const TARGET = .*$' ('const TARGET = ' + $access + ';')
+        | str replace --regex '(?m)^const SKIP = .*$' ('const SKIP = ' + $skip_lit + ';'))
 }
 
 def main [--only: string, --filter: string, --limit: int = 0, --timeout: int = 30, --out: string = "/tmp/zephem-depth/out", --commit] {
@@ -52,21 +64,26 @@ def main [--only: string, --filter: string, --limit: int = 0, --timeout: int = 3
     mkdir $outdir
     mkdir $SCRATCH
 
+    # direct child containers per parent — the SKIP set each container hands to resolve.zig.
+    let kids = ($idx | get path | insert-parent | group-by parent)
+
     print $"[L5] reflecting ($targets | length) container\(s\) — ($timeout)s timeout each, poison isolated per process"
     mut resolved = []
     mut poison = []
     mut redirect = []
     mut status = []   # per-container ledger: path · status · n_rows (the verifier re-derives from this)
     for path in $targets {
-        (gen $path) | save -f $"($SCRATCH)/r.zig"
+        let krow = ($kids | get -i $path | default [])
+        let skip = (if ($krow | is-empty) { [] } else { $krow | get child })
+        (gen $path $skip) | save -f $"($SCRATCH)/r.zig"
         let r = (do { ^timeout $"($timeout)s" zig run $"($SCRATCH)/r.zig" } | complete)
         if $r.exit_code == 0 {
             let rows = ($r.stdout | lines | skip 1 | where ($it | is-not-empty))
             $resolved = ($resolved | append $rows)
             $status = ($status | append $"($path)\tresolved\t($rows | length)")
-        } else if ($r.stderr | str contains "has no member named") {
-            # dead-end alias: the last segment duplicates a parent that already IS the type.
-            # Don't point backwards — record the redirect to the canonical (parent) path.
+        } else if ($r.stderr | str contains $"has no member named '($path | split row '.' | last)'") {
+            # dead-end alias: the path's OWN last segment isn't a member of its parent (the parent
+            # already IS that type). Don't point backwards — record the redirect to the canonical.
             let canonical = ($path | split row "." | drop 1 | str join ".")
             $redirect = ($redirect | append $"($path)\t($canonical)")
             $status = ($status | append $"($path)\tredirect\t0")

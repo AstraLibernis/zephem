@@ -70,10 +70,11 @@ def main [outdir: string, --full] {
     if ($lost | length) > 0 { print $"  ✗ ($lost | length) redirect\(s\) point to a path not in the map"; $lost | first 10 | print; $ok = false } else { print "  ✓ every redirect target is a real container — the canonical exists and is covered" }
 
     # 5. PRISTINE — no path resolved to two different facts.
+    let rpaths = (col $resolved "path")
     let conflicts = ($resolved | group-by path | items {|p, rows|
         { path: $p, variants: ($rows | each {|r| $"($r.kind)\t($r.detail)" } | uniq | length) }
     } | where variants > 1)
-    print $"pristine:     ($resolved | get path | uniq | length) distinct resolved paths"
+    print $"pristine:     ($rpaths | uniq | length) distinct resolved paths"
     if ($conflicts | length) > 0 { print $"  ✗ ($conflicts | length) path\(s\) carry conflicting facts"; $conflicts | first 10 | print; $ok = false } else { print "  ✓ no path resolves to two different values" }
 
     # 6. COVERAGE — (full sweep only) the map was swept in full, nothing skipped.
