@@ -176,10 +176,14 @@ bucket + dedup downstream, we fixed the cause in `scan.zig`/`enrich.zig`: a sele
 the source. The remaining 31 poison are all genuine (platform-conditional, integer overflow,
 reached-unreachable, foreign-lib) — each carries the compiler's exact reason.
 
-**L5 follow-up still open:**
+**L5 follow-up — DO AS ITS OWN SESSION (slow):**
 - **Reproducibility wiring** — add `resolved/redirects/poison/status.tsv` to `NAMES` + `SHA256SUMS`
-  so `--check` proves the overlay rebuilds too. (Watch determinism of anonymous-struct `@typeName`s
-  in resolved.tsv before relying on byte-identical reruns.)
+  so `--check` proves the L5 overlay rebuilds too, like the map does. Deliberately deferred: unlike
+  the instant parse-based map, an L5 rebuild is a full reflection sweep (~45 min), and `--check`
+  does **two** fresh rebuilds → ~90 min a run. So this is a standalone task, not a quick add-on.
+  Before wiring it: confirm the anonymous-struct `@typeName`s in `resolved.tsv` are deterministic
+  across rebuilds (e.g. `Edwards25519.elligator2__struct_NNNN`) — if that disambiguator drifts
+  between compiles, normalize it first or `--check` will false-fail.
 
 **Then, remaining layers, in order:**
 1. **L4 — examples from tests** (§4): extract + *run* `test {}` blocks (executing verification).
