@@ -151,6 +151,7 @@ and a Zig upgrade produces an additive, diffable delta (which L6 version-diff th
 | **std map** (`scan.zig` + bundle) | ✅ full std mapped, self-verifying, deterministic, pinned |
 | **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways |
 | **decls overlay** (`enrich.zig`, L1+L2) | ✅ signatures + doc-comments, registers on the map (sig ⇔ fns) |
+| **reproducibility harness** (`--check` + `SHA256SUMS`) | ✅ proves rebuildability: intrinsic + regression + integrity |
 | crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (the on-demand depth layer revives its technique) |
 
 We can now say *where* anything in std is and *how it is shaped*, completely and provably.
@@ -227,14 +228,17 @@ fill positions and can land in any order. Linking (L3) comes *after*, because a 
 definition in the map, so the things a tunnel connects must already exist before it can be
 resolved and verified. Lay the planes, then drill the wormholes.
 
-### 0 — Reproducibility harness (foundational, buildable now) · verification
-Make "provably rebuildable" a checked invariant. Add a `--check` mode to the build that
-(a) regenerates and compares byte-for-byte against a second run (intrinsic idempotency) and
-(b) compares against a committed `SHA256SUMS` manifest (regression). Wire it so every present
-and future dataset registers with one harness — `verify` then proves *true* and *reproducible*
-in a single pass. **Verify:** the check is its own proof; a non-zero exit on any drift.
-*Why:* without this, idempotency is a claim we re-test by hand each time — exactly the manual
-step the project exists to remove. This is the second half of the mission, not a chore.
+### 0 — Reproducibility harness · verification ✅ DONE
+"Provably rebuildable" is now a checked invariant. Every build writes `data/std/SHA256SUMS`
+(a `sha256sum -c`-compatible manifest, hashed in pure Nushell). `nu scripts/build_std.nu
+--check` proves rebuildability three ways, per dataset, and exits non-zero on any drift:
+- **intrinsic** — two independent fresh rebuilds are byte-identical (the *process* is
+  deterministic, no baseline needed);
+- **regression** — a fresh rebuild reproduces the committed manifest (still the recorded truth);
+- **integrity** — the on-disk snapshot still matches its own manifest (no silent hand-edits).
+A shared `regen` helper is the single build path, so the normal build and `--check` cannot
+diverge. New datasets register by adding their name to one list. *This removed the last manual
+step — idempotency was previously re-tested by hand (`sha256sum` ×3); now the build proves it.*
 
 ### 1 — Depth, on demand (L5) · extraction
 A `resolve <path>` step that reflects **one module** the map points at, emitting resolved

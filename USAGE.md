@@ -70,11 +70,15 @@ open data/std/nodes.tsv | where kind == 'fn' and ($it.path not-in $documented) |
 - editor / `Read`: open `nodes.tsv` at `offset = line`, `limit = span`
 - `sed -n "${line},$((line+span-1))p" data/std/nodes.tsv`
 
-## Regenerate
+## Regenerate & prove
 
 After a Zig upgrade (or to rebuild from scratch):
 ```nu
-nu scripts/build_std.nu          # scan → index → verify; refuses to ship if they disagree
+nu scripts/build_std.nu          # scan → index → enrich → verify; refuses to ship if they disagree
+nu scripts/build_std.nu --check  # prove the committed snapshot rebuilds byte-for-byte
 ```
-Output is deterministic (byte-identical on the same Zig) and the version is pinned in
-`data/std/PINNED`. See **[README.md](README.md)** for how the self-verification works.
+Output is deterministic (byte-identical on the same Zig); the version is pinned in
+`data/std/PINNED`, and a `sha256sum -c`-compatible manifest is written to `data/std/SHA256SUMS`
+(so `sha256sum -c data/std/SHA256SUMS` works too). `--check` proves rebuildability three ways
+— intrinsic (two fresh builds agree), regression (rebuild reproduces the manifest), integrity
+(the snapshot matches its manifest). See **[README.md](README.md)** for the self-verification.
