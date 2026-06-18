@@ -1,66 +1,67 @@
 # data/ — the extraction & map layer
 
-Toolchain: **Zig** does the extraction (it needs the real compiler/types), **Nushell**
-does the glue and the querying. No Python, no duckdb — the CSV/TSV/JSON files are the
-source of truth, and Nushell queries them natively.
+Toolchain: **Zig** does the extraction (parsing std source), **Nushell** does the glue and
+the querying. No Python, no duckdb — the TSV files are the source of truth, and Nushell
+queries them natively.
 
 ## Datasets
 
-### `crypto_raw.csv` — text inventory (breadth)
-`scripts/parse_crypto.nu`: a regex scan of every `.zig` under `/usr/lib/zig/std/crypto`,
-one row per `pub` declaration exactly as written. ~1932 rows. Answers *what exists,
-where*. Cannot resolve aliases/generics.
+### `std/nodes.tsv` — the full std map (the headline dataset)
+`src/scan.zig` + `scripts/build_std.nu`: the whole `std` namespace tree, built by **parsing
+source** (`std.zig.Ast`), not reflection — so it never dies on platform-gated / poison decls
+and maps *all* of std. One row per public decl. **16,631 rows / 442 files / max depth 9** on
+Zig 0.16.0 (version pinned in `std/PINNED`).
+Columns: `path · depth · kind · name · n_children · detail`.
+`kind ∈ ns · nsref · nserr · struct · enum · union · opaque · fn · const · alias · modref`.
 
-### `primitives.tsv` — resolved use-surface (depth)
-`src/dump.zig` + `scripts/build_primitives.nu`: the **compiler** reflects over a curated
-list of the primitives you actually instantiate, giving resolved byte sizes and fully
-typed signatures (incl. error sets) through every alias and generic. ~570 rows.
-Columns: `family · primitive · decl · kind · detail`.
-Known gap: inferred error sets show as `error{inferred}` (not exposed via `@typeName`).
+Self-verifying: `build_std.nu` runs a **forward** pass (scan) and a **backward** pass
+(`scripts/verify_std.nu`, which re-reads the rows grouped by parent) that must agree. The
+core invariant is the conservation law `Σ n_children == rows − 1`; the verifier also checks
+per-node child counts, kind partition, and `nsref` integrity. Disagreement → non-zero exit,
+nothing claimed.
 
-### `crypto_tree.{tsv,json}` — structural map (no interpretation)
-`src/maptree.zig` + `scripts/build_tree.nu`: every container in the public tree with
-exact counts — `n_decls / n_fields / n_types / n_fns / n_consts`. 400 containers.
-The `.json` is the same data nested by path. Rendered human-readable in
-`docs/archive/structure.md` (rendered snapshot). (codecs/tls/Certificate are recorded but not descended — their
-ASN.1/DER writer decls break reflection.)
+### `std/index.tsv` — the table of contents (where to look)
+`src/index.zig` (run inside `build_std.nu`): one row per container, recording where its
+block lives in `nodes.tsv`. Columns: `path · line · span · depth · kind · n_children`.
+Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
+`line` (1-based file line, header-aware) + `span` (subtree size) pin the exact block.
+Read a whole module in one ranged read instead of scanning 16k rows:
 
-### `clusters.tsv` — shape clusters
-`scripts/cluster_shapes.nu`: each container's shape cluster (math / scheme / namespace /
-config / stateful / ops / other), by explicit rules. Visual snapshot in `docs/archive/clusters.svg`.
+```nu
+let b = (open data/std/index.tsv | where path == 'std.crypto.aead' | first)
+open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span   # exactly that subtree
+```
 
-### `surface.tsv` — developer-facing surface
-`src/surface.zig` + `scripts/build_surface.nu`: reflection over the public namespaces
-labelling each decl PRIMITIVE / BUILDER / free-fn / namespace — what a dev reaches for,
-without the math/protocol machinery. 134 primitives across families. Rendered snapshot
-in `docs/archive/surface.md`.
+Self-checked both ways: `index.zig` asserts root span == total rows and every span ==
+1 + Σ child spans before writing; `verify_std.nu` then re-derives each block's boundary
+straight from `nodes.tsv` depths and confirms `line`+`span` land exactly on each subtree.
+
+Full recipes: **[../USAGE.md](../USAGE.md)**.
 
 ## Regenerate
 
 ```nu
-nu scripts/parse_crypto.nu       # text inventory  → crypto_raw.csv
-nu scripts/build_primitives.nu   # resolved surface → primitives.tsv   (needs zig)
-nu scripts/build_tree.nu         # structural map   → crypto_tree.* + docs/structure.md
-nu scripts/cluster_shapes.nu     # shape clusters   → clusters.tsv + docs/clusters.{svg,md}
-nu scripts/build_surface.nu      # dev-facing list  → surface.tsv + docs/surface.md  (needs zig)
+nu scripts/build_std.nu          # scan → index → verify; refuses to ship if they disagree
 ```
 
-Everything above is generated and idempotent. (The former hand-authored
-`docs/inventory.md` and `docs/map.md` were archived 2026-06-17 under the map-only
-charter — see `docs/archive/`.)
+Deterministic (same Zig → byte-identical) and idempotent (`git diff --exit-code` clean).
 
 ## Query examples (Nushell)
 
 ```nu
-# every key/nonce/tag/digest size, by family
-open data/primitives.tsv | where kind == 'const_int' and ($it.decl | str ends-with 'length')
+# every source file, one subtree, or the kind breakdown
+open data/std/nodes.tsv | where kind == 'ns'
+open data/std/nodes.tsv | where path =~ '^std\.crypto\.'
+open data/std/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}} | sort-by n -r
 
-# the full usable API of one primitive
-open data/primitives.tsv | where primitive == 'ChaCha20Poly1305'
-
-# confirm every AEAD shares the same encrypt shape
-open data/primitives.tsv | where family == 'aead' and decl == 'encrypt'
-
-# structural map: the pure namespaces (hold only sub-types)
-open data/crypto_tree.tsv | where n_fns == 0 and n_consts == 0 and n_types > 0
+# jump straight to one module via the table of contents
+let b = (open data/std/index.tsv | where path == 'std.mem' | first)
+open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span
 ```
+
+## Archived
+
+The original `std.crypto` reflection pipeline and its datasets (`primitives.tsv`,
+`crypto_tree.{tsv,json}`, `surface.tsv`, `clusters.tsv`, `crypto_raw.csv`) were retired
+2026-06-17 to **`../archive/crypto-reflection/`** (see its README). Retired crypto
+*docs* live in `../docs/archive/`.

@@ -1,91 +1,124 @@
-# zcrypto — Plan
+# zephem — Plan
 
-**What this is.** A data-extraction pipeline that emits pristine, queryable **datasets**
-describing exactly what `std.crypto` contains in a given Zig version. The product is the
-datasets, not prose. The goal is not to explain what crypto is *for* — it is to record
-what is *actually in Zig*, including detailed, cross-cutting facts that are hard to find
-or not human-parsable through Zig's autodoc: resolved byte sizes and full signatures
-(through aliases and generics), which primitives share an interface, and the complete
-structural tree. Built by **compiler reflection**, so the data is the compiler's truth,
-not a guess.
+**What this is.** A data-extraction and transformation tool that, pointed at a Zig source
+root, emits pristine, queryable **datasets** describing its **containers, labels, and
+levels** — the namespace tree, every public decl classified, and per-container counts. The
+product is the datasets *and the pipeline that regenerates them*, never prose.
 
-**What it is not.** Not a guide, tutorial, or crypto advice. **No hand-authored prose.**
-Any human-readable view, if ever wanted, is generated from the data — never written by
-hand.
+The intended consumers are LLMs (tidy tables that parse cleanly into context) and humans
+using the data as a static research aid.
 
----
+**Ephemeral by design.** Datasets are derived, regenerable artifacts — never hand-authored.
+Any committed dataset is a *pinned snapshot* of one Zig version, a cache of compiler/source
+truth, not a canonical hand-maintained source. The invariant: `regenerate && git diff
+--exit-code` is clean for a fixed compiler.
 
-## The product: the datasets (`data/`)
-
-| dataset | what it answers | source |
-|---|---|---|
-| `primitives.tsv` | resolved sizes & signatures per primitive (depth) | reflection |
-| `crypto_raw.csv` | every `pub` decl as written, and where (breadth) | text scan |
-| `crypto_tree.{tsv,json}` | the full structural tree with per-container counts | reflection |
-| `surface.tsv` | the developer-facing surface, labelled | reflection |
-| `clusters.tsv` | containers grouped by structural shape | rules |
-
-Schema + query cookbook: `data/README.md`.
+**What it is not.** Not a guide, tutorial, or domain advice. **No hand-authored prose.** Any
+human-readable view, if ever wanted, is generated from the data — never written by hand.
 
 ---
 
-## The three phases
+## The method: parse, don't reflect
 
-### 1 — Data Extraction
-Pull raw facts out of `std.crypto` with the compiler, not by guessing.
-- `scripts/parse_crypto.nu` → text scan (breadth: every decl as written).
-- `src/dump.zig` → reflection (depth: resolved const values + typed signatures).
-- `src/maptree.zig` → the structural tree with per-container counts.
-- `src/surface.zig` → the public, developer-facing surface.
+The general extractor reads source with `std.zig.Ast` instead of walking `@typeInfo`.
+Parsing never triggers comptime, so platform-gated and "poison" decls (e.g. `std.c.darwin`'s
+`assert(isDarwin())`) are harmless text. **This is the decision that makes mapping all of std
+possible** — a reflection walk dies on the first un-evaluatable decl. Reflection is kept only
+where it earns its keep (resolved sizes/signatures the source text can't give — the crypto
+`depth` layer).
 
-### 2 — Data Organization
-Turn raw extraction into clean, reconciled, schema'd tables.
-- Normalize resolved type names; strip non-deterministic noise (anonymous
-  `__struct_NNNNN` IDs) so output is byte-identical for a fixed compiler.
-- Reconcile the text scan against reflection (flag text-only artifacts, e.g. KT128).
-- Classify (surface labels, shape clusters).
-- One documented schema per dataset.
+---
 
-### 3 — Dataset Creation (pristine)
-Ship datasets that meet a hard quality bar. **Pristine** =
+## The headline product: the full std map
+
+`nu scripts/build_std.nu` → `data/std/nodes.tsv`, one row per public decl:
+
+```
+path · depth · kind · name · n_children · detail
+```
+
+- `kind ∈ ns` (an `@import`'d file, expanded) · `nsref` (reference to a file already
+  expanded elsewhere — keeps shared imports like `std` from recursing forever) · `nserr`
+  (unreadable file) · `struct`/`enum`/`union`/`opaque` (inline container) · `fn` · `const` ·
+  `alias` (re-export) · `modref` (module import, not a file we own).
+- `n_children` = public decls a container emits as direct children (0 for leaves / nsref /
+  nserr). This is what makes the data self-verifying.
+- `detail` = std-relative file path (ns/nsref) · param count (fn) · module name (modref).
+
+On Zig 0.16.0: **16,631 decls / 442 files / max depth 9.** Version pinned in `data/std/PINNED`.
+
+### Self-verifying: read it forwards, read it backwards
+
+`build_std.nu` bundles two passes that must agree, or it exits non-zero and claims nothing:
+
+- **forward** — `src/scan.zig` parses source → emits rows.
+- **backward** — `scripts/verify_std.nu` re-reads the rows grouped by parent path.
+
+Checks (no external tool, no oracle — the data checks itself):
+
+| check | invariant |
+|---|---|
+| **conservation** | `Σ n_children == rows − 1` (every non-root node is one node's child) |
+| **per-node** | for each expanded container, observed children == recorded `n_children` |
+| **partition** | `Σ rows-per-kind == total rows` (no unclassified leftovers) |
+| **nsref integrity** | every `nsref.detail` file is an expanded `ns.detail` somewhere |
+
+A dropped, double-counted, or truncated decl breaks conservation *and* per-node. This is the
+"triangulation from inside the data" the project wanted instead of an external cross-check.
+
+### Reading it efficiently: `data/std/index.tsv`
+
+`nodes.tsv` is ~221k tokens — too big to read whole for a narrow question. But pre-order DFS
+makes every subtree a **contiguous block**, so `src/index.zig` emits a tiny table of contents
+(`path · line · span · depth · kind · n_children`, 1,495 containers). Look up a module, read
+exactly its `[line, line+span)` rows — pure arithmetic, no scan. The index self-checks (root
+span == total rows; span == 1 + Σ child spans) and `verify_std.nu` re-derives every block's
+boundary from `nodes.tsv` depths so the map can never drift from the data.
+
+---
+
+## The pristine bar
+
+Every shipped dataset must be:
+
 - **Deterministic** — same Zig version → byte-identical output.
-- **Complete or explicitly scoped** — coverage is total, or every exclusion is recorded
-  and asserted. No silent gaps (nacl and P384 were missing and have been added).
-- **Self-verifying** — automated checks: every `surface.tsv` entry resolves in
-  `primitives.tsv`; row counts asserted; scan ↔ reflection reconciled by script.
+- **Complete or explicitly scoped** — coverage is total, or every exclusion is recorded. No
+  silent gaps.
+- **Self-verifying** — automated checks built into regeneration (the conservation bundle +
+  the index re-derivation above).
 - **Idempotent** — `regenerate && git diff --exit-code` is clean.
-- **Pinned** — tagged to the exact Zig version/commit the data was extracted from.
+- **Pinned** — tagged to the exact Zig version the data was extracted from.
 
 ---
 
 ## Status
 
-| phase | status |
+| piece | status |
 |---|---|
-| 1 — Extraction | ✅ text scan + 3 reflection tools (dump / maptree / surface) |
-| 2 — Organization | 🟡 schema documented; determinism + reconciliation checks pending |
-| 3 — Dataset (pristine) | 🟡 datasets exist; determinism / coverage / verification bar not yet met |
+| **std map** (`scan.zig` + bundle) | ✅ full std mapped, self-verifying, deterministic, pinned |
+| **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways |
+| crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (superseded by the scanner) |
 
-## Open quality work (the backlog)
+## Backlog
 
-- [ ] Strip anonymous `__struct_NNNNN` IDs (kills run-to-run churn — observed 2026-06-17).
-- [ ] Decide & implement coverage: full public surface vs explicitly-scoped curated set.
-- [ ] Close or record `error{inferred}`; record undescended `tls/Certificate`.
-- [ ] Add verification checks (resolve-completeness, row counts, scan ↔ reflection).
-- [ ] One-command regenerate with an idempotency diff-check.
-- [ ] Record the pinned Zig version/commit.
-- [ ] Trim the report scripts to emit data only (stop writing `docs/*.md`).
+- [ ] Point the AST scanner at non-std roots (it is already root-agnostic — needs a config /
+      target list to make other modules first-class).
+- [ ] Decide: keep committed snapshots tracked, or move generated data to gitignored build
+      output with regeneration as the contract.
+- [ ] (If ever revived) bring the archived crypto reflection datasets to the pristine bar —
+      they resolve byte sizes / signatures the source scan can't.
 
 ---
 
 ## Superseded
 
-This project began as an explanatory guide, then a faithful map of hand-written
-per-family docs. Both retired on 2026-06-17: the markdown only ever re-printed the
-datasets and went stale. The datasets are the product. All prior docs — the family
-pages and the rendered reports (`surface.md`, `structure.md`, `clusters.*`) — are in
-`docs/archive/` (provenance, per archive-don't-delete; see `docs/archive/README.md`).
+Began as `zcrypto`: first an explanatory guide, then a faithful map of hand-written
+per-family docs, then "the datasets are the product." Renamed to **zephem** and reframed on
+2026-06-17 — from *learning crypto* to *a general Zig structure-extraction tool*. The pivot
+to **AST parsing** (over reflection) followed, making the full-std map the headline product;
+the original crypto reflection pipeline was archived to `archive/crypto-reflection/`. Retired
+markdown lives in `docs/archive/` (provenance, per archive-don't-delete).
 
 ## Toolchain
-Zig (reflection extraction) + Nushell (glue / query) only. Every dataset under `data/`
-is regenerable and idempotent.
+Zig (AST parsing) + Nushell (glue / query) only. Every dataset under `data/` is regenerable
+and idempotent.
