@@ -52,10 +52,11 @@ def gen [path: string, skip: list<string>] {
         | str replace --regex '(?m)^const SKIP = .*$' ('const SKIP = ' + $skip_lit + ';'))
 }
 
-def main [--only: string, --filter: string, --limit: int = 0, --timeout: int = 30, --out: string = "/tmp/zephem-depth/out", --commit] {
+def main [--only: string, --filter: string, --list: string, --limit: int = 0, --timeout: int = 30, --out: string = "/tmp/zephem-depth/out", --commit] {
     let idx = (open data/std/index.tsv)
     mut targets = (
         if ($only | is-not-empty) { [$only] }
+        else if ($list | is-not-empty) { open $list | lines | where ($it | str trim | is-not-empty) }
         else if ($filter | is-not-empty) { $idx | get path | where ($it | str contains $filter) }
         else { $idx | get path }
     )

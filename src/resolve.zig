@@ -91,12 +91,31 @@ fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime
     }
 }
 
+/// The target resolved to a VALUE, not a type — the map indexed an `@import`-realiased decl
+/// (`pub const asin = @import("asin.zig").asin`, a fn) as a container, but the public access
+/// lands on the value. Emit its one resolved fact (usually a fully-typed fn signature) rather
+/// than treating a perfectly resolvable function as poison.
+fn emitValue(w: *std.Io.Writer, comptime path: []const u8, val: anytype) !void {
+    const VT = @TypeOf(val);
+    switch (@typeInfo(VT)) {
+        .int, .comptime_int => try w.print("{s}\tconst_int\t{d}\n", .{ path, val }),
+        .bool => try w.print("{s}\tconst_bool\t{}\n", .{ path, val }),
+        .@"fn" => try w.print("{s}\tfn\t{s}\n", .{ path, @typeName(VT) }),
+        else => try w.print("{s}\tconst_other\t{s}\n", .{ path, @typeName(VT) }),
+    }
+}
+
 pub fn main(init: std.process.Init) !void {
     var wbuf: [1 << 16]u8 = undefined;
     var fw = std.Io.File.stdout().writer(init.io, &wbuf);
     const w = &fw.interface;
 
     try w.print("path\tkind\tdetail\n", .{});
-    try emit(w, TARGET_PATH, TARGET, DESCEND, true);
+    // comptime branch: a type reflects as a container; a value emits its single resolved fact.
+    if (comptime @TypeOf(TARGET) == type) {
+        try emit(w, TARGET_PATH, TARGET, DESCEND, true);
+    } else {
+        try emitValue(w, TARGET_PATH, TARGET);
+    }
     try w.flush();
 }
