@@ -64,15 +64,48 @@ fn relPath(ctx: *Ctx, abs: []const u8) []const u8 {
     return abs;
 }
 
-/// Extract the quoted target of an `@import("...")` init expression from its
-/// source text, or null if this init is not a bare @import.
-fn importTarget(src: []const u8) ?[]const u8 {
+/// An `@import` init, split into the imported file and any selector that follows.
+///   `@import("f.zig")`        → { file: "f.zig", selector: "" }   (whole-file namespace)
+///   `@import("f.zig").Foo`    → { file: "f.zig", selector: "Foo" } (re-export of one decl)
+/// Returns null when the init is not a clean @import-or-@import-selection (e.g. a generic
+/// call `@import("f").Foo(args)` — that's a value, handled as an alias/const leaf).
+const ImportRef = struct { file: []const u8, selector: []const u8 };
+
+fn parseImport(src: []const u8) ?ImportRef {
     const t = std.mem.trim(u8, src, " \t\r\n");
     const prefix = "@import(\"";
     if (!std.mem.startsWith(u8, t, prefix)) return null;
-    const rest = t[prefix.len..];
-    const end = std.mem.indexOfScalar(u8, rest, '"') orelse return null;
-    return rest[0..end];
+    const after_q = t[prefix.len..];
+    const qend = std.mem.indexOfScalar(u8, after_q, '"') orelse return null;
+    const file = after_q[0..qend];
+    var rest = std.mem.trim(u8, after_q[qend + 1 ..], " \t\r\n");
+    if (!std.mem.startsWith(u8, rest, ")")) return null; // malformed / not a plain @import
+    rest = std.mem.trim(u8, rest[1..], " \t\r\n");
+    if (rest.len == 0) return .{ .file = file, .selector = "" }; // whole-file import
+    if (rest[0] != '.') return null; // a call or operator on the import → a value, not a re-export
+    const sel = std.mem.trim(u8, rest[1..], " \t\r\n");
+    if (sel.len == 0) return null;
+    // a re-export selector is a clean dotted identifier chain; anything else is an expression.
+    for (sel) |c| if (!(std.ascii.isAlphanumeric(c) or c == '_' or c == '.')) return null;
+    return .{ .file = file, .selector = sel };
+}
+
+/// The public decl named `name` among `members`, or null.
+fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, name: []const u8) ?Ast.Node.Index {
+    for (members) |m| {
+        if (ast.nodeTag(m) == .fn_decl) {
+            var b: [1]Ast.Node.Index = undefined;
+            const proto = ast.fullFnProto(&b, m) orelse continue;
+            if (proto.visib_token == null) continue;
+            const nt = proto.name_token orelse continue;
+            if (std.mem.eql(u8, ast.tokenSlice(nt), name)) return m;
+            continue;
+        }
+        const vd = ast.fullVarDecl(m) orelse continue;
+        if (vd.visib_token == null) continue;
+        if (std.mem.eql(u8, ast.tokenSlice(vd.ast.mut_token + 1), name)) return m;
+    }
+    return null;
 }
 
 /// Parse a file's source into an Ast (caller keeps it alive for the walk).
@@ -116,6 +149,83 @@ fn containerKindOf(ast: *const Ast, node: Ast.Node.Index) ContainerKind {
     };
 }
 
+/// Emit node `a_logical` (= `a_name`) for a selective re-export `@import(file).selector`,
+/// COLLAPSED: A becomes whatever `selector` resolves to inside `file` — a container (its
+/// members hang directly under A), a fn (a leaf), or, when the chain can't be followed
+/// cleanly, an `alias` leaf. This is what removes the phantom `X25519.X25519` doubling and
+/// the duplicate `acos` reads: the map records the re-export as the one thing it actually is.
+fn emitReexport(ctx: *Ctx, file_abs: []const u8, selector: []const u8, a_logical: []const u8, a_name: []const u8, depth: u32, chain: u8) anyerror!void {
+    const rel = relPath(ctx, file_abs);
+    // multi-segment selector or a too-deep alias chain → safe `alias` leaf (no false structure,
+    // no risk of a cyclic-alias loop). Single-segment is the dominant, fully-handled case.
+    if (chain > 16 or std.mem.indexOfScalar(u8, selector, '.') != null) {
+        try ctx.w.print("{s}\t{d}\talias\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, rel });
+        return;
+    }
+    const fast = (try parseFile(ctx, file_abs)) orelse {
+        try ctx.w.print("{s}\t{d}\tnserr\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, rel });
+        return;
+    };
+    const found = findDecl(&fast, fast.rootDecls(), selector) orelse {
+        try ctx.w.print("{s}\t{d}\talias\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, rel });
+        return;
+    };
+    // re-exported function → A is that fn (leaf, detail = param count).
+    if (fast.nodeTag(found) == .fn_decl) {
+        var b: [1]Ast.Node.Index = undefined;
+        const proto = fast.fullFnProto(&b, found).?;
+        var nparams: usize = 0;
+        var it = proto.iterate(&fast);
+        while (it.next()) |_| nparams += 1;
+        try ctx.w.print("{s}\t{d}\tfn\t{s}\t0\t{d}\n", .{ a_logical, depth, a_name, nparams });
+        return;
+    }
+    const vd = fast.fullVarDecl(found) orelse {
+        try ctx.w.print("{s}\t{d}\talias\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, rel });
+        return;
+    };
+    const binit = vd.ast.init_node.unwrap() orelse {
+        try ctx.w.print("{s}\t{d}\tconst\t{s}\t0\t\n", .{ a_logical, depth, a_name });
+        return;
+    };
+    // re-exported inline container → A IS it; hang its members directly under A (collapse).
+    const ck = containerKindOf(&fast, binit);
+    if (ck != .none) {
+        var b2: [2]Ast.Node.Index = undefined;
+        const cd = fast.fullContainerDecl(&b2, binit).?;
+        const cnt = if (depth < ctx.max_depth) countPub(&fast, cd.ast.members) else 0;
+        try ctx.w.print("{s}\t{d}\t{s}\t{s}\t{d}\t\n", .{ a_logical, depth, @tagName(ck), a_name, cnt });
+        if (depth < ctx.max_depth) {
+            try walkMembers(ctx, &fast, cd.ast.members, dirname(file_abs), a_logical, depth + 1);
+        }
+        return;
+    }
+    // re-exported decl is itself an @import → A re-exports that (whole file → ns; selective → chain).
+    if (parseImport(fast.getNodeSource(binit))) |imp2| {
+        if (std.mem.endsWith(u8, imp2.file, ".zig")) {
+            const gpath = try std.fs.path.resolve(ctx.arena, &.{ dirname(file_abs), imp2.file });
+            if (imp2.selector.len == 0) {
+                const grel = relPath(ctx, gpath);
+                if (ctx.visited.contains(gpath) or depth >= ctx.max_depth) {
+                    try ctx.w.print("{s}\t{d}\tnsref\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, grel });
+                } else if (try parseFile(ctx, gpath)) |gast| {
+                    try ctx.visited.put(gpath, {});
+                    const cnt = countPub(&gast, gast.rootDecls());
+                    try ctx.w.print("{s}\t{d}\tns\t{s}\t{d}\t{s}\n", .{ a_logical, depth, a_name, cnt, grel });
+                    try walkMembers(ctx, &gast, gast.rootDecls(), dirname(gpath), a_logical, depth + 1);
+                } else {
+                    try ctx.w.print("{s}\t{d}\tnserr\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, grel });
+                }
+            } else {
+                try emitReexport(ctx, gpath, imp2.selector, a_logical, a_name, depth, chain + 1);
+            }
+            return;
+        }
+    }
+    // generic instantiation, local alias, or plain value → alias leaf.
+    try ctx.w.print("{s}\t{d}\talias\t{s}\t0\t{s}\n", .{ a_logical, depth, a_name, rel });
+}
+
 /// Walk the members of a container node (or the root) at `logical_path`.
 fn walkMembers(
     ctx: *Ctx,
@@ -150,27 +260,32 @@ fn walkMembers(
         };
         const init_src = ast.getNodeSource(init);
 
-        // @import("x.zig") → a sub-namespace; follow it.
-        if (importTarget(init_src)) |target| {
-            if (std.mem.endsWith(u8, target, ".zig")) {
-                const child_path = try std.fs.path.resolve(ctx.arena, &.{ base_dir, target });
-                const child_logical = try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ logical_path, name });
-                const rel = relPath(ctx, child_path);
-                if (ctx.visited.contains(child_path) or depth >= ctx.max_depth) {
-                    // already expanded at its canonical home, or depth-capped: a leaf ref
-                    // to the file at `rel` (which IS expanded under some other path).
-                    try ctx.w.print("{s}\t{d}\tnsref\t{s}\t0\t{s}\n", .{ child_logical, depth, name, rel });
-                } else if (try parseFile(ctx, child_path)) |child_ast| {
-                    try ctx.visited.put(child_path, {});
-                    const cnt = countPub(&child_ast, child_ast.rootDecls());
-                    try ctx.w.print("{s}\t{d}\tns\t{s}\t{d}\t{s}\n", .{ child_logical, depth, name, cnt, rel });
-                    try walkMembers(ctx, &child_ast, child_ast.rootDecls(), dirname(child_path), child_logical, depth + 1);
-                } else {
-                    try ctx.w.print("{s}\t{d}\tnserr\t{s}\t0\t{s}\n", .{ child_logical, depth, name, rel });
-                }
-            } else {
+        // @import(...) — a whole-file namespace, a re-export of one decl, or a module ref.
+        if (parseImport(init_src)) |imp| {
+            const child_logical = try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ logical_path, name });
+            if (!std.mem.endsWith(u8, imp.file, ".zig")) {
                 // module import (std/builtin/root) — a reference, not a file we own.
-                try ctx.w.print("{s}.{s}\t{d}\tmodref\t{s}\t0\t{s}\n", .{ logical_path, name, depth, name, target });
+                try ctx.w.print("{s}\t{d}\tmodref\t{s}\t0\t{s}\n", .{ child_logical, depth, name, imp.file });
+            } else {
+                const child_path = try std.fs.path.resolve(ctx.arena, &.{ base_dir, imp.file });
+                if (imp.selector.len == 0) {
+                    // BARE whole-file import → a sub-namespace; follow it.
+                    const rel = relPath(ctx, child_path);
+                    if (ctx.visited.contains(child_path) or depth >= ctx.max_depth) {
+                        try ctx.w.print("{s}\t{d}\tnsref\t{s}\t0\t{s}\n", .{ child_logical, depth, name, rel });
+                    } else if (try parseFile(ctx, child_path)) |child_ast| {
+                        try ctx.visited.put(child_path, {});
+                        const cnt = countPub(&child_ast, child_ast.rootDecls());
+                        try ctx.w.print("{s}\t{d}\tns\t{s}\t{d}\t{s}\n", .{ child_logical, depth, name, cnt, rel });
+                        try walkMembers(ctx, &child_ast, child_ast.rootDecls(), dirname(child_path), child_logical, depth + 1);
+                    } else {
+                        try ctx.w.print("{s}\t{d}\tnserr\t{s}\t0\t{s}\n", .{ child_logical, depth, name, rel });
+                    }
+                } else {
+                    // SELECTIVE re-export `@import("f").Sel` → collapse: A *is* the decl Sel
+                    // resolves to (its members hang directly under A — no phantom doubling).
+                    try emitReexport(ctx, child_path, imp.selector, child_logical, name, depth, 0);
+                }
             }
             continue;
         }

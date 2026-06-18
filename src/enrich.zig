@@ -42,13 +42,43 @@ fn dirname(path: []const u8) []const u8 {
     return ".";
 }
 
-fn importTarget(src: []const u8) ?[]const u8 {
+/// `@import` init split into file + selector — see scan.zig (this MUST stay identical so the
+/// overlay walks the exact same collapsed tree the map does).
+const ImportRef = struct { file: []const u8, selector: []const u8 };
+
+fn parseImport(src: []const u8) ?ImportRef {
     const t = std.mem.trim(u8, src, " \t\r\n");
     const prefix = "@import(\"";
     if (!std.mem.startsWith(u8, t, prefix)) return null;
-    const rest = t[prefix.len..];
-    const end = std.mem.indexOfScalar(u8, rest, '"') orelse return null;
-    return rest[0..end];
+    const after_q = t[prefix.len..];
+    const qend = std.mem.indexOfScalar(u8, after_q, '"') orelse return null;
+    const file = after_q[0..qend];
+    var rest = std.mem.trim(u8, after_q[qend + 1 ..], " \t\r\n");
+    if (!std.mem.startsWith(u8, rest, ")")) return null;
+    rest = std.mem.trim(u8, rest[1..], " \t\r\n");
+    if (rest.len == 0) return .{ .file = file, .selector = "" };
+    if (rest[0] != '.') return null;
+    const sel = std.mem.trim(u8, rest[1..], " \t\r\n");
+    if (sel.len == 0) return null;
+    for (sel) |c| if (!(std.ascii.isAlphanumeric(c) or c == '_' or c == '.')) return null;
+    return .{ .file = file, .selector = sel };
+}
+
+fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, name: []const u8) ?Ast.Node.Index {
+    for (members) |m| {
+        if (ast.nodeTag(m) == .fn_decl) {
+            var b: [1]Ast.Node.Index = undefined;
+            const proto = ast.fullFnProto(&b, m) orelse continue;
+            if (proto.visib_token == null) continue;
+            const nt = proto.name_token orelse continue;
+            if (std.mem.eql(u8, ast.tokenSlice(nt), name)) return m;
+            continue;
+        }
+        const vd = ast.fullVarDecl(m) orelse continue;
+        if (vd.visib_token == null) continue;
+        if (std.mem.eql(u8, ast.tokenSlice(vd.ast.mut_token + 1), name)) return m;
+    }
+    return null;
 }
 
 fn parseFile(ctx: *Ctx, path: []const u8) !?Ast {
@@ -139,6 +169,74 @@ fn emitDocRow(ctx: *Ctx, ast: *const Ast, path: []const u8, start_tok: Ast.Token
     try ctx.w.writeAll("\t\n");
 }
 
+/// Overlay twin of scan.zig's emitReexport — MUST mirror its control flow exactly so the
+/// collapsed tree (and thus every path) matches. Emits the resolved fn's sig where A is a
+/// re-exported fn; otherwise A's own doc (from the parent decl) plus the descent.
+fn emitReexport(ctx: *Ctx, file_abs: []const u8, selector: []const u8, a_logical: []const u8, depth: u32, p_ast: *const Ast, p_start: Ast.TokenIndex, chain: u8) anyerror!void {
+    if (chain > 16 or std.mem.indexOfScalar(u8, selector, '.') != null) {
+        try emitDocRow(ctx, p_ast, a_logical, p_start);
+        return;
+    }
+    const fast = (try parseFile(ctx, file_abs)) orelse {
+        try emitDocRow(ctx, p_ast, a_logical, p_start);
+        return;
+    };
+    const found = findDecl(&fast, fast.rootDecls(), selector) orelse {
+        try emitDocRow(ctx, p_ast, a_logical, p_start);
+        return;
+    };
+    // re-exported function → A's row carries its resolved sig (and the fn's own doc).
+    if (fast.nodeTag(found) == .fn_decl) {
+        var b: [1]Ast.Node.Index = undefined;
+        const proto = fast.fullFnProto(&b, found).?;
+        try ctx.w.print("{s}\t", .{a_logical});
+        if (docFirst(&fast, proto.visib_token.?)) |df| try writeDoc(ctx.w, &fast, df, proto.visib_token.?);
+        try ctx.w.writeAll("\t");
+        try writeSig(ctx.w, fnSigSource(&fast, &proto));
+        try ctx.w.writeAll("\n");
+        return;
+    }
+    const vd = fast.fullVarDecl(found) orelse {
+        try emitDocRow(ctx, p_ast, a_logical, p_start);
+        return;
+    };
+    const binit = vd.ast.init_node.unwrap() orelse {
+        try emitDocRow(ctx, p_ast, a_logical, p_start);
+        return;
+    };
+    // re-exported inline container → A's (parent) doc, then descend its members under A.
+    const ck = containerKindOf(&fast, binit);
+    if (ck != .none) {
+        try emitDocRow(ctx, p_ast, a_logical, p_start);
+        if (depth < ctx.max_depth) {
+            var b2: [2]Ast.Node.Index = undefined;
+            const cd = fast.fullContainerDecl(&b2, binit).?;
+            try walkMembers(ctx, &fast, cd.ast.members, dirname(file_abs), a_logical, depth + 1);
+        }
+        return;
+    }
+    // re-exported decl is itself an @import → whole file (descend) or selective (chain).
+    if (parseImport(fast.getNodeSource(binit))) |imp2| {
+        if (std.mem.endsWith(u8, imp2.file, ".zig")) {
+            const gpath = try std.fs.path.resolve(ctx.arena, &.{ dirname(file_abs), imp2.file });
+            if (imp2.selector.len == 0) {
+                try emitDocRow(ctx, p_ast, a_logical, p_start);
+                if (!(ctx.visited.contains(gpath) or depth >= ctx.max_depth)) {
+                    if (try parseFile(ctx, gpath)) |gast| {
+                        try ctx.visited.put(gpath, {});
+                        try walkMembers(ctx, &gast, gast.rootDecls(), dirname(gpath), a_logical, depth + 1);
+                    }
+                }
+            } else {
+                try emitReexport(ctx, gpath, imp2.selector, a_logical, depth, p_ast, p_start, chain + 1);
+            }
+            return;
+        }
+    }
+    // generic instantiation / local alias / value → A's doc (sparse).
+    try emitDocRow(ctx, p_ast, a_logical, p_start);
+}
+
 fn walkMembers(
     ctx: *Ctx,
     ast: *const Ast,
@@ -173,19 +271,25 @@ fn walkMembers(
         };
         const init_src = ast.getNodeSource(init);
 
-        if (importTarget(init_src)) |target| {
-            if (std.mem.endsWith(u8, target, ".zig")) {
-                const child_path = try std.fs.path.resolve(ctx.arena, &.{ base_dir, target });
-                const child_logical = try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ logical_path, name });
-                try emitDocRow(ctx, ast, child_logical, start_tok);
-                if (ctx.visited.contains(child_path) or depth >= ctx.max_depth) {
-                    // nsref leaf — doc (if any) already emitted; don't recurse.
-                } else if (try parseFile(ctx, child_path)) |child_ast| {
-                    try ctx.visited.put(child_path, {});
-                    try walkMembers(ctx, &child_ast, child_ast.rootDecls(), dirname(child_path), child_logical, depth + 1);
-                }
+        if (parseImport(init_src)) |imp| {
+            const child_logical = try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ logical_path, name });
+            if (!std.mem.endsWith(u8, imp.file, ".zig")) {
+                try emitDocRow(ctx, ast, child_logical, start_tok); // modref — doc only
             } else {
-                try emitDocRow(ctx, ast, try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ logical_path, name }), start_tok);
+                const child_path = try std.fs.path.resolve(ctx.arena, &.{ base_dir, imp.file });
+                if (imp.selector.len == 0) {
+                    // BARE whole-file import → descend (as before).
+                    try emitDocRow(ctx, ast, child_logical, start_tok);
+                    if (ctx.visited.contains(child_path) or depth >= ctx.max_depth) {
+                        // nsref leaf — doc (if any) already emitted; don't recurse.
+                    } else if (try parseFile(ctx, child_path)) |child_ast| {
+                        try ctx.visited.put(child_path, {});
+                        try walkMembers(ctx, &child_ast, child_ast.rootDecls(), dirname(child_path), child_logical, depth + 1);
+                    }
+                } else {
+                    // SELECTIVE re-export → collapse (mirrors scan.zig).
+                    try emitReexport(ctx, child_path, imp.selector, child_logical, depth, ast, start_tok, 0);
+                }
             }
             continue;
         }
