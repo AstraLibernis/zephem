@@ -1,17 +1,32 @@
 # zephem — Plan
 
-**What this is.** A data-extraction and transformation tool that, pointed at a Zig source
-root, emits pristine, queryable **datasets** describing its **containers, labels, and
-levels** — the namespace tree, every public decl classified, and per-container counts. The
-product is the datasets *and the pipeline that regenerates them*, never prose.
+**What this is.** A data-extraction, transformation, and verification tool that, pointed at a
+Zig source root, emits pristine, queryable **datasets** of **true, direct knowledge** about
+it — starting with the namespace tree (where everything is, how it's shaped) and layering on
+progressively deeper facts (signatures, the authors' own doc-comments, references, runnable
+examples, resolved sizes, version diffs). The product is the datasets *and the pipeline that
+regenerates and self-checks them*, never prose.
 
-The intended consumers are LLMs (tidy tables that parse cleanly into context) and humans
-using the data as a static research aid.
+The intended consumers are LLMs (tidy tables that parse cleanly into context, so the model
+works from extracted fact instead of recollection) and humans using the data as a research
+aid. Every fact is something the compiler or source states or computes — nothing authored.
 
 **Ephemeral by design.** Datasets are derived, regenerable artifacts — never hand-authored.
 Any committed dataset is a *pinned snapshot* of one Zig version, a cache of compiler/source
-truth, not a canonical hand-maintained source. The invariant: `regenerate && git diff
---exit-code` is clean for a fixed compiler.
+truth, not a canonical hand-maintained source. This is why **reproducibility is a co-equal
+goal, not a nicety**: a snapshot you cannot provably rebuild is just hand-authored data with
+extra steps. The product is as much *the act of regenerating identically* as the bytes
+themselves.
+
+**Two guarantees, both proven, both orthogonal.** Gathering the data is only half the job:
+
+- **True** — every fact is extracted/computed, and the data checks itself (conservation,
+  referential integrity, executing examples). *Is what it says correct?*
+- **Reproducible** — the same Zig version rebuilds the byte-identical snapshot, every time,
+  without breaking. *Will building it again give the same thing?*
+
+Data can be internally consistent yet nondeterministic, or deterministic yet wrong. zephem
+asserts **both**, mechanically, on every run — see *Reproducibility* below.
 
 **What it is not.** Not a guide, tutorial, or domain advice. **No hand-authored prose.** Any
 human-readable view, if ever wanted, is generated from the data — never written by hand.
@@ -23,9 +38,10 @@ human-readable view, if ever wanted, is generated from the data — never writte
 The general extractor reads source with `std.zig.Ast` instead of walking `@typeInfo`.
 Parsing never triggers comptime, so platform-gated and "poison" decls (e.g. `std.c.darwin`'s
 `assert(isDarwin())`) are harmless text. **This is the decision that makes mapping all of std
-possible** — a reflection walk dies on the first un-evaluatable decl. Reflection is kept only
-where it earns its keep (resolved sizes/signatures the source text can't give — the crypto
-`depth` layer).
+possible** — a reflection walk dies on the first un-evaluatable decl. Reflection still earns
+its keep for the few facts source text can't give (resolved sizes, expanded generics) — but
+only **on demand, scoped to one module** the map points us at, never as a blanket walk. See
+the *depth* layer in the roadmap.
 
 ---
 
@@ -79,34 +95,148 @@ boundary from `nodes.tsv` depths so the map can never drift from the data.
 
 ## The pristine bar
 
-Every shipped dataset must be:
+Every shipped dataset must clear both guarantees:
 
-- **Deterministic** — same Zig version → byte-identical output.
+**True**
 - **Complete or explicitly scoped** — coverage is total, or every exclusion is recorded. No
   silent gaps.
 - **Self-verifying** — automated checks built into regeneration (the conservation bundle +
-  the index re-derivation above).
-- **Idempotent** — `regenerate && git diff --exit-code` is clean.
+  the index re-derivation above; each new layer adds its own backward check).
+
+**Reproducible**
+- **Deterministic** — same Zig version → byte-identical output, with every source of
+  run-to-run variance designed out (see below).
+- **Idempotent & checked** — regeneration is *proven* identical, not assumed.
+- **Robust / non-breaking** — a regeneration never crashes; new inputs (a Zig upgrade) yield
+  a valid snapshot with additive, diffable changes.
 - **Pinned** — tagged to the exact Zig version the data was extracted from.
 
 ---
 
-## Status
+## Reproducibility — provably rebuildable
+
+"Build it again, prove you got the same thing." This is enforced machinery, not an aspiration.
+
+**Determinism contract — the variance we design out.** Output is reproducible only because
+every non-deterministic input is eliminated by construction:
+
+| source of churn | how it's killed |
+|---|---|
+| hashmap / dir iteration order | rows emitted in **source order** (pre-order DFS), never map order |
+| absolute toolchain paths | paths rendered **relative to the module root** (`relPath`) |
+| timestamps / PIDs / RNG | none ever written into a dataset |
+| anonymous comptime IDs (`__struct_NNNNN`) | N/A — we parse, we don't reflect (this churn killed the old crypto pipeline) |
+
+**Idempotency guard — the proof.** A `--check` mode regenerates and asserts the result is
+**byte-identical**, two independent ways:
+1. *Intrinsic* — build twice in one run, compare hashes. Proves the **process** is
+   deterministic, needs no baseline.
+2. *Regression* — compare against the committed snapshot (recorded `SHA256SUMS` /
+   `git diff --exit-code`). Proves today's code + Zig still reproduces the **recorded** truth.
+
+A drift in either fails the build loudly. This generalizes across *all* layers as they land —
+one reproducibility harness regenerates every dataset and asserts no drift, so "provably build
+over and over" holds for the whole corpus, not just the map.
+
+**Robust regeneration.** Parsing-not-reflection means no input kills the run: an unreadable
+file becomes an `nserr` row, a moved file a different path — the snapshot is always *valid*,
+and a Zig upgrade produces an additive, diffable delta (which L6 version-diff then renders).
+
+---
+
+## Status — Part 1 (structure) is done
 
 | piece | status |
 |---|---|
 | **std map** (`scan.zig` + bundle) | ✅ full std mapped, self-verifying, deterministic, pinned |
 | **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways |
-| crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (superseded by the scanner) |
+| crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (the on-demand depth layer revives its technique) |
 
-## Backlog
+We can now say *where* anything in std is and *how it is shaped*, completely and provably.
+That is the skeleton. Everything below adds flesh to it — deeper true facts, one layer at a
+time, each held to the same pristine bar.
 
-- [ ] Point the AST scanner at non-std roots (it is already root-agnostic — needs a config /
-      target list to make other modules first-class).
-- [ ] Decide: keep committed snapshots tracked, or move generated data to gitignored build
-      output with regeneration as the contract.
-- [ ] (If ever revived) bring the archived crypto reflection datasets to the pristine bar —
-      they resolve byte sizes / signatures the source scan can't.
+---
+
+## The principle: true / direct knowledge, in layers
+
+zephem only ships facts that are **extracted or computed** from the compiler's source or the
+compiler itself — never authored, inferred, or interpreted. The map proved the model; the
+roadmap is the same model applied to progressively deeper facts. Think of it as layers, each
+a separate dataset keyed to the map by `path`:
+
+| layer | the question it answers | source of truth | coverage |
+|---|---|---|---|
+| **L0 structure** ✅ | where is it, how is it shaped | parse (AST) | total |
+| **L1 signatures-as-written** | what does this fn take / return / error | parse (AST) | total |
+| **L2 doc-comments** | what do std's authors say it is | parse (`///`) | total |
+| **L3 references** | what uses / pulls in what | parse (resolve idents) | total |
+| **L4 examples (tests)** | how is it actually used, *and does it run* | parse + **execute** | where tests exist |
+| **L5 resolved depth** | the real size / expanded generic / concrete type | reflect, on demand | targeted |
+| **L6 version diff** | what changed between Zig versions | transform two snapshots | total |
+
+Two hard rules keep every layer honest:
+1. **Keyed to the map.** Every row in every layer references a `path` that exists in
+   `nodes.tsv` — so layers compose, and a dangling key is a caught error (referential
+   integrity is just conservation again).
+2. **Self-verifying.** No layer ships without a backward check (count reconciliation,
+   referential integrity, reversibility, or — best of all — *executing* the fact).
+
+---
+
+## Roadmap (extraction · transformation · verification)
+
+Ordered by value-per-effort; each is an independent dataset, none blocks another — except the
+foundational item below, which every layer plugs into.
+
+### 0 — Reproducibility harness (foundational, buildable now) · verification
+Make "provably rebuildable" a checked invariant. Add a `--check` mode to the build that
+(a) regenerates and compares byte-for-byte against a second run (intrinsic idempotency) and
+(b) compares against a committed `SHA256SUMS` manifest (regression). Wire it so every present
+and future dataset registers with one harness — `verify` then proves *true* and *reproducible*
+in a single pass. **Verify:** the check is its own proof; a non-zero exit on any drift.
+*Why:* without this, idempotency is a claim we re-test by hand each time — exactly the manual
+step the project exists to remove. This is the second half of the mission, not a chore.
+
+### 1 — Depth, on demand (L5) · extraction
+A `resolve <path>` step that reflects **one module** the map points at, emitting resolved
+const values (the real `key_length = 32`), expanded aliases/generics, and fully-typed
+signatures with error sets. Scoping to a single module sidesteps the poison-decl death that
+killed blanket reflection. **Verify:** every leaf in the subtree is either resolved or
+explicitly recorded unresolvable — the two counts must reconcile with the map's subtree.
+*Why:* stops the LLM hallucinating sizes/types once it has drilled to a specific primitive.
+
+### 2 — Doc-comments (L2) · extraction
+Extract `///` comments per decl into a companion dataset keyed by `path`. This is the std
+authors' own documentation — direct truth, not our prose, fully within charter. **Verify:**
+every doc block attaches to exactly one existing node; doc'd-decl count is stable. *Why:*
+cheap, total, and enormously useful — the official "what is this" inline with the map.
+
+### 3 — Signatures-as-written (L1) · extraction
+Upgrade `fn` rows from a bare param count to the as-written signature (param names + types,
+return type, error union) straight from the AST — no reflection. **Verify:** the parsed
+param count must equal the existing `n` already in the map (cross-check against L0). *Why:*
+answers most signature questions without paying for reflection; L5 only for the resolved form.
+
+### 4 — Examples from tests (L4) · extraction + verification
+Extract `test "..." {}` blocks and which decls they exercise. **Verify (the strong one):**
+run `zig test` and record pass/fail — the knowledge doesn't just *claim*, it *executes green*.
+*Why:* real, compiling, passing usage is the highest-grade knowledge an LLM can be handed.
+
+### 5 — Reference graph (L3) · extraction → transformation
+Edges of which decl references which other decl (resolve identifiers + import targets in the
+AST). A graph layered over the containment tree. **Verify:** every edge endpoint is a node in
+`nodes.tsv` (no dangling); edge count stable. *Why:* coupling and impact — "what depends on
+X," "what does Y pull in" — which structure alone can't show.
+
+### 6 — Version diff (L6) · transformation
+Diff two pinned snapshots → added / removed / changed decls: a true changelog, computed not
+guessed. **Verify:** the diff is invertible — applying it to the old snapshot reproduces the
+new one exactly. *Why:* migration help grounded in fact; the real payoff of ephemeral-by-design.
+
+### Standing items
+- [ ] Point the scanner at non-std roots (already root-agnostic — needs a target list).
+- [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
 
 ---
 
