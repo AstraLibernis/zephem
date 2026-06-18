@@ -56,42 +56,52 @@ def main [--only: string, --filter: string, --limit: int = 0, --timeout: int = 3
     mut resolved = []
     mut poison = []
     mut redirect = []
+    mut status = []   # per-container ledger: path · status · n_rows (the verifier re-derives from this)
     for path in $targets {
         (gen $path) | save -f $"($SCRATCH)/r.zig"
         let r = (do { ^timeout $"($timeout)s" zig run $"($SCRATCH)/r.zig" } | complete)
         if $r.exit_code == 0 {
-            $resolved = ($resolved | append ($r.stdout | lines | skip 1 | where ($it | is-not-empty)))
+            let rows = ($r.stdout | lines | skip 1 | where ($it | is-not-empty))
+            $resolved = ($resolved | append $rows)
+            $status = ($status | append $"($path)\tresolved\t($rows | length)")
         } else if ($r.stderr | str contains "has no member named") {
             # dead-end alias: the last segment duplicates a parent that already IS the type.
             # Don't point backwards — record the redirect to the canonical (parent) path.
             let canonical = ($path | split row "." | drop 1 | str join ".")
             $redirect = ($redirect | append $"($path)\t($canonical)")
+            $status = ($status | append $"($path)\tredirect\t0")
         } else {
             # genuine poison. First compiler `error:` line is the reason; fall back to stderr / exit.
             let err = ($r.stderr | lines | where ($it =~ 'error:') | first)
             let reason = ($err | default ($r.stderr | lines | where ($it | str trim | is-not-empty) | first | default $"exit ($r.exit_code)"))
             $poison = ($poison | append $"($path)\t($reason | str trim)")
+            $status = ($status | append $"($path)\tpoison\t0")
         }
     }
 
     let n_poison = ($poison | length)
     let n_redirect = ($redirect | length)
     let n_ok = (($targets | length) - $n_poison - $n_redirect)
+    (["path\tstatus\tn_rows"] | append $status | str join "\n") + "\n" | save -f $"($outdir)/status.tsv"
     (["path\tkind\tdetail"] | append $resolved | str join "\n") + "\n" | save -f $"($outdir)/resolved.tsv"
     (["path\tredirect_to"] | append $redirect | str join "\n") + "\n" | save -f $"($outdir)/redirects.tsv"
     (["path\treason"] | append $poison | str join "\n") + "\n" | save -f $"($outdir)/poison.tsv"
 
     print $"[L5] resolved: ($n_ok) containers, ($resolved | length) rows   redirect: ($n_redirect)   poison: ($n_poison)   attempted: ($targets | length)"
-    print $"[L5] → ($outdir)/resolved.tsv · redirects.tsv · poison.tsv"
-    if $n_redirect > 0 {
+    print $"[L5] → ($outdir)/{status,resolved,redirects,poison}.tsv"
+    if $n_redirect > 0 and $n_redirect <= 20 {
         print "[L5] alias redirects (path → use instead):"
         $redirect | each {|x| print $"   ($x)" } | ignore
     }
-    if $n_poison > 0 {
+    if $n_poison > 0 and $n_poison <= 20 {
         print "[L5] poison (path · reason):"
         $poison | each {|p| print $"   ($p)" } | ignore
     }
-    # accounting (the deeper map-subtree reconciliation is the verify_std.nu step, not yet wired)
-    let accounted = (($n_ok + $n_redirect + $n_poison) == ($targets | length))
-    print $"[L5] accounting resolved+redirect+poison == attempted: (if $accounted { '✓' } else { '✗' })"
+
+    # ---- verification: re-read the buckets a SECOND way and reconcile with the map ----
+    print "[L5] verifying — reading the overlay back the other way..."
+    let vargs = (if $commit { [$outdir "--full"] } else { [$outdir] })
+    let v = (do { ^nu scripts/verify_depth.nu ...$vargs } | complete)
+    print $v.stdout
+    if $v.exit_code != 0 { print "build_depth: ✗ overlay rejected by verify_depth"; exit 1 }
 }
