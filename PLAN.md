@@ -54,12 +54,31 @@ Each layer is a separate dataset keyed to the map by `path` — see [concepts](d
 | **decls overlay** (`enrich.zig`, L1+L2) | ✅ 7,143 rows; sig coverage == map's fn set (5,377 ⇔ 5,377) |
 | **depth overlay** (`resolve.zig` + `build_depth.nu`, L5) | ✅ full-corpus sweep, verify-✓ (1,324 resolved / 0 redirect / 31 poison; zero dups) |
 | **tunnels overlay** (`tunnels.zig` + `build_tunnels.nu`, L3) | ✅ 5,123 resolved edges (alias/import/usage), verify-✓ 6 ways; sound (no dangling), unresolved recorded |
-| **reproducibility** (`--check` + `SHA256SUMS`) | ✅ map + decls in `build_std.nu --check` (instant); **L5 in its own `build_depth.nu --check`** (separate — full sweep ≈13 min cold / ≈76 s warm); **L3 in `build_tunnels.nu --check`** (parse, instant). See [reproducibility](docs/reproducibility.md). |
+| **reproducibility** (`--check` + `SHA256SUMS`) | ✅ map + decls in `build_std.nu --check` (instant); **L5 in its own `build_depth.nu --check`** (separate — full sweep, machine-dependent: ≈13 min cold / ≈76 s warm on a 3-core VM, under a minute on a many-core desktop); **L3 in `build_tunnels.nu --check`** (parse, instant). See [reproducibility](docs/reproducibility.md). |
 | crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (technique revived as L5) |
 
 We can now say *where* anything in std is, *how it is shaped*, what it's called and documented
 as, its resolved depth, and *what links to what* — completely and provably. That is the skeleton,
 three attribute overlays, and the graph that connects them.
+
+## Audit trail
+
+Independent per-step audit run so the ✅ claims above are checked, not asserted. Re-run the
+harnesses (`verify_std.nu`, `verify_tunnels.nu`, `verify_depth.nu`, and the three `--check`
+modes) to reproduce.
+
+- **2026-06-19** — every done-claim verified against the data and the project's own harnesses:
+  all headline counts exact (16,506 decls / 310 files · 1,355 containers · 7,143 decls with
+  5,377 ⇔ 5,377 sig bijection · 5,123 tunnel edges, no dangling · 1,324/0/31 depth, zero dups);
+  `verify_*` all green; planned/standing items honestly stated (L4 & L6 genuinely absent,
+  scanner is root-agnostic, snapshots are git-tracked). **Two reproducibility bugs found and
+  fixed:** (1) L5 was not byte-reproducible across machines — `norm-row` stripped
+  `__struct/__union/__enum` disambiguator digits but not `__opaque`, so 112 `resolved.tsv` lines
+  drifted on a different host; regex now covers `opaque`, snapshot regenerated, `--check` green.
+  (2) `build_depth.nu --commit` always exited 1 after writing — a `(run …)` literal inside a
+  nushell `$"…"` string parsed as a command call; parens escaped. All three layers (`build_std`,
+  `build_tunnels`, `build_depth`) now pass `--check`. Sweep timings are machine-dependent (see
+  [reproducibility](docs/reproducibility.md)).
 
 ## Remaining work, in order
 

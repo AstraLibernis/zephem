@@ -19,7 +19,7 @@ Output is reproducible only because every non-deterministic input is eliminated 
 | hashmap / dir iteration order | rows emitted in **source order** (pre-order DFS), never map order |
 | absolute toolchain paths | rendered **relative to the module root** (`relPath`); in L5 poison reasons, `/usr/lib/zig/std/…` → `std/…` and the scratch `r-<i>.zig` → `<gen>` |
 | timestamps / PIDs / RNG | none ever written into a dataset |
-| anonymous comptime IDs (`__struct_NNNNN`) | the parse-based layers (L0–L2) never touch them; **L5 reflection does** — the digits drift between identical compiles, so `norm-row` strips them while keeping the stable `__struct`/`__enum`/`__union` marker (this same churn killed the old crypto pipeline) |
+| anonymous comptime IDs (`__struct_NNNNN`) | the parse-based layers (L0–L2) never touch them; **L5 reflection does** — the digits drift between identical compiles, so `norm-row` strips them while keeping the stable `__struct`/`__enum`/`__union`/`__opaque` marker (this same churn killed the old crypto pipeline) |
 
 ---
 
@@ -79,6 +79,13 @@ two-sweep test is byte-identical. A full cold sweep then a warm sweep reproduced
 snapshot byte-for-byte across all four files, with zero duplicate rows (15,720 distinct ==
 15,720).
 
+**Follow-up — `__opaque` (2026-06-19).** The original `norm-row` regex covered
+`struct`/`union`/`enum` but not `opaque`; on the VM (warm cache) that gap stayed hidden because
+the counter landed identically. Rebuilding on a *different machine* surfaced it: 112 `resolved.tsv`
+lines drifted, all `…__opaque_NNNNN` (e.g. `Handle__opaque_34566` vs `__opaque_34608`) — exactly
+the cross-machine cache-miss case this section describes. The regex now includes `opaque`, the
+snapshot was regenerated, and `--check` is byte-identical across machines.
+
 **The cache is part of the story, not cheating.** Zig's cache is content-addressed: a hit
 returns exactly the bytes a fresh compile would. So a warm rebuild that *fails* to reproduce
 the manifest is a **meaningful signal** — Zig version changed, source changed, or genuine
@@ -87,15 +94,23 @@ first build, post-upgrade, a different machine), which is precisely the case the
 protects: cache makes local re-runs fast and trivially identical; normalization makes the
 snapshot reproducible when the cache can't save you.
 
-### Timings — *relative reference only, not a benchmark*
+### Timings — *machine-dependent; a relative reference, not a benchmark*
 
-*(fedora-KDE Hyper-V VM, 6 vCPU = 3 physical + SMT, no GPU; Zig 0.16.0, full std = 1,355
+These numbers scale with the host's core count and single-thread speed — read them as
+ballpark, not a contract. The cold sweep that takes ~13 min on a small VM finishes in well
+under a minute on a fast many-core desktop; what stays constant is the *shape* (cold ≫ warm,
+cache is the big lever).
+
+*(VM: fedora-KDE Hyper-V, 6 vCPU = 3 physical + SMT, no GPU; Zig 0.16.0, full std = 1,355
 containers; 2026-06-19)*
 
 | sweep | wall time |
 |---|---|
 | full L5 sweep, **cold** (empty cache) | ≈ **782 s** (~13 min) |
 | full L5 sweep, **warm** (cache populated) | ≈ **76 s** (~1.3 min) |
+
+*(desktop: Ryzen 7 9800X3D, 16 lanes; same Zig/std)* — the full `--check` (two sweeps) ran in
+**≈ 54 s** total, illustrating how far this varies with the machine.
 
 The **cache is the ~10× lever, not parallelism.** Each `zig run` is already internally
 multithreaded and saturates the 3 physical cores, so the data-parallel lanes (one per CPU via

@@ -21,13 +21,15 @@
 # canonical path is its own container and resolves on its own turn. We just record the redirect.
 #
 # REPRODUCIBILITY (separate from --commit ON PURPOSE — it is SLOW). The map (build_std.nu) is a
-# parse, so its --check is instant; an L5 rebuild is a full reflection sweep (~45 min), and
-# --check runs TWO of them (~90 min). So L5 reproducibility lives HERE, never wired into
-# build_std.nu's --check, which must stay fast. Two volatile inputs are normalized out so the
-# bytes are stable (without this, --check false-fails):
+# parse, so its --check is instant; an L5 rebuild is a full reflection sweep, and --check runs
+# TWO of them. Wall time is MACHINE-DEPENDENT and varies widely: a cold sweep measured ≈13 min
+# on a 3-core VM but well under a minute on a many-core desktop (see docs/reproducibility.md for
+# the timing table and why these are a relative reference, not a benchmark). So L5 reproducibility
+# lives HERE, never wired into build_std.nu's --check, which must stay fast. Two volatile inputs
+# are normalized out so the bytes are stable (without this, --check false-fails):
 #   • anonymous-type disambiguators `__struct_NNNN` — a semantic-analysis counter that DRIFTS
 #     between otherwise-identical compiles (proven: two sweeps of std.Io disagreed only here).
-#     The kind marker (__struct/__enum/__union) is stable and kept; only the digits are dropped.
+#     The kind marker (__struct/__enum/__union/__opaque) is stable and kept; only the digits drop.
 #   • absolute toolchain paths in poison reasons (`/usr/lib/zig/std/…`, the `/tmp/.../r.zig`
 #     scratch file) — rendered relative (`std/…`, `<gen>/…`), matching the map's relPath contract.
 #
@@ -83,8 +85,10 @@ def std-dir [] {
 }
 
 # Strip the volatile anonymous-type disambiguator digits (see header). Kind marker kept.
+# Covers every anonymous-type kind Zig assigns a counter to: struct/union/enum AND opaque
+# (opaque drifts identically across machines — e.g. `Handle__opaque_34566` vs `__opaque_34608`).
 def norm-row [] {
-    str replace --regex --all '__(struct|union|enum)_[0-9]+' '__${1}'
+    str replace --regex --all '__(struct|union|enum|opaque)_[0-9]+' '__${1}'
 }
 
 # sha256 of each overlay file in `dir`, as a {name: hash} record (raw bytes — no parsing).
@@ -163,7 +167,8 @@ def main [--only: string, --filter: string, --list: string, --limit: int = 0, --
 
     if $check {
         # ---- REPRODUCIBLE: prove the committed overlay rebuilds, byte-for-byte. SLOW. ----
-        # Two full fresh reflection sweeps (~45 min each → ~90 min). Deliberately NOT part of
+        # Two full fresh reflection sweeps; wall time is machine-dependent (≈13 min cold on a
+        # 3-core VM, under a minute on a many-core desktop). Deliberately NOT part of
         # build_std.nu --check, which is a fast parse and must stay fast.
         if not ($MANIFEST | path exists) { print $"[L5 check] no ($MANIFEST) — run --commit first"; exit 1 }
         print $"[L5 check] proving the depth overlay rebuilds — two full reflection sweeps, ($jobs) lanes each"
@@ -234,6 +239,6 @@ def main [--only: string, --filter: string, --list: string, --limit: int = 0, --
             $"($h)  data/std/($n)"
         } | str join "\n")
         $"($m)\n" | save -f $MANIFEST
-        print $"[L5] manifest → ($MANIFEST)  (run --check to prove it rebuilds — SLOW, ~90 min)"
+        print $"[L5] manifest → ($MANIFEST)  \(run --check to prove it rebuilds — SLOW, machine-dependent\)"
     }
 }
