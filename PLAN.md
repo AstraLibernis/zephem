@@ -61,7 +61,10 @@ path · depth · kind · name · n_children · detail
   nserr). This is what makes the data self-verifying.
 - `detail` = std-relative file path (ns/nsref) · param count (fn) · module name (modref).
 
-On Zig 0.16.0: **16,631 decls / 442 files / max depth 9.** Version pinned in `data/std/PINNED`.
+On Zig 0.16.0: **16,506 decls / 310 files / max depth 8.** Version pinned in `data/std/PINNED`.
+(These are the *collapsed-map* figures — the selective re-export fix in `bcf1ce3` folded mislabeled
+namespace imports into their resolved targets, lowering the file and depth counts from the pre-collapse
+16,631 / 442 / 9.)
 
 ### Self-verifying: read it forwards, read it backwards
 
@@ -86,7 +89,7 @@ A dropped, double-counted, or truncated decl breaks conservation *and* per-node.
 
 `nodes.tsv` is ~221k tokens — too big to read whole for a narrow question. But pre-order DFS
 makes every subtree a **contiguous block**, so `src/index.zig` emits a tiny table of contents
-(`path · line · span · depth · kind · n_children`, 1,495 containers). Look up a module, read
+(`path · line · span · depth · kind · n_children`, 1,355 containers). Look up a module, read
 exactly its `[line, line+span)` rows — pure arithmetic, no scan. The index self-checks (root
 span == total rows; span == 1 + Σ child spans) and `verify_std.nu` re-derives every block's
 boundary from `nodes.tsv` depths so the map can never drift from the data.
@@ -289,9 +292,9 @@ Shipped together as one overlay: `src/enrich.zig` → `data/std/decls.tsv`
 (`path · doc · sig`), keyed to the map. `doc` = the decl's `///` lines verbatim (the std
 authors' own words); `sig` = a `fn`'s as-written signature `fn name(params) ret`. A *sparse*
 overlay — a row only where there's something to say (every fn, plus any documented decl).
-On Zig 0.16.0: 7,118 rows (5,321 signatures, 4,131 docs). **Verified** by `verify_std.nu`:
+On Zig 0.16.0: 7,143 rows (5,377 signatures, 4,167 docs). **Verified** by `verify_std.nu`:
 every overlay path exists in the map (registration), paths are unique, and signature coverage
-is *exactly* the map's set of functions (5,321 ⇔ 5,321). Byte-identical reruns.
+is *exactly* the map's set of functions (5,377 ⇔ 5,377). Byte-identical reruns.
 
 ### 4 — Examples from tests (L4) · extraction + verification
 Extract `test "..." {}` blocks and which decls they exercise. **Verify (the strong one):**
