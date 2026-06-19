@@ -1,366 +1,366 @@
 from_path	kind	raw	reason
 std.BufSet.Iterator	alias	BufSetHashMap.KeyIterator	name not in scope
 std.Io.Threaded.Csprng.seed_len	alias	std.Random.DefaultCsprng.secret_seed_length	'secret_seed_length' not a member of 'std.Random.DefaultCsprng'
-std.Io.Threaded.Wtf8ToPrefixedFileWError	alias	Wtf16ToPrefixedFileWError	head path 'std.Io.Threaded.Wtf16ToPrefixedFileWError' not in map
+std.Io.Threaded.Wtf8ToPrefixedFileWError	alias	Wtf16ToPrefixedFileWError	internal: std.Io.Threaded.Wtf16ToPrefixedFileWError
 std.Io.File.BlockSize	alias	u32	primitive
 std.Random.ChaCha.secret_seed_length	alias	Cipher.key_length	'key_length' not a member of 'std.crypto.stream.chacha.ChaCha8IETF'
 std.Target.Os.WindowsVersion.latest	alias	WindowsVersion.win11_dt	name not in scope
-std.Thread.Handle	alias	Impl.ThreadHandle	head path 'std.Thread.Impl' not in map
+std.Thread.Handle	alias	Impl.ThreadHandle	internal: std.Thread.Impl
 std.bit_set.DynamicBitSetUnmanaged.MaskInt	alias	usize	primitive
 std.bit_set.DynamicBitSet.MaskInt	alias	usize	primitive
 std.c.in_port_t	alias	u16	primitive
 std.c.cc_t	alias	u8	primitive
-std.c.sigaddset	alias	private.sigaddset	head path 'std.c.private' not in map
-std.c.sigdelset	alias	private.sigdelset	head path 'std.c.private' not in map
-std.c.sigismember	alias	private.sigismember	head path 'std.c.private' not in map
+std.c.sigaddset	alias	private.sigaddset	internal: std.c.private
+std.c.sigdelset	alias	private.sigdelset	internal: std.c.private
+std.c.sigismember	alias	private.sigismember	internal: std.c.private
 std.c.intmax_t	alias	i64	primitive
 std.c.uintmax_t	alias	u64	primitive
-std.c.AF_SUN	alias	illumos.AF_SUN	import target not expanded
-std.c.AT_SUN	alias	illumos.AT_SUN	import target not expanded
-std.c.FILE_EVENT	alias	illumos.FILE_EVENT	import target not expanded
-std.c.GETCONTEXT	alias	illumos.GETCONTEXT	import target not expanded
-std.c.GETUSTACK	alias	illumos.GETUSTACK	import target not expanded
-std.c.PORT_ALERT	alias	illumos.PORT_ALERT	import target not expanded
-std.c.PORT_SOURCE	alias	illumos.PORT_SOURCE	import target not expanded
-std.c.POSIX_FADV	alias	illumos.POSIX_FADV	import target not expanded
-std.c.SETCONTEXT	alias	illumos.SETCONTEXT	import target not expanded
-std.c.SETUSTACK	alias	illumos.GETUSTACK	import target not expanded
-std.c.SFD	alias	illumos.SFD	import target not expanded
-std.c.ctid_t	alias	illumos.ctid_t	import target not expanded
-std.c.file_obj	alias	illumos.file_obj	import target not expanded
-std.c.id_t	alias	illumos.id_t	import target not expanded
-std.c.lif_ifinfo_req	alias	illumos.lif_ifinfo_req	import target not expanded
-std.c.lif_nd_req	alias	illumos.lif_nd_req	import target not expanded
-std.c.lifreq	alias	illumos.lifreq	import target not expanded
-std.c.major_t	alias	illumos.major_t	import target not expanded
-std.c.minor_t	alias	illumos.minor_t	import target not expanded
-std.c.poolid_t	alias	illumos.poolid_t	import target not expanded
-std.c.port_notify	alias	illumos.port_notify	import target not expanded
-std.c.priority	alias	illumos.priority	import target not expanded
-std.c.procfs	alias	illumos.procfs	import target not expanded
-std.c.projid_t	alias	illumos.projid_t	import target not expanded
-std.c.signalfd_siginfo	alias	illumos.signalfd_siginfo	import target not expanded
-std.c.taskid_t	alias	illumos.taskid_t	import target not expanded
-std.c.zoneid_t	alias	illumos.zoneid_t	import target not expanded
-std.c.DirEnt	alias	haiku.DirEnt	import target not expanded
-std.c._get_next_area_info	alias	haiku._get_next_area_info	import target not expanded
-std.c._get_next_image_info	alias	haiku._get_next_image_info	import target not expanded
-std.c._get_team_info	alias	haiku._get_team_info	import target not expanded
-std.c._kern_get_current_team	alias	haiku._kern_get_current_team	import target not expanded
-std.c._kern_open_dir	alias	haiku._kern_open_dir	import target not expanded
-std.c._kern_read_dir	alias	haiku._kern_read_dir	import target not expanded
-std.c._kern_read_stat	alias	haiku._kern_read_stat	import target not expanded
-std.c._kern_rewind_dir	alias	haiku._kern_rewind_dir	import target not expanded
-std.c.area_id	alias	haiku.area_id	import target not expanded
-std.c.area_info	alias	haiku.area_info	import target not expanded
-std.c.directory_which	alias	haiku.directory_which	import target not expanded
-std.c.find_directory	alias	haiku.find_directory	import target not expanded
-std.c.find_thread	alias	haiku.find_thread	import target not expanded
-std.c.get_system_info	alias	haiku.get_system_info	import target not expanded
-std.c.image_info	alias	haiku.image_info	import target not expanded
-std.c.port_id	alias	haiku.port_id	import target not expanded
-std.c.sem_id	alias	haiku.sem_id	import target not expanded
-std.c.status_t	alias	haiku.status_t	import target not expanded
-std.c.system_info	alias	haiku.system_info	import target not expanded
-std.c.team_id	alias	haiku.team_id	import target not expanded
-std.c.team_info	alias	haiku.team_info	import target not expanded
-std.c.thread_id	alias	haiku.thread_id	import target not expanded
-std.c.AUTH	alias	openbsd.AUTH	import target not expanded
-std.c.BI	alias	openbsd.BI	import target not expanded
-std.c.HW	alias	openbsd.HW	import target not expanded
-std.c.PTHREAD_STACK_MIN	alias	openbsd.PTHREAD_STACK_MIN	import target not expanded
-std.c.TCFLUSH	alias	openbsd.TCFLUSH	import target not expanded
-std.c.TCIO	alias	openbsd.TCIO	import target not expanded
-std.c.auth_approval	alias	openbsd.auth_approval	import target not expanded
-std.c.auth_call	alias	openbsd.auth_call	import target not expanded
-std.c.auth_cat	alias	openbsd.auth_cat	import target not expanded
-std.c.auth_challenge	alias	openbsd.auth_challenge	import target not expanded
-std.c.auth_check_change	alias	openbsd.auth_check_change	import target not expanded
-std.c.auth_check_expire	alias	openbsd.auth_check_expire	import target not expanded
-std.c.auth_checknologin	alias	openbsd.auth_checknologin	import target not expanded
-std.c.auth_clean	alias	openbsd.auth_clean	import target not expanded
-std.c.auth_close	alias	openbsd.auth_close	import target not expanded
-std.c.auth_clrenv	alias	openbsd.auth_clrenv	import target not expanded
-std.c.auth_clroption	alias	openbsd.auth_clroption	import target not expanded
-std.c.auth_clroptions	alias	openbsd.auth_clroptions	import target not expanded
-std.c.auth_getitem	alias	openbsd.auth_getitem	import target not expanded
-std.c.auth_getpwd	alias	openbsd.auth_getpwd	import target not expanded
-std.c.auth_getstate	alias	openbsd.auth_getstate	import target not expanded
-std.c.auth_getvalue	alias	openbsd.auth_getvalue	import target not expanded
-std.c.auth_item_t	alias	openbsd.auth_item_t	import target not expanded
-std.c.auth_mkvalue	alias	openbsd.auth_mkvalue	import target not expanded
-std.c.auth_open	alias	openbsd.auth_open	import target not expanded
-std.c.auth_session_t	alias	openbsd.auth_session_t	import target not expanded
-std.c.auth_setdata	alias	openbsd.auth_setdata	import target not expanded
-std.c.auth_setenv	alias	openbsd.auth_setenv	import target not expanded
-std.c.auth_setitem	alias	openbsd.auth_setitem	import target not expanded
-std.c.auth_setoption	alias	openbsd.auth_setoption	import target not expanded
-std.c.auth_setpwd	alias	openbsd.auth_setpwd	import target not expanded
-std.c.auth_setstate	alias	openbsd.auth_setstate	import target not expanded
-std.c.auth_userchallenge	alias	openbsd.auth_userchallenge	import target not expanded
-std.c.auth_usercheck	alias	openbsd.auth_usercheck	import target not expanded
-std.c.auth_userokay	alias	openbsd.auth_userokay	import target not expanded
-std.c.auth_userresponse	alias	openbsd.auth_userresponse	import target not expanded
-std.c.auth_verify	alias	openbsd.auth_verify	import target not expanded
-std.c.bcrypt	alias	openbsd.bcrypt	import target not expanded
-std.c.bcrypt_checkpass	alias	openbsd.bcrypt_checkpass	import target not expanded
-std.c.bcrypt_gensalt	alias	openbsd.bcrypt_gensalt	import target not expanded
-std.c.bcrypt_newhash	alias	openbsd.bcrypt_newhash	import target not expanded
-std.c.getpwnam_shadow	alias	openbsd.getpwnam_shadow	import target not expanded
-std.c.getpwuid_shadow	alias	openbsd.getpwuid_shadow	import target not expanded
-std.c.getthrid	alias	openbsd.getthrid	import target not expanded
-std.c.login_cap_t	alias	openbsd.login_cap_t	import target not expanded
-std.c.login_close	alias	openbsd.login_close	import target not expanded
-std.c.login_getcapbool	alias	openbsd.login_getcapbool	import target not expanded
-std.c.login_getcapnum	alias	openbsd.login_getcapnum	import target not expanded
-std.c.login_getcapsize	alias	openbsd.login_getcapsize	import target not expanded
-std.c.login_getcapstr	alias	openbsd.login_getcapstr	import target not expanded
-std.c.login_getcaptime	alias	openbsd.login_getcaptime	import target not expanded
-std.c.login_getclass	alias	openbsd.login_getclass	import target not expanded
-std.c.login_getstyle	alias	openbsd.login_getstyle	import target not expanded
-std.c.pledge	alias	openbsd.pledge	import target not expanded
-std.c.pthread_spinlock_t	alias	openbsd.pthread_spinlock_t	import target not expanded
-std.c.pw_dup	alias	openbsd.pw_dup	import target not expanded
-std.c.setclasscontext	alias	openbsd.setclasscontext	import target not expanded
-std.c.setpassent	alias	openbsd.setpassent	import target not expanded
-std.c.setusercontext	alias	openbsd.setusercontext	import target not expanded
-std.c.uid_from_user	alias	openbsd.uid_from_user	import target not expanded
-std.c.unveil	alias	openbsd.unveil	import target not expanded
-std.c.user_from_uid	alias	openbsd.user_from_uid	import target not expanded
-std.c.CAP_RIGHTS_VERSION	alias	freebsd.CAP_RIGHTS_VERSION	import target not expanded
-std.c.KINFO_FILE_SIZE	alias	freebsd.KINFO_FILE_SIZE	import target not expanded
-std.c.UMTX_ABSTIME	alias	freebsd.UMTX_ABSTIME	import target not expanded
-std.c.UMTX_OP	alias	freebsd.UMTX_OP	import target not expanded
-std.c._umtx_op	alias	freebsd._umtx_op	import target not expanded
-std.c._umtx_time	alias	freebsd._umtx_time	import target not expanded
-std.c.cap_rights	alias	freebsd.cap_rights	import target not expanded
-std.c.fflags_t	alias	freebsd.fflags_t	import target not expanded
-std.c.fsblkcnt_t	alias	freebsd.fsblkcnt_t	import target not expanded
-std.c.fsfilcnt_t	alias	freebsd.fsfilcnt_t	import target not expanded
-std.c.kinfo_file	alias	freebsd.kinfo_file	import target not expanded
-std.c.kinfo_getfile	alias	freebsd.kinfo_getfile	import target not expanded
-std.c.CALENDAR_CLOCK	alias	darwin.CALENDAR_CLOCK	import target not expanded
-std.c.COPYFILE	alias	darwin.COPYFILE	import target not expanded
-std.c.CPUFAMILY	alias	darwin.CPUFAMILY	import target not expanded
-std.c.PT	alias	darwin.PT	import target not expanded
-std.c.DB_RECORDTYPE	alias	darwin.DB_RECORDTYPE	import target not expanded
-std.c.EXC	alias	darwin.EXC	import target not expanded
-std.c.EXCEPTION	alias	darwin.EXCEPTION	import target not expanded
-std.c.KEVENT	alias	darwin.KEVENT	import target not expanded
-std.c.MACH	alias	darwin.MACH	import target not expanded
-std.c.MACH_MSG_TYPE	alias	darwin.MACH_MSG_TYPE	import target not expanded
-std.c.MACH_PORT_RIGHT	alias	darwin.MACH_PORT_RIGHT	import target not expanded
-std.c.MACH_TASK_BASIC_INFO	alias	darwin.MACH_TASK_BASIC_INFO	import target not expanded
-std.c.MACH_TASK_BASIC_INFO_COUNT	alias	darwin.MACH_TASK_BASIC_INFO_COUNT	import target not expanded
-std.c.MATTR	alias	darwin.MATTR	import target not expanded
-std.c.NSVersionOfRunTimeLibrary	alias	darwin.NSVersionOfRunTimeLibrary	import target not expanded
-std.c.OPEN_MAX	alias	darwin.OPEN_MAX	import target not expanded
-std.c.OS	alias	darwin.OS	import target not expanded
-std.c.POSIX_SPAWN	alias	darwin.POSIX_SPAWN	import target not expanded
-std.c.SYSPROTO_EVENT	alias	darwin.SYSPROTO_EVENT	import target not expanded
-std.c.SYSPROTO_CONTROL	alias	darwin.SYSPROTO_CONTROL	import target not expanded
-std.c.TASK	alias	darwin.TASK	import target not expanded
-std.c.TASK_NULL	alias	darwin.TASK_NULL	import target not expanded
-std.c.TASK_VM_INFO	alias	darwin.TASK_VM_INFO	import target not expanded
-std.c.TASK_VM_INFO_COUNT	alias	darwin.TASK_VM_INFO_COUNT	import target not expanded
-std.c.THREAD	alias	darwin.THREAD	import target not expanded
-std.c.THREAD_BASIC_INFO	alias	darwin.THREAD_BASIC_INFO	import target not expanded
-std.c.THREAD_BASIC_INFO_COUNT	alias	darwin.THREAD_BASIC_INFO_COUNT	import target not expanded
-std.c.THREAD_IDENTIFIER_INFO_COUNT	alias	darwin.THREAD_IDENTIFIER_INFO_COUNT	import target not expanded
-std.c.THREAD_NULL	alias	darwin.THREAD_NULL	import target not expanded
-std.c.THREAD_STATE_NONE	alias	darwin.THREAD_STATE_NONE	import target not expanded
-std.c.UL	alias	darwin.UL	import target not expanded
-std.c.VM	alias	darwin.VM	import target not expanded
-std.c._NSGetExecutablePath	alias	darwin._NSGetExecutablePath	import target not expanded
-std.c.__getdirentries64	alias	darwin.__getdirentries64	import target not expanded
-std.c.__ulock_wait	alias	darwin.__ulock_wait	import target not expanded
-std.c.__ulock_wait2	alias	darwin.__ulock_wait2	import target not expanded
-std.c.__ulock_wake	alias	darwin.__ulock_wake	import target not expanded
-std.c._dyld_get_image_header	alias	darwin._dyld_get_image_header	import target not expanded
-std.c._dyld_get_image_name	alias	darwin._dyld_get_image_name	import target not expanded
-std.c._dyld_get_image_vmaddr_slide	alias	darwin._dyld_get_image_vmaddr_slide	import target not expanded
-std.c._dyld_image_count	alias	darwin._dyld_image_count	import target not expanded
-std.c._dyld_get_image_header_containing_address	alias	darwin._dyld_get_image_header_containing_address	import target not expanded
-std.c.dyld_image_path_containing_address	alias	darwin.dyld_image_path_containing_address	import target not expanded
-std.c._host_page_size	alias	darwin._host_page_size	import target not expanded
-std.c.boolean_t	alias	darwin.boolean_t	import target not expanded
-std.c.clock_get_time	alias	darwin.clock_get_time	import target not expanded
-std.c.clock_serv_t	alias	darwin.clock_serv_t	import target not expanded
-std.c.clock_res_t	alias	darwin.clock_res_t	import target not expanded
-std.c.dispatch	alias	darwin.dispatch	import target not expanded
-std.c.fcopyfile	alias	darwin.fcopyfile	import target not expanded
-std.c.host_t	alias	darwin.host_t	import target not expanded
-std.c.integer_t	alias	darwin.integer_t	import target not expanded
-std.c.ipc_space_t	alias	darwin.ipc_space_t	import target not expanded
-std.c.ipc_space_port_t	alias	darwin.ipc_space_port_t	import target not expanded
-std.c.kern_return_t	alias	darwin.kern_return_t	import target not expanded
-std.c.vm_size_t	alias	darwin.vm_size_t	import target not expanded
-std.c.kevent64	alias	darwin.kevent64	import target not expanded
-std.c.kevent64_s	alias	darwin.kevent64_s	import target not expanded
-std.c.mach_absolute_time	alias	darwin.mach_absolute_time	import target not expanded
-std.c.mach_continuous_time	alias	darwin.mach_continuous_time	import target not expanded
-std.c.mach_hdr	alias	darwin.mach_hdr	import target not expanded
-std.c.mach_host_self	alias	darwin.mach_host_self	import target not expanded
-std.c.mach_msg	alias	darwin.mach_msg	import target not expanded
-std.c.mach_msg_return_t	alias	darwin.mach_msg_return_t	import target not expanded
-std.c.mach_msg_type_number_t	alias	darwin.mach_msg_type_number_t	import target not expanded
-std.c.mach_port_allocate	alias	darwin.mach_port_allocate	import target not expanded
-std.c.mach_port_array_t	alias	darwin.mach_port_array_t	import target not expanded
-std.c.mach_port_deallocate	alias	darwin.mach_port_deallocate	import target not expanded
-std.c.mach_port_insert_right	alias	darwin.mach_port_insert_right	import target not expanded
-std.c.mach_port_name_t	alias	darwin.mach_port_name_t	import target not expanded
-std.c.mach_port_t	alias	darwin.mach_port_t	import target not expanded
-std.c.mach_task_basic_info	alias	darwin.mach_task_basic_info	import target not expanded
-std.c.mach_task_self	alias	darwin.mach_task_self	import target not expanded
-std.c.mach_timebase_info	alias	darwin.mach_timebase_info	import target not expanded
-std.c.mach_timebase_info_data	alias	darwin.mach_timebase_info_data	import target not expanded
-std.c.mach_timespec_t	alias	darwin.mach_timespec_t	import target not expanded
-std.c.mach_vm_address_t	alias	darwin.mach_vm_address_t	import target not expanded
-std.c.mach_vm_protect	alias	darwin.mach_vm_protect	import target not expanded
-std.c.mach_vm_read	alias	darwin.mach_vm_read	import target not expanded
-std.c.mach_vm_region	alias	darwin.mach_vm_region	import target not expanded
-std.c.mach_vm_region_recurse	alias	darwin.mach_vm_region_recurse	import target not expanded
-std.c.mach_vm_size_t	alias	darwin.mach_vm_size_t	import target not expanded
-std.c.mach_vm_write	alias	darwin.mach_vm_write	import target not expanded
-std.c.natural_t	alias	darwin.natural_t	import target not expanded
-std.c.os_log_create	alias	darwin.os_log_create	import target not expanded
-std.c.os_log_t	alias	darwin.os_log_t	import target not expanded
-std.c.os_log_type_enabled	alias	darwin.os_log_type_enabled	import target not expanded
-std.c.os_log_type_t	alias	darwin.os_log_type_t	import target not expanded
-std.c.os_signpost_enabled	alias	darwin.os_signpost_enabled	import target not expanded
-std.c.os_signpost_id_generate	alias	darwin.os_signpost_id_generate	import target not expanded
-std.c.os_signpost_id_make_with_pointer	alias	darwin.os_signpost_id_make_with_pointer	import target not expanded
-std.c.os_signpost_id_t	alias	darwin.os_signpost_id_t	import target not expanded
-std.c.os_signpost_interval_begin	alias	darwin.os_signpost_interval_begin	import target not expanded
-std.c.os_signpost_interval_end	alias	darwin.os_signpost_interval_end	import target not expanded
-std.c.os_unfair_lock	alias	darwin.os_unfair_lock	import target not expanded
-std.c.os_unfair_lock_assert_not_owner	alias	darwin.os_unfair_lock_assert_not_owner	import target not expanded
-std.c.os_unfair_lock_assert_owner	alias	darwin.os_unfair_lock_assert_owner	import target not expanded
-std.c.os_unfair_lock_lock	alias	darwin.os_unfair_lock_lock	import target not expanded
-std.c.os_unfair_lock_t	alias	darwin.os_unfair_lock_t	import target not expanded
-std.c.os_unfair_lock_trylock	alias	darwin.os_unfair_lock_trylock	import target not expanded
-std.c.os_unfair_lock_unlock	alias	darwin.os_unfair_lock_unlock	import target not expanded
-std.c.pid_for_task	alias	darwin.pid_for_task	import target not expanded
-std.c.posix_spawn	alias	darwin.posix_spawn	import target not expanded
-std.c.posix_spawn_file_actions_addchdir_np	alias	darwin.posix_spawn_file_actions_addchdir_np	import target not expanded
-std.c.posix_spawn_file_actions_addclose	alias	darwin.posix_spawn_file_actions_addclose	import target not expanded
-std.c.posix_spawn_file_actions_adddup2	alias	darwin.posix_spawn_file_actions_adddup2	import target not expanded
-std.c.posix_spawn_file_actions_addfchdir_np	alias	darwin.posix_spawn_file_actions_addfchdir_np	import target not expanded
-std.c.posix_spawn_file_actions_addinherit_np	alias	darwin.posix_spawn_file_actions_addinherit_np	import target not expanded
-std.c.posix_spawn_file_actions_addopen	alias	darwin.posix_spawn_file_actions_addopen	import target not expanded
-std.c.posix_spawn_file_actions_destroy	alias	darwin.posix_spawn_file_actions_destroy	import target not expanded
-std.c.posix_spawn_file_actions_init	alias	darwin.posix_spawn_file_actions_init	import target not expanded
-std.c.posix_spawn_file_actions_t	alias	darwin.posix_spawn_file_actions_t	import target not expanded
-std.c.posix_spawnattr_destroy	alias	darwin.posix_spawnattr_destroy	import target not expanded
-std.c.posix_spawnattr_getflags	alias	darwin.posix_spawnattr_getflags	import target not expanded
-std.c.posix_spawnattr_init	alias	darwin.posix_spawnattr_init	import target not expanded
-std.c.posix_spawnattr_setflags	alias	darwin.posix_spawnattr_setflags	import target not expanded
-std.c.posix_spawnattr_t	alias	darwin.posix_spawnattr_t	import target not expanded
-std.c.posix_spawnp	alias	darwin.posix_spawnp	import target not expanded
-std.c.pthread_attr_get_qos_class_np	alias	darwin.pthread_attr_get_qos_class_np	import target not expanded
-std.c.pthread_attr_set_qos_class_np	alias	darwin.pthread_attr_set_qos_class_np	import target not expanded
-std.c.pthread_get_qos_class_np	alias	darwin.pthread_get_qos_class_np	import target not expanded
-std.c.pthread_set_qos_class_self_np	alias	darwin.pthread_set_qos_class_self_np	import target not expanded
-std.c.qos_class_t	alias	darwin.qos_class_t	import target not expanded
-std.c.task_flavor_t	alias	darwin.task_flavor_t	import target not expanded
-std.c.task_for_pid	alias	darwin.task_for_pid	import target not expanded
-std.c.task_get_exception_ports	alias	darwin.task_get_exception_ports	import target not expanded
-std.c.task_info	alias	darwin.task_info	import target not expanded
-std.c.task_info_t	alias	darwin.task_info_t	import target not expanded
-std.c.task_name_t	alias	darwin.task_name_t	import target not expanded
-std.c.task_resume	alias	darwin.task_resume	import target not expanded
-std.c.task_set_exception_ports	alias	darwin.task_set_exception_ports	import target not expanded
-std.c.task_suspend	alias	darwin.task_suspend	import target not expanded
-std.c.task_threads	alias	darwin.task_threads	import target not expanded
-std.c.task_vm_info_data_t	alias	darwin.task_vm_info_data_t	import target not expanded
-std.c.thread_basic_info	alias	darwin.thread_basic_info	import target not expanded
-std.c.thread_get_state	alias	darwin.thread_get_state	import target not expanded
-std.c.thread_identifier_info	alias	darwin.thread_identifier_info	import target not expanded
-std.c.thread_info	alias	darwin.thread_info	import target not expanded
-std.c.thread_info_t	alias	darwin.thread_info_t	import target not expanded
-std.c.thread_resume	alias	darwin.thread_resume	import target not expanded
-std.c.thread_set_state	alias	darwin.thread_set_state	import target not expanded
-std.c.vm_address_t	alias	darwin.vm_address_t	import target not expanded
-std.c.vm_deallocate	alias	darwin.vm_deallocate	import target not expanded
-std.c.vm_machine_attribute	alias	darwin.vm_machine_attribute	import target not expanded
-std.c.vm_machine_attribute_t	alias	darwin.vm_machine_attribute_t	import target not expanded
-std.c.vm_machine_attribute_val_t	alias	darwin.vm_machine_attribute_val_t	import target not expanded
-std.c.vm_map_t	alias	darwin.vm_map_t	import target not expanded
-std.c.vm_offset_t	alias	darwin.vm_offset_t	import target not expanded
-std.c.vm_prot_t	alias	darwin.vm_prot_t	import target not expanded
-std.c.vm_region_basic_info_64	alias	darwin.vm_region_basic_info_64	import target not expanded
-std.c.vm_region_extended_info	alias	darwin.vm_region_extended_info	import target not expanded
-std.c.vm_region_info_t	alias	darwin.vm_region_info_t	import target not expanded
-std.c.vm_region_recurse_info_t	alias	darwin.vm_region_recurse_info_t	import target not expanded
-std.c.vm_region_submap_info_64	alias	darwin.vm_region_submap_info_64	import target not expanded
-std.c.vm_region_submap_short_info_64	alias	darwin.vm_region_submap_short_info_64	import target not expanded
-std.c.vm_region_top_info	alias	darwin.vm_region_top_info	import target not expanded
-std.c.exception_behavior_array_t	alias	darwin.exception_behavior_array_t	import target not expanded
-std.c.exception_behavior_t	alias	darwin.exception_behavior_t	import target not expanded
-std.c.exception_data_t	alias	darwin.exception_data_t	import target not expanded
-std.c.exception_data_type_t	alias	darwin.exception_data_type_t	import target not expanded
-std.c.exception_flavor_array_t	alias	darwin.exception_flavor_array_t	import target not expanded
-std.c.exception_handler_array_t	alias	darwin.exception_handler_array_t	import target not expanded
-std.c.exception_handler_t	alias	darwin.exception_handler_t	import target not expanded
-std.c.exception_mask_array_t	alias	darwin.exception_mask_array_t	import target not expanded
-std.c.exception_mask_t	alias	darwin.exception_mask_t	import target not expanded
-std.c.exception_port_array_t	alias	darwin.exception_port_array_t	import target not expanded
-std.c.exception_port_t	alias	darwin.exception_port_t	import target not expanded
-std.c.exception_type_t	alias	darwin.exception_type_t	import target not expanded
-std.c.mach_exception_data_t	alias	darwin.mach_exception_data_t	import target not expanded
-std.c.mach_exception_data_type_t	alias	darwin.mach_exception_data_type_t	import target not expanded
-std.c.mach_msg_bits_t	alias	darwin.mach_msg_bits_t	import target not expanded
-std.c.mach_msg_id_t	alias	darwin.mach_msg_id_t	import target not expanded
-std.c.mach_msg_header_t	alias	darwin.mach_msg_header_t	import target not expanded
-std.c.mach_msg_option_t	alias	darwin.mach_msg_option_t	import target not expanded
-std.c.mach_msg_size_t	alias	darwin.mach_msg_size_t	import target not expanded
-std.c.mach_msg_timeout_t	alias	darwin.mach_msg_timeout_t	import target not expanded
-std.c.mach_msg_type_name_t	alias	darwin.mach_msg_type_name_t	import target not expanded
-std.c.mach_port_right_t	alias	darwin.mach_port_right_t	import target not expanded
-std.c.memory_object_offset_t	alias	darwin.memory_object_offset_t	import target not expanded
-std.c.policy_t	alias	darwin.policy_t	import target not expanded
-std.c.task_policy_flavor_t	alias	darwin.task_policy_flavor_t	import target not expanded
-std.c.task_policy_t	alias	darwin.task_policy_t	import target not expanded
-std.c.task_read_t	alias	darwin.task_read_t	import target not expanded
-std.c.task_t	alias	darwin.task_t	import target not expanded
-std.c.thread_act_t	alias	darwin.thread_act_t	import target not expanded
-std.c.thread_flavor_t	alias	darwin.thread_flavor_t	import target not expanded
-std.c.thread_port_t	alias	darwin.thread_port_t	import target not expanded
-std.c.thread_state_flavor_t	alias	darwin.thread_state_flavor_t	import target not expanded
-std.c.thread_state_t	alias	darwin.thread_state_t	import target not expanded
-std.c.thread_t	alias	darwin.thread_t	import target not expanded
-std.c.time_value_t	alias	darwin.time_value_t	import target not expanded
-std.c.vm32_object_id_t	alias	darwin.vm32_object_id_t	import target not expanded
-std.c.vm_behavior_t	alias	darwin.vm_behavior_t	import target not expanded
-std.c.vm_inherit_t	alias	darwin.vm_inherit_t	import target not expanded
-std.c.vm_map_read_t	alias	darwin.vm_map_read_t	import target not expanded
-std.c.vm_object_id_t	alias	darwin.vm_object_id_t	import target not expanded
-std.c.vm_region_flavor_t	alias	darwin.vm_region_flavor_t	import target not expanded
-std.c._ksiginfo	alias	netbsd._ksiginfo	import target not expanded
-std.c._lwp_self	alias	netbsd._lwp_self	import target not expanded
-std.c._lwp_park	alias	netbsd.___lwp_park60	import target not expanded
-std.c._lwp_unpark	alias	netbsd._lwp_unpark	import target not expanded
-std.c._lwp_unpark_all	alias	netbsd._lwp_unpark_all	import target not expanded
-std.c.lwpid_t	alias	netbsd.lwpid_t	import target not expanded
-std.c.lwp_gettid	alias	dragonfly.lwp_gettid	import target not expanded
-std.c.umtx_sleep	alias	dragonfly.umtx_sleep	import target not expanded
-std.c.umtx_wakeup	alias	dragonfly.umtx_wakeup	import target not expanded
-std.c.PERF_EVENT	alias	serenity.PERF_EVENT	import target not expanded
-std.c.disown	alias	serenity.disown	import target not expanded
-std.c.profiling_enable	alias	serenity.profiling_enable	import target not expanded
-std.c.profiling_disable	alias	serenity.profiling_disable	import target not expanded
-std.c.profiling_free_buffer	alias	serenity.profiling_free_buffer	import target not expanded
-std.c.futex_wait	alias	serenity.futex_wait	import target not expanded
-std.c.futex_wake	alias	serenity.futex_wake	import target not expanded
-std.c.purge	alias	serenity.purge	import target not expanded
-std.c.perf_event	alias	serenity.perf_event	import target not expanded
-std.c.perf_register_string	alias	serenity.perf_register_string	import target not expanded
-std.c.get_stack_bounds	alias	serenity.get_stack_bounds	import target not expanded
-std.c.anon_create	alias	serenity.anon_create	import target not expanded
-std.c.serenity_readlink	alias	serenity.serenity_readlink	import target not expanded
-std.c.serenity_open	alias	serenity.serenity_open	import target not expanded
-std.c.getkeymap	alias	serenity.getkeymap	import target not expanded
-std.c.setkeymap	alias	serenity.setkeymap	import target not expanded
+std.c.AF_SUN	alias	illumos.AF_SUN	internal: private import 'c/illumos.zig'
+std.c.AT_SUN	alias	illumos.AT_SUN	internal: private import 'c/illumos.zig'
+std.c.FILE_EVENT	alias	illumos.FILE_EVENT	internal: private import 'c/illumos.zig'
+std.c.GETCONTEXT	alias	illumos.GETCONTEXT	internal: private import 'c/illumos.zig'
+std.c.GETUSTACK	alias	illumos.GETUSTACK	internal: private import 'c/illumos.zig'
+std.c.PORT_ALERT	alias	illumos.PORT_ALERT	internal: private import 'c/illumos.zig'
+std.c.PORT_SOURCE	alias	illumos.PORT_SOURCE	internal: private import 'c/illumos.zig'
+std.c.POSIX_FADV	alias	illumos.POSIX_FADV	internal: private import 'c/illumos.zig'
+std.c.SETCONTEXT	alias	illumos.SETCONTEXT	internal: private import 'c/illumos.zig'
+std.c.SETUSTACK	alias	illumos.GETUSTACK	internal: private import 'c/illumos.zig'
+std.c.SFD	alias	illumos.SFD	internal: private import 'c/illumos.zig'
+std.c.ctid_t	alias	illumos.ctid_t	internal: private import 'c/illumos.zig'
+std.c.file_obj	alias	illumos.file_obj	internal: private import 'c/illumos.zig'
+std.c.id_t	alias	illumos.id_t	internal: private import 'c/illumos.zig'
+std.c.lif_ifinfo_req	alias	illumos.lif_ifinfo_req	internal: private import 'c/illumos.zig'
+std.c.lif_nd_req	alias	illumos.lif_nd_req	internal: private import 'c/illumos.zig'
+std.c.lifreq	alias	illumos.lifreq	internal: private import 'c/illumos.zig'
+std.c.major_t	alias	illumos.major_t	internal: private import 'c/illumos.zig'
+std.c.minor_t	alias	illumos.minor_t	internal: private import 'c/illumos.zig'
+std.c.poolid_t	alias	illumos.poolid_t	internal: private import 'c/illumos.zig'
+std.c.port_notify	alias	illumos.port_notify	internal: private import 'c/illumos.zig'
+std.c.priority	alias	illumos.priority	internal: private import 'c/illumos.zig'
+std.c.procfs	alias	illumos.procfs	internal: private import 'c/illumos.zig'
+std.c.projid_t	alias	illumos.projid_t	internal: private import 'c/illumos.zig'
+std.c.signalfd_siginfo	alias	illumos.signalfd_siginfo	internal: private import 'c/illumos.zig'
+std.c.taskid_t	alias	illumos.taskid_t	internal: private import 'c/illumos.zig'
+std.c.zoneid_t	alias	illumos.zoneid_t	internal: private import 'c/illumos.zig'
+std.c.DirEnt	alias	haiku.DirEnt	internal: private import 'c/haiku.zig'
+std.c._get_next_area_info	alias	haiku._get_next_area_info	internal: private import 'c/haiku.zig'
+std.c._get_next_image_info	alias	haiku._get_next_image_info	internal: private import 'c/haiku.zig'
+std.c._get_team_info	alias	haiku._get_team_info	internal: private import 'c/haiku.zig'
+std.c._kern_get_current_team	alias	haiku._kern_get_current_team	internal: private import 'c/haiku.zig'
+std.c._kern_open_dir	alias	haiku._kern_open_dir	internal: private import 'c/haiku.zig'
+std.c._kern_read_dir	alias	haiku._kern_read_dir	internal: private import 'c/haiku.zig'
+std.c._kern_read_stat	alias	haiku._kern_read_stat	internal: private import 'c/haiku.zig'
+std.c._kern_rewind_dir	alias	haiku._kern_rewind_dir	internal: private import 'c/haiku.zig'
+std.c.area_id	alias	haiku.area_id	internal: private import 'c/haiku.zig'
+std.c.area_info	alias	haiku.area_info	internal: private import 'c/haiku.zig'
+std.c.directory_which	alias	haiku.directory_which	internal: private import 'c/haiku.zig'
+std.c.find_directory	alias	haiku.find_directory	internal: private import 'c/haiku.zig'
+std.c.find_thread	alias	haiku.find_thread	internal: private import 'c/haiku.zig'
+std.c.get_system_info	alias	haiku.get_system_info	internal: private import 'c/haiku.zig'
+std.c.image_info	alias	haiku.image_info	internal: private import 'c/haiku.zig'
+std.c.port_id	alias	haiku.port_id	internal: private import 'c/haiku.zig'
+std.c.sem_id	alias	haiku.sem_id	internal: private import 'c/haiku.zig'
+std.c.status_t	alias	haiku.status_t	internal: private import 'c/haiku.zig'
+std.c.system_info	alias	haiku.system_info	internal: private import 'c/haiku.zig'
+std.c.team_id	alias	haiku.team_id	internal: private import 'c/haiku.zig'
+std.c.team_info	alias	haiku.team_info	internal: private import 'c/haiku.zig'
+std.c.thread_id	alias	haiku.thread_id	internal: private import 'c/haiku.zig'
+std.c.AUTH	alias	openbsd.AUTH	internal: private import 'c/openbsd.zig'
+std.c.BI	alias	openbsd.BI	internal: private import 'c/openbsd.zig'
+std.c.HW	alias	openbsd.HW	internal: private import 'c/openbsd.zig'
+std.c.PTHREAD_STACK_MIN	alias	openbsd.PTHREAD_STACK_MIN	internal: private import 'c/openbsd.zig'
+std.c.TCFLUSH	alias	openbsd.TCFLUSH	internal: private import 'c/openbsd.zig'
+std.c.TCIO	alias	openbsd.TCIO	internal: private import 'c/openbsd.zig'
+std.c.auth_approval	alias	openbsd.auth_approval	internal: private import 'c/openbsd.zig'
+std.c.auth_call	alias	openbsd.auth_call	internal: private import 'c/openbsd.zig'
+std.c.auth_cat	alias	openbsd.auth_cat	internal: private import 'c/openbsd.zig'
+std.c.auth_challenge	alias	openbsd.auth_challenge	internal: private import 'c/openbsd.zig'
+std.c.auth_check_change	alias	openbsd.auth_check_change	internal: private import 'c/openbsd.zig'
+std.c.auth_check_expire	alias	openbsd.auth_check_expire	internal: private import 'c/openbsd.zig'
+std.c.auth_checknologin	alias	openbsd.auth_checknologin	internal: private import 'c/openbsd.zig'
+std.c.auth_clean	alias	openbsd.auth_clean	internal: private import 'c/openbsd.zig'
+std.c.auth_close	alias	openbsd.auth_close	internal: private import 'c/openbsd.zig'
+std.c.auth_clrenv	alias	openbsd.auth_clrenv	internal: private import 'c/openbsd.zig'
+std.c.auth_clroption	alias	openbsd.auth_clroption	internal: private import 'c/openbsd.zig'
+std.c.auth_clroptions	alias	openbsd.auth_clroptions	internal: private import 'c/openbsd.zig'
+std.c.auth_getitem	alias	openbsd.auth_getitem	internal: private import 'c/openbsd.zig'
+std.c.auth_getpwd	alias	openbsd.auth_getpwd	internal: private import 'c/openbsd.zig'
+std.c.auth_getstate	alias	openbsd.auth_getstate	internal: private import 'c/openbsd.zig'
+std.c.auth_getvalue	alias	openbsd.auth_getvalue	internal: private import 'c/openbsd.zig'
+std.c.auth_item_t	alias	openbsd.auth_item_t	internal: private import 'c/openbsd.zig'
+std.c.auth_mkvalue	alias	openbsd.auth_mkvalue	internal: private import 'c/openbsd.zig'
+std.c.auth_open	alias	openbsd.auth_open	internal: private import 'c/openbsd.zig'
+std.c.auth_session_t	alias	openbsd.auth_session_t	internal: private import 'c/openbsd.zig'
+std.c.auth_setdata	alias	openbsd.auth_setdata	internal: private import 'c/openbsd.zig'
+std.c.auth_setenv	alias	openbsd.auth_setenv	internal: private import 'c/openbsd.zig'
+std.c.auth_setitem	alias	openbsd.auth_setitem	internal: private import 'c/openbsd.zig'
+std.c.auth_setoption	alias	openbsd.auth_setoption	internal: private import 'c/openbsd.zig'
+std.c.auth_setpwd	alias	openbsd.auth_setpwd	internal: private import 'c/openbsd.zig'
+std.c.auth_setstate	alias	openbsd.auth_setstate	internal: private import 'c/openbsd.zig'
+std.c.auth_userchallenge	alias	openbsd.auth_userchallenge	internal: private import 'c/openbsd.zig'
+std.c.auth_usercheck	alias	openbsd.auth_usercheck	internal: private import 'c/openbsd.zig'
+std.c.auth_userokay	alias	openbsd.auth_userokay	internal: private import 'c/openbsd.zig'
+std.c.auth_userresponse	alias	openbsd.auth_userresponse	internal: private import 'c/openbsd.zig'
+std.c.auth_verify	alias	openbsd.auth_verify	internal: private import 'c/openbsd.zig'
+std.c.bcrypt	alias	openbsd.bcrypt	internal: private import 'c/openbsd.zig'
+std.c.bcrypt_checkpass	alias	openbsd.bcrypt_checkpass	internal: private import 'c/openbsd.zig'
+std.c.bcrypt_gensalt	alias	openbsd.bcrypt_gensalt	internal: private import 'c/openbsd.zig'
+std.c.bcrypt_newhash	alias	openbsd.bcrypt_newhash	internal: private import 'c/openbsd.zig'
+std.c.getpwnam_shadow	alias	openbsd.getpwnam_shadow	internal: private import 'c/openbsd.zig'
+std.c.getpwuid_shadow	alias	openbsd.getpwuid_shadow	internal: private import 'c/openbsd.zig'
+std.c.getthrid	alias	openbsd.getthrid	internal: private import 'c/openbsd.zig'
+std.c.login_cap_t	alias	openbsd.login_cap_t	internal: private import 'c/openbsd.zig'
+std.c.login_close	alias	openbsd.login_close	internal: private import 'c/openbsd.zig'
+std.c.login_getcapbool	alias	openbsd.login_getcapbool	internal: private import 'c/openbsd.zig'
+std.c.login_getcapnum	alias	openbsd.login_getcapnum	internal: private import 'c/openbsd.zig'
+std.c.login_getcapsize	alias	openbsd.login_getcapsize	internal: private import 'c/openbsd.zig'
+std.c.login_getcapstr	alias	openbsd.login_getcapstr	internal: private import 'c/openbsd.zig'
+std.c.login_getcaptime	alias	openbsd.login_getcaptime	internal: private import 'c/openbsd.zig'
+std.c.login_getclass	alias	openbsd.login_getclass	internal: private import 'c/openbsd.zig'
+std.c.login_getstyle	alias	openbsd.login_getstyle	internal: private import 'c/openbsd.zig'
+std.c.pledge	alias	openbsd.pledge	internal: private import 'c/openbsd.zig'
+std.c.pthread_spinlock_t	alias	openbsd.pthread_spinlock_t	internal: private import 'c/openbsd.zig'
+std.c.pw_dup	alias	openbsd.pw_dup	internal: private import 'c/openbsd.zig'
+std.c.setclasscontext	alias	openbsd.setclasscontext	internal: private import 'c/openbsd.zig'
+std.c.setpassent	alias	openbsd.setpassent	internal: private import 'c/openbsd.zig'
+std.c.setusercontext	alias	openbsd.setusercontext	internal: private import 'c/openbsd.zig'
+std.c.uid_from_user	alias	openbsd.uid_from_user	internal: private import 'c/openbsd.zig'
+std.c.unveil	alias	openbsd.unveil	internal: private import 'c/openbsd.zig'
+std.c.user_from_uid	alias	openbsd.user_from_uid	internal: private import 'c/openbsd.zig'
+std.c.CAP_RIGHTS_VERSION	alias	freebsd.CAP_RIGHTS_VERSION	internal: private import 'c/freebsd.zig'
+std.c.KINFO_FILE_SIZE	alias	freebsd.KINFO_FILE_SIZE	internal: private import 'c/freebsd.zig'
+std.c.UMTX_ABSTIME	alias	freebsd.UMTX_ABSTIME	internal: private import 'c/freebsd.zig'
+std.c.UMTX_OP	alias	freebsd.UMTX_OP	internal: private import 'c/freebsd.zig'
+std.c._umtx_op	alias	freebsd._umtx_op	internal: private import 'c/freebsd.zig'
+std.c._umtx_time	alias	freebsd._umtx_time	internal: private import 'c/freebsd.zig'
+std.c.cap_rights	alias	freebsd.cap_rights	internal: private import 'c/freebsd.zig'
+std.c.fflags_t	alias	freebsd.fflags_t	internal: private import 'c/freebsd.zig'
+std.c.fsblkcnt_t	alias	freebsd.fsblkcnt_t	internal: private import 'c/freebsd.zig'
+std.c.fsfilcnt_t	alias	freebsd.fsfilcnt_t	internal: private import 'c/freebsd.zig'
+std.c.kinfo_file	alias	freebsd.kinfo_file	internal: private import 'c/freebsd.zig'
+std.c.kinfo_getfile	alias	freebsd.kinfo_getfile	internal: private import 'c/freebsd.zig'
+std.c.CALENDAR_CLOCK	alias	darwin.CALENDAR_CLOCK	internal: private import 'c/darwin.zig'
+std.c.COPYFILE	alias	darwin.COPYFILE	internal: private import 'c/darwin.zig'
+std.c.CPUFAMILY	alias	darwin.CPUFAMILY	internal: private import 'c/darwin.zig'
+std.c.PT	alias	darwin.PT	internal: private import 'c/darwin.zig'
+std.c.DB_RECORDTYPE	alias	darwin.DB_RECORDTYPE	internal: private import 'c/darwin.zig'
+std.c.EXC	alias	darwin.EXC	internal: private import 'c/darwin.zig'
+std.c.EXCEPTION	alias	darwin.EXCEPTION	internal: private import 'c/darwin.zig'
+std.c.KEVENT	alias	darwin.KEVENT	internal: private import 'c/darwin.zig'
+std.c.MACH	alias	darwin.MACH	internal: private import 'c/darwin.zig'
+std.c.MACH_MSG_TYPE	alias	darwin.MACH_MSG_TYPE	internal: private import 'c/darwin.zig'
+std.c.MACH_PORT_RIGHT	alias	darwin.MACH_PORT_RIGHT	internal: private import 'c/darwin.zig'
+std.c.MACH_TASK_BASIC_INFO	alias	darwin.MACH_TASK_BASIC_INFO	internal: private import 'c/darwin.zig'
+std.c.MACH_TASK_BASIC_INFO_COUNT	alias	darwin.MACH_TASK_BASIC_INFO_COUNT	internal: private import 'c/darwin.zig'
+std.c.MATTR	alias	darwin.MATTR	internal: private import 'c/darwin.zig'
+std.c.NSVersionOfRunTimeLibrary	alias	darwin.NSVersionOfRunTimeLibrary	internal: private import 'c/darwin.zig'
+std.c.OPEN_MAX	alias	darwin.OPEN_MAX	internal: private import 'c/darwin.zig'
+std.c.OS	alias	darwin.OS	internal: private import 'c/darwin.zig'
+std.c.POSIX_SPAWN	alias	darwin.POSIX_SPAWN	internal: private import 'c/darwin.zig'
+std.c.SYSPROTO_EVENT	alias	darwin.SYSPROTO_EVENT	internal: private import 'c/darwin.zig'
+std.c.SYSPROTO_CONTROL	alias	darwin.SYSPROTO_CONTROL	internal: private import 'c/darwin.zig'
+std.c.TASK	alias	darwin.TASK	internal: private import 'c/darwin.zig'
+std.c.TASK_NULL	alias	darwin.TASK_NULL	internal: private import 'c/darwin.zig'
+std.c.TASK_VM_INFO	alias	darwin.TASK_VM_INFO	internal: private import 'c/darwin.zig'
+std.c.TASK_VM_INFO_COUNT	alias	darwin.TASK_VM_INFO_COUNT	internal: private import 'c/darwin.zig'
+std.c.THREAD	alias	darwin.THREAD	internal: private import 'c/darwin.zig'
+std.c.THREAD_BASIC_INFO	alias	darwin.THREAD_BASIC_INFO	internal: private import 'c/darwin.zig'
+std.c.THREAD_BASIC_INFO_COUNT	alias	darwin.THREAD_BASIC_INFO_COUNT	internal: private import 'c/darwin.zig'
+std.c.THREAD_IDENTIFIER_INFO_COUNT	alias	darwin.THREAD_IDENTIFIER_INFO_COUNT	internal: private import 'c/darwin.zig'
+std.c.THREAD_NULL	alias	darwin.THREAD_NULL	internal: private import 'c/darwin.zig'
+std.c.THREAD_STATE_NONE	alias	darwin.THREAD_STATE_NONE	internal: private import 'c/darwin.zig'
+std.c.UL	alias	darwin.UL	internal: private import 'c/darwin.zig'
+std.c.VM	alias	darwin.VM	internal: private import 'c/darwin.zig'
+std.c._NSGetExecutablePath	alias	darwin._NSGetExecutablePath	internal: private import 'c/darwin.zig'
+std.c.__getdirentries64	alias	darwin.__getdirentries64	internal: private import 'c/darwin.zig'
+std.c.__ulock_wait	alias	darwin.__ulock_wait	internal: private import 'c/darwin.zig'
+std.c.__ulock_wait2	alias	darwin.__ulock_wait2	internal: private import 'c/darwin.zig'
+std.c.__ulock_wake	alias	darwin.__ulock_wake	internal: private import 'c/darwin.zig'
+std.c._dyld_get_image_header	alias	darwin._dyld_get_image_header	internal: private import 'c/darwin.zig'
+std.c._dyld_get_image_name	alias	darwin._dyld_get_image_name	internal: private import 'c/darwin.zig'
+std.c._dyld_get_image_vmaddr_slide	alias	darwin._dyld_get_image_vmaddr_slide	internal: private import 'c/darwin.zig'
+std.c._dyld_image_count	alias	darwin._dyld_image_count	internal: private import 'c/darwin.zig'
+std.c._dyld_get_image_header_containing_address	alias	darwin._dyld_get_image_header_containing_address	internal: private import 'c/darwin.zig'
+std.c.dyld_image_path_containing_address	alias	darwin.dyld_image_path_containing_address	internal: private import 'c/darwin.zig'
+std.c._host_page_size	alias	darwin._host_page_size	internal: private import 'c/darwin.zig'
+std.c.boolean_t	alias	darwin.boolean_t	internal: private import 'c/darwin.zig'
+std.c.clock_get_time	alias	darwin.clock_get_time	internal: private import 'c/darwin.zig'
+std.c.clock_serv_t	alias	darwin.clock_serv_t	internal: private import 'c/darwin.zig'
+std.c.clock_res_t	alias	darwin.clock_res_t	internal: private import 'c/darwin.zig'
+std.c.dispatch	alias	darwin.dispatch	internal: private import 'c/darwin.zig'
+std.c.fcopyfile	alias	darwin.fcopyfile	internal: private import 'c/darwin.zig'
+std.c.host_t	alias	darwin.host_t	internal: private import 'c/darwin.zig'
+std.c.integer_t	alias	darwin.integer_t	internal: private import 'c/darwin.zig'
+std.c.ipc_space_t	alias	darwin.ipc_space_t	internal: private import 'c/darwin.zig'
+std.c.ipc_space_port_t	alias	darwin.ipc_space_port_t	internal: private import 'c/darwin.zig'
+std.c.kern_return_t	alias	darwin.kern_return_t	internal: private import 'c/darwin.zig'
+std.c.vm_size_t	alias	darwin.vm_size_t	internal: private import 'c/darwin.zig'
+std.c.kevent64	alias	darwin.kevent64	internal: private import 'c/darwin.zig'
+std.c.kevent64_s	alias	darwin.kevent64_s	internal: private import 'c/darwin.zig'
+std.c.mach_absolute_time	alias	darwin.mach_absolute_time	internal: private import 'c/darwin.zig'
+std.c.mach_continuous_time	alias	darwin.mach_continuous_time	internal: private import 'c/darwin.zig'
+std.c.mach_hdr	alias	darwin.mach_hdr	internal: private import 'c/darwin.zig'
+std.c.mach_host_self	alias	darwin.mach_host_self	internal: private import 'c/darwin.zig'
+std.c.mach_msg	alias	darwin.mach_msg	internal: private import 'c/darwin.zig'
+std.c.mach_msg_return_t	alias	darwin.mach_msg_return_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_type_number_t	alias	darwin.mach_msg_type_number_t	internal: private import 'c/darwin.zig'
+std.c.mach_port_allocate	alias	darwin.mach_port_allocate	internal: private import 'c/darwin.zig'
+std.c.mach_port_array_t	alias	darwin.mach_port_array_t	internal: private import 'c/darwin.zig'
+std.c.mach_port_deallocate	alias	darwin.mach_port_deallocate	internal: private import 'c/darwin.zig'
+std.c.mach_port_insert_right	alias	darwin.mach_port_insert_right	internal: private import 'c/darwin.zig'
+std.c.mach_port_name_t	alias	darwin.mach_port_name_t	internal: private import 'c/darwin.zig'
+std.c.mach_port_t	alias	darwin.mach_port_t	internal: private import 'c/darwin.zig'
+std.c.mach_task_basic_info	alias	darwin.mach_task_basic_info	internal: private import 'c/darwin.zig'
+std.c.mach_task_self	alias	darwin.mach_task_self	internal: private import 'c/darwin.zig'
+std.c.mach_timebase_info	alias	darwin.mach_timebase_info	internal: private import 'c/darwin.zig'
+std.c.mach_timebase_info_data	alias	darwin.mach_timebase_info_data	internal: private import 'c/darwin.zig'
+std.c.mach_timespec_t	alias	darwin.mach_timespec_t	internal: private import 'c/darwin.zig'
+std.c.mach_vm_address_t	alias	darwin.mach_vm_address_t	internal: private import 'c/darwin.zig'
+std.c.mach_vm_protect	alias	darwin.mach_vm_protect	internal: private import 'c/darwin.zig'
+std.c.mach_vm_read	alias	darwin.mach_vm_read	internal: private import 'c/darwin.zig'
+std.c.mach_vm_region	alias	darwin.mach_vm_region	internal: private import 'c/darwin.zig'
+std.c.mach_vm_region_recurse	alias	darwin.mach_vm_region_recurse	internal: private import 'c/darwin.zig'
+std.c.mach_vm_size_t	alias	darwin.mach_vm_size_t	internal: private import 'c/darwin.zig'
+std.c.mach_vm_write	alias	darwin.mach_vm_write	internal: private import 'c/darwin.zig'
+std.c.natural_t	alias	darwin.natural_t	internal: private import 'c/darwin.zig'
+std.c.os_log_create	alias	darwin.os_log_create	internal: private import 'c/darwin.zig'
+std.c.os_log_t	alias	darwin.os_log_t	internal: private import 'c/darwin.zig'
+std.c.os_log_type_enabled	alias	darwin.os_log_type_enabled	internal: private import 'c/darwin.zig'
+std.c.os_log_type_t	alias	darwin.os_log_type_t	internal: private import 'c/darwin.zig'
+std.c.os_signpost_enabled	alias	darwin.os_signpost_enabled	internal: private import 'c/darwin.zig'
+std.c.os_signpost_id_generate	alias	darwin.os_signpost_id_generate	internal: private import 'c/darwin.zig'
+std.c.os_signpost_id_make_with_pointer	alias	darwin.os_signpost_id_make_with_pointer	internal: private import 'c/darwin.zig'
+std.c.os_signpost_id_t	alias	darwin.os_signpost_id_t	internal: private import 'c/darwin.zig'
+std.c.os_signpost_interval_begin	alias	darwin.os_signpost_interval_begin	internal: private import 'c/darwin.zig'
+std.c.os_signpost_interval_end	alias	darwin.os_signpost_interval_end	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock	alias	darwin.os_unfair_lock	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock_assert_not_owner	alias	darwin.os_unfair_lock_assert_not_owner	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock_assert_owner	alias	darwin.os_unfair_lock_assert_owner	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock_lock	alias	darwin.os_unfair_lock_lock	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock_t	alias	darwin.os_unfair_lock_t	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock_trylock	alias	darwin.os_unfair_lock_trylock	internal: private import 'c/darwin.zig'
+std.c.os_unfair_lock_unlock	alias	darwin.os_unfair_lock_unlock	internal: private import 'c/darwin.zig'
+std.c.pid_for_task	alias	darwin.pid_for_task	internal: private import 'c/darwin.zig'
+std.c.posix_spawn	alias	darwin.posix_spawn	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_addchdir_np	alias	darwin.posix_spawn_file_actions_addchdir_np	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_addclose	alias	darwin.posix_spawn_file_actions_addclose	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_adddup2	alias	darwin.posix_spawn_file_actions_adddup2	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_addfchdir_np	alias	darwin.posix_spawn_file_actions_addfchdir_np	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_addinherit_np	alias	darwin.posix_spawn_file_actions_addinherit_np	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_addopen	alias	darwin.posix_spawn_file_actions_addopen	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_destroy	alias	darwin.posix_spawn_file_actions_destroy	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_init	alias	darwin.posix_spawn_file_actions_init	internal: private import 'c/darwin.zig'
+std.c.posix_spawn_file_actions_t	alias	darwin.posix_spawn_file_actions_t	internal: private import 'c/darwin.zig'
+std.c.posix_spawnattr_destroy	alias	darwin.posix_spawnattr_destroy	internal: private import 'c/darwin.zig'
+std.c.posix_spawnattr_getflags	alias	darwin.posix_spawnattr_getflags	internal: private import 'c/darwin.zig'
+std.c.posix_spawnattr_init	alias	darwin.posix_spawnattr_init	internal: private import 'c/darwin.zig'
+std.c.posix_spawnattr_setflags	alias	darwin.posix_spawnattr_setflags	internal: private import 'c/darwin.zig'
+std.c.posix_spawnattr_t	alias	darwin.posix_spawnattr_t	internal: private import 'c/darwin.zig'
+std.c.posix_spawnp	alias	darwin.posix_spawnp	internal: private import 'c/darwin.zig'
+std.c.pthread_attr_get_qos_class_np	alias	darwin.pthread_attr_get_qos_class_np	internal: private import 'c/darwin.zig'
+std.c.pthread_attr_set_qos_class_np	alias	darwin.pthread_attr_set_qos_class_np	internal: private import 'c/darwin.zig'
+std.c.pthread_get_qos_class_np	alias	darwin.pthread_get_qos_class_np	internal: private import 'c/darwin.zig'
+std.c.pthread_set_qos_class_self_np	alias	darwin.pthread_set_qos_class_self_np	internal: private import 'c/darwin.zig'
+std.c.qos_class_t	alias	darwin.qos_class_t	internal: private import 'c/darwin.zig'
+std.c.task_flavor_t	alias	darwin.task_flavor_t	internal: private import 'c/darwin.zig'
+std.c.task_for_pid	alias	darwin.task_for_pid	internal: private import 'c/darwin.zig'
+std.c.task_get_exception_ports	alias	darwin.task_get_exception_ports	internal: private import 'c/darwin.zig'
+std.c.task_info	alias	darwin.task_info	internal: private import 'c/darwin.zig'
+std.c.task_info_t	alias	darwin.task_info_t	internal: private import 'c/darwin.zig'
+std.c.task_name_t	alias	darwin.task_name_t	internal: private import 'c/darwin.zig'
+std.c.task_resume	alias	darwin.task_resume	internal: private import 'c/darwin.zig'
+std.c.task_set_exception_ports	alias	darwin.task_set_exception_ports	internal: private import 'c/darwin.zig'
+std.c.task_suspend	alias	darwin.task_suspend	internal: private import 'c/darwin.zig'
+std.c.task_threads	alias	darwin.task_threads	internal: private import 'c/darwin.zig'
+std.c.task_vm_info_data_t	alias	darwin.task_vm_info_data_t	internal: private import 'c/darwin.zig'
+std.c.thread_basic_info	alias	darwin.thread_basic_info	internal: private import 'c/darwin.zig'
+std.c.thread_get_state	alias	darwin.thread_get_state	internal: private import 'c/darwin.zig'
+std.c.thread_identifier_info	alias	darwin.thread_identifier_info	internal: private import 'c/darwin.zig'
+std.c.thread_info	alias	darwin.thread_info	internal: private import 'c/darwin.zig'
+std.c.thread_info_t	alias	darwin.thread_info_t	internal: private import 'c/darwin.zig'
+std.c.thread_resume	alias	darwin.thread_resume	internal: private import 'c/darwin.zig'
+std.c.thread_set_state	alias	darwin.thread_set_state	internal: private import 'c/darwin.zig'
+std.c.vm_address_t	alias	darwin.vm_address_t	internal: private import 'c/darwin.zig'
+std.c.vm_deallocate	alias	darwin.vm_deallocate	internal: private import 'c/darwin.zig'
+std.c.vm_machine_attribute	alias	darwin.vm_machine_attribute	internal: private import 'c/darwin.zig'
+std.c.vm_machine_attribute_t	alias	darwin.vm_machine_attribute_t	internal: private import 'c/darwin.zig'
+std.c.vm_machine_attribute_val_t	alias	darwin.vm_machine_attribute_val_t	internal: private import 'c/darwin.zig'
+std.c.vm_map_t	alias	darwin.vm_map_t	internal: private import 'c/darwin.zig'
+std.c.vm_offset_t	alias	darwin.vm_offset_t	internal: private import 'c/darwin.zig'
+std.c.vm_prot_t	alias	darwin.vm_prot_t	internal: private import 'c/darwin.zig'
+std.c.vm_region_basic_info_64	alias	darwin.vm_region_basic_info_64	internal: private import 'c/darwin.zig'
+std.c.vm_region_extended_info	alias	darwin.vm_region_extended_info	internal: private import 'c/darwin.zig'
+std.c.vm_region_info_t	alias	darwin.vm_region_info_t	internal: private import 'c/darwin.zig'
+std.c.vm_region_recurse_info_t	alias	darwin.vm_region_recurse_info_t	internal: private import 'c/darwin.zig'
+std.c.vm_region_submap_info_64	alias	darwin.vm_region_submap_info_64	internal: private import 'c/darwin.zig'
+std.c.vm_region_submap_short_info_64	alias	darwin.vm_region_submap_short_info_64	internal: private import 'c/darwin.zig'
+std.c.vm_region_top_info	alias	darwin.vm_region_top_info	internal: private import 'c/darwin.zig'
+std.c.exception_behavior_array_t	alias	darwin.exception_behavior_array_t	internal: private import 'c/darwin.zig'
+std.c.exception_behavior_t	alias	darwin.exception_behavior_t	internal: private import 'c/darwin.zig'
+std.c.exception_data_t	alias	darwin.exception_data_t	internal: private import 'c/darwin.zig'
+std.c.exception_data_type_t	alias	darwin.exception_data_type_t	internal: private import 'c/darwin.zig'
+std.c.exception_flavor_array_t	alias	darwin.exception_flavor_array_t	internal: private import 'c/darwin.zig'
+std.c.exception_handler_array_t	alias	darwin.exception_handler_array_t	internal: private import 'c/darwin.zig'
+std.c.exception_handler_t	alias	darwin.exception_handler_t	internal: private import 'c/darwin.zig'
+std.c.exception_mask_array_t	alias	darwin.exception_mask_array_t	internal: private import 'c/darwin.zig'
+std.c.exception_mask_t	alias	darwin.exception_mask_t	internal: private import 'c/darwin.zig'
+std.c.exception_port_array_t	alias	darwin.exception_port_array_t	internal: private import 'c/darwin.zig'
+std.c.exception_port_t	alias	darwin.exception_port_t	internal: private import 'c/darwin.zig'
+std.c.exception_type_t	alias	darwin.exception_type_t	internal: private import 'c/darwin.zig'
+std.c.mach_exception_data_t	alias	darwin.mach_exception_data_t	internal: private import 'c/darwin.zig'
+std.c.mach_exception_data_type_t	alias	darwin.mach_exception_data_type_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_bits_t	alias	darwin.mach_msg_bits_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_id_t	alias	darwin.mach_msg_id_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_header_t	alias	darwin.mach_msg_header_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_option_t	alias	darwin.mach_msg_option_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_size_t	alias	darwin.mach_msg_size_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_timeout_t	alias	darwin.mach_msg_timeout_t	internal: private import 'c/darwin.zig'
+std.c.mach_msg_type_name_t	alias	darwin.mach_msg_type_name_t	internal: private import 'c/darwin.zig'
+std.c.mach_port_right_t	alias	darwin.mach_port_right_t	internal: private import 'c/darwin.zig'
+std.c.memory_object_offset_t	alias	darwin.memory_object_offset_t	internal: private import 'c/darwin.zig'
+std.c.policy_t	alias	darwin.policy_t	internal: private import 'c/darwin.zig'
+std.c.task_policy_flavor_t	alias	darwin.task_policy_flavor_t	internal: private import 'c/darwin.zig'
+std.c.task_policy_t	alias	darwin.task_policy_t	internal: private import 'c/darwin.zig'
+std.c.task_read_t	alias	darwin.task_read_t	internal: private import 'c/darwin.zig'
+std.c.task_t	alias	darwin.task_t	internal: private import 'c/darwin.zig'
+std.c.thread_act_t	alias	darwin.thread_act_t	internal: private import 'c/darwin.zig'
+std.c.thread_flavor_t	alias	darwin.thread_flavor_t	internal: private import 'c/darwin.zig'
+std.c.thread_port_t	alias	darwin.thread_port_t	internal: private import 'c/darwin.zig'
+std.c.thread_state_flavor_t	alias	darwin.thread_state_flavor_t	internal: private import 'c/darwin.zig'
+std.c.thread_state_t	alias	darwin.thread_state_t	internal: private import 'c/darwin.zig'
+std.c.thread_t	alias	darwin.thread_t	internal: private import 'c/darwin.zig'
+std.c.time_value_t	alias	darwin.time_value_t	internal: private import 'c/darwin.zig'
+std.c.vm32_object_id_t	alias	darwin.vm32_object_id_t	internal: private import 'c/darwin.zig'
+std.c.vm_behavior_t	alias	darwin.vm_behavior_t	internal: private import 'c/darwin.zig'
+std.c.vm_inherit_t	alias	darwin.vm_inherit_t	internal: private import 'c/darwin.zig'
+std.c.vm_map_read_t	alias	darwin.vm_map_read_t	internal: private import 'c/darwin.zig'
+std.c.vm_object_id_t	alias	darwin.vm_object_id_t	internal: private import 'c/darwin.zig'
+std.c.vm_region_flavor_t	alias	darwin.vm_region_flavor_t	internal: private import 'c/darwin.zig'
+std.c._ksiginfo	alias	netbsd._ksiginfo	internal: private import 'c/netbsd.zig'
+std.c._lwp_self	alias	netbsd._lwp_self	internal: private import 'c/netbsd.zig'
+std.c._lwp_park	alias	netbsd.___lwp_park60	internal: private import 'c/netbsd.zig'
+std.c._lwp_unpark	alias	netbsd._lwp_unpark	internal: private import 'c/netbsd.zig'
+std.c._lwp_unpark_all	alias	netbsd._lwp_unpark_all	internal: private import 'c/netbsd.zig'
+std.c.lwpid_t	alias	netbsd.lwpid_t	internal: private import 'c/netbsd.zig'
+std.c.lwp_gettid	alias	dragonfly.lwp_gettid	internal: private import 'c/dragonfly.zig'
+std.c.umtx_sleep	alias	dragonfly.umtx_sleep	internal: private import 'c/dragonfly.zig'
+std.c.umtx_wakeup	alias	dragonfly.umtx_wakeup	internal: private import 'c/dragonfly.zig'
+std.c.PERF_EVENT	alias	serenity.PERF_EVENT	internal: private import 'c/serenity.zig'
+std.c.disown	alias	serenity.disown	internal: private import 'c/serenity.zig'
+std.c.profiling_enable	alias	serenity.profiling_enable	internal: private import 'c/serenity.zig'
+std.c.profiling_disable	alias	serenity.profiling_disable	internal: private import 'c/serenity.zig'
+std.c.profiling_free_buffer	alias	serenity.profiling_free_buffer	internal: private import 'c/serenity.zig'
+std.c.futex_wait	alias	serenity.futex_wait	internal: private import 'c/serenity.zig'
+std.c.futex_wake	alias	serenity.futex_wake	internal: private import 'c/serenity.zig'
+std.c.purge	alias	serenity.purge	internal: private import 'c/serenity.zig'
+std.c.perf_event	alias	serenity.perf_event	internal: private import 'c/serenity.zig'
+std.c.perf_register_string	alias	serenity.perf_register_string	internal: private import 'c/serenity.zig'
+std.c.get_stack_bounds	alias	serenity.get_stack_bounds	internal: private import 'c/serenity.zig'
+std.c.anon_create	alias	serenity.anon_create	internal: private import 'c/serenity.zig'
+std.c.serenity_readlink	alias	serenity.serenity_readlink	internal: private import 'c/serenity.zig'
+std.c.serenity_open	alias	serenity.serenity_open	internal: private import 'c/serenity.zig'
+std.c.getkeymap	alias	serenity.getkeymap	internal: private import 'c/serenity.zig'
+std.c.setkeymap	alias	serenity.setkeymap	internal: private import 'c/serenity.zig'
 std.compress.flate.Compress.Options.fastest	alias	level_1	name not in scope
 std.compress.flate.Compress.Options.default	alias	level_6	name not in scope
 std.compress.flate.Compress.Options.best	alias	level_9	name not in scope
@@ -376,20 +376,20 @@ std.crypto.aead.aegis.Aegis128L_256	alias	variants.Aegis128L_256	name not in sco
 std.crypto.aead.aegis.Aegis256X4_256	alias	variants.Aegis256X4_256	name not in scope
 std.crypto.aead.aegis.Aegis256X2_256	alias	variants.Aegis256X2_256	name not in scope
 std.crypto.aead.aegis.Aegis256_256	alias	variants.Aegis256_256	name not in scope
-std.crypto.aead.aes_gcm.Aes128Gcm	import	crypto/aes_gcm.zig	reexport target file not expanded
-std.crypto.aead.aes_gcm.Aes256Gcm	import	crypto/aes_gcm.zig	reexport target file not expanded
-std.crypto.aead.aes_gcm_siv.Aes128GcmSiv	import	crypto/aes_gcm_siv.zig	reexport target file not expanded
-std.crypto.aead.aes_gcm_siv.Aes256GcmSiv	import	crypto/aes_gcm_siv.zig	reexport target file not expanded
-std.crypto.aead.aes_siv.Aes128Siv	import	crypto/aes_siv.zig	reexport target file not expanded
-std.crypto.aead.aes_siv.Aes256Siv	import	crypto/aes_siv.zig	reexport target file not expanded
-std.crypto.aead.aes_ocb.Aes128Ocb	import	crypto/aes_ocb.zig	reexport target file not expanded
-std.crypto.aead.aes_ocb.Aes256Ocb	import	crypto/aes_ocb.zig	reexport target file not expanded
-std.crypto.aead.chacha_poly.ChaCha20Poly1305	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.aead.chacha_poly.ChaCha12Poly1305	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.aead.chacha_poly.ChaCha8Poly1305	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.aead.chacha_poly.XChaCha20Poly1305	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.aead.chacha_poly.XChaCha12Poly1305	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.aead.chacha_poly.XChaCha8Poly1305	import	crypto/chacha20.zig	reexport target file not expanded
+std.crypto.aead.aes_gcm.Aes128Gcm	import	crypto/aes_gcm.zig	internal: private import 'crypto/aes_gcm.zig'
+std.crypto.aead.aes_gcm.Aes256Gcm	import	crypto/aes_gcm.zig	internal: private import 'crypto/aes_gcm.zig'
+std.crypto.aead.aes_gcm_siv.Aes128GcmSiv	import	crypto/aes_gcm_siv.zig	internal: private import 'crypto/aes_gcm_siv.zig'
+std.crypto.aead.aes_gcm_siv.Aes256GcmSiv	import	crypto/aes_gcm_siv.zig	internal: private import 'crypto/aes_gcm_siv.zig'
+std.crypto.aead.aes_siv.Aes128Siv	import	crypto/aes_siv.zig	internal: private import 'crypto/aes_siv.zig'
+std.crypto.aead.aes_siv.Aes256Siv	import	crypto/aes_siv.zig	internal: private import 'crypto/aes_siv.zig'
+std.crypto.aead.aes_ocb.Aes128Ocb	import	crypto/aes_ocb.zig	internal: private import 'crypto/aes_ocb.zig'
+std.crypto.aead.aes_ocb.Aes256Ocb	import	crypto/aes_ocb.zig	internal: private import 'crypto/aes_ocb.zig'
+std.crypto.aead.chacha_poly.ChaCha20Poly1305	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.aead.chacha_poly.ChaCha12Poly1305	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.aead.chacha_poly.ChaCha8Poly1305	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.aead.chacha_poly.XChaCha20Poly1305	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.aead.chacha_poly.XChaCha12Poly1305	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.aead.chacha_poly.XChaCha8Poly1305	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
 std.crypto.aead.salsa_poly.XSalsa20Poly1305.tag_length	alias	Poly1305.mac_length	name not in scope
 std.crypto.aead.salsa_poly.XSalsa20Poly1305.nonce_length	alias	XSalsa20.nonce_length	name not in scope
 std.crypto.aead.salsa_poly.XSalsa20Poly1305.key_length	alias	XSalsa20.key_length	name not in scope
@@ -405,39 +405,39 @@ std.crypto.auth.aegis.Aegis128LMac_128	alias	variants.Aegis128LMac_128	name not 
 std.crypto.auth.aegis.Aegis256X4Mac_128	alias	variants.Aegis256X4Mac_128	name not in scope
 std.crypto.auth.aegis.Aegis256X2Mac_128	alias	variants.Aegis256X2Mac_128	name not in scope
 std.crypto.auth.aegis.Aegis256Mac_128	alias	variants.Aegis256Mac_128	name not in scope
-std.crypto.core.aes.Block	alias	impl.Block	head path 'std.crypto.core.aes.impl' not in map
-std.crypto.core.aes.BlockVec	alias	impl.BlockVec	head path 'std.crypto.core.aes.impl' not in map
-std.crypto.core.aes.AesEncryptCtx	alias	impl.AesEncryptCtx	head path 'std.crypto.core.aes.impl' not in map
-std.crypto.core.aes.AesDecryptCtx	alias	impl.AesDecryptCtx	head path 'std.crypto.core.aes.impl' not in map
-std.crypto.core.aes.Aes128	alias	impl.Aes128	head path 'std.crypto.core.aes.impl' not in map
-std.crypto.core.aes.Aes256	alias	impl.Aes256	head path 'std.crypto.core.aes.impl' not in map
-std.crypto.ecc.P256.Fe	import	crypto/pcurves/p256/field.zig	reexport target file not expanded
-std.crypto.ecc.P256.scalar.field_order	alias	Fe.field_order	head path 'std.crypto.ecc.P256.scalar.Fe' not in map
-std.crypto.ecc.P384.Fe	import	crypto/pcurves/p384/field.zig	reexport target file not expanded
-std.crypto.ecc.P384.scalar.field_order	alias	Fe.field_order	head path 'std.crypto.ecc.P384.scalar.Fe' not in map
+std.crypto.core.aes.Block	alias	impl.Block	internal: std.crypto.core.aes.impl
+std.crypto.core.aes.BlockVec	alias	impl.BlockVec	internal: std.crypto.core.aes.impl
+std.crypto.core.aes.AesEncryptCtx	alias	impl.AesEncryptCtx	internal: std.crypto.core.aes.impl
+std.crypto.core.aes.AesDecryptCtx	alias	impl.AesDecryptCtx	internal: std.crypto.core.aes.impl
+std.crypto.core.aes.Aes128	alias	impl.Aes128	internal: std.crypto.core.aes.impl
+std.crypto.core.aes.Aes256	alias	impl.Aes256	internal: std.crypto.core.aes.impl
+std.crypto.ecc.P256.Fe	import	crypto/pcurves/p256/field.zig	internal: private import 'crypto/pcurves/p256/field.zig'
+std.crypto.ecc.P256.scalar.field_order	alias	Fe.field_order	internal: std.crypto.ecc.P256.scalar.Fe
+std.crypto.ecc.P384.Fe	import	crypto/pcurves/p384/field.zig	internal: private import 'crypto/pcurves/p384/field.zig'
+std.crypto.ecc.P384.scalar.field_order	alias	Fe.field_order	internal: std.crypto.ecc.P384.scalar.Fe
 std.crypto.ecc.Ristretto255.Fe	alias	Curve.Fe	name not in scope
 std.crypto.ecc.Ristretto255.scalar	alias	Curve.scalar	name not in scope
-std.crypto.ecc.Secp256k1.Fe	import	crypto/pcurves/secp256k1/field.zig	reexport target file not expanded
-std.crypto.ecc.Secp256k1.scalar.field_order	alias	Fe.field_order	head path 'std.crypto.ecc.Secp256k1.scalar.Fe' not in map
+std.crypto.ecc.Secp256k1.Fe	import	crypto/pcurves/secp256k1/field.zig	internal: private import 'crypto/pcurves/secp256k1/field.zig'
+std.crypto.ecc.Secp256k1.scalar.field_order	alias	Fe.field_order	internal: std.crypto.ecc.Secp256k1.scalar.Fe
 std.crypto.hash.ascon.AsconHash256	alias	variants.AsconHash256	name not in scope
 std.crypto.hash.ascon.AsconXof128	alias	variants.AsconXof128	name not in scope
 std.crypto.hash.ascon.AsconCxof128	alias	variants.AsconCxof128	name not in scope
-std.crypto.hash.sha3.KT128	alias	kangarootwelve.KT128	import target not expanded
-std.crypto.hash.sha3.KT256	alias	kangarootwelve.KT256	import target not expanded
-std.crypto.onetimeauth.Ghash	import	crypto/ghash_polyval.zig	reexport target file not expanded
-std.crypto.onetimeauth.Polyval	import	crypto/ghash_polyval.zig	reexport target file not expanded
+std.crypto.hash.sha3.KT128	alias	kangarootwelve.KT128	internal: private import 'crypto/kangarootwelve.zig'
+std.crypto.hash.sha3.KT256	alias	kangarootwelve.KT256	internal: private import 'crypto/kangarootwelve.zig'
+std.crypto.onetimeauth.Ghash	import	crypto/ghash_polyval.zig	internal: private import 'crypto/ghash_polyval.zig'
+std.crypto.onetimeauth.Polyval	import	crypto/ghash_polyval.zig	internal: private import 'crypto/ghash_polyval.zig'
 std.crypto.sign.Ed25519.KeyPair.seed_length	alias	noise_length	name not in scope
-std.crypto.stream.chacha.ChaCha20IETF	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.ChaCha12IETF	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.ChaCha8IETF	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.ChaCha20With64BitNonce	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.ChaCha12With64BitNonce	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.ChaCha8With64BitNonce	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.XChaCha20IETF	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.XChaCha12IETF	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.chacha.XChaCha8IETF	import	crypto/chacha20.zig	reexport target file not expanded
-std.crypto.stream.salsa.Salsa20	import	crypto/salsa20.zig	reexport target file not expanded
-std.crypto.stream.salsa.XSalsa20	import	crypto/salsa20.zig	reexport target file not expanded
+std.crypto.stream.chacha.ChaCha20IETF	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.ChaCha12IETF	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.ChaCha8IETF	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.ChaCha20With64BitNonce	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.ChaCha12With64BitNonce	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.ChaCha8With64BitNonce	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.XChaCha20IETF	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.XChaCha12IETF	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.chacha.XChaCha8IETF	import	crypto/chacha20.zig	internal: private import 'crypto/chacha20.zig'
+std.crypto.stream.salsa.Salsa20	import	crypto/salsa20.zig	internal: private import 'crypto/salsa20.zig'
+std.crypto.stream.salsa.XSalsa20	import	crypto/salsa20.zig	internal: private import 'crypto/salsa20.zig'
 std.crypto.nacl.Box	alias	salsa20.Box	name not in scope
 std.crypto.nacl.SecretBox	alias	salsa20.SecretBox	name not in scope
 std.crypto.nacl.SealedBox	alias	salsa20.SealedBox	name not in scope
@@ -467,27 +467,27 @@ std.elf.Elf64_Relr	alias	u64	primitive
 std.elf.Elf32_Conflict	alias	u32	primitive
 std.elf.Addr	alias	ElfN.Addr	'Addr' not a member of 'std.elf.ElfN'
 std.fmt.ArgSetType	alias	u32	primitive
-std.fmt.ParseFloatError	import	fmt/parse_float.zig	reexport target file not expanded
+std.fmt.ParseFloatError	import	fmt/parse_float.zig	internal: private import 'fmt/parse_float.zig'
 std.fs.base64_encoder	alias	std.base64.url_safe.Encoder	'Encoder' not a member of 'std.base64.url_safe'
 std.fs.base64_decoder	alias	std.base64.url_safe.Decoder	'Decoder' not a member of 'std.base64.url_safe'
-std.hash.autoHash	alias	auto_hash.autoHash	import target not expanded
-std.hash.autoHashStrat	alias	auto_hash.hash	import target not expanded
-std.hash.Strategy	alias	auto_hash.HashStrategy	import target not expanded
-std.hash.crc.Crc	alias	impl.Crc	import target not expanded
-std.hash.crc.Polynomial	alias	impl.Polynomial	import target not expanded
-std.hash.crc.Crc32WithPoly	alias	impl.Crc32WithPoly	import target not expanded
-std.hash.crc.Crc32SmallWithPoly	alias	impl.Crc32SmallWithPoly	import target not expanded
-std.hash.Fnv1a_32	alias	fnv.Fnv1a_32	import target not expanded
-std.hash.Fnv1a_64	alias	fnv.Fnv1a_64	import target not expanded
-std.hash.Fnv1a_128	alias	fnv.Fnv1a_128	import target not expanded
-std.hash.Wyhash	alias	wyhash.Wyhash	import target not expanded
-std.hash.XxHash3	alias	xxhash.XxHash3	import target not expanded
-std.hash.XxHash64	alias	xxhash.XxHash64	import target not expanded
-std.hash.XxHash32	alias	xxhash.XxHash32	import target not expanded
+std.hash.autoHash	alias	auto_hash.autoHash	internal: private import 'hash/auto_hash.zig'
+std.hash.autoHashStrat	alias	auto_hash.hash	internal: private import 'hash/auto_hash.zig'
+std.hash.Strategy	alias	auto_hash.HashStrategy	internal: private import 'hash/auto_hash.zig'
+std.hash.crc.Crc	alias	impl.Crc	internal: private import 'hash/crc/impl.zig'
+std.hash.crc.Polynomial	alias	impl.Polynomial	internal: private import 'hash/crc/impl.zig'
+std.hash.crc.Crc32WithPoly	alias	impl.Crc32WithPoly	internal: private import 'hash/crc/impl.zig'
+std.hash.crc.Crc32SmallWithPoly	alias	impl.Crc32SmallWithPoly	internal: private import 'hash/crc/impl.zig'
+std.hash.Fnv1a_32	alias	fnv.Fnv1a_32	internal: private import 'hash/fnv.zig'
+std.hash.Fnv1a_64	alias	fnv.Fnv1a_64	internal: private import 'hash/fnv.zig'
+std.hash.Fnv1a_128	alias	fnv.Fnv1a_128	internal: private import 'hash/fnv.zig'
+std.hash.Wyhash	alias	wyhash.Wyhash	internal: private import 'hash/wyhash.zig'
+std.hash.XxHash3	alias	xxhash.XxHash3	internal: private import 'hash/xxhash.zig'
+std.hash.XxHash64	alias	xxhash.XxHash64	internal: private import 'hash/xxhash.zig'
+std.hash.XxHash32	alias	xxhash.XxHash32	internal: private import 'hash/xxhash.zig'
 std.http.Client.disable_tls	alias	std.options.http_disable_tls	'http_disable_tls' not a member of 'std.options'
-std.json.ObjectMap	import	json/dynamic.zig	reexport target file not expanded
-std.json.Array	import	json/dynamic.zig	reexport target file not expanded
-std.json.ParseFromValueError	import	json/static.zig	reexport target file not expanded
+std.json.ObjectMap	import	json/dynamic.zig	internal: private import 'json/dynamic.zig'
+std.json.Array	import	json/dynamic.zig	internal: private import 'json/dynamic.zig'
+std.json.ParseFromValueError	import	json/static.zig	internal: private import 'json/static.zig'
 std.log.err	alias	default.err	'err' not a member of 'std.log.default'
 std.log.warn	alias	default.warn	'warn' not a member of 'std.log.default'
 std.log.info	alias	default.info	'info' not a member of 'std.log.default'
@@ -495,38 +495,38 @@ std.log.debug	alias	default.debug	'debug' not a member of 'std.log.default'
 std.macho.cpu_type_t	alias	c_int	primitive
 std.macho.cpu_subtype_t	alias	c_int	primitive
 std.macho.compact_unwind_encoding_t	alias	u32	primitive
-std.math.FloatRepr	alias	float.FloatRepr	import target not expanded
-std.math.floatExponentBits	alias	float.floatExponentBits	import target not expanded
-std.math.floatMantissaBits	alias	float.floatMantissaBits	import target not expanded
-std.math.floatFractionalBits	alias	float.floatFractionalBits	import target not expanded
-std.math.floatExponentMin	alias	float.floatExponentMin	import target not expanded
-std.math.floatExponentMax	alias	float.floatExponentMax	import target not expanded
-std.math.floatTrueMin	alias	float.floatTrueMin	import target not expanded
-std.math.floatMin	alias	float.floatMin	import target not expanded
-std.math.floatMax	alias	float.floatMax	import target not expanded
-std.math.floatEps	alias	float.floatEps	import target not expanded
-std.math.floatEpsAt	alias	float.floatEpsAt	import target not expanded
-std.math.inf	alias	float.inf	import target not expanded
-std.math.nan	alias	float.nan	import target not expanded
-std.math.snan	alias	float.snan	import target not expanded
+std.math.FloatRepr	alias	float.FloatRepr	internal: private import 'math/float.zig'
+std.math.floatExponentBits	alias	float.floatExponentBits	internal: private import 'math/float.zig'
+std.math.floatMantissaBits	alias	float.floatMantissaBits	internal: private import 'math/float.zig'
+std.math.floatFractionalBits	alias	float.floatFractionalBits	internal: private import 'math/float.zig'
+std.math.floatExponentMin	alias	float.floatExponentMin	internal: private import 'math/float.zig'
+std.math.floatExponentMax	alias	float.floatExponentMax	internal: private import 'math/float.zig'
+std.math.floatTrueMin	alias	float.floatTrueMin	internal: private import 'math/float.zig'
+std.math.floatMin	alias	float.floatMin	internal: private import 'math/float.zig'
+std.math.floatMax	alias	float.floatMax	internal: private import 'math/float.zig'
+std.math.floatEps	alias	float.floatEps	internal: private import 'math/float.zig'
+std.math.floatEpsAt	alias	float.floatEpsAt	internal: private import 'math/float.zig'
+std.math.inf	alias	float.inf	internal: private import 'math/float.zig'
+std.math.nan	alias	float.nan	internal: private import 'math/float.zig'
+std.math.snan	alias	float.snan	internal: private import 'math/float.zig'
 std.math.big.Limb	alias	usize	primitive
-std.os.linux.syscall0	alias	syscall_bits.syscall0	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall1	alias	syscall_bits.syscall1	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall2	alias	syscall_bits.syscall2	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall3	alias	syscall_bits.syscall3	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall4	alias	syscall_bits.syscall4	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall5	alias	syscall_bits.syscall5	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall6	alias	syscall_bits.syscall6	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall7	alias	syscall_bits.syscall7	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.restore	alias	syscall_bits.restore	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.restore_rt	alias	syscall_bits.restore_rt	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.socketcall	alias	syscall_bits.socketcall	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall_pipe	alias	syscall_bits.syscall_pipe	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.syscall_fork	alias	syscall_bits.syscall_fork	head path 'std.os.linux.syscall_bits' not in map
-std.os.linux.ARCH	alias	arch_bits.ARCH	head path 'std.os.linux.arch_bits' not in map
-std.os.linux.HWCAP	alias	arch_bits.HWCAP	head path 'std.os.linux.arch_bits' not in map
-std.os.linux.SC	alias	arch_bits.SC	head path 'std.os.linux.arch_bits' not in map
-std.os.linux.VDSO	alias	arch_bits.VDSO	head path 'std.os.linux.arch_bits' not in map
+std.os.linux.syscall0	alias	syscall_bits.syscall0	internal: std.os.linux.syscall_bits
+std.os.linux.syscall1	alias	syscall_bits.syscall1	internal: std.os.linux.syscall_bits
+std.os.linux.syscall2	alias	syscall_bits.syscall2	internal: std.os.linux.syscall_bits
+std.os.linux.syscall3	alias	syscall_bits.syscall3	internal: std.os.linux.syscall_bits
+std.os.linux.syscall4	alias	syscall_bits.syscall4	internal: std.os.linux.syscall_bits
+std.os.linux.syscall5	alias	syscall_bits.syscall5	internal: std.os.linux.syscall_bits
+std.os.linux.syscall6	alias	syscall_bits.syscall6	internal: std.os.linux.syscall_bits
+std.os.linux.syscall7	alias	syscall_bits.syscall7	internal: std.os.linux.syscall_bits
+std.os.linux.restore	alias	syscall_bits.restore	internal: std.os.linux.syscall_bits
+std.os.linux.restore_rt	alias	syscall_bits.restore_rt	internal: std.os.linux.syscall_bits
+std.os.linux.socketcall	alias	syscall_bits.socketcall	internal: std.os.linux.syscall_bits
+std.os.linux.syscall_pipe	alias	syscall_bits.syscall_pipe	internal: std.os.linux.syscall_bits
+std.os.linux.syscall_fork	alias	syscall_bits.syscall_fork	internal: std.os.linux.syscall_bits
+std.os.linux.ARCH	alias	arch_bits.ARCH	internal: std.os.linux.arch_bits
+std.os.linux.HWCAP	alias	arch_bits.HWCAP	internal: std.os.linux.arch_bits
+std.os.linux.SC	alias	arch_bits.SC	internal: std.os.linux.arch_bits
+std.os.linux.VDSO	alias	arch_bits.VDSO	internal: std.os.linux.arch_bits
 std.os.linux.blkcnt_t	alias	u64	primitive
 std.os.linux.blksize_t	alias	u32	primitive
 std.os.linux.dev_t	alias	u64	primitive
@@ -534,8 +534,8 @@ std.os.linux.ino_t	alias	u64	primitive
 std.os.linux.mode_t	alias	u32	primitive
 std.os.linux.nlink_t	alias	u32	primitive
 std.os.linux.off_t	alias	i64	primitive
-std.os.linux.time_t	alias	arch_bits.time_t	head path 'std.os.linux.arch_bits' not in map
-std.os.linux.user_desc	alias	arch_bits.user_desc	head path 'std.os.linux.arch_bits' not in map
+std.os.linux.time_t	alias	arch_bits.time_t	internal: std.os.linux.arch_bits
+std.os.linux.user_desc	alias	arch_bits.user_desc	internal: std.os.linux.arch_bits
 std.os.linux.tls.area_desc	alias	undefined	name not in scope
 std.os.linux.SECCOMP.RET.KILL	alias	KILL_THREAD	name not in scope
 std.os.linux.elf_aux_maybe	alias	null	name not in scope
@@ -575,8 +575,8 @@ std.os.plan9.siginfo_t	alias	c_long	primitive
 std.os.plan9.mode_t	alias	i32	primitive
 std.os.uefi.protocol.DevicePath.CreateFileDevicePathError	alias	Allocator.Error	name not in scope
 std.os.uefi.tables.PhysicalAddress	alias	u64	primitive
-std.os.uefi.pool_allocator	import	os/uefi/pool_allocator.zig	reexport target file not expanded
-std.os.uefi.raw_pool_allocator	import	os/uefi/pool_allocator.zig	reexport target file not expanded
+std.os.uefi.pool_allocator	import	os/uefi/pool_allocator.zig	internal: private import 'os/uefi/pool_allocator.zig'
+std.os.uefi.raw_pool_allocator	import	os/uefi/pool_allocator.zig	internal: private import 'os/uefi/pool_allocator.zig'
 std.os.uefi.handle	alias	undefined	name not in scope
 std.os.uefi.system_table	alias	undefined	name not in scope
 std.os.wasi.device_t	alias	u64	primitive
@@ -620,8 +620,8 @@ std.os.emscripten.em_promise_result_t	alias	c_uint	primitive
 std.os.windows.ws2_32.GROUP	alias	u32	primitive
 std.os.windows.ws2_32.ADDRESS_FAMILY	alias	u16	primitive
 std.os.windows.ws2_32.socklen_t	alias	u32	primitive
-std.os.windows.TDI.STATUS	alias	NTSTATUS	import target not expanded
-std.os.windows.DNS.STATUS	alias	Win32Error	import target not expanded
+std.os.windows.TDI.STATUS	alias	NTSTATUS	internal: private import 'os/windows/ntstatus.zig'
+std.os.windows.DNS.STATUS	alias	Win32Error	internal: private import 'os/windows/win32error.zig'
 std.os.windows.CTL_CODE.FILE_ACCESS.SPECIAL	alias	ANY	name not in scope
 std.os.windows.ACCESS_MASK.Specific.Key.EXECUTE	alias	READ	name not in scope
 std.os.windows.ACCESS_MASK.Standard.Rights.ALL	alias	REQUIRED	name not in scope
@@ -798,8 +798,8 @@ std.testing.log_level	alias	std.log.Level.warn	'warn' not a member of 'std.log.L
 std.time.epoch.Year	alias	u16	primitive
 std.zig.ErrorBundle.String	alias	u32	primitive
 std.zig.ErrorBundle.OptionalString	alias	u32	primitive
-std.zig.Token	alias	tokenizer.Token	import target not expanded
-std.zig.Tokenizer	alias	tokenizer.Tokenizer	import target not expanded
+std.zig.Token	alias	tokenizer.Token	internal: private import 'zig/tokenizer.zig'
+std.zig.Tokenizer	alias	tokenizer.Tokenizer	internal: private import 'zig/tokenizer.zig'
 std.zig.Ast.ByteOffset	alias	u32	primitive
 std.zig.Ast.TokenIndex	alias	u32	primitive
 std.zig.Zir.Inst.Call.Flags.PackedModifier	alias	u3	primitive
@@ -888,15 +888,15 @@ std.crypto.codecs.asn1.der.Encoder.length	usage	void	primitive
 std.crypto.codecs.asn1.der.Encoder.tagBytes	usage	const	name not in scope
 std.crypto.codecs.asn1.der.Encoder.tagBytes	usage	u8	primitive
 std.crypto.codecs.asn1.der.Encoder.tagBytes	usage	void	primitive
-std.crypto.codecs.asn1.der.Encoder.writer	usage	ArrayListReverse.Writer	import target not expanded
+std.crypto.codecs.asn1.der.Encoder.writer	usage	ArrayListReverse.Writer	internal: private import 'crypto/codecs/asn1/der/ArrayListReverse.zig'
 std.Io.Reader.Limited.init	usage	u8	primitive
 std.tar.Writer.setRoot	usage	const	name not in scope
 std.tar.Writer.setRoot	usage	u8	primitive
-std.tar.Writer.setRoot	usage	Error	head path 'std.tar.Writer.Error' not in map
+std.tar.Writer.setRoot	usage	Error	internal: std.tar.Writer.Error
 std.tar.Writer.setRoot	usage	void	primitive
 std.tar.Writer.writeDir	usage	const	name not in scope
 std.tar.Writer.writeDir	usage	u8	primitive
-std.tar.Writer.writeDir	usage	Error	head path 'std.tar.Writer.Error' not in map
+std.tar.Writer.writeDir	usage	Error	internal: std.tar.Writer.Error
 std.tar.Writer.writeDir	usage	void	primitive
 std.tar.Writer.writeFileTimestamp	usage	const	name not in scope
 std.tar.Writer.writeFileTimestamp	usage	u8	primitive
@@ -911,11 +911,11 @@ std.tar.Writer.writeFileStream	usage	u64	primitive
 std.tar.Writer.writeFileStream	usage	void	primitive
 std.tar.Writer.writeFileBytes	usage	const	name not in scope
 std.tar.Writer.writeFileBytes	usage	u8	primitive
-std.tar.Writer.writeFileBytes	usage	Error	head path 'std.tar.Writer.Error' not in map
+std.tar.Writer.writeFileBytes	usage	Error	internal: std.tar.Writer.Error
 std.tar.Writer.writeFileBytes	usage	void	primitive
 std.tar.Writer.writeLink	usage	const	name not in scope
 std.tar.Writer.writeLink	usage	u8	primitive
-std.tar.Writer.writeLink	usage	Error	head path 'std.tar.Writer.Error' not in map
+std.tar.Writer.writeLink	usage	Error	internal: std.tar.Writer.Error
 std.tar.Writer.writeLink	usage	void	primitive
 std.tar.Writer.finishPedantically	usage	void	primitive
 std.mem.Allocator.noAlloc	usage	anyopaque	primitive
@@ -951,13 +951,13 @@ std.mem.Allocator.alloc	usage	T	name not in scope
 std.mem.Allocator.allocWithOptions	usage	type	primitive
 std.mem.Allocator.allocWithOptions	usage	usize	primitive
 std.mem.Allocator.allocWithOptions	usage	Elem	name not in scope
-std.mem.Allocator.allocWithOptions	usage	AllocWithOptionsPayload	head path 'std.mem.Allocator.AllocWithOptionsPayload' not in map
+std.mem.Allocator.allocWithOptions	usage	AllocWithOptionsPayload	internal: std.mem.Allocator.AllocWithOptionsPayload
 std.mem.Allocator.allocWithOptions	usage	optional_alignment	name not in scope
 std.mem.Allocator.allocWithOptions	usage	optional_sentinel	name not in scope
 std.mem.Allocator.allocWithOptionsRetAddr	usage	type	primitive
 std.mem.Allocator.allocWithOptionsRetAddr	usage	usize	primitive
 std.mem.Allocator.allocWithOptionsRetAddr	usage	Elem	name not in scope
-std.mem.Allocator.allocWithOptionsRetAddr	usage	AllocWithOptionsPayload	head path 'std.mem.Allocator.AllocWithOptionsPayload' not in map
+std.mem.Allocator.allocWithOptionsRetAddr	usage	AllocWithOptionsPayload	internal: std.mem.Allocator.AllocWithOptionsPayload
 std.mem.Allocator.allocWithOptionsRetAddr	usage	optional_alignment	name not in scope
 std.mem.Allocator.allocWithOptionsRetAddr	usage	optional_sentinel	name not in scope
 std.mem.Allocator.allocSentinel	usage	type	primitive
@@ -1004,7 +1004,7 @@ std.mem.Allocator.dupeSentinel	usage	sentinel	name not in scope
 std.SemanticVersion.parse	usage	const	name not in scope
 std.SemanticVersion.parse	usage	u8	primitive
 std.SemanticVersion.format	usage	void	primitive
-std.Build.create	usage	AvailableDeps	head path 'std.Build.AvailableDeps' not in map
+std.Build.create	usage	AvailableDeps	internal: std.Build.AvailableDeps
 std.Build.create	usage	error	name not in scope
 std.Build.create	usage	OutOfMemory	name not in scope
 std.Build.resolveInstallPrefix	usage	const	name not in scope
@@ -1548,7 +1548,7 @@ std.Build.Step.Compile.producesCompilerRtDynLib	usage	bool	primitive
 std.Build.Step.Compile.producesImplib	usage	bool	primitive
 std.Build.Step.Compile.runPkgConfig	usage	const	name not in scope
 std.Build.Step.Compile.runPkgConfig	usage	u8	primitive
-std.Build.Step.Compile.runPkgConfig	usage	PkgConfigResult	head path 'std.Build.Step.Compile.PkgConfigResult' not in map
+std.Build.Step.Compile.runPkgConfig	usage	PkgConfigResult	internal: std.Build.Step.Compile.PkgConfigResult
 std.Build.Step.Compile.setVerboseLink	usage	bool	primitive
 std.Build.Step.Compile.setVerboseLink	usage	void	primitive
 std.Build.Step.Compile.setVerboseCC	usage	bool	primitive
@@ -1677,8 +1677,8 @@ std.Build.WebServer.updateTimeReportGeneric	usage	void	primitive
 std.Build.WebServer.updateTimeReportRunTest	usage	const	name not in scope
 std.Build.WebServer.updateTimeReportRunTest	usage	u64	primitive
 std.Build.WebServer.updateTimeReportRunTest	usage	void	primitive
-std.Build.WebServer.getRunnerRequest	usage	RunnerRequest	head path 'std.Build.WebServer.RunnerRequest' not in map
-std.Build.WebServer.wait	usage	RunnerRequest	head path 'std.Build.WebServer.RunnerRequest' not in map
+std.Build.WebServer.getRunnerRequest	usage	RunnerRequest	internal: std.Build.WebServer.RunnerRequest
+std.Build.WebServer.wait	usage	RunnerRequest	internal: std.Build.WebServer.RunnerRequest
 std.valgrind.callgrind.dumpStats	usage	void	primitive
 std.valgrind.callgrind.dumpStatsAt	usage	const	name not in scope
 std.valgrind.callgrind.dumpStatsAt	usage	u8	primitive
@@ -1689,7 +1689,7 @@ std.valgrind.callgrind.startInstrumentation	usage	void	primitive
 std.valgrind.callgrind.stopInstrumentation	usage	void	primitive
 std.zig.AstSmith.source	usage	u8	primitive
 std.zig.AstSmith.tokens	usage	std.zig.Ast.TokenList.Slice	'Slice' not a member of 'std.zig.Ast.TokenList'
-std.zig.AstSmith.generateSource	usage	SourceError	head path 'std.zig.AstSmith.SourceError' not in map
+std.zig.AstSmith.generateSource	usage	SourceError	internal: std.zig.AstSmith.SourceError
 std.zig.AstSmith.generateSource	usage	void	primitive
 std.zig.AstSmith.logSource	usage	void	primitive
 std.zig.llvm.bitcode_writer.BitcodeWriter	usage	const	name not in scope
@@ -1731,15 +1731,15 @@ std.simd.iota	usage	T	name not in scope
 std.simd.repeat	usage	usize	primitive
 std.simd.repeat	usage	len	name not in scope
 std.simd.repeat	usage	vec	name not in scope
-std.simd.join	usage	vectorLength	head path 'std.simd.vectorLength' not in map
+std.simd.join	usage	vectorLength	internal: std.simd.vectorLength
 std.simd.join	usage	a	name not in scope
 std.simd.join	usage	b	name not in scope
-std.simd.interlace	usage	vectorLength	head path 'std.simd.vectorLength' not in map
+std.simd.interlace	usage	vectorLength	internal: std.simd.vectorLength
 std.simd.interlace	usage	vecs	name not in scope
 std.simd.interlace	usage	vecs.len	name not in scope
 std.simd.deinterlace	usage	usize	primitive
 std.simd.deinterlace	usage	vec_count	name not in scope
-std.simd.deinterlace	usage	vectorLength	head path 'std.simd.vectorLength' not in map
+std.simd.deinterlace	usage	vectorLength	internal: std.simd.vectorLength
 std.simd.deinterlace	usage	interlaced	name not in scope
 std.simd.extract	usage	vec	name not in scope
 std.simd.extract	usage	count	name not in scope
@@ -1906,8 +1906,8 @@ std.debug.Pdb.getInlineeSourceLines	usage	const	name not in scope
 std.debug.Pdb.getLineNumberInfo	usage	u64	primitive
 std.debug.Pdb.getModule	usage	usize	primitive
 std.debug.Pdb.getStreamById	usage	u32	primitive
-std.debug.Pdb.getStreamById	usage	MsfStream	head path 'std.debug.Pdb.MsfStream' not in map
-std.debug.Pdb.getStream	usage	MsfStream	head path 'std.debug.Pdb.MsfStream' not in map
+std.debug.Pdb.getStreamById	usage	MsfStream	internal: std.debug.Pdb.MsfStream
+std.debug.Pdb.getStream	usage	MsfStream	internal: std.debug.Pdb.MsfStream
 std.json.Scanner.initCompleteInput	usage	const	name not in scope
 std.json.Scanner.initCompleteInput	usage	u8	primitive
 std.json.Scanner.deinit	usage	void	primitive
@@ -2047,7 +2047,7 @@ std.debug.Coverage.addStringAssumeCapacity	usage	const	name not in scope
 std.debug.Coverage.addStringAssumeCapacity	usage	u8	primitive
 std.os.windows.GetCurrentProcessId	usage	u32	primitive
 std.os.windows.GetCurrentThreadId	usage	u32	primitive
-std.os.windows.GetLastError	usage	Win32Error	import target not expanded
+std.os.windows.GetLastError	usage	Win32Error	internal: private import 'os/windows/win32error.zig'
 std.os.windows.CloseHandle	usage	void	primitive
 std.os.windows.fromSysTime	usage	i64	primitive
 std.os.windows.toSysTime	usage	i64	primitive
@@ -2073,10 +2073,10 @@ std.os.windows.ntToWin32Namespace	usage	u16	primitive
 std.os.windows.ntToWin32Namespace	usage	error	name not in scope
 std.os.windows.ntToWin32Namespace	usage	NameTooLong	name not in scope
 std.os.windows.ntToWin32Namespace	usage	NotNtPath	name not in scope
-std.os.windows.unexpectedError	usage	Win32Error	import target not expanded
-std.os.windows.unexpectedStatus	usage	NTSTATUS	import target not expanded
-std.os.windows.statusBug	usage	NTSTATUS	import target not expanded
-std.os.windows.errorBug	usage	Win32Error	import target not expanded
+std.os.windows.unexpectedError	usage	Win32Error	internal: private import 'os/windows/win32error.zig'
+std.os.windows.unexpectedStatus	usage	NTSTATUS	internal: private import 'os/windows/ntstatus.zig'
+std.os.windows.statusBug	usage	NTSTATUS	internal: private import 'os/windows/ntstatus.zig'
+std.os.windows.errorBug	usage	Win32Error	internal: private import 'os/windows/win32error.zig'
 std.os.windows.FileInformationIterator	usage	type	primitive
 std.os.windows.IsProcessorFeaturePresent	usage	bool	primitive
 std.os.windows.wtf8ToWtf16Le	usage	u16	primitive
@@ -2105,19 +2105,19 @@ std.unicode.utf8EncodeComptime	usage	err	name not in scope
 std.unicode.utf8EncodeComptime	usage	u8	primitive
 std.unicode.utf8Decode	usage	const	name not in scope
 std.unicode.utf8Decode	usage	u8	primitive
-std.unicode.utf8Decode	usage	Utf8DecodeError	head path 'std.unicode.Utf8DecodeError' not in map
+std.unicode.utf8Decode	usage	Utf8DecodeError	internal: std.unicode.Utf8DecodeError
 std.unicode.utf8Decode	usage	u21	primitive
 std.unicode.utf8Decode2	usage	u8	primitive
-std.unicode.utf8Decode2	usage	Utf8Decode2Error	head path 'std.unicode.Utf8Decode2Error' not in map
+std.unicode.utf8Decode2	usage	Utf8Decode2Error	internal: std.unicode.Utf8Decode2Error
 std.unicode.utf8Decode2	usage	u21	primitive
 std.unicode.utf8Decode3	usage	u8	primitive
-std.unicode.utf8Decode3	usage	Utf8Decode3Error	head path 'std.unicode.Utf8Decode3Error' not in map
+std.unicode.utf8Decode3	usage	Utf8Decode3Error	internal: std.unicode.Utf8Decode3Error
 std.unicode.utf8Decode3	usage	u21	primitive
 std.unicode.utf8Decode3AllowSurrogateHalf	usage	u8	primitive
-std.unicode.utf8Decode3AllowSurrogateHalf	usage	Utf8Decode3AllowSurrogateHalfError	head path 'std.unicode.Utf8Decode3AllowSurrogateHalfError' not in map
+std.unicode.utf8Decode3AllowSurrogateHalf	usage	Utf8Decode3AllowSurrogateHalfError	internal: std.unicode.Utf8Decode3AllowSurrogateHalfError
 std.unicode.utf8Decode3AllowSurrogateHalf	usage	u21	primitive
 std.unicode.utf8Decode4	usage	u8	primitive
-std.unicode.utf8Decode4	usage	Utf8Decode4Error	head path 'std.unicode.Utf8Decode4Error' not in map
+std.unicode.utf8Decode4	usage	Utf8Decode4Error	internal: std.unicode.Utf8Decode4Error
 std.unicode.utf8Decode4	usage	u21	primitive
 std.unicode.utf8ValidCodepoint	usage	u21	primitive
 std.unicode.utf8ValidCodepoint	usage	bool	primitive
@@ -2143,7 +2143,7 @@ std.unicode.utf16CountCodepoints	usage	u16	primitive
 std.unicode.utf16CountCodepoints	usage	usize	primitive
 std.unicode.fmtUtf8	usage	const	name not in scope
 std.unicode.fmtUtf8	usage	u8	primitive
-std.unicode.fmtUtf8	usage	formatUtf8	head path 'std.unicode.formatUtf8' not in map
+std.unicode.fmtUtf8	usage	formatUtf8	internal: std.unicode.formatUtf8
 std.unicode.utf16LeToUtf8ArrayList	usage	u8	primitive
 std.unicode.utf16LeToUtf8ArrayList	usage	const	name not in scope
 std.unicode.utf16LeToUtf8ArrayList	usage	u16	primitive
@@ -2186,7 +2186,7 @@ std.unicode.utf8ToUtf16Le	usage	usize	primitive
 std.unicode.utf8ToUtf16LeImpl	usage	u16	primitive
 std.unicode.utf8ToUtf16LeImpl	usage	const	name not in scope
 std.unicode.utf8ToUtf16LeImpl	usage	u8	primitive
-std.unicode.utf8ToUtf16LeImpl	usage	Surrogates	head path 'std.unicode.Surrogates' not in map
+std.unicode.utf8ToUtf16LeImpl	usage	Surrogates	internal: std.unicode.Surrogates
 std.unicode.utf8ToUtf16LeImpl	usage	usize	primitive
 std.unicode.utf8ToUtf16LeStringLiteral	usage	const	name not in scope
 std.unicode.utf8ToUtf16LeStringLiteral	usage	u8	primitive
@@ -2202,19 +2202,19 @@ std.unicode.wtf8ToWtf16LeStringLiteral	usage	err	name not in scope
 std.unicode.wtf8ToWtf16LeStringLiteral	usage	u16	primitive
 std.unicode.calcUtf16LeLenImpl	usage	const	name not in scope
 std.unicode.calcUtf16LeLenImpl	usage	u8	primitive
-std.unicode.calcUtf16LeLenImpl	usage	Surrogates	head path 'std.unicode.Surrogates' not in map
+std.unicode.calcUtf16LeLenImpl	usage	Surrogates	internal: std.unicode.Surrogates
 std.unicode.calcUtf16LeLenImpl	usage	usize	primitive
 std.unicode.calcUtf16LeLen	usage	const	name not in scope
 std.unicode.calcUtf16LeLen	usage	u8	primitive
-std.unicode.calcUtf16LeLen	usage	CalcUtf16LeLenError	head path 'std.unicode.CalcUtf16LeLenError' not in map
+std.unicode.calcUtf16LeLen	usage	CalcUtf16LeLenError	internal: std.unicode.CalcUtf16LeLenError
 std.unicode.calcUtf16LeLen	usage	usize	primitive
 std.unicode.calcWtf16LeLen	usage	const	name not in scope
 std.unicode.calcWtf16LeLen	usage	u8	primitive
-std.unicode.calcWtf16LeLen	usage	CalcWtf16LeLenError	head path 'std.unicode.CalcWtf16LeLenError' not in map
+std.unicode.calcWtf16LeLen	usage	CalcWtf16LeLenError	internal: std.unicode.CalcWtf16LeLenError
 std.unicode.calcWtf16LeLen	usage	usize	primitive
 std.unicode.fmtUtf16Le	usage	const	name not in scope
 std.unicode.fmtUtf16Le	usage	u16	primitive
-std.unicode.fmtUtf16Le	usage	formatUtf16Le	head path 'std.unicode.formatUtf16Le' not in map
+std.unicode.fmtUtf16Le	usage	formatUtf16Le	internal: std.unicode.formatUtf16Le
 std.unicode.isSurrogateCodepoint	usage	u21	primitive
 std.unicode.isSurrogateCodepoint	usage	bool	primitive
 std.unicode.wtf8Encode	usage	u21	primitive
@@ -2224,7 +2224,7 @@ std.unicode.wtf8Encode	usage	CodepointTooLarge	name not in scope
 std.unicode.wtf8Encode	usage	u3	primitive
 std.unicode.wtf8Decode	usage	const	name not in scope
 std.unicode.wtf8Decode	usage	u8	primitive
-std.unicode.wtf8Decode	usage	Wtf8DecodeError	head path 'std.unicode.Wtf8DecodeError' not in map
+std.unicode.wtf8Decode	usage	Wtf8DecodeError	internal: std.unicode.Wtf8DecodeError
 std.unicode.wtf8Decode	usage	u21	primitive
 std.unicode.wtf8ValidateSlice	usage	const	name not in scope
 std.unicode.wtf8ValidateSlice	usage	u8	primitive
@@ -2305,7 +2305,7 @@ std.debug.MachOFile.lookupSymbolName	usage	error	name not in scope
 std.debug.MachOFile.lookupSymbolName	usage	MissingDebugInfo	name not in scope
 std.debug.MachOFile.lookupSymbolName	usage	const	name not in scope
 std.debug.MachOFile.lookupSymbolName	usage	u8	primitive
-std.os.uefi.unexpectedStatus	usage	Status	import target not expanded
+std.os.uefi.unexpectedStatus	usage	Status	internal: private import 'os/uefi/status.zig'
 std.os.plan9.errno	usage	usize	primitive
 std.os.plan9.errstr	usage	const	name not in scope
 std.os.plan9.errstr	usage	u8	primitive
@@ -2414,10 +2414,10 @@ std.mem.findDiff	usage	type	primitive
 std.mem.findDiff	usage	const	name not in scope
 std.mem.findDiff	usage	T	name not in scope
 std.mem.findDiff	usage	usize	primitive
-std.mem.span	usage	Span	head path 'std.mem.Span' not in map
+std.mem.span	usage	Span	internal: std.mem.Span
 std.mem.span	usage	ptr	name not in scope
 std.mem.sliceTo	usage	ptr	name not in scope
-std.mem.sliceTo	usage	SliceTo	head path 'std.mem.SliceTo' not in map
+std.mem.sliceTo	usage	SliceTo	internal: std.mem.SliceTo
 std.mem.sliceTo	usage	end	name not in scope
 std.mem.len	usage	usize	primitive
 std.mem.findSentinel	usage	type	primitive
@@ -2706,23 +2706,23 @@ std.mem.nativeToBig	usage	T	name not in scope
 std.mem.alignPointerOffset	usage	usize	primitive
 std.mem.alignPointer	usage	usize	primitive
 std.mem.alignPointer	usage	ptr	name not in scope
-std.mem.asBytes	usage	AsBytesReturnType	head path 'std.mem.AsBytesReturnType' not in map
+std.mem.asBytes	usage	AsBytesReturnType	internal: std.mem.AsBytesReturnType
 std.mem.asBytes	usage	ptr	name not in scope
 std.mem.toBytes	usage	value	name not in scope
 std.mem.toBytes	usage	u8	primitive
 std.mem.bytesAsValue	usage	type	primitive
-std.mem.bytesAsValue	usage	BytesAsValueReturnType	head path 'std.mem.BytesAsValueReturnType' not in map
+std.mem.bytesAsValue	usage	BytesAsValueReturnType	internal: std.mem.BytesAsValueReturnType
 std.mem.bytesAsValue	usage	T	name not in scope
 std.mem.bytesAsValue	usage	bytes	name not in scope
 std.mem.bytesToValue	usage	type	primitive
 std.mem.bytesToValue	usage	T	name not in scope
 std.mem.bytesAsSlice	usage	type	primitive
-std.mem.bytesAsSlice	usage	BytesAsSliceReturnType	head path 'std.mem.BytesAsSliceReturnType' not in map
+std.mem.bytesAsSlice	usage	BytesAsSliceReturnType	internal: std.mem.BytesAsSliceReturnType
 std.mem.bytesAsSlice	usage	T	name not in scope
 std.mem.bytesAsSlice	usage	bytes	name not in scope
-std.mem.sliceAsBytes	usage	SliceAsBytesReturnType	head path 'std.mem.SliceAsBytesReturnType' not in map
+std.mem.sliceAsBytes	usage	SliceAsBytesReturnType	internal: std.mem.SliceAsBytesReturnType
 std.mem.sliceAsBytes	usage	slice	name not in scope
-std.mem.absorbSentinel	usage	AbsorbSentinelReturnType	head path 'std.mem.AbsorbSentinelReturnType' not in map
+std.mem.absorbSentinel	usage	AbsorbSentinelReturnType	internal: std.mem.AbsorbSentinelReturnType
 std.mem.absorbSentinel	usage	slice	name not in scope
 std.mem.alignForwardAnyAlign	usage	type	primitive
 std.mem.alignForwardAnyAlign	usage	T	name not in scope
@@ -2755,7 +2755,7 @@ std.mem.alignInBytes	usage	usize	primitive
 std.mem.alignInBytes	usage	align	name not in scope
 std.mem.alignInBytes	usage	new_alignment	name not in scope
 std.mem.alignInSlice	usage	usize	primitive
-std.mem.alignInSlice	usage	AlignedSlice	head path 'std.mem.AlignedSlice' not in map
+std.mem.alignInSlice	usage	AlignedSlice	internal: std.mem.AlignedSlice
 std.mem.alignInSlice	usage	slice	name not in scope
 std.mem.alignInSlice	usage	new_alignment	name not in scope
 std.Io.File.Writer.init	usage	u8	primitive
@@ -2860,7 +2860,7 @@ std.debug.Dwarf.findCompileUnit	usage	const	name not in scope
 std.debug.Dwarf.findCompileUnit	usage	u64	primitive
 std.debug.Dwarf.populateSrcLocCache	usage	void	primitive
 std.debug.Dwarf.getLineNumberInfo	usage	u64	primitive
-std.debug.Dwarf.readUnitHeader	usage	UnitHeader	head path 'std.debug.Dwarf.UnitHeader' not in map
+std.debug.Dwarf.readUnitHeader	usage	UnitHeader	internal: std.debug.Dwarf.UnitHeader
 std.debug.Dwarf.compactUnwindToDwarfRegNumber	usage	u3	primitive
 std.debug.Dwarf.compactUnwindToDwarfRegNumber	usage	u16	primitive
 std.debug.Dwarf.ipRegNum	usage	u16	primitive
@@ -4120,7 +4120,7 @@ std.Build.Cache.Path.basename	usage	const	name not in scope
 std.Build.Cache.Path.basename	usage	u8	primitive
 std.zig.Zir.extraData	usage	type	primitive
 std.zig.Zir.extraData	usage	usize	primitive
-std.zig.Zir.extraData	usage	ExtraData	head path 'std.zig.Zir.ExtraData' not in map
+std.zig.Zir.extraData	usage	ExtraData	internal: std.zig.Zir.ExtraData
 std.zig.Zir.extraData	usage	T	name not in scope
 std.zig.Zir.nullTerminatedString	usage	const	name not in scope
 std.zig.Zir.nullTerminatedString	usage	u8	primitive
@@ -4457,14 +4457,14 @@ std.Thread.setName	usage	void	primitive
 std.Thread.getName	usage	u8	primitive
 std.Thread.getName	usage	const	name not in scope
 std.Thread.getCpuCount	usage	usize	primitive
-std.Thread.getHandle	usage	Handle	head path 'std.Thread.Impl' not in map
+std.Thread.getHandle	usage	Handle	internal: std.Thread.Impl
 std.Thread.detach	usage	void	primitive
 std.Thread.join	usage	void	primitive
 std.Thread.yield	usage	void	primitive
 std.Thread.maybeAttachSignalStack	usage	void	primitive
 std.crypto.pwhash.bcrypt.bcrypt	usage	const	name not in scope
 std.crypto.pwhash.bcrypt.bcrypt	usage	u8	primitive
-std.crypto.pwhash.bcrypt.bcrypt	usage	dk_length	head path 'std.crypto.pwhash.bcrypt.dk_length' not in map
+std.crypto.pwhash.bcrypt.bcrypt	usage	dk_length	internal: std.crypto.pwhash.bcrypt.dk_length
 std.crypto.pwhash.bcrypt.pbkdf	usage	const	name not in scope
 std.crypto.pwhash.bcrypt.pbkdf	usage	u8	primitive
 std.crypto.pwhash.bcrypt.pbkdf	usage	u32	primitive
@@ -4526,7 +4526,7 @@ std.fs.path.joinZ	usage	const	name not in scope
 std.fs.path.joinZ	usage	u8	primitive
 std.fs.path.fmtJoin	usage	const	name not in scope
 std.fs.path.fmtJoin	usage	u8	primitive
-std.fs.path.fmtJoin	usage	formatJoin	head path 'std.fs.path.formatJoin' not in map
+std.fs.path.fmtJoin	usage	formatJoin	internal: std.fs.path.formatJoin
 std.fs.path.isAbsoluteZ	usage	const	name not in scope
 std.fs.path.isAbsoluteZ	usage	u8	primitive
 std.fs.path.isAbsoluteZ	usage	bool	primitive
@@ -4558,10 +4558,10 @@ std.fs.path.parsePath	usage	u8	primitive
 std.fs.path.parsePath	usage	switch	name not in scope
 std.fs.path.parsePath	usage	native_os	external module 'builtin'
 std.fs.path.parsePath	usage	else	name not in scope
-std.fs.path.parsePath	usage	PosixPath	head path 'std.fs.path.PosixPath' not in map
+std.fs.path.parsePath	usage	PosixPath	internal: std.fs.path.PosixPath
 std.fs.path.parsePathPosix	usage	const	name not in scope
 std.fs.path.parsePathPosix	usage	u8	primitive
-std.fs.path.parsePathPosix	usage	PosixPath	head path 'std.fs.path.PosixPath' not in map
+std.fs.path.parsePathPosix	usage	PosixPath	internal: std.fs.path.PosixPath
 std.fs.path.WindowsPath2	usage	type	primitive
 std.fs.path.parsePathWindows	usage	type	primitive
 std.fs.path.parsePathWindows	usage	const	name not in scope
@@ -4630,12 +4630,12 @@ std.Io.Threaded.GetFinalPathNameByHandle	usage	u16	primitive
 std.Io.Threaded.QueryObjectName	usage	u16	primitive
 std.Io.Threaded.wToPrefixedFileW	usage	const	name not in scope
 std.Io.Threaded.wToPrefixedFileW	usage	u16	primitive
-std.Io.Threaded.wToPrefixedFileW	usage	Wtf16ToPrefixedFileWOptions	head path 'std.Io.Threaded.Wtf16ToPrefixedFileWOptions' not in map
-std.Io.Threaded.wToPrefixedFileW	usage	Wtf16ToPrefixedFileWError	head path 'std.Io.Threaded.Wtf16ToPrefixedFileWError' not in map
+std.Io.Threaded.wToPrefixedFileW	usage	Wtf16ToPrefixedFileWOptions	internal: std.Io.Threaded.Wtf16ToPrefixedFileWOptions
+std.Io.Threaded.wToPrefixedFileW	usage	Wtf16ToPrefixedFileWError	internal: std.Io.Threaded.Wtf16ToPrefixedFileWError
 std.Io.Threaded.sliceToPrefixedFileW	usage	const	name not in scope
 std.Io.Threaded.sliceToPrefixedFileW	usage	u8	primitive
-std.Io.Threaded.sliceToPrefixedFileW	usage	Wtf16ToPrefixedFileWOptions	head path 'std.Io.Threaded.Wtf16ToPrefixedFileWOptions' not in map
-std.Io.Threaded.sliceToPrefixedFileW	usage	Wtf8ToPrefixedFileWError	head path 'std.Io.Threaded.Wtf16ToPrefixedFileWError' not in map
+std.Io.Threaded.sliceToPrefixedFileW	usage	Wtf16ToPrefixedFileWOptions	internal: std.Io.Threaded.Wtf16ToPrefixedFileWOptions
+std.Io.Threaded.sliceToPrefixedFileW	usage	Wtf8ToPrefixedFileWError	internal: std.Io.Threaded.Wtf16ToPrefixedFileWError
 std.Io.Threaded.posixAddressFamily	usage	const	name not in scope
 std.Io.Threaded.addressFromPosix	usage	const	name not in scope
 std.Io.Threaded.addressToPosix	usage	const	name not in scope
@@ -4701,7 +4701,7 @@ std.testing.expectStringEndsWith	usage	void	primitive
 std.testing.expectEqualDeep	usage	error	name not in scope
 std.testing.expectEqualDeep	usage	TestExpectedEqual	name not in scope
 std.testing.expectEqualDeep	usage	void	primitive
-std.testing.checkAllAllocationFailures	usage	CheckAllAllocationFailuresExtraArgs	head path 'std.testing.CheckAllAllocationFailuresExtraArgs' not in map
+std.testing.checkAllAllocationFailures	usage	CheckAllAllocationFailuresExtraArgs	internal: std.testing.CheckAllAllocationFailuresExtraArgs
 std.testing.checkAllAllocationFailures	usage	test_fn	name not in scope
 std.testing.checkAllAllocationFailures	usage	void	primitive
 std.testing.refAllDecls	usage	type	primitive
@@ -4994,9 +4994,9 @@ std.Build.Step.ConfigHeader.addValue	usage	void	primitive
 std.Build.Step.ConfigHeader.addValues	usage	void	primitive
 std.Io.Uring.init	usage	void	primitive
 std.Io.Uring.deinit	usage	void	primitive
-std.Io.Uring.dup2	usage	CancelRegion.Sync	head path 'std.Io.Uring.CancelRegion' not in map
+std.Io.Uring.dup2	usage	CancelRegion.Sync	internal: std.Io.Uring.CancelRegion
 std.Io.Uring.dup2	usage	void	primitive
-std.Io.Uring.execvPath	usage	CancelRegion.Sync	head path 'std.Io.Uring.CancelRegion' not in map
+std.Io.Uring.execvPath	usage	CancelRegion.Sync	internal: std.Io.Uring.CancelRegion
 std.Io.Uring.execvPath	usage	const	name not in scope
 std.Io.Uring.execvPath	usage	u8	primitive
 std.Io.Uring.execvPath	usage	null	name not in scope
@@ -6075,7 +6075,7 @@ std.Build.Step.CheckObject.dumpSection	usage	u8	primitive
 std.Build.Step.CheckObject.dumpSection	usage	void	primitive
 std.Build.Step.CheckObject.checkComputeCompare	usage	const	name not in scope
 std.Build.Step.CheckObject.checkComputeCompare	usage	u8	primitive
-std.Build.Step.CheckObject.checkComputeCompare	usage	ComputeCompareExpected	head path 'std.Build.Step.CheckObject.ComputeCompareExpected' not in map
+std.Build.Step.CheckObject.checkComputeCompare	usage	ComputeCompareExpected	internal: std.Build.Step.CheckObject.ComputeCompareExpected
 std.Build.Step.CheckObject.checkComputeCompare	usage	void	primitive
 std.Build.Step.InstallFile.create	usage	const	name not in scope
 std.Build.Step.InstallFile.create	usage	u8	primitive
@@ -6247,7 +6247,7 @@ std.math.rem	usage	T	name not in scope
 std.math.negateCast	usage	x	name not in scope
 std.math.cast	usage	type	primitive
 std.math.cast	usage	T	name not in scope
-std.math.alignCast	usage	AlignCastResult	head path 'std.math.AlignCastResult' not in map
+std.math.alignCast	usage	AlignCastResult	internal: std.math.AlignCastResult
 std.math.alignCast	usage	alignment	name not in scope
 std.math.alignCast	usage	ptr	name not in scope
 std.math.isPowerOfTwo	usage	bool	primitive
@@ -6287,7 +6287,7 @@ std.math.boolMask	usage	bool	primitive
 std.math.boolMask	usage	MaskInt	name not in scope
 std.math.comptimeMod	usage	comptime_int	primitive
 std.math.comptimeMod	usage	denom	name not in scope
-std.math.sign	usage	SignOf	head path 'std.math.SignOf' not in map
+std.math.sign	usage	SignOf	internal: std.math.SignOf
 std.math.sign	usage	n	name not in scope
 std.compress.zstd.Decompress.init	usage	u8	primitive
 std.process.Child.kill	usage	void	primitive
@@ -6401,8 +6401,8 @@ std.valgrind.memcheck.doLeakCheck	usage	void	primitive
 std.valgrind.memcheck.doAddedLeakCheck	usage	void	primitive
 std.valgrind.memcheck.doChangedLeakCheck	usage	void	primitive
 std.valgrind.memcheck.doQuickLeakCheck	usage	void	primitive
-std.valgrind.memcheck.countLeaks	usage	CountResult	head path 'std.valgrind.memcheck.CountResult' not in map
-std.valgrind.memcheck.countLeakBlocks	usage	CountResult	head path 'std.valgrind.memcheck.CountResult' not in map
+std.valgrind.memcheck.countLeaks	usage	CountResult	internal: std.valgrind.memcheck.CountResult
+std.valgrind.memcheck.countLeakBlocks	usage	CountResult	internal: std.valgrind.memcheck.CountResult
 std.valgrind.memcheck.getVbits	usage	u8	primitive
 std.valgrind.memcheck.getVbits	usage	u2	primitive
 std.valgrind.memcheck.setVbits	usage	u8	primitive
@@ -6436,8 +6436,8 @@ std.zig.c_translation.helpers.ArithmeticConversion	usage	type	primitive
 std.zig.c_translation.helpers.FlexibleArrayType	usage	type	primitive
 std.zig.c_translation.helpers.promoteIntLiteral	usage	type	primitive
 std.zig.c_translation.helpers.promoteIntLiteral	usage	comptime_int	primitive
-std.zig.c_translation.helpers.promoteIntLiteral	usage	CIntLiteralBase	head path 'std.zig.c_translation.helpers.CIntLiteralBase' not in map
-std.zig.c_translation.helpers.promoteIntLiteral	usage	PromoteIntLiteralReturnType	head path 'std.zig.c_translation.helpers.PromoteIntLiteralReturnType' not in map
+std.zig.c_translation.helpers.promoteIntLiteral	usage	CIntLiteralBase	internal: std.zig.c_translation.helpers.CIntLiteralBase
+std.zig.c_translation.helpers.promoteIntLiteral	usage	PromoteIntLiteralReturnType	internal: std.zig.c_translation.helpers.PromoteIntLiteralReturnType
 std.zig.c_translation.helpers.promoteIntLiteral	usage	SuffixType	name not in scope
 std.zig.c_translation.helpers.promoteIntLiteral	usage	number	name not in scope
 std.zig.c_translation.helpers.promoteIntLiteral	usage	base	name not in scope
@@ -6468,7 +6468,7 @@ std.zig.c_translation.helpers.CAST_OR_CALL	usage	type	primitive
 std.zig.c_translation.helpers.DISCARD	usage	void	primitive
 std.zig.c_translation.helpers.F_SUFFIX	usage	comptime_float	primitive
 std.zig.c_translation.helpers.F_SUFFIX	usage	f32	primitive
-std.zig.c_translation.helpers.L_SUFFIX	usage	L_SUFFIX_ReturnType	head path 'std.zig.c_translation.helpers.L_SUFFIX_ReturnType' not in map
+std.zig.c_translation.helpers.L_SUFFIX	usage	L_SUFFIX_ReturnType	internal: std.zig.c_translation.helpers.L_SUFFIX_ReturnType
 std.zig.c_translation.helpers.L_SUFFIX	usage	number	name not in scope
 std.zig.c_translation.helpers.LL_SUFFIX	usage	comptime_int	primitive
 std.zig.c_translation.helpers.LL_SUFFIX	usage	c_longlong	primitive

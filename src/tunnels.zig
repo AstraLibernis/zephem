@@ -175,9 +175,10 @@ fn symsOf(ctx: *Ctx, file: []const u8) !?*std.StringHashMap(Target) {
 }
 
 const Res = union(enum) {
-    resolved: []const u8,
-    primitive: []const u8,
-    unresolved: []const u8, // reason
+    resolved: []const u8, // lands on a public node — a real edge
+    primitive: []const u8, // a built-in (u8, void) — resolves to nothing by design
+    internal: []const u8, // traced to a concrete target that lives behind the pub boundary
+    unresolved: []const u8, // reason — couldn't trace it at all (a real gap)
 };
 
 fn has(ctx: *Ctx, path: []const u8) bool {
@@ -193,8 +194,10 @@ fn resolve(ctx: *Ctx, file: []const u8, chain: []const u8, depth: u8) anyerror!R
 
     if (rest.len == 0 and isPrimitive(head)) return .{ .primitive = head };
 
-    // resolve the head to a base path
+    // resolve the head to a base path. `traced` = base names a concrete source entity (a real
+    // decl / file), so if it isn't in the public map it's private — an `internal` link, not a gap.
     var base: []const u8 = undefined;
+    var traced = false;
     if (std.mem.eql(u8, head, "std")) {
         base = "std";
     } else if (try symsOf(ctx, file)) |tbl| {
@@ -203,12 +206,18 @@ fn resolve(ctx: *Ctx, file: []const u8, chain: []const u8, depth: u8) anyerror!R
                 .defined => {
                     const p = ctx.file2path.get(file) orelse return .{ .unresolved = "file not in map" };
                     base = try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ p, head });
+                    traced = true;
                 },
-                .self => base = ctx.file2path.get(file) orelse return .{ .unresolved = "file not in map" },
-                .import_whole => |f| base = ctx.file2path.get(f) orelse return .{ .unresolved = "import target not expanded" },
+                .self => {
+                    base = ctx.file2path.get(file) orelse return .{ .unresolved = "file not in map" };
+                    traced = true;
+                },
+                // a whole-file import whose target isn't mapped = a private per-OS/internal file.
+                .import_whole => |f| base = ctx.file2path.get(f) orelse return .{ .internal = try std.fmt.allocPrint(ctx.arena, "private import '{s}'", .{f}) },
                 .import_sel => |s| {
-                    const p = ctx.file2path.get(s.file) orelse return .{ .unresolved = "import target not expanded" };
+                    const p = ctx.file2path.get(s.file) orelse return .{ .internal = try std.fmt.allocPrint(ctx.arena, "private import '{s}'", .{s.file}) };
                     base = try std.fmt.allocPrint(ctx.arena, "{s}.{s}", .{ p, s.sel });
+                    traced = true;
                 },
                 .import_mod => |m| return .{ .unresolved = try std.fmt.allocPrint(ctx.arena, "external module '{s}'", .{m}) },
                 .name_ref => |c2| {
@@ -216,7 +225,7 @@ fn resolve(ctx: *Ctx, file: []const u8, chain: []const u8, depth: u8) anyerror!R
                     const r = try resolve(ctx, file, c2, depth + 1);
                     switch (r) {
                         .resolved => |p| base = p,
-                        else => return r,
+                        else => return r, // internal / primitive / unresolved propagates
                     }
                 },
             }
@@ -227,7 +236,11 @@ fn resolve(ctx: *Ctx, file: []const u8, chain: []const u8, depth: u8) anyerror!R
         return .{ .unresolved = "file not parseable" };
     }
 
-    if (!has(ctx, base)) return .{ .unresolved = try std.fmt.allocPrint(ctx.arena, "head path '{s}' not in map", .{base}) };
+    if (!has(ctx, base)) {
+        // traced to a real decl that isn't public → it lives behind the pub boundary.
+        if (traced) return .{ .internal = base };
+        return .{ .unresolved = try std.fmt.allocPrint(ctx.arena, "head path '{s}' not in map", .{base}) };
+    }
     if (rest.len == 0) return .{ .resolved = base };
 
     // walk the remaining segments as direct children
@@ -255,6 +268,7 @@ fn emitEdge(w: *std.Io.Writer, from: []const u8, kind: []const u8, r: Res, raw: 
     switch (r) {
         .resolved => |to| try w.print("{s}\t{s}\tresolved\t{s}\t\n", .{ from, kind, to }),
         .primitive => |p| try w.print("{s}\t{s}\tprimitive\t{s}\t\n", .{ from, kind, p }),
+        .internal => |t| try w.print("{s}\t{s}\tinternal\t{s}\t{s}\n", .{ from, kind, raw, t }),
         .unresolved => |why| try w.print("{s}\t{s}\tunresolved\t{s}\t{s}\n", .{ from, kind, raw, why }),
     }
 }
@@ -395,7 +409,7 @@ pub fn main(init: std.process.Init) !void {
             const r: Res = if (file2path.get(al.detail)) |p| blk: {
                 const cand = try std.fmt.allocPrint(arena, "{s}.{s}", .{ p, name });
                 break :blk if (has(&ctx, cand)) .{ .resolved = cand } else .{ .unresolved = "selector not a member of target file" };
-            } else .{ .unresolved = "reexport target file not expanded" };
+            } else .{ .internal = try std.fmt.allocPrint(arena, "private import '{s}'", .{al.detail}) };
             try emitEdge(w, al.path, "import", r, al.detail);
             continue;
         }

@@ -21,7 +21,7 @@ O(1) jump, not just a name. Two datasets:
 
 ```
 tunnels.tsv     from_path · kind · to_path · to_line   (resolved edges)
-unresolved.tsv  from_path · kind · raw · reason         (primitive + unresolved, every ref kept)
+unresolved.tsv  from_path · kind · raw · reason         (every non-edge kept, categorized)
 ```
 
 Three edge kinds:
@@ -32,8 +32,20 @@ Three edge kinds:
 `to_line` carries the target's container line from [index.tsv](L0-structure.md) where the target
 is a container (follow in one jump); it's blank for a leaf target, whose parent block holds it.
 
-On Zig 0.16.0: **5,123 resolved edges** (alias 287, import 6, usage 4,830); **2,639 unresolved +
-4,122 primitive** recorded. 2,971 functions carry usage edges.
+Every reference lands in one of four honest outcomes — accuracy of the edges is total; the rest
+is categorized, never a vague "failed":
+
+| outcome | meaning | count |
+|---|---|---|
+| **resolved** (→ tunnels.tsv) | lands on a public node — a real edge | 5,123 (alias 287, import 6, usage 4,830) |
+| **internal** (`reason: internal: …`) | a real **pub → private** link: traced to a concrete target behind the `pub` boundary (a private per-OS file, a private helper) | 514 |
+| **primitive** (`reason: primitive`) | a built-in (`u8`, `void`) — resolves to nothing by design | 4,122 |
+| **genuine gap** (specific `reason`) | couldn't trace at all — a comptime type param (`T`), or a multi-hop tail we don't yet follow | 2,125 |
+
+2,971 functions carry usage edges. The **internal** category is the key honesty move: a public
+symbol backed by private internals (`std.c.AF_SUN → private import 'c/illumos.zig'`) is a *true,
+informative fact*, not a failure — so it's flagged, not dumped in with the real gaps, and we
+don't drag the private guts into the dataset.
 
 ## Sound, not complete
 
@@ -50,12 +62,14 @@ against that + the map. This is what lets `std.BitStack.init(allocator: Allocato
 `Allocator` → `std.mem.Allocator`. A self-alias `const Ast = @This();` resolves to the file's own
 type, not a phantom child.
 
-**What stays unresolved is honest, often informative.** Alias resolution is ~26% (287/1,099):
-the majority of unresolved aliases re-export into **private per-OS files** (`darwin`, `openbsd`,
-`illumos`, `haiku`, …) that a public-only, single-platform map doesn't contain — so the
-unresolved bucket is, in effect, a true map of which platform files `std.c` multiplexes over.
-Bare type params (`fn f(comptime T: type, x: T)` → `T`) are correctly "not in scope" (not a
-global decl). Primitives (`u8`, `void`) are tagged, not failed.
+**What doesn't become an edge is categorized, not dumped.** The 514 **internal** links are
+honest and informative — a public symbol backed by private internals (`std.c.AF_SUN` →
+`c/illumos.zig`), so the internal set is in effect a true map of which platform files `std.c`
+multiplexes over. The 2,125 **genuine gaps** are mostly bare comptime type params
+(`fn f(comptime T: type, x: T)` → `T`) — correctly "not in scope," because `T` is a parameter,
+not a global decl — plus ~228 multi-hop tails (`Cipher.key_length`) that a future
+alias-following pass could close. Primitives are tagged. None of these are errors; each says
+something true about the reference.
 
 ## Verified six ways
 

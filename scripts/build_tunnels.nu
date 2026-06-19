@@ -45,10 +45,17 @@ def regen [root: string, outdir: string] {
         | join --left $idx to_path path
         | select from_path kind to_path line | rename --column {line: to_line}
         | update to_line {|r| $r.to_line | default "" })
+    # non-edges, each kept with a clear category in `reason`:
+    #   primitive            — a built-in (u8, void)
+    #   internal: <target>   — a real "pub → private" link (the public ref reaches into private
+    #                          internals we don't map); informative, not a gap
+    #   <specific reason>    — a genuine unresolved gap (multi-hop tail, type param, …)
     let other = ($raw | where status != "resolved"
         | select from_path kind to_or_raw status reason
         | each {|r| {from_path: $r.from_path, kind: $r.kind, raw: $r.to_or_raw,
-                     reason: (if $r.status == "primitive" { "primitive" } else { $r.reason })} })
+                     reason: (if $r.status == "primitive" { "primitive"
+                              } else if $r.status == "internal" { $"internal: ($r.reason)"
+                              } else { $r.reason })} })
 
     # dedup: a signature may name the same type twice — one graph edge, not two.
     $resolved | uniq | to tsv | save -f $"($outdir)/tunnels.tsv"
@@ -92,7 +99,10 @@ def main [--check] {
     let u = (open data/std/unresolved.tsv)
     let by_kind = ($t | group-by kind | items {|k, rows| $"($k) ($rows | length)" } | str join "  ")
     print $"[L3] tunnels: (($t | length)) resolved edges   \(($by_kind)\)"
-    print $"[L3] unresolved: (($u | where reason != 'primitive' | length))   primitive: (($u | where reason == 'primitive' | length))"
+    let prim = ($u | where reason == "primitive" | length)
+    let intl = ($u | where reason =~ '^internal' | length)
+    let gap = (($u | length) - $prim - $intl)
+    print $"[L3] recorded non-edges: ($intl) internal \(pub→private\)   ($prim) primitive   ($gap) genuine gaps"
 
     print "[L3] verifying — reading the overlay back against the map..."
     let v = (do { ^nu scripts/verify_tunnels.nu data/std } | complete)
