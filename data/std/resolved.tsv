@@ -489,7 +489,7 @@ std.Build.Step.handleVerbose	fn	fn (*Build, process.Child.Cwd, []const []const u
 std.Build.Step.handleVerbose2	fn	fn (*Build, process.Child.Cwd, ?*const process.Environ.Map, []const []const u8) error{OutOfMemory}!void
 std.Build.Step.handleChildProcUnsupported	fn	fn (*Build.Step) callconv(.@"inline") error{MakeFailed,OutOfMemory}!void
 std.Build.Step.handleChildProcessTerm	fn	fn (*Build.Step, process.Child.Term) error{MakeFailed,OutOfMemory}!void
-std.Build.Step.allocPrintCmd	fn	fn (mem.Allocator, process.Child.Cwd, ?Build.Step.allocPrintCmd__struct_37099, []const []const u8) error{OutOfMemory}![]u8
+std.Build.Step.allocPrintCmd	fn	fn (mem.Allocator, process.Child.Cwd, ?Build.Step.allocPrintCmd__struct, []const []const u8) error{OutOfMemory}![]u8
 std.Build.Step.cacheHit	fn	fn (*Build.Step, *Build.Cache.Manifest) @typeInfo(@typeInfo(@TypeOf(Build.Step.cacheHit)).@"fn".return_type.?).error_union.error_set!bool
 std.Build.Step.cacheHitAndWatch	fn	fn (*Build.Step, *Build.Cache.Manifest) @typeInfo(@typeInfo(@TypeOf(Build.Step.cacheHitAndWatch)).@"fn".return_type.?).error_union.error_set!bool
 std.Build.Step.writeManifest	fn	fn (*Build.Step, *Build.Cache.Manifest) @typeInfo(@typeInfo(@TypeOf(Build.Step.writeManifest)).@"fn".return_type.?).error_union.error_set!void
@@ -910,7 +910,7 @@ std.Build.Module.IncludeDir	type	Build.Module.IncludeDir
 std.Build.Module.LinkFrameworkOptions	type	Build.Module.LinkFrameworkOptions
 std.Build.Module.CreateOptions	type	Build.Module.CreateOptions
 std.Build.Module.Import	type	Build.Module.Import
-std.Build.Module.init	fn	fn (*Build.Module, *Build, Build.Module.init__union_34169) void
+std.Build.Module.init	fn	fn (*Build.Module, *Build, Build.Module.init__union) void
 std.Build.Module.create	fn	fn (*Build, Build.Module.CreateOptions) *Build.Module
 std.Build.Module.addImport	fn	fn (*Build.Module, []const u8, *Build.Module) void
 std.Build.Module.addAnonymousImport	fn	fn (*Build.Module, []const u8, Build.Module.CreateOptions) void
@@ -957,7 +957,7 @@ std.Build.Watch.Match.Context	type	Build.Watch.Match.Context
 std.Build.Watch.Match.Context.hash	fn	fn (Build.Watch.Match.Context, Build.Watch.Match) u32
 std.Build.Watch.Match.Context.eql	fn	fn (Build.Watch.Match.Context, Build.Watch.Match, Build.Watch.Match, usize) bool
 std.Build.Watch.Timeout.to_i32_ms	fn	fn (Build.Watch.Timeout) i32
-std.Build.Watch.Timeout.toTimespec	fn	fn (Build.Watch.Timeout, *os.linux.timespec__struct_14750) ?*os.linux.timespec__struct_14750
+std.Build.Watch.Timeout.toTimespec	fn	fn (Build.Watch.Timeout, *os.linux.timespec__struct) ?*os.linux.timespec__struct
 std.Build.Fuzz.Mode	type	Build.Fuzz.Mode
 std.Build.Fuzz.init	fn	fn (mem.Allocator, Io, []const *Build.Step, Progress.Node, Build.Fuzz.Mode) error{Canceled,OutOfMemory}!Build.Fuzz
 std.Build.Fuzz.start	fn	fn (*Build.Fuzz) void
@@ -976,11 +976,11 @@ std.Build.WebServer.deinit	fn	fn (*Build.WebServer) void
 std.Build.WebServer.start	fn	fn (*Build.WebServer) error{AlreadyReported}!void
 std.Build.WebServer.startBuild	fn	fn (*Build.WebServer) void
 std.Build.WebServer.updateStepStatus	fn	fn (*Build.WebServer, *Build.Step, Build.abi.StepUpdate.Status) void
-std.Build.WebServer.finishBuild	fn	fn (*Build.WebServer, Build.WebServer.finishBuild__struct_33420) void
+std.Build.WebServer.finishBuild	fn	fn (*Build.WebServer, Build.WebServer.finishBuild__struct) void
 std.Build.WebServer.now	fn	fn (*const Build.WebServer) i64
 std.Build.WebServer.serveFile	fn	fn (*Build.WebServer, *http.Server.Request, Build.Cache.Path, []const u8) @typeInfo(@typeInfo(@TypeOf(Build.WebServer.serveFile)).@"fn".return_type.?).error_union.error_set!void
 std.Build.WebServer.serveTarFile	fn	fn (*Build.WebServer, *http.Server.Request, []const Build.Cache.Path) @typeInfo(@typeInfo(@TypeOf(Build.WebServer.serveTarFile)).@"fn".return_type.?).error_union.error_set!void
-std.Build.WebServer.updateTimeReportCompile	fn	fn (*Build.WebServer, Build.WebServer.updateTimeReportCompile__struct_33566) void
+std.Build.WebServer.updateTimeReportCompile	fn	fn (*Build.WebServer, Build.WebServer.updateTimeReportCompile__struct) void
 std.Build.WebServer.updateTimeReportGeneric	fn	fn (*Build.WebServer, *Build.Step, Io.Duration) void
 std.Build.WebServer.updateTimeReportRunTest	fn	fn (*Build.WebServer, *Build.Step.Run, *const Build.Step.Run.CachedTestMetadata, []const u64) void
 std.Build.WebServer.getRunnerRequest	fn	fn (*Build.WebServer) ?Build.WebServer.RunnerRequest
@@ -1079,22 +1079,22 @@ std.DynLib.openZ	fn	fn ([*:0]const u8) error{AccessDenied,AntivirusInterference,
 std.DynLib.close	fn	fn (*dynamic_library.DynLib) void
 std.DynLib.lookup	fn	fn (*dynamic_library.DynLib, comptime type, [:0]const u8) anytype
 std.Io.Threaded.Csprng	type	Io.Threaded.Csprng
-std.Io.Threaded.Argv0	type	Io.Threaded.Argv0__struct_3588
-std.Io.Threaded.Argv0.empty	const_other	Io.Threaded.Argv0__struct_3588
-std.Io.Threaded.Argv0.init	fn	fn (process.Args) Io.Threaded.Argv0__struct_3588
+std.Io.Threaded.Argv0	type	Io.Threaded.Argv0__struct
+std.Io.Threaded.Argv0.empty	const_other	Io.Threaded.Argv0__struct
+std.Io.Threaded.Argv0.init	fn	fn (process.Args) Io.Threaded.Argv0__struct
 std.Io.Threaded.Environ	type	Io.Threaded.Environ
-std.Io.Threaded.NullFile	type	Io.Threaded.NullFile__struct_3594
-std.Io.Threaded.RandomFile	type	Io.Threaded.RandomFile__struct_3601
-std.Io.Threaded.PipeFile	type	Io.Threaded.PipeFile__struct_3603
-std.Io.Threaded.Pid	type	Io.Threaded.Pid__enum_3308
-std.Io.Threaded.UseSendfile	type	Io.Threaded.UseSendfile__enum_3407
-std.Io.Threaded.UseSendfile.default	const_other	Io.Threaded.UseSendfile__enum_3407
-std.Io.Threaded.UseCopyFileRange	type	Io.Threaded.UseCopyFileRange__enum_3411
-std.Io.Threaded.UseCopyFileRange.default	const_other	Io.Threaded.UseCopyFileRange__enum_3411
-std.Io.Threaded.UseFcopyfile	type	Io.Threaded.UseFcopyfile__enum_3427
-std.Io.Threaded.UseFcopyfile.default	const_other	Io.Threaded.UseFcopyfile__enum_3427
-std.Io.Threaded.UseFchmodat2	type	Io.Threaded.UseFchmodat2__enum_3582
-std.Io.Threaded.UseFchmodat2.default	const_other	Io.Threaded.UseFchmodat2__enum_3582
+std.Io.Threaded.NullFile	type	Io.Threaded.NullFile__struct
+std.Io.Threaded.RandomFile	type	Io.Threaded.RandomFile__struct
+std.Io.Threaded.PipeFile	type	Io.Threaded.PipeFile__struct
+std.Io.Threaded.Pid	type	Io.Threaded.Pid__enum
+std.Io.Threaded.UseSendfile	type	Io.Threaded.UseSendfile__enum
+std.Io.Threaded.UseSendfile.default	const_other	Io.Threaded.UseSendfile__enum
+std.Io.Threaded.UseCopyFileRange	type	Io.Threaded.UseCopyFileRange__enum
+std.Io.Threaded.UseCopyFileRange.default	const_other	Io.Threaded.UseCopyFileRange__enum
+std.Io.Threaded.UseFcopyfile	type	Io.Threaded.UseFcopyfile__enum
+std.Io.Threaded.UseFcopyfile.default	const_other	Io.Threaded.UseFcopyfile__enum
+std.Io.Threaded.UseFchmodat2	type	Io.Threaded.UseFchmodat2__enum
+std.Io.Threaded.UseFchmodat2.default	const_other	Io.Threaded.UseFchmodat2__enum
 std.Io.Threaded.apc_align	const_int	16
 std.Io.Threaded.waitForApcOrAlert	fn	fn () void
 std.Io.Threaded.max_iovecs_len	const_int	8
@@ -1123,7 +1123,7 @@ std.Io.Threaded.PosixAddress	type	Io.Threaded.PosixAddress
 std.Io.Threaded.posixAddressFamily	fn	fn (*const Io.net.IpAddress) u16
 std.Io.Threaded.addressFromPosix	fn	fn (*const Io.Threaded.PosixAddress) Io.net.IpAddress
 std.Io.Threaded.addressToPosix	fn	fn (*const Io.net.IpAddress, *Io.Threaded.PosixAddress) u32
-std.Io.Threaded.errnoBug	fn	fn (os.linux.E__enum_5796) error{Unexpected}
+std.Io.Threaded.errnoBug	fn	fn (os.linux.E__enum) error{Unexpected}
 std.Io.Threaded.posixSocketModeProtocol	fn	fn (u16, Io.net.Socket.Mode, ?Io.net.Protocol) @typeInfo(@typeInfo(@TypeOf(Io.Threaded.posixSocketModeProtocol)).@"fn".return_type.?).error_union.error_set!struct { u32, u32 }
 std.Io.Threaded.recoverableOsBugDetected	fn	fn () void
 std.Io.Threaded.clockToPosix	fn	fn (Io.Clock) os.linux.clockid_t
@@ -1132,9 +1132,9 @@ std.Io.Threaded.linux_statx_check	const_other	os.linux.STATX
 std.Io.Threaded.statFromLinux	fn	fn (*const os.linux.Statx) error{Unexpected}!Io.File.Stat
 std.Io.Threaded.statxKind	fn	fn (u16) Io.File.Kind
 std.Io.Threaded.statFromPosix	fn	fn (*const void) Io.File.Stat
-std.Io.Threaded.timestampFromPosix	fn	fn (*const os.linux.timespec__struct_14759) Io.Timestamp
-std.Io.Threaded.nanosecondsFromPosix	fn	fn (*const os.linux.timespec__struct_14759) i96
-std.Io.Threaded.setTimestampToPosix	fn	fn (Io.File.SetTimestamp) os.linux.timespec__struct_14759
+std.Io.Threaded.timestampFromPosix	fn	fn (*const os.linux.timespec__struct) Io.Timestamp
+std.Io.Threaded.nanosecondsFromPosix	fn	fn (*const os.linux.timespec__struct) i96
+std.Io.Threaded.setTimestampToPosix	fn	fn (Io.File.SetTimestamp) os.linux.timespec__struct
 std.Io.Threaded.pathToPosix	fn	fn ([]const u8, *[4096]u8) error{BadPathName,NameTooLong}![:0]u8
 std.Io.Threaded.statusToTerm	fn	fn (u32) process.Child.Term
 std.Io.Threaded.posixExecvPath	fn	fn ([*:0]const u8, [*:null]const ?[*:0]const u8, process.Environ.PosixBlock) error{AccessDenied,BadPathName,Canceled,FileBusy,FileNotFound,FileSystem,InvalidExe,IsDir,NameTooLong,NotDir,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,SystemResources,Unexpected}
@@ -1143,7 +1143,7 @@ std.Io.Threaded.windowsCreatePipe	fn	fn (*Io.Threaded, Io.Threaded.CreatePipeOpt
 std.Io.Threaded.environString	fn	fn (*Io.Threaded, comptime []const u8) ?[:0]const u8
 std.Io.Threaded.fallbackSeed	fn	fn (?*anyopaque, *[32]u8) void
 std.Io.Threaded.PipeError	type	error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}
-std.Io.Threaded.pipe2	fn	fn (os.linux.O__struct_24120) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
+std.Io.Threaded.pipe2	fn	fn (os.linux.O__struct) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
 std.Io.Threaded.DupError	type	error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Threaded.dup2	fn	fn (i32, i32) error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}!void
 std.Io.Threaded.FchdirError	type	error{AccessDenied,Canceled,FileSystem,NotDir,Unexpected}
@@ -1159,13 +1159,13 @@ std.Io.Threaded.Csprng.isInitialized	fn	fn (*const Io.Threaded.Csprng) bool
 std.Io.Threaded.Environ.empty	const_other	Io.Threaded.Environ
 std.Io.Threaded.Environ.Error	type	error{OutOfMemory,Unexpected}
 std.Io.Threaded.Environ.Exist	type	Io.Threaded.Environ.Exist
-std.Io.Threaded.Environ.String	type	Io.Threaded.Environ.String__struct_3682
+std.Io.Threaded.Environ.String	type	Io.Threaded.Environ.String__struct
 std.Io.Threaded.Environ.scan	fn	fn (*Io.Threaded.Environ, mem.Allocator) void
 std.Io.Threaded.WindowsPathSpace.span	fn	fn (*const Io.Threaded.WindowsPathSpace) [:0]const u16
 std.Io.Threaded.WindowsPathSpace.string	fn	fn (*const Io.Threaded.WindowsPathSpace) os.windows.STRING(u16)
 std.Io.Threaded.CreatePipeOptions.End	type	Io.Threaded.CreatePipeOptions.End
 std.Io.fiber.supported	const_bool	true
-std.Io.fiber.Context	type	Io.fiber.Context__struct_32961
+std.Io.fiber.Context	type	Io.fiber.Context__struct
 std.Io.fiber.Switch	type	Io.fiber.Switch
 std.Io.fiber.contextSwitch	fn	fn (*const Io.fiber.Switch) callconv(.@"inline") *const Io.fiber.Switch
 std.Io.Uring.allocator	fn	fn (*Io.Uring) mem.Allocator
@@ -1174,7 +1174,7 @@ std.Io.Uring.InitOptions	type	Io.Uring.InitOptions
 std.Io.Uring.init	fn	fn (*Io.Uring, mem.Allocator, Io.Uring.InitOptions) @typeInfo(@typeInfo(@TypeOf(Io.Uring.init)).@"fn".return_type.?).error_union.error_set!void
 std.Io.Uring.deinit	fn	fn (*Io.Uring) void
 std.Io.Uring.PipeError	type	error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}
-std.Io.Uring.pipe2	fn	fn (os.linux.O__struct_24107) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
+std.Io.Uring.pipe2	fn	fn (os.linux.O__struct) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
 std.Io.Uring.DupError	type	error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Uring.dup2	fn	fn (*Io.Uring.CancelRegion.Sync, i32, i32) error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}!void
 std.Io.Uring.execvPath	fn	fn (*Io.Uring.CancelRegion.Sync, [*:0]const u8, [*:null]const ?[*:0]const u8, process.Environ.PosixBlock) error{AccessDenied,BadPathName,Canceled,FileBusy,FileNotFound,FileSystem,InvalidExe,IsDir,NameTooLong,NotDir,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,SystemResources,Unexpected}
@@ -1620,12 +1620,12 @@ std.Io.Dir.updateFile	fn	fn (Io.Dir, Io, []const u8, Io.Dir, []const u8, Io.Dir.
 std.Io.Dir.ReadFileError	type	error{AccessDenied,AntivirusInterference,BadPathName,Canceled,ConnectionResetByPeer,DeviceBusy,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,InputOutput,IsDir,LockViolation,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,NotOpenForReading,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SocketUnconnected,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}
 std.Io.Dir.readFile	fn	fn (Io.Dir, Io, []const u8, []u8) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,ConnectionResetByPeer,DeviceBusy,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,InputOutput,IsDir,LockViolation,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,NotOpenForReading,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SocketUnconnected,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}![]u8
 std.Io.Dir.CreateDirError	type	error{AccessDenied,BadPathName,Canceled,DiskQuota,FileNotFound,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}
-std.Io.Dir.createDir	fn	fn (Io.Dir, Io, []const u8, Io.File.Permissions__enum_2597) error{AccessDenied,BadPathName,Canceled,DiskQuota,FileNotFound,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
-std.Io.Dir.createDirAbsolute	fn	fn (Io, []const u8, Io.File.Permissions__enum_2597) error{AccessDenied,BadPathName,Canceled,DiskQuota,FileNotFound,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
+std.Io.Dir.createDir	fn	fn (Io.Dir, Io, []const u8, Io.File.Permissions__enum) error{AccessDenied,BadPathName,Canceled,DiskQuota,FileNotFound,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
+std.Io.Dir.createDirAbsolute	fn	fn (Io, []const u8, Io.File.Permissions__enum) error{AccessDenied,BadPathName,Canceled,DiskQuota,FileNotFound,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
 std.Io.Dir.CreateDirPathError	type	error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,DiskQuota,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,IsDir,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}
 std.Io.Dir.createDirPath	fn	fn (Io.Dir, Io, []const u8) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,DiskQuota,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,IsDir,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}!void
 std.Io.Dir.CreatePathStatus	type	Io.Dir.CreatePathStatus
-std.Io.Dir.createDirPathStatus	fn	fn (Io.Dir, Io, []const u8, Io.File.Permissions__enum_2597) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,DiskQuota,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,IsDir,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}!Io.Dir.CreatePathStatus
+std.Io.Dir.createDirPathStatus	fn	fn (Io.Dir, Io, []const u8, Io.File.Permissions__enum) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,DiskQuota,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,IsDir,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}!Io.Dir.CreatePathStatus
 std.Io.Dir.CreateDirPathOpenError	type	error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,DiskQuota,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,IsDir,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}
 std.Io.Dir.CreateDirPathOpenOptions	type	Io.Dir.CreateDirPathOpenOptions
 std.Io.Dir.createDirPathOpen	fn	fn (Io.Dir, Io, []const u8, Io.Dir.CreateDirPathOpenOptions) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,DiskQuota,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,IsDir,LinkQuotaExceeded,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}!Io.Dir
@@ -1679,17 +1679,17 @@ std.Io.Dir.CreateFileAtomicOptions	type	Io.Dir.CreateFileAtomicOptions
 std.Io.Dir.CreateFileAtomicError	type	error{AccessDenied,AntivirusInterference,BadPathName,Canceled,FileBusy,FileNotFound,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PermissionDenied,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}
 std.Io.Dir.createFileAtomic	fn	fn (Io.Dir, Io, []const u8, Io.Dir.CreateFileAtomicOptions) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,FileBusy,FileNotFound,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,PermissionDenied,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,WouldBlock}!Io.File.Atomic
 std.Io.Dir.SetPermissionsError	type	error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}
-std.Io.Dir.Permissions	type	Io.File.Permissions__enum_2597
+std.Io.Dir.Permissions	type	Io.File.Permissions__enum
 std.Io.Dir.Permissions.has_executable_bit	const_bool	true
-std.Io.Dir.Permissions.executable_file	const_other	Io.File.Permissions__enum_2597
-std.Io.Dir.Permissions.toMode	fn	fn (Io.File.Permissions__enum_2597) u32
-std.Io.Dir.Permissions.fromMode	fn	fn (u32) Io.File.Permissions__enum_2597
-std.Io.Dir.Permissions.readOnly	fn	fn (Io.File.Permissions__enum_2597) bool
-std.Io.Dir.Permissions.setReadOnly	fn	fn (Io.File.Permissions__enum_2597, bool) Io.File.Permissions__enum_2597
-std.Io.Dir.setPermissions	fn	fn (Io.Dir, Io, Io.File.Permissions__enum_2597) error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
+std.Io.Dir.Permissions.executable_file	const_other	Io.File.Permissions__enum
+std.Io.Dir.Permissions.toMode	fn	fn (Io.File.Permissions__enum) u32
+std.Io.Dir.Permissions.fromMode	fn	fn (u32) Io.File.Permissions__enum
+std.Io.Dir.Permissions.readOnly	fn	fn (Io.File.Permissions__enum) bool
+std.Io.Dir.Permissions.setReadOnly	fn	fn (Io.File.Permissions__enum, bool) Io.File.Permissions__enum
+std.Io.Dir.setPermissions	fn	fn (Io.Dir, Io, Io.File.Permissions__enum) error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
 std.Io.Dir.SetFilePermissionsError	type	error{AccessDenied,BadPathName,Canceled,FileNotFound,InputOutput,NameTooLong,OperationUnsupported,PermissionDenied,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Dir.SetFilePermissionsOptions	type	Io.Dir.SetFilePermissionsOptions
-std.Io.Dir.setFilePermissions	fn	fn (Io.Dir, Io, []const u8, Io.File.Permissions__enum_2597, Io.Dir.SetFilePermissionsOptions) error{AccessDenied,BadPathName,Canceled,FileNotFound,InputOutput,NameTooLong,OperationUnsupported,PermissionDenied,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected}!void
+std.Io.Dir.setFilePermissions	fn	fn (Io.Dir, Io, []const u8, Io.File.Permissions__enum, Io.Dir.SetFilePermissionsOptions) error{AccessDenied,BadPathName,Canceled,FileNotFound,InputOutput,NameTooLong,OperationUnsupported,PermissionDenied,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected}!void
 std.Io.Dir.SetOwnerError	type	error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}
 std.Io.Dir.setOwner	fn	fn (Io.Dir, Io, ?u32, ?u32) error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
 std.Io.Dir.SetFileOwnerError	type	error{AccessDenied,BadPathName,Canceled,FileNotFound,InputOutput,NameTooLong,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}
@@ -1764,16 +1764,16 @@ std.Io.File.setLength	fn	fn (Io.File, Io, u64) error{AccessDenied,Canceled,FileB
 std.Io.File.LengthError	type	error{AccessDenied,Canceled,PermissionDenied,Streaming,SystemResources,Unexpected}
 std.Io.File.length	fn	fn (Io.File, Io) error{AccessDenied,Canceled,PermissionDenied,Streaming,SystemResources,Unexpected}!u64
 std.Io.File.SetPermissionsError	type	error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}
-std.Io.File.setPermissions	fn	fn (Io.File, Io, Io.File.Permissions__enum_2597) error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
+std.Io.File.setPermissions	fn	fn (Io.File, Io, Io.File.Permissions__enum) error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
 std.Io.File.SetOwnerError	type	error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}
 std.Io.File.setOwner	fn	fn (Io.File, Io, ?u32, ?u32) error{AccessDenied,Canceled,FileNotFound,InputOutput,PermissionDenied,ReadOnlyFileSystem,SymLinkLoop,SystemResources,Unexpected}!void
-std.Io.File.Permissions	type	Io.File.Permissions__enum_2597
+std.Io.File.Permissions	type	Io.File.Permissions__enum
 std.Io.File.Permissions.has_executable_bit	const_bool	true
-std.Io.File.Permissions.executable_file	const_other	Io.File.Permissions__enum_2597
-std.Io.File.Permissions.toMode	fn	fn (Io.File.Permissions__enum_2597) u32
-std.Io.File.Permissions.fromMode	fn	fn (u32) Io.File.Permissions__enum_2597
-std.Io.File.Permissions.readOnly	fn	fn (Io.File.Permissions__enum_2597) bool
-std.Io.File.Permissions.setReadOnly	fn	fn (Io.File.Permissions__enum_2597, bool) Io.File.Permissions__enum_2597
+std.Io.File.Permissions.executable_file	const_other	Io.File.Permissions__enum
+std.Io.File.Permissions.toMode	fn	fn (Io.File.Permissions__enum) u32
+std.Io.File.Permissions.fromMode	fn	fn (u32) Io.File.Permissions__enum
+std.Io.File.Permissions.readOnly	fn	fn (Io.File.Permissions__enum) bool
+std.Io.File.Permissions.setReadOnly	fn	fn (Io.File.Permissions__enum, bool) Io.File.Permissions__enum
 std.Io.File.SetTimestampsError	type	error{AccessDenied,Canceled,PermissionDenied,ReadOnlyFileSystem,Unexpected}
 std.Io.File.SetTimestampsOptions	type	Io.File.SetTimestampsOptions
 std.Io.File.SetTimestamp	type	Io.File.SetTimestamp
@@ -1895,10 +1895,10 @@ std.Io.Semaphore.post	fn	fn (*Io.Semaphore, Io) void
 std.Io.Operation.Tag	type	@typeInfo(Io.Operation).@"union".tag_type.?
 std.Io.Operation.FileReadStreaming	type	Io.Operation.FileReadStreaming
 std.Io.Operation.FileWriteStreaming	type	Io.Operation.FileWriteStreaming
-std.Io.Operation.DeviceIoControl	type	Io.Operation.DeviceIoControl__struct_2336
+std.Io.Operation.DeviceIoControl	type	Io.Operation.DeviceIoControl__struct
 std.Io.Operation.DeviceIoControl.Result	type	i32
 std.Io.Operation.NetReceive	type	Io.Operation.NetReceive
-std.Io.Operation.Result	type	Io.Operation.Result__union_2556
+std.Io.Operation.Result	type	Io.Operation.Result__union
 std.Io.Operation.Storage	type	Io.Operation.Storage
 std.Io.Operation.OptionalIndex	type	Io.Operation.OptionalIndex
 std.Io.Operation.List	type	Io.Operation.List
@@ -4029,7 +4029,7 @@ std.builtin.panic.copyLenMismatch	fn	fn () noreturn
 std.builtin.panic.memcpyAlias	fn	fn () noreturn
 std.builtin.panic.noreturnReturned	fn	fn () noreturn
 std.builtin.returnError	fn	noinline fn () void
-std.builtin.assembly.Clobbers	type	builtin.assembly.Clobbers__struct_5604
+std.builtin.assembly.Clobbers	type	builtin.assembly.Clobbers__struct
 std.builtin.CallingConvention.ArcInterruptOptions.InterruptType	type	builtin.CallingConvention.ArcInterruptOptions.InterruptType
 std.builtin.CallingConvention.ArmInterruptOptions.InterruptType	type	builtin.CallingConvention.ArmInterruptOptions.InterruptType
 std.builtin.CallingConvention.MicroblazeInterruptOptions.InterruptType	type	builtin.CallingConvention.MicroblazeInterruptOptions.InterruptType
@@ -5163,7 +5163,7 @@ std.crypto.ecc.Edwards25519.mulPublic	fn	fn (crypto.25519.edwards25519.Edwards25
 std.crypto.ecc.Edwards25519.mulDoubleBasePublic	fn	fn (crypto.25519.edwards25519.Edwards25519, [32]u8, crypto.25519.edwards25519.Edwards25519, [32]u8) error{WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Edwards25519.mulMulti	fn	fn (comptime usize, anytype, anytype) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Edwards25519.clampedMul	fn	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Edwards25519.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct_34057
+std.crypto.ecc.Edwards25519.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct
 std.crypto.ecc.Edwards25519.fromHash	fn	fn ([64]u8) crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Edwards25519.fromString	fn	fn (comptime bool, []const u8, []const u8) crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Edwards25519.fromUniform	fn	fn ([32]u8) crypto.25519.edwards25519.Edwards25519
@@ -5466,7 +5466,7 @@ std.crypto.ecc.Ristretto255.Curve.mulPublic	fn	fn (crypto.25519.edwards25519.Edw
 std.crypto.ecc.Ristretto255.Curve.mulDoubleBasePublic	fn	fn (crypto.25519.edwards25519.Edwards25519, [32]u8, crypto.25519.edwards25519.Edwards25519, [32]u8) error{WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Ristretto255.Curve.mulMulti	fn	fn (comptime usize, anytype, anytype) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Ristretto255.Curve.clampedMul	fn	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct_34056
+std.crypto.ecc.Ristretto255.Curve.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct
 std.crypto.ecc.Ristretto255.Curve.fromHash	fn	fn ([64]u8) crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Ristretto255.Curve.fromString	fn	fn (comptime bool, []const u8, []const u8) crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Ristretto255.Curve.fromUniform	fn	fn ([32]u8) crypto.25519.edwards25519.Edwards25519
@@ -6154,7 +6154,7 @@ std.crypto.sign.Ed25519.Curve.mulPublic	fn	fn (crypto.25519.edwards25519.Edwards
 std.crypto.sign.Ed25519.Curve.mulDoubleBasePublic	fn	fn (crypto.25519.edwards25519.Edwards25519, [32]u8, crypto.25519.edwards25519.Edwards25519, [32]u8) error{WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
 std.crypto.sign.Ed25519.Curve.mulMulti	fn	fn (comptime usize, anytype, anytype) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
 std.crypto.sign.Ed25519.Curve.clampedMul	fn	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.sign.Ed25519.Curve.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct_33713
+std.crypto.sign.Ed25519.Curve.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct
 std.crypto.sign.Ed25519.Curve.fromHash	fn	fn ([64]u8) crypto.25519.edwards25519.Edwards25519
 std.crypto.sign.Ed25519.Curve.fromString	fn	fn (comptime bool, []const u8, []const u8) crypto.25519.edwards25519.Edwards25519
 std.crypto.sign.Ed25519.Curve.fromUniform	fn	fn ([32]u8) crypto.25519.edwards25519.Edwards25519
@@ -6266,7 +6266,7 @@ std.crypto.sign.mldsa.MLDSA44.private_key_bytes	const_int	2560
 std.crypto.sign.mldsa.MLDSA44.signature_bytes	const_int	2420
 std.crypto.sign.mldsa.MLDSA44.PublicKey	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).PublicKey
 std.crypto.sign.mldsa.MLDSA44.SecretKey	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).SecretKey
-std.crypto.sign.mldsa.MLDSA44.newKeyFromSeed	fn	fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).newKeyFromSeed__struct_33331
+std.crypto.sign.mldsa.MLDSA44.newKeyFromSeed	fn	fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).newKeyFromSeed__struct
 std.crypto.sign.mldsa.MLDSA44.Signature	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).Signature
 std.crypto.sign.mldsa.MLDSA44.Signer	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).Signer
 std.crypto.sign.mldsa.MLDSA44.Verifier	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).Verifier
@@ -6284,7 +6284,7 @@ std.crypto.sign.mldsa.MLDSA65.private_key_bytes	const_int	4032
 std.crypto.sign.mldsa.MLDSA65.signature_bytes	const_int	3309
 std.crypto.sign.mldsa.MLDSA65.PublicKey	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).PublicKey
 std.crypto.sign.mldsa.MLDSA65.SecretKey	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).SecretKey
-std.crypto.sign.mldsa.MLDSA65.newKeyFromSeed	fn	fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).newKeyFromSeed__struct_33613
+std.crypto.sign.mldsa.MLDSA65.newKeyFromSeed	fn	fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).newKeyFromSeed__struct
 std.crypto.sign.mldsa.MLDSA65.Signature	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signature
 std.crypto.sign.mldsa.MLDSA65.Signer	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Signer
 std.crypto.sign.mldsa.MLDSA65.Verifier	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).Verifier
@@ -6302,7 +6302,7 @@ std.crypto.sign.mldsa.MLDSA87.private_key_bytes	const_int	4896
 std.crypto.sign.mldsa.MLDSA87.signature_bytes	const_int	4627
 std.crypto.sign.mldsa.MLDSA87.PublicKey	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).PublicKey
 std.crypto.sign.mldsa.MLDSA87.SecretKey	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).SecretKey
-std.crypto.sign.mldsa.MLDSA87.newKeyFromSeed	fn	fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).newKeyFromSeed__struct_33833
+std.crypto.sign.mldsa.MLDSA87.newKeyFromSeed	fn	fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).newKeyFromSeed__struct
 std.crypto.sign.mldsa.MLDSA87.Signature	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).Signature
 std.crypto.sign.mldsa.MLDSA87.Signer	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).Signer
 std.crypto.sign.mldsa.MLDSA87.Verifier	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).Verifier
@@ -6648,7 +6648,7 @@ std.crypto.Certificate.rsa.PKCS1v1_5Signature.concatVerify	fn	fn (comptime usize
 std.crypto.Certificate.rsa.PublicKey.FromBytesError	type	error{CertificatePublicKeyInvalid}
 std.crypto.Certificate.rsa.PublicKey.fromBytes	fn	fn ([]const u8, []const u8) error{CertificatePublicKeyInvalid}!crypto.Certificate.rsa.PublicKey
 std.crypto.Certificate.rsa.PublicKey.ParseDerError	type	error{CertificateFieldHasInvalidLength,CertificateFieldHasWrongDataType}
-std.crypto.Certificate.rsa.PublicKey.parseDer	fn	fn ([]const u8) error{CertificateFieldHasInvalidLength,CertificateFieldHasWrongDataType}!crypto.Certificate.rsa.PublicKey.parseDer__struct_33113
+std.crypto.Certificate.rsa.PublicKey.parseDer	fn	fn ([]const u8) error{CertificateFieldHasInvalidLength,CertificateFieldHasWrongDataType}!crypto.Certificate.rsa.PublicKey.parseDer__struct
 std.debug.Dwarf	type	debug.Dwarf
 std.debug.Pdb	type	debug.Pdb
 std.debug.ElfFile	type	debug.ElfFile
@@ -6989,7 +6989,7 @@ std.debug.cpu_context.Native.getPc	fn	fn (*const debug.cpu_context.X86_64) usize
 std.debug.cpu_context.Native.dwarfRegisterBytes	fn	fn (*debug.cpu_context.X86_64, u16) error{InvalidRegister,UnsupportedRegister}![]u8
 std.debug.cpu_context.DwarfRegisterError	type	error{InvalidRegister,UnsupportedRegister}
 std.debug.cpu_context.fromPosixSignalContext	fn	fn (?*const anyopaque) ?debug.cpu_context.X86_64
-std.debug.cpu_context.fromWindowsContext	fn	fn (*const os.windows.CONTEXT__struct_33183) debug.cpu_context.X86_64
+std.debug.cpu_context.fromWindowsContext	fn	fn (*const os.windows.CONTEXT__struct) debug.cpu_context.X86_64
 std.debug.simple_panic.call	fn	fn ([]const u8, ?usize) noreturn
 std.debug.simple_panic.sentinelMismatch	fn	fn (anytype, anytype) noreturn
 std.debug.simple_panic.unwrapError	fn	fn (anyerror) noreturn
@@ -7045,7 +7045,7 @@ std.debug.no_panic.noreturnReturned	fn	fn () noreturn
 std.debug.SourceLocation.invalid	const_other	debug.SourceLocation
 std.debug.Symbol.unknown	const_other	debug.Symbol
 std.debug.FormatStackTrace.format	fn	fn (debug.FormatStackTrace, *Io.Writer) error{WriteFailed}!void
-std.debug.SafetyLock.State	type	debug.SafetyLock.State__enum_9095
+std.debug.SafetyLock.State	type	debug.SafetyLock.State__enum
 std.debug.SafetyLock.lock	fn	fn (*debug.SafetyLock) void
 std.debug.SafetyLock.unlock	fn	fn (*debug.SafetyLock) void
 std.debug.SafetyLock.assertUnlocked	fn	fn (debug.SafetyLock) void
@@ -9720,7 +9720,7 @@ std.os.linux.BPF.btf.VarSecInfo	type	os.linux.bpf.btf.VarSecInfo
 std.os.linux.BPF.btf.DeclTag	type	os.linux.bpf.btf.DeclTag
 std.os.linux.BPF.btf.ext.Header	type	os.linux.bpf.btf_ext.Header
 std.os.linux.BPF.btf.ext.InfoSec	type	os.linux.bpf.btf_ext.InfoSec
-std.os.linux.BPF.kern.helpers	type	os.linux.bpf.kern.helpers__struct_33082
+std.os.linux.BPF.kern.helpers	type	os.linux.bpf.kern.helpers__struct
 std.os.linux.BPF.kern.BinPrm	type	os.linux.bpf.kern.BinPrm
 std.os.linux.BPF.kern.BTFPtr	type	os.linux.bpf.kern.BTFPtr
 std.os.linux.BPF.kern.BpfDynPtr	type	os.linux.bpf.kern.BpfDynPtr
@@ -9952,8 +9952,8 @@ std.os.linux.W.EXITED	const_int	4
 std.os.linux.W.CONTINUED	const_int	8
 std.os.linux.W.NOWAIT	const_int	16777216
 std.os.linux.W.EXITSTATUS	fn	fn (u32) u8
-std.os.linux.W.TERMSIG	fn	fn (u32) os.linux.SIG__enum_3333
-std.os.linux.W.STOPSIG	fn	fn (u32) os.linux.SIG__enum_3333
+std.os.linux.W.TERMSIG	fn	fn (u32) os.linux.SIG__enum
+std.os.linux.W.STOPSIG	fn	fn (u32) os.linux.SIG__enum
 std.os.linux.W.IFEXITED	fn	fn (u32) bool
 std.os.linux.W.IFSTOPPED	fn	fn (u32) bool
 std.os.linux.W.IFSIGNALED	fn	fn (u32) bool
@@ -10599,8 +10599,8 @@ std.os.linux.S.ISBLK	fn	fn (u32) bool
 std.os.linux.S.ISFIFO	fn	fn (u32) bool
 std.os.linux.S.ISLNK	fn	fn (u32) bool
 std.os.linux.S.ISSOCK	fn	fn (u32) bool
-std.os.linux.Sigaction.handler_fn	type	*align(1) const fn (os.linux.SIG__enum_3333) callconv(.c) void
-std.os.linux.Sigaction.sigaction_fn	type	*const fn (os.linux.SIG__enum_3333, *const os.linux.siginfo_t__struct_3658, ?*anyopaque) callconv(.c) void
+std.os.linux.Sigaction.handler_fn	type	*align(1) const fn (os.linux.SIG__enum) callconv(.c) void
+std.os.linux.Sigaction.sigaction_fn	type	*const fn (os.linux.SIG__enum, *const os.linux.siginfo_t__struct, ?*anyopaque) callconv(.c) void
 std.os.linux.SFD.CLOEXEC	const_int	524288
 std.os.linux.SFD.NONBLOCK	const_int	2048
 std.os.linux.sockaddr.SS_MAXSIZE	const_int	128
@@ -10685,8 +10685,8 @@ std.os.linux.io_uring_sqe.prep_send_zc	fn	fn (*os.linux.io_uring_sqe.io_uring_sq
 std.os.linux.io_uring_sqe.prep_send_zc_fixed	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, []const u8, u32, u16, u16) void
 std.os.linux.io_uring_sqe.prep_sendmsg_zc	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, *const os.linux.msghdr_const, u32) void
 std.os.linux.io_uring_sqe.prep_sendmsg	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, *const os.linux.msghdr_const, u32) void
-std.os.linux.io_uring_sqe.prep_openat	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, [*:0]const u8, os.linux.O__struct_24113, u32) void
-std.os.linux.io_uring_sqe.prep_openat_direct	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, [*:0]const u8, os.linux.O__struct_24113, u32, u32) void
+std.os.linux.io_uring_sqe.prep_openat	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, [*:0]const u8, os.linux.O__struct, u32) void
+std.os.linux.io_uring_sqe.prep_openat_direct	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, [*:0]const u8, os.linux.O__struct, u32, u32) void
 std.os.linux.io_uring_sqe.prep_close	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32) void
 std.os.linux.io_uring_sqe.prep_close_direct	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, u32) void
 std.os.linux.io_uring_sqe.prep_timeout	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, *const os.linux.kernel_timespec, u32, u32) void
@@ -10713,7 +10713,7 @@ std.os.linux.io_uring_sqe.prep_multishot_accept	fn	fn (*os.linux.io_uring_sqe.io
 std.os.linux.io_uring_sqe.prep_socket	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, u32, u32, u32, u32) void
 std.os.linux.io_uring_sqe.prep_socket_direct	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, u32, u32, u32, u32, u32) void
 std.os.linux.io_uring_sqe.prep_socket_direct_alloc	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, u32, u32, u32, u32) void
-std.os.linux.io_uring_sqe.prep_waitid	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, os.linux.P, i32, *os.linux.siginfo_t__struct_3658, u32, u32) void
+std.os.linux.io_uring_sqe.prep_waitid	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, os.linux.P, i32, *os.linux.siginfo_t__struct, u32, u32) void
 std.os.linux.io_uring_sqe.prep_bind	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, *const os.linux.sockaddr, u32, u32) void
 std.os.linux.io_uring_sqe.prep_listen	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, i32, usize, u32) void
 std.os.linux.io_uring_sqe.prep_cmd_sock	fn	fn (*os.linux.io_uring_sqe.io_uring_sqe, os.linux.IO_URING_SOCKET_OP, i32, u32, u32, u64, u32) void
@@ -10758,8 +10758,8 @@ std.os.linux.IoUring.send_zc_fixed	fn	fn (*os.linux.IoUring, u64, i32, []const u
 std.os.linux.IoUring.recvmsg	fn	fn (*os.linux.IoUring, u64, i32, *os.linux.msghdr, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.recvmsg)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.sendmsg	fn	fn (*os.linux.IoUring, u64, i32, *const os.linux.msghdr_const, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.sendmsg)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.sendmsg_zc	fn	fn (*os.linux.IoUring, u64, i32, *const os.linux.msghdr_const, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.sendmsg_zc)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
-std.os.linux.IoUring.openat	fn	fn (*os.linux.IoUring, u64, i32, [*:0]const u8, os.linux.O__struct_24121, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.openat)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
-std.os.linux.IoUring.openat_direct	fn	fn (*os.linux.IoUring, u64, i32, [*:0]const u8, os.linux.O__struct_24121, u32, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.openat_direct)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
+std.os.linux.IoUring.openat	fn	fn (*os.linux.IoUring, u64, i32, [*:0]const u8, os.linux.O__struct, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.openat)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
+std.os.linux.IoUring.openat_direct	fn	fn (*os.linux.IoUring, u64, i32, [*:0]const u8, os.linux.O__struct, u32, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.openat_direct)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.close	fn	fn (*os.linux.IoUring, u64, i32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.close)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.close_direct	fn	fn (*os.linux.IoUring, u64, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.close_direct)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.timeout	fn	fn (*os.linux.IoUring, u64, *const os.linux.kernel_timespec, u32, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.timeout)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
@@ -10779,7 +10779,7 @@ std.os.linux.IoUring.symlinkat	fn	fn (*os.linux.IoUring, u64, [*:0]const u8, i32
 std.os.linux.IoUring.linkat	fn	fn (*os.linux.IoUring, u64, i32, [*:0]const u8, i32, [*:0]const u8, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.linkat)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.provide_buffers	fn	fn (*os.linux.IoUring, u64, [*]u8, usize, usize, usize, usize) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.provide_buffers)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.remove_buffers	fn	fn (*os.linux.IoUring, u64, usize, usize) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.remove_buffers)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
-std.os.linux.IoUring.waitid	fn	fn (*os.linux.IoUring, u64, os.linux.P, i32, *os.linux.siginfo_t__struct_3658, u32, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.waitid)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
+std.os.linux.IoUring.waitid	fn	fn (*os.linux.IoUring, u64, os.linux.P, i32, *os.linux.siginfo_t__struct, u32, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.waitid)).@"fn".return_type.?).error_union.error_set!*os.linux.io_uring_sqe.io_uring_sqe
 std.os.linux.IoUring.register_files	fn	fn (*os.linux.IoUring, []const i32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.register_files)).@"fn".return_type.?).error_union.error_set!void
 std.os.linux.IoUring.register_files_update	fn	fn (*os.linux.IoUring, u32, []const i32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.register_files_update)).@"fn".return_type.?).error_union.error_set!void
 std.os.linux.IoUring.register_files_sparse	fn	fn (*os.linux.IoUring, u32) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.register_files_sparse)).@"fn".return_type.?).error_union.error_set!void
@@ -10821,7 +10821,7 @@ std.os.linux.IoUring.BufferGroup.recv_multishot	fn	fn (*os.linux.IoUring.BufferG
 std.os.linux.IoUring.BufferGroup.get_by_id	fn	fn (*os.linux.IoUring.BufferGroup, u16) []u8
 std.os.linux.IoUring.BufferGroup.get	fn	fn (*os.linux.IoUring.BufferGroup, os.linux.io_uring_cqe) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.BufferGroup.get)).@"fn".return_type.?).error_union.error_set![]u8
 std.os.linux.IoUring.BufferGroup.put	fn	fn (*os.linux.IoUring.BufferGroup, os.linux.io_uring_cqe) @typeInfo(@typeInfo(@TypeOf(os.linux.IoUring.BufferGroup.put)).@"fn".return_type.?).error_union.error_set!void
-std.os.linux.io_uring_cqe.err	fn	fn (os.linux.io_uring_cqe) os.linux.E__enum_5797
+std.os.linux.io_uring_cqe.err	fn	fn (os.linux.io_uring_cqe) os.linux.E__enum
 std.os.linux.io_uring_cqe.buffer_id	fn	fn (os.linux.io_uring_cqe) @typeInfo(@typeInfo(@TypeOf(os.linux.io_uring_cqe.buffer_id)).@"fn".return_type.?).error_union.error_set!u16
 std.os.linux.io_uring_probe_op.is_supported	fn	fn (os.linux.io_uring_probe_op) bool
 std.os.linux.io_uring_probe.is_supported	fn	fn (os.linux.io_uring_probe, os.linux.IORING_OP) bool
@@ -10957,10 +10957,10 @@ std.os.linux.MADV.COLD	const_int	20
 std.os.linux.MADV.PAGEOUT	const_int	21
 std.os.linux.MADV.HWPOISON	const_int	100
 std.os.linux.MADV.SOFT_OFFLINE	const_int	101
-std.os.linux.kernel_timespec.NOW	const_other	os.linux.timespec__struct_14760
-std.os.linux.kernel_timespec.OMIT	const_other	os.linux.timespec__struct_14760
-std.os.linux.UTIME.NOW	const_other	os.linux.timespec__struct_14751
-std.os.linux.UTIME.OMIT	const_other	os.linux.timespec__struct_14751
+std.os.linux.kernel_timespec.NOW	const_other	os.linux.timespec__struct
+std.os.linux.kernel_timespec.OMIT	const_other	os.linux.timespec__struct
+std.os.linux.UTIME.NOW	const_other	os.linux.timespec__struct
+std.os.linux.UTIME.OMIT	const_other	os.linux.timespec__struct
 std.os.linux.XDP.SHARED_UMEM	const_int	1
 std.os.linux.XDP.COPY	const_int	2
 std.os.linux.XDP.ZEROCOPY	const_int	4
@@ -11260,11 +11260,11 @@ std.os.uefi.tables	type	os.uefi.tables
 std.os.uefi.efi_pool_memory_type	const_other	os.uefi.tables.MemoryType
 std.os.uefi.pool_allocator	const_other	mem.Allocator
 std.os.uefi.raw_pool_allocator	const_other	mem.Allocator
-std.os.uefi.handle	const_other	*os.uefi.Handle__opaque_34560
+std.os.uefi.handle	const_other	*os.uefi.Handle__opaque_34566
 std.os.uefi.system_table	const_other	*os.uefi.tables.system_table.SystemTable
 std.os.uefi.Page	type	[4096]u8
-std.os.uefi.Event	type	*os.uefi.Event__opaque_34642
-std.os.uefi.EventRegistration	type	*const os.uefi.EventRegistration__opaque_34674
+std.os.uefi.Event	type	*os.uefi.Event__opaque_34648
+std.os.uefi.EventRegistration	type	*const os.uefi.EventRegistration__opaque_34680
 std.os.uefi.EventType	type	os.uefi.EventType
 std.os.uefi.cc	const_other	builtin.CallingConvention
 std.os.uefi.MacAddress	type	os.uefi.MacAddress
@@ -11272,10 +11272,10 @@ std.os.uefi.Ipv4Address	type	os.uefi.Ipv4Address
 std.os.uefi.Ipv6Address	type	os.uefi.Ipv6Address
 std.os.uefi.IpAddress	type	os.uefi.IpAddress
 std.os.uefi.Guid	type	os.uefi.Guid
-std.os.uefi.Handle	type	*os.uefi.Handle__opaque_34560
+std.os.uefi.Handle	type	*os.uefi.Handle__opaque_34566
 std.os.uefi.Time	type	os.uefi.Time
 std.os.uefi.TimeCapabilities	type	os.uefi.TimeCapabilities
-std.os.uefi.FileHandle	type	*os.uefi.FileHandle__opaque_35735
+std.os.uefi.FileHandle	type	*os.uefi.FileHandle__opaque_35741
 std.os.uefi.UnexpectedError	type	error{Unexpected}
 std.os.uefi.unexpectedStatus	fn	fn (os.uefi.status.Status) error{Unexpected}
 std.os.uefi.protocol.ServiceBinding	fn	fn (os.uefi.Guid) type
@@ -11299,24 +11299,24 @@ std.os.uefi.protocol.ManagedNetwork	type	os.uefi.protocol.managed_network.Manage
 std.os.uefi.protocol.Ip6ServiceBinding	type	os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } })
 std.os.uefi.protocol.Ip6ServiceBinding.CreateChildError	type	error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}
 std.os.uefi.protocol.Ip6ServiceBinding.DestroyChildError	type	error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}
-std.os.uefi.protocol.Ip6ServiceBinding.createChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } })) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!*os.uefi.Handle__opaque_33179
-std.os.uefi.protocol.Ip6ServiceBinding.addToHandle	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } }), *os.uefi.Handle__opaque_33179) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
-std.os.uefi.protocol.Ip6ServiceBinding.destroyChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } }), *os.uefi.Handle__opaque_33179) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
+std.os.uefi.protocol.Ip6ServiceBinding.createChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } })) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!*os.uefi.Handle__opaque_33203
+std.os.uefi.protocol.Ip6ServiceBinding.addToHandle	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } }), *os.uefi.Handle__opaque_33203) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
+std.os.uefi.protocol.Ip6ServiceBinding.destroyChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 3968032211, .time_mid = 65039, .time_high_and_version = 24955, .clock_seq_high_and_reserved = 166, .clock_seq_low = 33, .node = .{ ... } }), *os.uefi.Handle__opaque_33203) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
 std.os.uefi.protocol.Ip6ServiceBinding.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.Ip6	type	os.uefi.protocol.ip6.Ip6
 std.os.uefi.protocol.Ip6Config	type	os.uefi.protocol.ip6_config.Ip6Config
 std.os.uefi.protocol.Udp6ServiceBinding	type	os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } })
 std.os.uefi.protocol.Udp6ServiceBinding.CreateChildError	type	error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}
 std.os.uefi.protocol.Udp6ServiceBinding.DestroyChildError	type	error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}
-std.os.uefi.protocol.Udp6ServiceBinding.createChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } })) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!*os.uefi.Handle__opaque_33179
-std.os.uefi.protocol.Udp6ServiceBinding.addToHandle	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } }), *os.uefi.Handle__opaque_33179) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
-std.os.uefi.protocol.Udp6ServiceBinding.destroyChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } }), *os.uefi.Handle__opaque_33179) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
+std.os.uefi.protocol.Udp6ServiceBinding.createChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } })) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!*os.uefi.Handle__opaque_33203
+std.os.uefi.protocol.Udp6ServiceBinding.addToHandle	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } }), *os.uefi.Handle__opaque_33203) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
+std.os.uefi.protocol.Udp6ServiceBinding.destroyChild	fn	fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } }), *os.uefi.Handle__opaque_33203) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
 std.os.uefi.protocol.Udp6ServiceBinding.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.Udp6	type	os.uefi.protocol.udp6.Udp6
 std.os.uefi.protocol.HiiDatabase	type	os.uefi.protocol.hii_database.HiiDatabase
 std.os.uefi.protocol.HiiPopup	type	os.uefi.protocol.hii_popup.HiiPopup
 std.os.uefi.protocol.LoadedImage.UnloadError	type	error{InvalidParameter,Unexpected}
-std.os.uefi.protocol.LoadedImage.unload	fn	fn (*os.uefi.protocol.loaded_image.LoadedImage, *os.uefi.Handle__opaque_32917) error{InvalidParameter,Unexpected}!void
+std.os.uefi.protocol.LoadedImage.unload	fn	fn (*os.uefi.protocol.loaded_image.LoadedImage, *os.uefi.Handle__opaque_32926) error{InvalidParameter,Unexpected}!void
 std.os.uefi.protocol.LoadedImage.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.LoadedImage.device_path_guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.DevicePath.CreateFileDevicePathError	type	error{OutOfMemory}
@@ -11400,8 +11400,8 @@ std.os.uefi.protocol.SimpleTextInputEx.UnregisterKeyNotifyError	type	error{Inval
 std.os.uefi.protocol.SimpleTextInputEx.reset	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx, bool) error{DeviceError,Unexpected}!void
 std.os.uefi.protocol.SimpleTextInputEx.readKeyStroke	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx) error{DeviceError,NotReady,Unexpected,Unsupported}!os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key
 std.os.uefi.protocol.SimpleTextInputEx.setState	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx, *const os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key.State.Toggle) error{DeviceError,Unexpected,Unsupported}!void
-std.os.uefi.protocol.SimpleTextInputEx.registerKeyNotify	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx, *const os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key, *const fn (*const os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) os.uefi.status.Status) error{OutOfResources,Unexpected}!*os.uefi.Handle__opaque_33324
-std.os.uefi.protocol.SimpleTextInputEx.unregisterKeyNotify	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx, *os.uefi.Handle__opaque_33324) error{InvalidParameter,Unexpected}!void
+std.os.uefi.protocol.SimpleTextInputEx.registerKeyNotify	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx, *const os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key, *const fn (*const os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) os.uefi.status.Status) error{OutOfResources,Unexpected}!*os.uefi.Handle__opaque_33337
+std.os.uefi.protocol.SimpleTextInputEx.unregisterKeyNotify	fn	fn (*os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx, *os.uefi.Handle__opaque_33337) error{InvalidParameter,Unexpected}!void
 std.os.uefi.protocol.SimpleTextInputEx.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.SimpleTextInputEx.Key	type	os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key
 std.os.uefi.protocol.SimpleTextInputEx.Key.State	type	os.uefi.protocol.simple_text_input_ex.SimpleTextInputEx.Key.State
@@ -11530,7 +11530,7 @@ std.os.uefi.protocol.edid.Override	type	os.uefi.protocol.edid.Override
 std.os.uefi.protocol.edid.Active.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.edid.Discovered.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.edid.Override.GetEdidError	type	error{Unexpected,Unsupported}
-std.os.uefi.protocol.edid.Override.getEdid	fn	fn (*const os.uefi.protocol.edid.Override, *os.uefi.Handle__opaque_32905) error{Unexpected,Unsupported}!os.uefi.protocol.edid.Override.Edid
+std.os.uefi.protocol.edid.Override.getEdid	fn	fn (*const os.uefi.protocol.edid.Override, *os.uefi.Handle__opaque_32937) error{Unexpected,Unsupported}!os.uefi.protocol.edid.Override.Edid
 std.os.uefi.protocol.edid.Override.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.edid.Override.Edid	type	os.uefi.protocol.edid.Override.Edid
 std.os.uefi.protocol.edid.Override.Attributes	type	os.uefi.protocol.edid.Override.Attributes
@@ -11594,8 +11594,8 @@ std.os.uefi.protocol.ManagedNetwork.CompletionToken	type	os.uefi.protocol.manage
 std.os.uefi.protocol.ManagedNetwork.ReceiveData	type	os.uefi.protocol.managed_network.ManagedNetwork.ReceiveData
 std.os.uefi.protocol.ManagedNetwork.TransmitData	type	os.uefi.protocol.managed_network.ManagedNetwork.TransmitData
 std.os.uefi.protocol.ManagedNetwork.Fragment	type	os.uefi.protocol.managed_network.ManagedNetwork.Fragment
-std.os.uefi.protocol.ManagedNetwork.ServiceBinding.createChild	fn	fn (*const os.uefi.protocol.managed_network.ManagedNetwork.ServiceBinding, *?*os.uefi.Handle__opaque_32906) os.uefi.status.Status
-std.os.uefi.protocol.ManagedNetwork.ServiceBinding.destroyChild	fn	fn (*const os.uefi.protocol.managed_network.ManagedNetwork.ServiceBinding, *os.uefi.Handle__opaque_32906) os.uefi.status.Status
+std.os.uefi.protocol.ManagedNetwork.ServiceBinding.createChild	fn	fn (*const os.uefi.protocol.managed_network.ManagedNetwork.ServiceBinding, *?*os.uefi.Handle__opaque_32930) os.uefi.status.Status
+std.os.uefi.protocol.ManagedNetwork.ServiceBinding.destroyChild	fn	fn (*const os.uefi.protocol.managed_network.ManagedNetwork.ServiceBinding, *os.uefi.Handle__opaque_32930) os.uefi.status.Status
 std.os.uefi.protocol.ManagedNetwork.ServiceBinding.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.ManagedNetwork.TransmitData.getFragments	fn	fn (*os.uefi.protocol.managed_network.ManagedNetwork.TransmitData) []os.uefi.protocol.managed_network.ManagedNetwork.Fragment
 std.os.uefi.protocol.Ip6.GetModeDataError	type	error{InvalidParameter,OutOfResources,Unexpected}
@@ -11637,8 +11637,8 @@ std.os.uefi.protocol.Ip6Config.RegisterDataNotifyError	type	error{AccessDenied,I
 std.os.uefi.protocol.Ip6Config.UnregisterDataNotifyError	type	error{InvalidParameter,NotFound,Unexpected}
 std.os.uefi.protocol.Ip6Config.setData	fn	fn (*const os.uefi.protocol.ip6_config.Ip6Config, comptime @typeInfo(os.uefi.protocol.ip6_config.Ip6Config.DataType).@"union".tag_type.?, anytype) error{AccessDenied,BadBufferSize,DeviceError,InvalidParameter,NotReady,OutOfResources,Unexpected,Unsupported,WriteProtected}!void
 std.os.uefi.protocol.Ip6Config.getData	fn	fn (*const os.uefi.protocol.ip6_config.Ip6Config, comptime @typeInfo(os.uefi.protocol.ip6_config.Ip6Config.DataType).@"union".tag_type.?) anytype
-std.os.uefi.protocol.Ip6Config.registerDataNotify	fn	fn (*const os.uefi.protocol.ip6_config.Ip6Config, os.uefi.protocol.ip6_config.Ip6Config.DataType, *os.uefi.Event__opaque_32927) error{AccessDenied,InvalidParameter,OutOfResources,Unexpected,Unsupported}!void
-std.os.uefi.protocol.Ip6Config.unregisterDataNotify	fn	fn (*const os.uefi.protocol.ip6_config.Ip6Config, os.uefi.protocol.ip6_config.Ip6Config.DataType, *os.uefi.Event__opaque_32927) error{InvalidParameter,NotFound,Unexpected}!void
+std.os.uefi.protocol.Ip6Config.registerDataNotify	fn	fn (*const os.uefi.protocol.ip6_config.Ip6Config, os.uefi.protocol.ip6_config.Ip6Config.DataType, *os.uefi.Event__opaque_32940) error{AccessDenied,InvalidParameter,OutOfResources,Unexpected,Unsupported}!void
+std.os.uefi.protocol.Ip6Config.unregisterDataNotify	fn	fn (*const os.uefi.protocol.ip6_config.Ip6Config, os.uefi.protocol.ip6_config.Ip6Config.DataType, *os.uefi.Event__opaque_32940) error{InvalidParameter,NotFound,Unexpected}!void
 std.os.uefi.protocol.Ip6Config.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.Ip6Config.DataType	type	os.uefi.protocol.ip6_config.Ip6Config.DataType
 std.os.uefi.protocol.Ip6Config.InterfaceInfo	type	os.uefi.protocol.ip6_config.Ip6Config.InterfaceInfo
@@ -11675,13 +11675,13 @@ std.os.uefi.protocol.HiiDatabase.RemovePackageListError	type	error{NotFound,Unex
 std.os.uefi.protocol.HiiDatabase.UpdatePackageListError	type	error{InvalidParameter,NotFound,OutOfResources,Unexpected}
 std.os.uefi.protocol.HiiDatabase.ListPackageListsError	type	error{BufferTooSmall,InvalidParameter,NotFound,Unexpected}
 std.os.uefi.protocol.HiiDatabase.ExportPackageListError	type	error{BufferTooSmall,InvalidParameter,NotFound,Unexpected}
-std.os.uefi.protocol.HiiDatabase.removePackageList	fn	fn (*os.uefi.protocol.hii_database.HiiDatabase, *os.uefi.hii.Handle__opaque_32912) error{NotFound,Unexpected}!void
-std.os.uefi.protocol.HiiDatabase.updatePackageList	fn	fn (*os.uefi.protocol.hii_database.HiiDatabase, *os.uefi.hii.Handle__opaque_32912, *const os.uefi.hii.PackageList) error{InvalidParameter,NotFound,OutOfResources,Unexpected}!void
-std.os.uefi.protocol.HiiDatabase.listPackageLists	fn	fn (*const os.uefi.protocol.hii_database.HiiDatabase, u8, ?*const os.uefi.Guid, []*os.uefi.hii.Handle__opaque_32912) error{BufferTooSmall,InvalidParameter,NotFound,Unexpected}![]*os.uefi.hii.Handle__opaque_32912
-std.os.uefi.protocol.HiiDatabase.exportPackageLists	fn	fn (*const os.uefi.protocol.hii_database.HiiDatabase, ?*os.uefi.hii.Handle__opaque_32912, []os.uefi.hii.PackageList) error{BufferTooSmall,InvalidParameter,NotFound,Unexpected}![]os.uefi.hii.PackageList
+std.os.uefi.protocol.HiiDatabase.removePackageList	fn	fn (*os.uefi.protocol.hii_database.HiiDatabase, *os.uefi.hii.Handle__opaque_32945) error{NotFound,Unexpected}!void
+std.os.uefi.protocol.HiiDatabase.updatePackageList	fn	fn (*os.uefi.protocol.hii_database.HiiDatabase, *os.uefi.hii.Handle__opaque_32945, *const os.uefi.hii.PackageList) error{InvalidParameter,NotFound,OutOfResources,Unexpected}!void
+std.os.uefi.protocol.HiiDatabase.listPackageLists	fn	fn (*const os.uefi.protocol.hii_database.HiiDatabase, u8, ?*const os.uefi.Guid, []*os.uefi.hii.Handle__opaque_32945) error{BufferTooSmall,InvalidParameter,NotFound,Unexpected}![]*os.uefi.hii.Handle__opaque_32945
+std.os.uefi.protocol.HiiDatabase.exportPackageLists	fn	fn (*const os.uefi.protocol.hii_database.HiiDatabase, ?*os.uefi.hii.Handle__opaque_32945, []os.uefi.hii.PackageList) error{BufferTooSmall,InvalidParameter,NotFound,Unexpected}![]os.uefi.hii.PackageList
 std.os.uefi.protocol.HiiDatabase.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.HiiPopup.CreatePopupError	type	error{InvalidParameter,OutOfResources,Unexpected}
-std.os.uefi.protocol.HiiPopup.createPopup	fn	fn (*const os.uefi.protocol.hii_popup.HiiPopup, os.uefi.protocol.hii_popup.HiiPopup.PopupStyle, os.uefi.protocol.hii_popup.HiiPopup.PopupType, *os.uefi.hii.Handle__opaque_32909, u16) error{InvalidParameter,OutOfResources,Unexpected}!os.uefi.protocol.hii_popup.HiiPopup.PopupSelection
+std.os.uefi.protocol.HiiPopup.createPopup	fn	fn (*const os.uefi.protocol.hii_popup.HiiPopup, os.uefi.protocol.hii_popup.HiiPopup.PopupStyle, os.uefi.protocol.hii_popup.HiiPopup.PopupType, *os.uefi.hii.Handle__opaque_32955, u16) error{InvalidParameter,OutOfResources,Unexpected}!os.uefi.protocol.hii_popup.HiiPopup.PopupSelection
 std.os.uefi.protocol.HiiPopup.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.HiiPopup.PopupStyle	type	os.uefi.protocol.hii_popup.HiiPopup.PopupStyle
 std.os.uefi.protocol.HiiPopup.PopupType	type	os.uefi.protocol.hii_popup.HiiPopup.PopupType
@@ -11752,7 +11752,7 @@ std.os.uefi.DevicePath.BiosBootSpecification.BBS101DevicePath.getDescription	fn	
 std.os.uefi.DevicePath.End.Subtype	type	os.uefi.device_path.DevicePath.End.Subtype
 std.os.uefi.DevicePath.End.EndEntireDevicePath	type	os.uefi.device_path.DevicePath.End.EndEntireDevicePath
 std.os.uefi.DevicePath.End.EndThisInstanceDevicePath	type	os.uefi.device_path.DevicePath.End.EndThisInstanceDevicePath
-std.os.uefi.hii.Handle	type	*os.uefi.hii.Handle__opaque_32949
+std.os.uefi.hii.Handle	type	*os.uefi.hii.Handle__opaque_32988
 std.os.uefi.hii.PackageHeader	type	os.uefi.hii.PackageHeader
 std.os.uefi.hii.PackageList	type	os.uefi.hii.PackageList
 std.os.uefi.hii.SimplifiedFontPackage	type	os.uefi.hii.SimplifiedFontPackage
@@ -11783,7 +11783,7 @@ std.os.uefi.tables.RuntimeServices	type	os.uefi.tables.runtime_services.RuntimeS
 std.os.uefi.tables.ConfigurationTable	type	os.uefi.tables.configuration_table.ConfigurationTable
 std.os.uefi.tables.SystemTable	type	os.uefi.tables.system_table.SystemTable
 std.os.uefi.tables.TableHeader	type	os.uefi.tables.table_header.TableHeader
-std.os.uefi.tables.EventNotify	type	*const fn (*os.uefi.Event__opaque_33163, *anyopaque) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) void
+std.os.uefi.tables.EventNotify	type	*const fn (*os.uefi.Event__opaque_33180, *anyopaque) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) void
 std.os.uefi.tables.TimerDelay	type	os.uefi.tables.TimerDelay
 std.os.uefi.tables.MemoryType	type	os.uefi.tables.MemoryType
 std.os.uefi.tables.MemoryDescriptorAttribute	type	os.uefi.tables.MemoryDescriptorAttribute
@@ -11845,42 +11845,42 @@ std.os.uefi.tables.BootServices.getMemoryMapInfo	fn	fn (*const os.uefi.tables.bo
 std.os.uefi.tables.BootServices.getMemoryMap	fn	fn (*const os.uefi.tables.boot_services.BootServices, []align(8) u8) error{BufferTooSmall,InvalidParameter,Unexpected}!os.uefi.tables.MemoryMapSlice
 std.os.uefi.tables.BootServices.allocatePool	fn	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.tables.MemoryType, usize) error{InvalidParameter,OutOfResources,Unexpected}![]align(8) u8
 std.os.uefi.tables.BootServices.freePool	fn	fn (*os.uefi.tables.boot_services.BootServices, [*]align(8) u8) error{InvalidParameter,Unexpected}!void
-std.os.uefi.tables.BootServices.createEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.EventType, os.uefi.tables.boot_services.BootServices.NotifyOpts) error{InvalidParameter,OutOfResources,Unexpected}!*os.uefi.Event__opaque_32974
-std.os.uefi.tables.BootServices.setTimer	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32974, os.uefi.tables.TimerDelay, u64) error{InvalidParameter,Unexpected}!void
-std.os.uefi.tables.BootServices.waitForEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, []const *os.uefi.Event__opaque_32974) error{InvalidParameter,Unexpected,Unsupported}!struct { *const *os.uefi.Event__opaque_32974, usize }
-std.os.uefi.tables.BootServices.signalEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32974) error{Unexpected}!void
-std.os.uefi.tables.BootServices.closeEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32974) error{Unexpected}!void
-std.os.uefi.tables.BootServices.checkEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32974) error{InvalidParameter,Unexpected}!bool
-std.os.uefi.tables.BootServices.installProtocolInterface	fn	fn (*os.uefi.tables.boot_services.BootServices, ?*os.uefi.Handle__opaque_32994, anytype) error{AlreadyStarted,InvalidParameter,OutOfResources,Unexpected}!*os.uefi.Handle__opaque_32994
-std.os.uefi.tables.BootServices.reinstallProtocolInterface	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, type, anytype, anytype) error{AccessDenied,InvalidParameter,NotFound,Unexpected}!void
-std.os.uefi.tables.BootServices.uninstallProtocolInterface	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, anytype) error{InvalidParameter,Unexpected}!void
-std.os.uefi.tables.BootServices.handleProtocol	fn	fn (*os.uefi.tables.boot_services.BootServices, type, *os.uefi.Handle__opaque_32994) anytype
-std.os.uefi.tables.BootServices.registerProtocolNotify	fn	fn (*os.uefi.tables.boot_services.BootServices, type, *os.uefi.Event__opaque_32974) error{InvalidParameter,OutOfResources,Unexpected}!*const os.uefi.EventRegistration__opaque_33013
+std.os.uefi.tables.BootServices.createEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.EventType, os.uefi.tables.boot_services.BootServices.NotifyOpts) error{InvalidParameter,OutOfResources,Unexpected}!*os.uefi.Event__opaque_32986
+std.os.uefi.tables.BootServices.setTimer	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32986, os.uefi.tables.TimerDelay, u64) error{InvalidParameter,Unexpected}!void
+std.os.uefi.tables.BootServices.waitForEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, []const *os.uefi.Event__opaque_32986) error{InvalidParameter,Unexpected,Unsupported}!struct { *const *os.uefi.Event__opaque_32986, usize }
+std.os.uefi.tables.BootServices.signalEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32986) error{Unexpected}!void
+std.os.uefi.tables.BootServices.closeEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32986) error{Unexpected}!void
+std.os.uefi.tables.BootServices.checkEvent	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Event__opaque_32986) error{InvalidParameter,Unexpected}!bool
+std.os.uefi.tables.BootServices.installProtocolInterface	fn	fn (*os.uefi.tables.boot_services.BootServices, ?*os.uefi.Handle__opaque_33006, anytype) error{AlreadyStarted,InvalidParameter,OutOfResources,Unexpected}!*os.uefi.Handle__opaque_33006
+std.os.uefi.tables.BootServices.reinstallProtocolInterface	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, type, anytype, anytype) error{AccessDenied,InvalidParameter,NotFound,Unexpected}!void
+std.os.uefi.tables.BootServices.uninstallProtocolInterface	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, anytype) error{InvalidParameter,Unexpected}!void
+std.os.uefi.tables.BootServices.handleProtocol	fn	fn (*os.uefi.tables.boot_services.BootServices, type, *os.uefi.Handle__opaque_33006) anytype
+std.os.uefi.tables.BootServices.registerProtocolNotify	fn	fn (*os.uefi.tables.boot_services.BootServices, type, *os.uefi.Event__opaque_32986) error{InvalidParameter,OutOfResources,Unexpected}!*const os.uefi.EventRegistration__opaque_33025
 std.os.uefi.tables.BootServices.locateHandleLen	fn	fn (*const os.uefi.tables.boot_services.BootServices, os.uefi.tables.LocateSearch) error{Unexpected}!usize
-std.os.uefi.tables.BootServices.locateHandle	fn	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.tables.LocateSearch, []*os.uefi.Handle__opaque_32994) error{BufferTooSmall,InvalidParameter,Unexpected}![]*os.uefi.Handle__opaque_32994
-std.os.uefi.tables.BootServices.locateDevicePath	fn	fn (*const os.uefi.tables.boot_services.BootServices, *const os.uefi.protocol.device_path.DevicePath, type) error{BufferTooSmall,InvalidParameter,Unexpected}!?struct { *const os.uefi.protocol.device_path.DevicePath, *os.uefi.Handle__opaque_32994 }
+std.os.uefi.tables.BootServices.locateHandle	fn	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.tables.LocateSearch, []*os.uefi.Handle__opaque_33006) error{BufferTooSmall,InvalidParameter,Unexpected}![]*os.uefi.Handle__opaque_33006
+std.os.uefi.tables.BootServices.locateDevicePath	fn	fn (*const os.uefi.tables.boot_services.BootServices, *const os.uefi.protocol.device_path.DevicePath, type) error{BufferTooSmall,InvalidParameter,Unexpected}!?struct { *const os.uefi.protocol.device_path.DevicePath, *os.uefi.Handle__opaque_33006 }
 std.os.uefi.tables.BootServices.installConfigurationTable	fn	fn (*os.uefi.tables.boot_services.BootServices, *const os.uefi.Guid, *anyopaque) error{InvalidParameter,OutOfResources,Unexpected}!void
 std.os.uefi.tables.BootServices.uninstallConfigurationTable	fn	fn (*os.uefi.tables.boot_services.BootServices, *const os.uefi.Guid) error{InvalidParameter,NotFound,OutOfResources,Unexpected}!void
 std.os.uefi.tables.BootServices.LoadImageSource	type	os.uefi.tables.boot_services.BootServices.LoadImageSource
-std.os.uefi.tables.BootServices.loadImage	fn	fn (*os.uefi.tables.boot_services.BootServices, bool, *os.uefi.Handle__opaque_32994, os.uefi.tables.boot_services.BootServices.LoadImageSource) error{AccessDenied,DeviceError,InvalidParameter,LoadError,NotFound,OutOfResources,SecurityViolation,Unexpected,Unsupported}!*os.uefi.Handle__opaque_32994
-std.os.uefi.tables.BootServices.startImage	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994) error{InvalidParameter,SecurityViolation,Unexpected}!os.uefi.tables.boot_services.BootServices.ImageExitData
-std.os.uefi.tables.BootServices.exit	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, os.uefi.status.Status, ?[:0]const u16) error{InvalidParameter,Unexpected}!void
-std.os.uefi.tables.BootServices.exitWithData	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, os.uefi.status.Status, []align(2) const u8) error{InvalidParameter,Unexpected}!void
-std.os.uefi.tables.BootServices.unloadImage	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!os.uefi.status.Status
-std.os.uefi.tables.BootServices.exitBootServices	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, os.uefi.tables.MemoryMapKey) error{InvalidParameter,Unexpected}!void
+std.os.uefi.tables.BootServices.loadImage	fn	fn (*os.uefi.tables.boot_services.BootServices, bool, *os.uefi.Handle__opaque_33006, os.uefi.tables.boot_services.BootServices.LoadImageSource) error{AccessDenied,DeviceError,InvalidParameter,LoadError,NotFound,OutOfResources,SecurityViolation,Unexpected,Unsupported}!*os.uefi.Handle__opaque_33006
+std.os.uefi.tables.BootServices.startImage	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006) error{InvalidParameter,SecurityViolation,Unexpected}!os.uefi.tables.boot_services.BootServices.ImageExitData
+std.os.uefi.tables.BootServices.exit	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, os.uefi.status.Status, ?[:0]const u16) error{InvalidParameter,Unexpected}!void
+std.os.uefi.tables.BootServices.exitWithData	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, os.uefi.status.Status, []align(2) const u8) error{InvalidParameter,Unexpected}!void
+std.os.uefi.tables.BootServices.unloadImage	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!os.uefi.status.Status
+std.os.uefi.tables.BootServices.exitBootServices	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, os.uefi.tables.MemoryMapKey) error{InvalidParameter,Unexpected}!void
 std.os.uefi.tables.BootServices.getNextMonotonicCount	fn	fn (*const os.uefi.tables.boot_services.BootServices, *u64) error{DeviceError,InvalidParameter,Unexpected}!void
 std.os.uefi.tables.BootServices.stall	fn	fn (*const os.uefi.tables.boot_services.BootServices, usize) error{Unexpected}!void
 std.os.uefi.tables.BootServices.setWatchdogTimer	fn	fn (*os.uefi.tables.boot_services.BootServices, usize, u64, ?[]const u16) error{DeviceError,InvalidParameter,Unexpected,Unsupported}!void
-std.os.uefi.tables.BootServices.connectController	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, ?[*:null]?*os.uefi.Handle__opaque_32994, ?*const os.uefi.protocol.device_path.DevicePath, bool) error{InvalidParameter,NotFound,SecurityViolation,Unexpected}!void
-std.os.uefi.tables.BootServices.disconnectController	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, ?*os.uefi.Handle__opaque_32994, ?*os.uefi.Handle__opaque_32994) error{DeviceError,InvalidParameter,OutOfResources,Unexpected}!void
-std.os.uefi.tables.BootServices.openProtocol	fn	fn (*os.uefi.tables.boot_services.BootServices, type, *os.uefi.Handle__opaque_32994, os.uefi.tables.OpenProtocolArgs) anytype
-std.os.uefi.tables.BootServices.closeProtocol	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, type, *os.uefi.Handle__opaque_32994, ?*os.uefi.Handle__opaque_32994) error{InvalidParameter,NotFound,Unexpected}!void
-std.os.uefi.tables.BootServices.openProtocolInformation	fn	fn (*const os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, type) error{OutOfResources,Unexpected}!?[]os.uefi.tables.ProtocolInformationEntry
-std.os.uefi.tables.BootServices.protocolsPerHandle	fn	fn (*const os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994) error{InvalidParameter,OutOfResources,Unexpected}![]*const os.uefi.Guid
-std.os.uefi.tables.BootServices.locateHandleBuffer	fn	fn (*const os.uefi.tables.boot_services.BootServices, os.uefi.tables.LocateSearch) error{InvalidParameter,OutOfResources,Unexpected}!?[]*os.uefi.Handle__opaque_32994
-std.os.uefi.tables.BootServices.locateProtocol	fn	fn (*const os.uefi.tables.boot_services.BootServices, type, ?*const os.uefi.EventRegistration__opaque_33013) anytype
-std.os.uefi.tables.BootServices.installProtocolInterfaces	fn	fn (*os.uefi.tables.boot_services.BootServices, ?*os.uefi.Handle__opaque_32994, anytype) error{AlreadyStarted,InvalidParameter,OutOfResources,Unexpected}!*os.uefi.Handle__opaque_32994
-std.os.uefi.tables.BootServices.uninstallProtocolInterfaces	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_32994, anytype) error{InvalidParameter,Unexpected}!void
+std.os.uefi.tables.BootServices.connectController	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, ?[*:null]?*os.uefi.Handle__opaque_33006, ?*const os.uefi.protocol.device_path.DevicePath, bool) error{InvalidParameter,NotFound,SecurityViolation,Unexpected}!void
+std.os.uefi.tables.BootServices.disconnectController	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, ?*os.uefi.Handle__opaque_33006, ?*os.uefi.Handle__opaque_33006) error{DeviceError,InvalidParameter,OutOfResources,Unexpected}!void
+std.os.uefi.tables.BootServices.openProtocol	fn	fn (*os.uefi.tables.boot_services.BootServices, type, *os.uefi.Handle__opaque_33006, os.uefi.tables.OpenProtocolArgs) anytype
+std.os.uefi.tables.BootServices.closeProtocol	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, type, *os.uefi.Handle__opaque_33006, ?*os.uefi.Handle__opaque_33006) error{InvalidParameter,NotFound,Unexpected}!void
+std.os.uefi.tables.BootServices.openProtocolInformation	fn	fn (*const os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, type) error{OutOfResources,Unexpected}!?[]os.uefi.tables.ProtocolInformationEntry
+std.os.uefi.tables.BootServices.protocolsPerHandle	fn	fn (*const os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006) error{InvalidParameter,OutOfResources,Unexpected}![]*const os.uefi.Guid
+std.os.uefi.tables.BootServices.locateHandleBuffer	fn	fn (*const os.uefi.tables.boot_services.BootServices, os.uefi.tables.LocateSearch) error{InvalidParameter,OutOfResources,Unexpected}!?[]*os.uefi.Handle__opaque_33006
+std.os.uefi.tables.BootServices.locateProtocol	fn	fn (*const os.uefi.tables.boot_services.BootServices, type, ?*const os.uefi.EventRegistration__opaque_33025) anytype
+std.os.uefi.tables.BootServices.installProtocolInterfaces	fn	fn (*os.uefi.tables.boot_services.BootServices, ?*os.uefi.Handle__opaque_33006, anytype) error{AlreadyStarted,InvalidParameter,OutOfResources,Unexpected}!*os.uefi.Handle__opaque_33006
+std.os.uefi.tables.BootServices.uninstallProtocolInterfaces	fn	fn (*os.uefi.tables.boot_services.BootServices, *os.uefi.Handle__opaque_33006, anytype) error{InvalidParameter,Unexpected}!void
 std.os.uefi.tables.BootServices.calculateCrc32	fn	fn (*const os.uefi.tables.boot_services.BootServices, []const u8) error{InvalidParameter,Unexpected}!u32
 std.os.uefi.tables.BootServices.signature	const_int	6220110259551162178
 std.os.uefi.tables.BootServices.NotifyOpts	type	os.uefi.tables.boot_services.BootServices.NotifyOpts
@@ -12004,7 +12004,7 @@ std.os.emscripten.W.EXITED	const_int	4
 std.os.emscripten.W.CONTINUED	const_int	8
 std.os.emscripten.W.NOWAIT	const_int	16777216
 std.os.emscripten.W.EXITSTATUS	fn	fn (u32) u8
-std.os.emscripten.W.TERMSIG	fn	fn (u32) os.linux.SIG__enum_3333
+std.os.emscripten.W.TERMSIG	fn	fn (u32) os.linux.SIG__enum
 std.os.emscripten.W.STOPSIG	fn	fn (u32) u32
 std.os.emscripten.W.IFEXITED	fn	fn (u32) bool
 std.os.emscripten.W.IFSTOPPED	fn	fn (u32) bool
@@ -12519,10 +12519,10 @@ std.os.windows.FILE.PIPE.REMOTE_INFORMATION	type	os.windows.FILE.PIPE.REMOTE_INF
 std.os.windows.FILE.PIPE.WAIT_FOR_BUFFER	type	os.windows.FILE.PIPE.WAIT_FOR_BUFFER
 std.os.windows.FILE.PIPE.TYPE.VALID_MASK	const_other	os.windows.FILE.PIPE.TYPE
 std.os.windows.FILE.PIPE.WAIT_FOR_BUFFER.WAIT_FOREVER	const_int	-9223372036854775808
-std.os.windows.FILE.PIPE.WAIT_FOR_BUFFER.init	fn	fn (os.windows.FILE.PIPE.WAIT_FOR_BUFFER.init__struct_32994) os.windows.FILE.PIPE.WAIT_FOR_BUFFER
+std.os.windows.FILE.PIPE.WAIT_FOR_BUFFER.init	fn	fn (os.windows.FILE.PIPE.WAIT_FOR_BUFFER.init__struct) os.windows.FILE.PIPE.WAIT_FOR_BUFFER
 std.os.windows.FILE.PIPE.WAIT_FOR_BUFFER.getName	fn	fn (*const os.windows.FILE.PIPE.WAIT_FOR_BUFFER) []const u16
 std.os.windows.FILE.PIPE.WAIT_FOR_BUFFER.toBuffer	fn	fn (*const os.windows.FILE.PIPE.WAIT_FOR_BUFFER) []const u8
-std.os.windows.FILE.RENAME_INFORMATION.init	fn	fn (os.windows.FILE.RENAME_INFORMATION.init__struct_32969) os.windows.FILE.RENAME_INFORMATION
+std.os.windows.FILE.RENAME_INFORMATION.init	fn	fn (os.windows.FILE.RENAME_INFORMATION.init__struct) os.windows.FILE.RENAME_INFORMATION
 std.os.windows.FILE.RENAME_INFORMATION.FLAGS	type	os.windows.FILE.RENAME_INFORMATION.FLAGS
 std.os.windows.FILE.RENAME_INFORMATION.getFileName	fn	fn (*const os.windows.FILE.RENAME_INFORMATION) []const u16
 std.os.windows.FILE.RENAME_INFORMATION.toBuffer	fn	fn (*os.windows.FILE.RENAME_INFORMATION) []u8
@@ -12562,7 +12562,7 @@ std.os.windows.CONSOLE.USER_IO.INFO.CP.MODE	type	os.windows.CONSOLE.USER_IO.INFO
 std.os.windows.CONSOLE.USER_IO.INFO.WRITE.MODE	type	os.windows.CONSOLE.USER_IO.INFO.WRITE.MODE
 std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH	type	os.windows.CONSOLE.USER_IO.INFO.FILL.WITH
 std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Tag	type	@typeInfo(os.windows.CONSOLE.USER_IO.INFO.FILL.WITH).@"union".tag_type.?
-std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Payload	type	os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Payload__union_33052
+std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Payload	type	os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Payload__union
 std.os.windows.CONSOLE.USER_IO.INFO.READ_OUTPUT_CHARACTER.MODE	type	os.windows.CONSOLE.USER_IO.INFO.READ_OUTPUT_CHARACTER.MODE
 std.os.windows.CONSOLE.USER_IO.Header.With	fn	fn (comptime type) type
 std.os.windows.AFD.OPEN_PACKET.NAME	const_other	*const [15:0]u8
@@ -13279,7 +13279,7 @@ std.os.windows.KEY.VALUE.INFORMATION_CLASS.Max	const_int	6
 std.os.windows.KEY.VALUE.PARTIAL_INFORMATION.data	fn	fn (*const os.windows.KEY.VALUE.PARTIAL_INFORMATION) []const u8
 std.os.windows.LDR.DLL_NOTIFICATION.REASON	type	os.windows.LDR.DLL_NOTIFICATION.REASON
 std.os.windows.LDR.DLL_NOTIFICATION.DATA	type	os.windows.LDR.DLL_NOTIFICATION.DATA
-std.os.windows.LDR.DLL_NOTIFICATION.COOKIE	type	*os.windows.LDR.DLL_NOTIFICATION.COOKIE__opaque_33070
+std.os.windows.LDR.DLL_NOTIFICATION.COOKIE	type	*os.windows.LDR.DLL_NOTIFICATION.COOKIE__opaque_33083
 std.os.windows.LDR.DLL_NOTIFICATION.FUNCTION	type	fn (os.windows.LDR.DLL_NOTIFICATION.REASON, *const os.windows.LDR.DLL_NOTIFICATION.DATA, ?*anyopaque) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) void
 std.os.windows.LDR.DLL_NOTIFICATION.REGISTER	type	os.windows.LDR.DLL_NOTIFICATION.REGISTER
 std.os.windows.LDR.DLL_NOTIFICATION.DATA.LOADED	type	os.windows.LDR.DLL_NOTIFICATION.DATA.LOADED
@@ -14113,7 +14113,7 @@ std.zig.Client.Message.Header	type	zig.Client.Message.Header
 std.zig.Client.Message.Tag	type	zig.Client.Message.Tag
 std.zig.TokenSmith.gen	fn	fn (*testing.Smith) zig.TokenSmith
 std.zig.TokenSmith.source	fn	fn (*zig.TokenSmith) [:0]u8
-std.zig.TokenSmith.list	fn	fn (*zig.TokenSmith) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_33041).Slice
+std.zig.TokenSmith.list	fn	fn (*zig.TokenSmith) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).Slice
 std.zig.string_literal.ParseError	type	error{InvalidLiteral,OutOfMemory}
 std.zig.string_literal.ParsedCharLiteral	type	zig.string_literal.ParsedCharLiteral
 std.zig.string_literal.Result	type	zig.string_literal.Result
@@ -14133,44 +14133,44 @@ std.zig.number_literal.parseNumberLiteral	fn	fn ([]const u8) zig.number_literal.
 std.zig.primitives.names	const_other	static_string_map.StaticStringMapWithEql(void,(function 'defaultEql'))
 std.zig.primitives.isPrimitive	fn	fn ([]const u8) bool
 std.zig.Ast.ByteOffset	type	u32
-std.zig.Ast.TokenList	type	multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)
-std.zig.Ast.TokenList.empty	const_other	multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)
-std.zig.Ast.TokenList.initCapacity	fn	fn (mem.Allocator, usize) error{OutOfMemory}!multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)
-std.zig.Ast.TokenList.Field	type	meta.FieldEnum(zig.Ast.TokenList__struct_32903)
-std.zig.Ast.TokenList.Slice	type	multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903).Slice
-std.zig.Ast.TokenList.deinit	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator) void
-std.zig.Ast.TokenList.toOwnedSlice	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903).Slice
-std.zig.Ast.TokenList.slice	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903).Slice
-std.zig.Ast.TokenList.items	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), comptime meta.FieldEnum(zig.Ast.TokenList__struct_32903)) anytype
-std.zig.Ast.TokenList.set	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize, zig.Ast.TokenList__struct_32903) void
-std.zig.Ast.TokenList.get	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize) zig.Ast.TokenList__struct_32903
-std.zig.Ast.TokenList.append	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, zig.Ast.TokenList__struct_32903) error{OutOfMemory}!void
-std.zig.Ast.TokenList.appendAssumeCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), zig.Ast.TokenList__struct_32903) void
-std.zig.Ast.TokenList.appendBounded	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), zig.Ast.TokenList__struct_32903) error{OutOfMemory}!void
-std.zig.Ast.TokenList.addOne	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator) error{OutOfMemory}!usize
-std.zig.Ast.TokenList.addOneAssumeCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)) usize
-std.zig.Ast.TokenList.addOneBounded	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)) error{OutOfMemory}!usize
-std.zig.Ast.TokenList.pop	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)) ?zig.Ast.TokenList__struct_32903
-std.zig.Ast.TokenList.insert	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, usize, zig.Ast.TokenList__struct_32903) @typeInfo(@typeInfo(@TypeOf(multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903).insert)).@"fn".return_type.?).error_union.error_set!void
-std.zig.Ast.TokenList.insertAssumeCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize, zig.Ast.TokenList__struct_32903) void
-std.zig.Ast.TokenList.insertBounded	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize, zig.Ast.TokenList__struct_32903) error{OutOfMemory}!void
-std.zig.Ast.TokenList.swapRemove	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize) void
-std.zig.Ast.TokenList.orderedRemove	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize) void
-std.zig.Ast.TokenList.orderedRemoveMany	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), []const usize) void
-std.zig.Ast.TokenList.resize	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, usize) error{OutOfMemory}!void
-std.zig.Ast.TokenList.shrinkAndFree	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, usize) void
-std.zig.Ast.TokenList.clearAndFree	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator) void
-std.zig.Ast.TokenList.shrinkRetainingCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize) void
-std.zig.Ast.TokenList.clearRetainingCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)) void
-std.zig.Ast.TokenList.ensureTotalCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, usize) error{OutOfMemory}!void
+std.zig.Ast.TokenList	type	multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)
+std.zig.Ast.TokenList.empty	const_other	multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)
+std.zig.Ast.TokenList.initCapacity	fn	fn (mem.Allocator, usize) error{OutOfMemory}!multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)
+std.zig.Ast.TokenList.Field	type	meta.FieldEnum(zig.Ast.TokenList__struct)
+std.zig.Ast.TokenList.Slice	type	multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).Slice
+std.zig.Ast.TokenList.deinit	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator) void
+std.zig.Ast.TokenList.toOwnedSlice	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).Slice
+std.zig.Ast.TokenList.slice	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).Slice
+std.zig.Ast.TokenList.items	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), comptime meta.FieldEnum(zig.Ast.TokenList__struct)) anytype
+std.zig.Ast.TokenList.set	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize, zig.Ast.TokenList__struct) void
+std.zig.Ast.TokenList.get	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize) zig.Ast.TokenList__struct
+std.zig.Ast.TokenList.append	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, zig.Ast.TokenList__struct) error{OutOfMemory}!void
+std.zig.Ast.TokenList.appendAssumeCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), zig.Ast.TokenList__struct) void
+std.zig.Ast.TokenList.appendBounded	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), zig.Ast.TokenList__struct) error{OutOfMemory}!void
+std.zig.Ast.TokenList.addOne	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator) error{OutOfMemory}!usize
+std.zig.Ast.TokenList.addOneAssumeCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)) usize
+std.zig.Ast.TokenList.addOneBounded	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)) error{OutOfMemory}!usize
+std.zig.Ast.TokenList.pop	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)) ?zig.Ast.TokenList__struct
+std.zig.Ast.TokenList.insert	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, usize, zig.Ast.TokenList__struct) @typeInfo(@typeInfo(@TypeOf(multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).insert)).@"fn".return_type.?).error_union.error_set!void
+std.zig.Ast.TokenList.insertAssumeCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize, zig.Ast.TokenList__struct) void
+std.zig.Ast.TokenList.insertBounded	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize, zig.Ast.TokenList__struct) error{OutOfMemory}!void
+std.zig.Ast.TokenList.swapRemove	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize) void
+std.zig.Ast.TokenList.orderedRemove	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize) void
+std.zig.Ast.TokenList.orderedRemoveMany	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), []const usize) void
+std.zig.Ast.TokenList.resize	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, usize) error{OutOfMemory}!void
+std.zig.Ast.TokenList.shrinkAndFree	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, usize) void
+std.zig.Ast.TokenList.clearAndFree	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator) void
+std.zig.Ast.TokenList.shrinkRetainingCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize) void
+std.zig.Ast.TokenList.clearRetainingCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)) void
+std.zig.Ast.TokenList.ensureTotalCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, usize) error{OutOfMemory}!void
 std.zig.Ast.TokenList.growCapacity	fn	fn (usize) usize
-std.zig.Ast.TokenList.ensureUnusedCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, usize) error{OutOfMemory}!void
-std.zig.Ast.TokenList.setCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator, usize) error{OutOfMemory}!void
-std.zig.Ast.TokenList.clone	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), mem.Allocator) error{OutOfMemory}!multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903)
-std.zig.Ast.TokenList.sort	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), anytype) void
-std.zig.Ast.TokenList.sortSpan	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize, usize, anytype) void
-std.zig.Ast.TokenList.sortUnstable	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), anytype) void
-std.zig.Ast.TokenList.sortSpanUnstable	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903), usize, usize, anytype) void
+std.zig.Ast.TokenList.ensureUnusedCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, usize) error{OutOfMemory}!void
+std.zig.Ast.TokenList.setCapacity	fn	fn (*multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator, usize) error{OutOfMemory}!void
+std.zig.Ast.TokenList.clone	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), mem.Allocator) error{OutOfMemory}!multi_array_list.MultiArrayList(zig.Ast.TokenList__struct)
+std.zig.Ast.TokenList.sort	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), anytype) void
+std.zig.Ast.TokenList.sortSpan	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize, usize, anytype) void
+std.zig.Ast.TokenList.sortUnstable	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), anytype) void
+std.zig.Ast.TokenList.sortSpanUnstable	fn	fn (multi_array_list.MultiArrayList(zig.Ast.TokenList__struct), usize, usize, anytype) void
 std.zig.Ast.TokenList.capacityInBytes	fn	fn (usize) usize
 std.zig.Ast.NodeList	type	multi_array_list.MultiArrayList(zig.Ast.Node)
 std.zig.Ast.NodeList.empty	const_other	multi_array_list.MultiArrayList(zig.Ast.Node)
@@ -14226,7 +14226,7 @@ std.zig.Ast.Span	type	zig.Ast.Span
 std.zig.Ast.deinit	fn	fn (*zig.Ast, mem.Allocator) void
 std.zig.Ast.Mode	type	zig.Ast.Mode
 std.zig.Ast.parse	fn	fn (mem.Allocator, [:0]const u8, zig.Ast.Mode) error{OutOfMemory}!zig.Ast
-std.zig.Ast.parseTokens	fn	fn (mem.Allocator, [:0]const u8, multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_32903).Slice, zig.Ast.Mode) error{OutOfMemory}!zig.Ast
+std.zig.Ast.parseTokens	fn	fn (mem.Allocator, [:0]const u8, multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).Slice, zig.Ast.Mode) error{OutOfMemory}!zig.Ast
 std.zig.Ast.renderAlloc	fn	fn (zig.Ast, mem.Allocator) error{OutOfMemory}![]u8
 std.zig.Ast.Render	type	zig.Ast.Render
 std.zig.Ast.render	fn	fn (zig.Ast, mem.Allocator, *Io.Writer, zig.Ast.Render.Fixups) error{OutOfMemory,WriteFailed}!void
@@ -14406,7 +14406,7 @@ std.zig.Ast.Node.Tag.isContainerField	fn	fn (zig.Ast.Node.Tag) bool
 std.zig.AstGen.generate	fn	fn (mem.Allocator, zig.Ast) error{OutOfMemory}!zig.Zir
 std.zig.AstSmith.init	fn	fn (*testing.Smith) zig.AstSmith
 std.zig.AstSmith.source	fn	fn (*zig.AstSmith) [:0]u8
-std.zig.AstSmith.tokens	fn	fn (*zig.AstSmith) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct_33108).Slice
+std.zig.AstSmith.tokens	fn	fn (*zig.AstSmith) multi_array_list.MultiArrayList(zig.Ast.TokenList__struct).Slice
 std.zig.AstSmith.Error	type	error{OutOfMemory,SkipZigTest}
 std.zig.AstSmith.generate	fn	fn (*zig.AstSmith, mem.Allocator) error{OutOfMemory,SkipZigTest}!zig.Ast
 std.zig.AstSmith.generateSource	fn	fn (*zig.AstSmith) error{SkipZigTest}!void
@@ -15213,7 +15213,7 @@ std.zig.llvm.Builder.Global.Index.eql	fn	fn (zig.llvm.Builder.Global.Index, zig.
 std.zig.llvm.Builder.Global.Index.ptr	fn	fn (zig.llvm.Builder.Global.Index, *zig.llvm.Builder) *zig.llvm.Builder.Global
 std.zig.llvm.Builder.Global.Index.ptrConst	fn	fn (zig.llvm.Builder.Global.Index, *const zig.llvm.Builder) *const zig.llvm.Builder.Global
 std.zig.llvm.Builder.Global.Index.name	fn	fn (zig.llvm.Builder.Global.Index, *const zig.llvm.Builder) zig.llvm.Builder.StrtabString
-std.zig.llvm.Builder.Global.Index.strtab	fn	fn (zig.llvm.Builder.Global.Index, *const zig.llvm.Builder) zig.llvm.Builder.Global.Index.strtab__struct_33165
+std.zig.llvm.Builder.Global.Index.strtab	fn	fn (zig.llvm.Builder.Global.Index, *const zig.llvm.Builder) zig.llvm.Builder.Global.Index.strtab__struct
 std.zig.llvm.Builder.Global.Index.typeOf	fn	fn (zig.llvm.Builder.Global.Index, *const zig.llvm.Builder) zig.llvm.Builder.Type
 std.zig.llvm.Builder.Global.Index.toConst	fn	fn (zig.llvm.Builder.Global.Index) zig.llvm.Builder.Constant
 std.zig.llvm.Builder.Global.Index.toValue	fn	fn (zig.llvm.Builder.Global.Index) zig.llvm.Builder.Value
@@ -15354,13 +15354,13 @@ std.zig.llvm.Builder.WipFunction.Instruction.Phi	type	zig.llvm.Builder.Function.
 std.zig.llvm.Builder.WipFunction.Instruction.Select	type	zig.llvm.Builder.Function.Instruction.Select
 std.zig.llvm.Builder.WipFunction.Instruction.Call	type	zig.llvm.Builder.Function.Instruction.Call
 std.zig.llvm.Builder.WipFunction.Instruction.VaArg	type	zig.llvm.Builder.Function.Instruction.VaArg
-std.zig.llvm.Builder.WipFunction.init	fn	fn (*zig.llvm.Builder, zig.llvm.Builder.WipFunction.init__struct_33987) error{OutOfMemory}!zig.llvm.Builder.WipFunction
+std.zig.llvm.Builder.WipFunction.init	fn	fn (*zig.llvm.Builder, zig.llvm.Builder.WipFunction.init__struct) error{OutOfMemory}!zig.llvm.Builder.WipFunction
 std.zig.llvm.Builder.WipFunction.arg	fn	fn (*const zig.llvm.Builder.WipFunction, u32) zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.block	fn	fn (*zig.llvm.Builder.WipFunction, u32, []const u8) error{OutOfMemory}!zig.llvm.Builder.WipFunction.Block.Index
 std.zig.llvm.Builder.WipFunction.ret	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
 std.zig.llvm.Builder.WipFunction.retVoid	fn	fn (*zig.llvm.Builder.WipFunction) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
 std.zig.llvm.Builder.WipFunction.br	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.WipFunction.Block.Index) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
-std.zig.llvm.Builder.WipFunction.brCond	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, zig.llvm.Builder.WipFunction.Block.Index, zig.llvm.Builder.WipFunction.Block.Index, zig.llvm.Builder.WipFunction.brCond__enum_34187) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
+std.zig.llvm.Builder.WipFunction.brCond	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, zig.llvm.Builder.WipFunction.Block.Index, zig.llvm.Builder.WipFunction.Block.Index, zig.llvm.Builder.WipFunction.brCond__enum) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
 std.zig.llvm.Builder.WipFunction.WipSwitch	type	zig.llvm.Builder.WipFunction.WipSwitch
 std.zig.llvm.Builder.WipFunction.switch	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, zig.llvm.Builder.WipFunction.Block.Index, u32, zig.llvm.Builder.Function.Instruction.BrCond.Weights) error{OutOfMemory}!zig.llvm.Builder.WipFunction.WipSwitch
 std.zig.llvm.Builder.WipFunction.indirectbr	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, []const zig.llvm.Builder.WipFunction.Block.Index) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
@@ -15436,7 +15436,7 @@ std.zig.llvm.Builder.Constant.Cast	type	zig.llvm.Builder.Constant.Cast
 std.zig.llvm.Builder.Constant.GetElementPtr	type	zig.llvm.Builder.Constant.GetElementPtr
 std.zig.llvm.Builder.Constant.Binary	type	zig.llvm.Builder.Constant.Binary
 std.zig.llvm.Builder.Constant.Assembly	type	zig.llvm.Builder.Constant.Assembly
-std.zig.llvm.Builder.Constant.unwrap	fn	fn (zig.llvm.Builder.Constant) zig.llvm.Builder.Constant.unwrap__union_33995
+std.zig.llvm.Builder.Constant.unwrap	fn	fn (zig.llvm.Builder.Constant) zig.llvm.Builder.Constant.unwrap__union
 std.zig.llvm.Builder.Constant.toValue	fn	fn (zig.llvm.Builder.Constant) zig.llvm.Builder.Value
 std.zig.llvm.Builder.Constant.typeOf	fn	fn (zig.llvm.Builder.Constant, *zig.llvm.Builder) zig.llvm.Builder.Type
 std.zig.llvm.Builder.Constant.isZeroInit	fn	fn (zig.llvm.Builder.Constant, *const zig.llvm.Builder) bool
@@ -15450,7 +15450,7 @@ std.zig.llvm.Builder.Constant.GetElementPtr.Kind	type	zig.llvm.Builder.Constant.
 std.zig.llvm.Builder.Constant.GetElementPtr.InRangeIndex	type	zig.llvm.Builder.Constant.GetElementPtr.InRangeIndex
 std.zig.llvm.Builder.Constant.GetElementPtr.Info	type	zig.llvm.Builder.Constant.GetElementPtr.Info
 std.zig.llvm.Builder.Constant.Assembly.Info	type	zig.llvm.Builder.Constant.Assembly.Info
-std.zig.llvm.Builder.Value.unwrap	fn	fn (zig.llvm.Builder.Value) zig.llvm.Builder.Value.unwrap__union_32997
+std.zig.llvm.Builder.Value.unwrap	fn	fn (zig.llvm.Builder.Value) zig.llvm.Builder.Value.unwrap__union
 std.zig.llvm.Builder.Value.typeOfWip	fn	fn (zig.llvm.Builder.Value, *const zig.llvm.Builder.WipFunction) zig.llvm.Builder.Type
 std.zig.llvm.Builder.Value.typeOf	fn	fn (zig.llvm.Builder.Value, zig.llvm.Builder.Function.Index, *zig.llvm.Builder) zig.llvm.Builder.Type
 std.zig.llvm.Builder.Value.toConst	fn	fn (zig.llvm.Builder.Value) ?zig.llvm.Builder.Constant
