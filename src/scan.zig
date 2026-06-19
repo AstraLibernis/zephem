@@ -18,7 +18,8 @@
 //! modref (import of a module like std/builtin, not a file we own).
 //! n_children = number of public decls this container emits as direct children
 //!   (0 for leaves and for @ref/read-error namespaces, which are not expanded).
-//! detail = target file (ns) · param count (fn) · module name (modref) · "".
+//! detail = target file (ns/nsref) · param count (fn) · module name (modref) ·
+//!   raw RHS reference (alias, e.g. `mem.Allocator` — the L3 tunnel target) · "".
 //!
 //! Self-verifying — the conservation law: every node except the root is exactly
 //! one node's child, so  Σ n_children == (total rows − 1).  Per node, the rows
@@ -88,6 +89,28 @@ fn parseImport(src: []const u8) ?ImportRef {
     // a re-export selector is a clean dotted identifier chain; anything else is an expression.
     for (sel) |c| if (!(std.ascii.isAlphanumeric(c) or c == '_' or c == '.')) return null;
     return .{ .file = file, .selector = sel };
+}
+
+/// True iff `s` is a pure dotted identifier chain — `Foo`, `mem.Allocator`,
+/// `crypto.hash.sha2.Sha256` — and nothing else. This is exactly a re-export alias: a name
+/// that points at another decl. Anything with an operator, call, `@builtin`, or whitespace
+/// (an error-set merge `E1 || E2`, a bool `Os != void`, a generic call) is a computed value,
+/// not an alias — so it stays a `const`. Being whitespace-free, an accepted chain is always
+/// TSV-safe as the alias `detail`.
+fn isAliasChain(s: []const u8) bool {
+    if (s.len == 0) return false;
+    var expect_start = true; // at the first char of an identifier segment
+    for (s) |c| {
+        if (expect_start) {
+            if (!(std.ascii.isAlphabetic(c) or c == '_')) return false;
+            expect_start = false;
+        } else if (c == '.') {
+            expect_start = true;
+        } else if (!(std.ascii.isAlphanumeric(c) or c == '_')) {
+            return false;
+        }
+    }
+    return !expect_start; // must not end on a trailing '.'
 }
 
 /// The public decl named `name` among `members`, or null.
@@ -304,13 +327,14 @@ fn walkMembers(
             continue;
         }
 
-        // an alias / plain const. Distinguish a re-export (X.Y / Y) from a value.
+        // an alias / plain const. A pure dotted chain (`X.Y` / `Y`) is a re-export; record its
+        // raw RHS in `detail` — the unresolved target an L3 tunnel resolves to a canonical path.
+        // Anything else (an expression, error-set merge, generic call) is a computed `const`.
         const trimmed = std.mem.trim(u8, init_src, " \t\r\n");
-        const looks_alias = trimmed.len > 0 and
-            (std.ascii.isAlphabetic(trimmed[0]) or trimmed[0] == '_' or trimmed[0] == '@') and
-            std.mem.indexOfAny(u8, trimmed, "+-*/(){}\"") == null;
-        const kind: []const u8 = if (looks_alias) "alias" else "const";
-        try ctx.w.print("{s}.{s}\t{d}\t{s}\t{s}\t0\t\n", .{ logical_path, name, depth, kind, name });
+        const is_alias = isAliasChain(trimmed);
+        const kind: []const u8 = if (is_alias) "alias" else "const";
+        const detail_field: []const u8 = if (is_alias) trimmed else "";
+        try ctx.w.print("{s}.{s}\t{d}\t{s}\t{s}\t0\t{s}\n", .{ logical_path, name, depth, kind, name, detail_field });
     }
 }
 

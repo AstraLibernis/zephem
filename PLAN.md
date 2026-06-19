@@ -40,7 +40,7 @@ Each layer is a separate dataset keyed to the map by `path` — see [concepts](d
 |---|---|---|---|
 | **L0 structure** | where is it, how is it shaped | ✅ done | [L0-structure](docs/layers/L0-structure.md) |
 | **L1+L2 decls** | fn signatures + authors' doc-comments | ✅ done | [L1-L2-decls](docs/layers/L1-L2-decls.md) |
-| **L3 tunnels** | what links to what (followable) | ▢ planned | [L3-tunnels](docs/layers/L3-tunnels.md) |
+| **L3 tunnels** | what links to what (followable) | ✅ done | [L3-tunnels](docs/layers/L3-tunnels.md) |
 | **L4 examples** | how it's used, *and does it run* | ▢ planned | [L4-examples](docs/layers/L4-examples.md) |
 | **L5 resolved depth** | real size / expanded generic / type | ✅ done | [L5-depth](docs/layers/L5-depth.md) |
 | **L6 version diff** | what changed between Zig versions | ▢ planned | [L6-version-diff](docs/layers/L6-version-diff.md) |
@@ -53,20 +53,23 @@ Each layer is a separate dataset keyed to the map by `path` — see [concepts](d
 | **table of contents** (`index.zig`) | ✅ contiguous-block index, self-checked both ways (1,355 containers) |
 | **decls overlay** (`enrich.zig`, L1+L2) | ✅ 7,143 rows; sig coverage == map's fn set (5,377 ⇔ 5,377) |
 | **depth overlay** (`resolve.zig` + `build_depth.nu`, L5) | ✅ full-corpus sweep, verify-✓ (1,324 resolved / 0 redirect / 31 poison; zero dups) |
-| **reproducibility** (`--check` + `SHA256SUMS`) | ✅ map + decls in `build_std.nu --check` (instant); **L5 in its own `build_depth.nu --check`** (separate — full sweep ≈13 min cold / ≈76 s warm). See [reproducibility](docs/reproducibility.md). |
+| **tunnels overlay** (`tunnels.zig` + `build_tunnels.nu`, L3) | ✅ 5,123 resolved edges (alias/import/usage), verify-✓ 6 ways; sound (no dangling), unresolved recorded |
+| **reproducibility** (`--check` + `SHA256SUMS`) | ✅ map + decls in `build_std.nu --check` (instant); **L5 in its own `build_depth.nu --check`** (separate — full sweep ≈13 min cold / ≈76 s warm); **L3 in `build_tunnels.nu --check`** (parse, instant). See [reproducibility](docs/reproducibility.md). |
 | crypto reflection pipeline | 🗄️ archived → `archive/crypto-reflection/` (technique revived as L5) |
 
 We can now say *where* anything in std is, *how it is shaped*, what it's called and documented
-as, and its resolved depth — completely and provably. That is the skeleton plus its first three
-overlays.
+as, its resolved depth, and *what links to what* — completely and provably. That is the skeleton,
+three attribute overlays, and the graph that connects them.
 
 ## Remaining work, in order
 
 1. **[L4 — examples from tests](docs/layers/L4-examples.md)** — extract + *run* `test {}` blocks
    (executing verification); highest value-per-effort.
-2. **[L3 — tunnels](docs/layers/L3-tunnels.md)** — resolve references to addresses; build after
-   the overlays exist.
-3. **[L6 — version diff](docs/layers/L6-version-diff.md)** — needs a second pinned snapshot.
+2. **[L6 — version diff](docs/layers/L6-version-diff.md)** — needs a second pinned snapshot.
+
+L3 completeness follow-up (optional): multi-hop alias-following would resolve the
+`Cipher.key_length`-style tails now in the unresolved bucket — a pure completeness gain, never a
+soundness change.
 
 Each new dataset registers with a harness and ships its own backward check (see
 [reproducibility](docs/reproducibility.md)).

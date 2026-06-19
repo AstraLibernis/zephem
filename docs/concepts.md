@@ -51,7 +51,7 @@ a separate dataset keyed to the map by `path`:
 | **L0 structure** ✅ | where is it, how is it shaped | parse (AST) | total | [L0](layers/L0-structure.md) |
 | **L1 signatures-as-written** ✅ | what does this fn take / return / error | parse (AST) | total | [L1-L2](layers/L1-L2-decls.md) |
 | **L2 doc-comments** ✅ | what do std's authors say it is | parse (`///`) | total | [L1-L2](layers/L1-L2-decls.md) |
-| **L3 references / tunnels** ▢ | what links to what (followable to an address) | parse (resolve names) | edges | [L3](layers/L3-tunnels.md) |
+| **L3 references / tunnels** ✅ | what links to what (followable to an address) | parse (resolve names) | edges | [L3](layers/L3-tunnels.md) |
 | **L4 examples (tests)** ▢ | how is it actually used, *and does it run* | parse + **execute** | where tests exist | [L4](layers/L4-examples.md) |
 | **L5 resolved depth** ✅ | the real size / expanded generic / concrete type | reflect (per-container, isolated) | full sweep | [L5](layers/L5-depth.md) |
 | **L6 version diff** ▢ | what changed between Zig versions | transform two snapshots | total | [L6](layers/L6-version-diff.md) |

@@ -44,12 +44,16 @@ renders).
 
 ---
 
-## Two harnesses — fast map, slow depth (kept separate on purpose)
+## Three harnesses — fast parses, slow depth (kept separate on purpose)
 
 - **Map + decls (parse): `nu scripts/build_std.nu --check`** — instant. Every build writes
   `data/std/SHA256SUMS` (a `sha256sum -c`-compatible manifest, hashed in pure Nushell) over the
   parse-based datasets; `--check` proves the three guarantees per dataset and exits non-zero on
   any drift. New parse datasets register by adding their name to one `NAMES` list.
+
+- **Tunnels (parse + resolve): `nu scripts/build_tunnels.nu --check`** — also fast (a parse).
+  Records `data/std/SHA256SUMS.tunnels` over `tunnels.tsv` + `unresolved.tsv` and proves the same
+  three ways. See [L3](layers/L3-tunnels.md).
 
 - **Depth (reflection): `nu scripts/build_depth.nu --check`** — slow, and deliberately **not**
   wired into `build_std.nu`. `--commit` records `data/std/SHA256SUMS.depth` over the four L5
