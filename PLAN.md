@@ -79,6 +79,9 @@ modes) to reproduce.
   nushell `$"…"` string parsed as a command call; parens escaped. All three layers (`build_std`,
   `build_tunnels`, `build_depth`) now pass `--check`. Sweep timings are machine-dependent (see
   [reproducibility](docs/reproducibility.md)).
+- **2026-06-19** — four-lens adversarial audit (efficiency · reproducibility · soundness ·
+  organization) for weak spots and refinements; findings recorded in the **Refinement backlog**
+  at the end of this file.
 
 ## Remaining work, in order
 
@@ -97,3 +100,24 @@ Each new dataset registers with a harness and ships its own backward check (see
 
 - [ ] Point the scanner at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
+
+## Refinement backlog (adversarial audit, 2026-06-19)
+
+Weak spots surfaced by a four-lens adversarial pass (efficiency · reproducibility · soundness ·
+organization). Severity / whether the issue was **reproduced** vs **reasoned** / fix / effort.
+Two unifying themes: (a) implicit single-machine assumptions in a project that promises
+"rebuilds identically anywhere" — same root cause as the `__opaque` bug; (b) the project not yet
+fully practicing its own "self-verifying / every fact computed / no hand-authored prose" thesis.
+
+| # | sev | finding | fix | effort |
+|---|---|---|---|---|
+| 1 | 🔴 high · **reproduced** | **Timeouts silently become poison.** Per-container 30 s reflect timeout: a slow host exits 124 and falls into the *same* poison branch as a real compile error (reason `exit 124`), so the poison set — and `resolved.tsv` — is silently speed-gated and drifts cross-machine. `build_depth.nu:114,127-128`. Committed poison is clean today (0/31 timeouts) only because it was built on fast boxes. | Fail-loud on exit 124 (don't demote to poison); assert "no `exit N` reason in poison.tsv" in `verify_depth.nu`. Optional `elapsed` column in `status.tsv` for margin visibility. | low |
+| 2 | 🔴 high · confirmed | **Snapshot is implicitly x86_64-linux but unlabeled.** `PINNED` records only `zig 0.16.0`. 13/31 poison are target-foreign; 5 resolved rows carry `.x86_64_win` callconv. Rebuild on another arch → drift, no signal. | Record the target triple in `PINNED` (`zig env`); have `--check` warn/fail if the host triple differs. | low |
+| 3 | 🟠 high · **demonstrated live** | **The "two-way" check for L0/L1/L2 is a tautology.** `enrich.zig` is a near-verbatim copy of `scan.zig` (same `findDecl`/`containerKindOf`/fn gate), so the 5,377 ⇔ 5,377 sig⇔fn bijection is two copies of one walk agreeing. A comptime-block container with a `pub fn` was dropped by **both** walks with every check green. Conservation only conserves what was emitted. | Wire the real oracle already on disk: join `resolved.kind` (compiler) ↔ `nodes.kind` (parser) in `verify_depth.nu` (assert fn⟹fn, struct/enum/union/opaque⟹type; report const↔type/fn deltas). Add a small `grep -c 'pub fn'` source anchor on a few pinned leaf files. | ~1–2 h |
+| 4 | 🟡 med · **measured** | **Compile-cache persistence > parallelism.** Cold L5 sweep 117.7 s vs warm 3.3 s — ~114 s of "cold" is Zig *recompiling*, not reflecting. Warm state survives only via 1,355 path-stable `r-<i>.zig` files in volatile `/tmp/zephem-depth`; a reboot restores the 117 s cost. par-each gave ~16×, cache persistence ~35×. (Note: a runtime-parameterized binary is impossible — reflection targets must be comptime-known; the per-container subprocess design is forced.) | Move scratch to a persistent / content-addressed cache (e.g. gitignored `data/.cache/depth/`, filename keyed by substituted-source hash). | low |
+| 5 | 🟡 med · confirmed | **Triplicate proof logic.** `hashes`, manifest-parse, the intrinsic/regression/integrity loop, and `std-root`/`std-dir` are copy-pasted across all three `build_*.nu` (~90 lines). **Both bugs fixed on 2026-06-19 lived in this duplicated block** — the next fix needs applying 3×. Adding a layer is an ~8-site edit (L4/L6 imminent). | Factor `scripts/lib/manifest.nu` (`hashes`/`read-manifest`/`write-manifest`/`std-dir`/`prove-rebuild`); consider a `layers.nu` registry so a new layer is one record. | med |
+| 6 | 🟡 med · confirmed | **Hand-authored counts drift** — headline numbers restated in ~7 doc places, violating the "no hand-authored prose / every fact computed" thesis. Live drift: `README.md:111` & `USAGE.md:92` still say "~45 min" (missed when the 2026-06-19 timing-wording fix updated only PLAN/`reproducibility.md`/the script). | Generate `data/std/STATS.tsv` (computed) and have docs cite it; fix the two stale "45 min". | low–med |
+| 7 | 🟢 low · confirmed | `status.tsv` is fully derivable from `index`+`resolved`+`poison`; `redirects.tsv` is committed empty (+ a manifest slot); `SCRATCH` const vs the hardcoded `/tmp/zephem-depth` literal inside the `norm-row` regex (`build_depth.nu:130`) can silently drift; `norm-row`'s denylist `(struct\|union\|enum\|opaque)` is whack-a-mole — generalize to `__([a-z]+)_[0-9]+ → __$1` to pre-empt the next `__opaque`-class drift. | small, independent cleanups | low each |
+
+Suggested first bundle (cheap, high-confidence cross-machine hardening, continuous with the
+`__opaque` fix): **#1 + #2 + the #7 denylist→allowlist regex + the #6 stale "45 min"**.
