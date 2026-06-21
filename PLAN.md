@@ -29,14 +29,15 @@ never folded into the base.
 2. **zephem** (2026-06-17) — reframed as a general extractor built on **AST parsing**
    (parse-don't-reflect): it reads source as syntax, never evaluates comptime, so it maps
    **all** of std including poison decls. The tool is the extractor, not the crypto.
-3. **engine split** (2026-06-21) — the extractor was first folded into one parse (many
-   visitors, so the map and overlays can no longer desync), then split by *what each reads*
-   into three engines: **`parse/`** (read source as text → map, decls, tunnels), **`reflect/`**
-   (run the compiler → resolved depth), **`derive/`** (transform the datasets, read no Zig →
-   index, canon). Editorial shape-clustering was **deferred to a later phase** (after
-   `derive/`) to keep the base map a pure mirror — early experiments preserved in git history
-   at commit `933f4a0`. Docs cut to three (this file, `README.md`, `parse/README.md`); the
-   rest parked in `docs/archive/` for rewrite.
+3. **engine split** (2026-06-21) — split by *what each reads* into three engines: **`parse/`**
+   (read source as text), **`reflect/`** (run the compiler → resolved depth), **`derive/`**
+   (transform the datasets, read no Zig → index, canon). Docs cut to three (this file,
+   `README.md`, `parse/README.md`); the rest parked in `docs/archive/` for rewrite.
+4. **parser stripped to one file** (2026-06-21) — the parser now emits *only* the structural
+   map (`nodes.tsv`). Signatures/doc-comments (`decls`) and references (`tunnels`) were
+   **removed from the parser** — they are *our* organisation (added detail and resolved links),
+   not the faithful base. Parse all → output all; everything else is an "organize later" layer.
+   Preserved in git history at commit `933f4a0`.
 
 ---
 
@@ -47,29 +48,35 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ full std: 16,506 decls / 310 files, depth 8; conservation-checked |
+| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's one output: full std, 16,506 decls / 310 files, depth 8; conservation-checked |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 1,355 containers, self-checked both ways |
-| **L1+L2 decls** — `decls.tsv` | `parse/visit/enrich.zig` | ✅ 7,143 rows (5,377 signatures, 4,167 docs) |
-| **L3 tunnels** — `tunnels.tsv` | `parse/tunnels.zig` | ✅ 5,123 resolved reference edges, no dangling |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
 | **canon census** — `canon.tsv` | `scripts/build_canon.nu` | ✅ every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
 | **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds: fn⟹fn 4,823/4,823, container⟹type 2,375/2,375 |
-| **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/decls/index instant; L3 instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
+| **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
 
-We can say *where* anything in std is, *how* it's shaped, what it's called and documented as,
-its resolved depth, and *what links to what* — completely and provably. That is the skeleton,
-three attribute overlays, the graph that connects them, and a total provenance census.
+We can say *where* anything in std is, *how* it's shaped, and its resolved depth — completely
+and provably. That is the faithful skeleton, the compiler's resolved view, and a total
+provenance census joining the two. Added detail and links come next, as separate layers.
 
 ## Remaining work
 
 1. **L4 — examples from tests** — extract and *run* `test {}` blocks (executing verification).
    Highest value-per-effort.
 2. **L6 — version diff** — what changed between Zig versions; needs a second pinned snapshot.
-3. **Clustering / grouping** *(after `derive/`)* — the editorial layer that groups the faithful
-   map "by purpose". Deliberately last: it is *our* reading laid on top, never part of the base.
-   Early experiments at commit `933f4a0`.
-
 Each new dataset registers with a harness and ships its own backward check.
+
+## Organize-later layers (on top of the faithful map, never in the parser)
+
+The parser emits only the structural map. These are *our* organisation, added back each as its
+own separate layer once the base is settled — all preserved in git history at commit `933f4a0`:
+
+1. **Signatures + doc-comments** (was `decls`) — each fn's as-written signature and any `///`,
+   keyed to the map by `path`. Added detail, not structure.
+2. **References / links** (was `tunnels`) — the resolved reference graph (what name resolves to
+   what). A relationship layer — a "direction" the parser must not bake in.
+3. **Grouping by purpose** (clustering) — bucket the map into themes. The most editorial of the
+   three; deliberately last.
 
 ## Standing items
 

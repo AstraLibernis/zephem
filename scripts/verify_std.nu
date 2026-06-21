@@ -86,34 +86,6 @@ def main [file: string = "data/std/nodes.tsv"] {
         if $iok { print "  ✓ every block re-derived from nodes.tsv — line+span land exactly on each subtree" } else { $ok = false }
     }
 
-    # 6. DECLS OVERLAY (L1 signatures + L2 doc-comments) — the overlay must register onto the
-    #    map and not lose anything between the two. These are LOSS/CORRUPTION checks within the
-    #    parser's own world (map ← build.zig, overlay ← enrich.zig). They are NOT a correctness
-    #    proof of the function set: build.zig and enrich.zig apply the same fn-gate, so their
-    #    agreement is guaranteed by construction (it would survive a shared blind spot). The
-    #    independent correctness witness — parser kinds vs the COMPILER's reflected kinds — lives
-    #    in scripts/verify_layers.nu. Run that to test whether the fn set is actually right.
-    if ("data/std/decls.tsv" | path exists) {
-        let d = (open data/std/decls.tsv)
-        print $"decls overlay:  ($d | length) rows   \(sig: ($d | where sig != '' | length)   doc: ($d | where doc != '' | length)\)"
-        mut dok = true
-        # registration — every decl path is a real node (no dangling overlay rows)
-        let reg = ($d | select path | join ($t | select path) path)
-        if ($reg | length) != ($d | length) { print $"  ✗ (($d | length) - ($reg | length)) overlay rows reference paths not in the map"; $dok = false }
-        # uniqueness — one overlay row per path
-        let dups = ($d | get path | uniq -d)
-        if ($dups | length) > 0 { print $"  ✗ ($dups | length) duplicated paths in the overlay"; $dok = false }
-        # no-loss — a sig must attach to a path the map calls a fn (else the overlay is broken),
-        # and enrich must have emitted a sig for every map fn (else it silently dropped one).
-        # Equality here means "no loss between map and overlay", NOT "the fn set is correct".
-        let sigset = ($d | where sig != "" | select path)
-        let fnset = ($t | where kind == "fn" | select path)
-        let inter = ($sigset | join $fnset path)
-        if ($inter | length) != ($sigset | length) { print $"  ✗ (($sigset | length) - ($inter | length)) signature\(s\) attach to a non-fn path — overlay broken"; $dok = false }
-        if ($inter | length) != ($fnset | length) { print $"  ✗ enrich dropped (($fnset | length) - ($inter | length)) map fn\(s\) — overlay lost a signature"; $dok = false }
-        if $dok { print "  ✓ overlay registers on the map, no loss \(parser-internal; correctness ↦ verify_layers.nu\)" } else { $ok = false }
-    }
-
     print ""
     if $ok { print "VERDICT: ✓ all integrity checks pass" } else { print "VERDICT: ✗ integrity FAILED"; exit 1 }
 }

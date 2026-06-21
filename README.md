@@ -64,7 +64,6 @@ $ nu scripts/build_std.nu
 [forward]  scanning .../std.zig  (zig 0.16.0, depth 24)
            rows: 16506   files: 310   max depth: 8
 [index]    containers: 1355   root span: 16506
-[enrich]   decl rows: 7143   with sig: 5377   with doc: 4167
 [backward] re-reading the datasets — must reconcile...
 conservation:  Σ n_children = 16505   rows − 1 = 16505   ✓
 per-node:       1355 expanded containers checked           ✓
@@ -94,19 +93,12 @@ The index self-checks: the root's span equals the whole file (conservation again
 Copy-pasteable recipes (read one module, find by name, orient, regenerate) are parked in
 **[docs/archive/USAGE.md](docs/archive/USAGE.md)** pending a rewrite.
 
-## Overlays: deeper facts, keyed to the map
+## Beyond the map: the other engines, keyed to it
 
-The map is the skeleton; each overlay attaches more true facts *at the same `path`*, so they
-join cleanly and every row is anchored to a node that exists. Two ship today, both
-self-verifying and byte-identical on rerun:
+The map is the skeleton — and the *only* thing the parser emits. Deeper facts are produced by
+**separate engines** and join back at the same `path`, so every row anchors to a node that
+exists. Two ship today, both self-verifying and byte-identical on rerun:
 
-- **`data/std/decls.tsv`** (L1 signatures + L2 doc-comments) — `path · doc · sig` from
-  `parse/visit/enrich.zig` (emitted by `parse/build.zig` on the same parse as the map).
-  Sparse: a row per `fn` (its as-written signature) plus any decl carrying a
-  `///`. On Zig 0.16.0: 7,143 rows (5,377 signatures covering the map's 5,377 functions with no
-  loss, 4,167 docs). That map↔overlay agreement is a parser-internal loss check, not a
-  correctness proof — whether the fn set is right is tested against the compiler in
-  `scripts/verify_layers.nu`.
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On Zig 0.16.0: 1,355 containers swept → **1,324 resolved (15,720
@@ -126,8 +118,9 @@ self-verifying and byte-identical on rerun:
   `scripts/verify_canon.nu` and deterministic (`--check`). This is the layer that makes "nothing is
   missing" a *checked* property rather than a claim.
 
-The layer model (positions / overlays / tunnels) and the roadmap for the remaining layers
-(L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
+The deferred "organize later" layers (signatures + doc-comments, references/links, grouping by
+purpose) and the roadmap for the remaining work (L4 runnable test examples, L6 version diff)
+live in **[PLAN.md](PLAN.md)**.
 
 ## Where it started: `std.crypto` (archived)
 
@@ -143,10 +136,10 @@ The extractor is **three engines**, split by *what each reads*:
 
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
   [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
-  single generic walk (`parse/walk.zig`) over two visitors → `nodes.tsv` (the map) +
-  `decls.tsv` (sigs/docs); `parse/tunnels.zig` adds the L3 reference graph. It reads source
-  as text and never runs the compiler, which is what lets it map all of std without dying on
-  poison decls.
+  single generic walk (`parse/walk.zig`) over the structure visitor → **one file**, `nodes.tsv`
+  (the map). Parse all → output all: just paths, names, kinds, child-counts, files, in source
+  order. It reads source as text and never runs the compiler, which is what lets it map all of
+  std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
   parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.
@@ -154,10 +147,10 @@ The extractor is **three engines**, split by *what each reads*:
   above: `derive/index.zig` builds the table of contents (`index.tsv`) over the map, and
   `scripts/build_canon.nu` joins parse vs reflect into the provenance census (`canon.tsv`).
 
-The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. Editorial
-shape-clustering (grouping the map "by purpose") is **deliberately deferred to a later phase,
-after `derive/`** — those are *our* ideas laid on top, never part of the faithful base.
-Phases and status: **[PLAN.md](PLAN.md)**.
+The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. Three things are
+**deliberately deferred to "organize later"** layers — *our* organisation laid on the faithful
+base, never mixed into the parse: **signatures + doc-comments**, **references/links** between
+names, and **grouping** the map by purpose. Phases and status: **[PLAN.md](PLAN.md)**.
 
 ## Toolchain
 

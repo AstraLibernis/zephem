@@ -3,8 +3,8 @@
 #
 # Two guarantees, both enforced here:
 #
-#   TRUE         FORWARD  (parse/build.zig + derive/index.zig) extracts the map and the
-#                signature/doc overlay in one pass, then its table of contents.
+#   TRUE         FORWARD  (parse/build.zig) extracts the structural map in one pass;
+#                derive/index.zig builds its table of contents.
 #                BACKWARD (scripts/verify_std.nu) re-reads them the other way — by parent,
 #                by depth, by join — and checks everything reconciles. A regeneration the
 #                backward read rejects is not a regeneration: exits non-zero, claims nothing.
@@ -22,7 +22,7 @@
 #         nu scripts/build_std.nu --depth 24
 #         nu scripts/build_std.nu --check       # prove the committed snapshot rebuilds
 
-const NAMES = ["nodes.tsv" "index.tsv" "decls.tsv"]
+const NAMES = ["nodes.tsv" "index.tsv"]
 
 # The active toolchain's std root. `zig env` emits ZON, not JSON — pull the path out.
 def std-root [] {
@@ -30,13 +30,13 @@ def std-root [] {
     $"($std_dir)/std.zig"
 }
 
-# Regenerate the three datasets into `outdir`, saved identically to the committed
-# snapshot (so hashes are comparable). The single source of build truth, shared by the
-# normal build and --check, so they cannot diverge.
+# Regenerate the datasets into `outdir`, saved identically to the committed snapshot (so
+# hashes are comparable). The single source of build truth, shared by the normal build and
+# --check, so they cannot diverge.
 def regen [root: string, depth: int, outdir: string] {
     mkdir $outdir
-    # one pass parses std once and writes BOTH the map and the doc/sig overlay.
-    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/nodes.tsv" $"($outdir)/decls.tsv"
+    # the parser reads std once → the structural map (one file). derive builds its TOC.
+    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/nodes.tsv"
     (^zig run derive/index.zig -- $"($outdir)/nodes.tsv" | into string) | save -f $"($outdir)/index.tsv"
 }
 
@@ -90,8 +90,6 @@ def main [--depth: int = 24, --check] {
     print $"           rows: (($t | length))   files: (($t | where kind == 'ns' | length))   max depth: (($t | get depth | math max))"
     let it = (open data/std/index.tsv)
     print $"[index]    containers: (($it | length))   root span: (($it | get span | math max))"
-    let dt = (open data/std/decls.tsv)
-    print $"[enrich]   decl rows: (($dt | length))   with sig: (($dt | where sig != '' | length))   with doc: (($dt | where doc != '' | length))"
 
     # ---- TRUE (backward): read the data the other way; it must agree ---------
     print "[backward] re-reading the datasets — must reconcile..."
