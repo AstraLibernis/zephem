@@ -86,6 +86,24 @@ def main [file: string = "data/std/nodes.tsv"] {
         if $iok { print "  ✓ every block re-derived from nodes.tsv — line+span land exactly on each subtree" } else { $ok = false }
     }
 
+    # 6. DETAIL OVERLAYS — the parser's sigs/docs must key onto real nodes (sigs onto fns),
+    #    one row per path. Same self-check spirit: the overlays can't drift from the map.
+    let dir = ($file | path dirname)
+    if ($"($dir)/sigs.tsv" | path exists) {
+        let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+        let fnset = ($t | where kind == "fn" | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+        let sigs = (open $"($dir)/sigs.tsv")
+        let docs = (open $"($dir)/docs.tsv")
+        let sig_orphan = ($sigs | where {|r| ($fnset | get -o $r.path) != true})
+        let doc_orphan = ($docs | where {|r| ($nodeset | get -o $r.path) != true})
+        let sig_dup = ($sigs | get path | uniq -d)
+        let doc_dup = ($docs | get path | uniq -d)
+        print $"detail overlays: ($sigs | length) sigs / ($docs | length) docs"
+        if ($sig_orphan | length) > 0 { print $"  ✗ ($sig_orphan | length) signature\(s\) key onto a non-fn / missing node"; $ok = false } else { print "  ✓ every signature keys onto a real fn node" }
+        if ($doc_orphan | length) > 0 { print $"  ✗ ($doc_orphan | length) doc\(s\) key onto a missing node"; $ok = false } else { print "  ✓ every doc keys onto a real node" }
+        if (($sig_dup | length) > 0) or (($doc_dup | length) > 0) { print $"  ✗ duplicate keys: ($sig_dup | length) sig / ($doc_dup | length) doc"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
+    }
+
     print ""
     if $ok { print "VERDICT: ✓ all integrity checks pass" } else { print "VERDICT: ✗ integrity FAILED"; exit 1 }
 }

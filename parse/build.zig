@@ -29,13 +29,25 @@ pub fn main(init: std.process.Init) !void {
     else
         DEFAULT_MAX_DEPTH;
     const nodes_out: []const u8 = if (args.len > 3) args[3] else "nodes.tsv";
+    const sigs_out: []const u8 = if (args.len > 4) args[4] else "sigs.tsv";
+    const docs_out: []const u8 = if (args.len > 5) args[5] else "docs.tsv";
 
     const nodes_file = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nodes_file.close(io);
+    const sigs_file = try std.Io.Dir.cwd().createFile(io, sigs_out, .{});
+    defer sigs_file.close(io);
+    const docs_file = try std.Io.Dir.cwd().createFile(io, docs_out, .{});
+    defer docs_file.close(io);
 
     var nbuf: [1 << 16]u8 = undefined;
     var nfw = nodes_file.writer(io, &nbuf);
     const nw = &nfw.interface;
+    var sbuf: [1 << 16]u8 = undefined;
+    var sfw = sigs_file.writer(io, &sbuf);
+    const sw = &sfw.interface;
+    var dbuf: [1 << 16]u8 = undefined;
+    var dfw = docs_file.writer(io, &dbuf);
+    const dw = &dfw.interface;
 
     var visited = std.StringHashMap(void).init(arena);
     try visited.put(root_path, {});
@@ -48,9 +60,13 @@ pub fn main(init: std.process.Init) !void {
         .max_depth = max_depth,
         .root_dir = root_dir,
         .out = nw,
+        .sigs = sw,
+        .docs = dw,
     };
 
     try nw.print("path\tdepth\tkind\tname\tn_children\tdetail\n", .{});
+    try sw.print("path\tsig\n", .{});
+    try dw.print("path\tdoc\n", .{});
 
     const root_logical = std.fs.path.stem(root_path); // "std"
     if (try az.parseFile(io, arena, root_path)) |root_ast_v| {
@@ -65,4 +81,6 @@ pub fn main(init: std.process.Init) !void {
     }
 
     try nw.flush();
+    try sw.flush();
+    try dw.flush();
 }

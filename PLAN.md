@@ -48,7 +48,8 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's one output: full std, 16,506 decls / 310 files, depth 8; conservation-checked |
+| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, 16,506 decls / 310 files, depth 8; conservation-checked |
+| **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ 5,377 as-written fn signatures + 4,084 `///` docs, keyed by `path`; integrity-checked vs the map |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 1,355 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
@@ -69,17 +70,28 @@ next, as separate layers.
 2. **L6 — version diff** — what changed between Zig versions; needs a second pinned snapshot.
 Each new dataset registers with a harness and ships its own backward check.
 
-## Organize-later layers (on top of the faithful map, never in the parser)
+## The inclusive map (parser) vs organisation (derive)
 
-The parser emits only the structural map. These are *our* organisation, added back each as its
-own separate layer once the base is settled — all preserved in git history at commit `933f4a0`:
+The dividing line: **raw source facts → the parser (the all-inclusive map); organisation →
+derive.** Signatures and docs are raw source facts only the parser can see (derive reads no Zig;
+reflect has resolved types but no names, no docs), so they belong in the parser's output — not as
+a later overlay. What stays *out* of the parser is genuinely editorial: resolved cross-links and
+purpose-groupings.
 
-1. **Signatures + doc-comments** (was `decls`) — each fn's as-written signature and any `///`,
-   keyed to the map by `path`. Added detail, not structure.
-2. **References / links** (was `tunnels`) — the resolved reference graph (what name resolves to
-   what). A relationship layer — a "direction" the parser must not bake in.
-3. **Grouping by purpose** (clustering) — bucket the map into themes. The most editorial of the
-   three; deliberately last.
+**In the parser now:** structure (`nodes.tsv`), as-written fn signatures (`sigs.tsv`), `///` docs
+(`docs.tsv`) — all keyed by `path`, all integrity-checked.
+
+**Still to add to the parser (raw source facts):**
+1. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
+   `threadlocal`/`var`-vs-`const` flags. Columns on `nodes.tsv`. *(next — easy)*
+2. **Fields** — struct/union fields, enum tags, error-set members (name·type·value). How to
+   construct/read a type; 0% covered today. *(after — needs member descent)*
+
+**True organize-later (derive — never in the parser):**
+- **References / links** (was `tunnels`) — the resolved reference graph (what name resolves to
+   what). A relationship layer a "direction" the parser must not bake in.
+- **Grouping by purpose** (clustering) — bucket the map into themes. The most editorial; last.
+- **Call-card** — join `sigs` + `resolved` + `canon` + `consensus` into one per-callable view.
 
 ## Standing items
 

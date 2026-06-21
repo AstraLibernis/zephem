@@ -153,10 +153,11 @@ The extractor is **three engines**, split by *what each reads*:
 
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
   [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
-  single generic walk (`parse/walk.zig`) over the structure visitor → **one file**, `nodes.tsv`
-  (the map). Parse all → output all: just paths, names, kinds, child-counts, files, in source
-  order. It reads source as text and never runs the compiler, which is what lets it map all of
-  std without dying on poison decls.
+  single generic walk (`parse/walk.zig`) → the **map** (`nodes.tsv`: paths, names, kinds,
+  child-counts, files, source order) plus the raw source facts only a parser can see:
+  as-written **fn signatures** (`sigs.tsv`, 5,377) and **`///` docs** (`docs.tsv`, 4,084), both
+  keyed by `path`. It reads source as text and never runs the compiler, which is what lets it map
+  all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
   parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.
@@ -166,10 +167,11 @@ The extractor is **three engines**, split by *what each reads*:
   alias/dup families (`canon.tsv`); and `scripts/build_consensus.nu` compares parse vs reflect,
   tagging where the two readers agree or differ (`consensus.tsv`).
 
-The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. Three things are
-**deliberately deferred to "organize later"** layers — *our* organisation laid on the faithful
-base, never mixed into the parse: **signatures + doc-comments**, **references/links** between
-names, and **grouping** the map by purpose. Phases and status: **[PLAN.md](PLAN.md)**.
+The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The dividing line:
+**raw source facts go in the parser** (structure, signatures, docs — and next, fields +
+location/modifiers); **organisation is deferred to derive** — **references/links** between names
+and **grouping** the map by purpose, never mixed into the parse. Phases and status:
+**[PLAN.md](PLAN.md)**.
 
 ## Toolchain
 
