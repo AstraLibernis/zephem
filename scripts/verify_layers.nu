@@ -8,11 +8,11 @@
 # This script is different on purpose. It joins TWO views of the same symbols that were produced
 # by SEPARATE machinery and asks whether they agree:
 #
-#   PARSER view    L0  data/std/nodes.tsv     ← src/scan.zig, walking the AST (syntax)
+#   PARSER view    L0  data/std/nodes.tsv     ← mapper/build.zig, walking the AST (syntax)
 #   COMPILER view  L5  data/std/resolved.tsv  ← reflection, semantic analysis (what it *is*)
 #
-# scan.zig and the compiler share no code path, so when they agree on a symbol's kind that
-# agreement is *evidence*. (Contrast the old decls⇔map "bijection": scan.zig and enrich.zig
+# build.zig and the compiler share no code path, so when they agree on a symbol's kind that
+# agreement is *evidence*. (Contrast the old decls⇔map "bijection": build.zig and enrich.zig
 # running the same fn-gate twice — agreement guaranteed by construction, proving nothing.)
 #
 # Two reconciliations the views need before a delta is real (parse-don't-reflect by design):

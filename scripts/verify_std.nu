@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # verify_std.nu — prove the std map's integrity by reading it a SECOND way.
 #
-# The extractor (src/scan.zig) records, per container, how many public children
+# The extractor (mapper/build.zig) records, per container, how many public children
 # it declares (`n_children`). This script never trusts that number on its own —
 # it re-derives the truth by grouping every row under its parent path, then
 # checks the two agree. No external tools, no oracle: the data checks itself.
@@ -88,8 +88,8 @@ def main [file: string = "data/std/nodes.tsv"] {
 
     # 6. DECLS OVERLAY (L1 signatures + L2 doc-comments) — the overlay must register onto the
     #    map and not lose anything between the two. These are LOSS/CORRUPTION checks within the
-    #    parser's own world (map ← scan.zig, overlay ← enrich.zig). They are NOT a correctness
-    #    proof of the function set: scan.zig and enrich.zig apply the same fn-gate, so their
+    #    parser's own world (map ← build.zig, overlay ← enrich.zig). They are NOT a correctness
+    #    proof of the function set: build.zig and enrich.zig apply the same fn-gate, so their
     #    agreement is guaranteed by construction (it would survive a shared blind spot). The
     #    independent correctness witness — parser kinds vs the COMPILER's reflected kinds — lives
     #    in scripts/verify_layers.nu. Run that to test whether the fn set is actually right.

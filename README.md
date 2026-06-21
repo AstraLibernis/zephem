@@ -49,7 +49,7 @@ open data/std/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}}
 
 The build is **two passes that must agree**, bundled on purpose:
 
-- **forward** (`src/scan.zig`) reads the source into rows.
+- **forward** (`mapper/build.zig`) reads the source into rows.
 - **backward** (`scripts/verify_std.nu`) re-reads `nodes.tsv` *from the other end* —
   grouping rows by parent path — and checks the tree reconciles.
 
@@ -91,7 +91,8 @@ open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span            # just t
 The index self-checks: the root's span equals the whole file (conservation again), and
 `verify_std.nu` re-derives every block's edges from `nodes.tsv` so the map can't drift.
 
-Copy-pasteable recipes (read one module, find by name, orient, regenerate): **[USAGE.md](USAGE.md)**.
+Copy-pasteable recipes (read one module, find by name, orient, regenerate) are parked in
+**[docs/archive/USAGE.md](docs/archive/USAGE.md)** pending a rewrite.
 
 ## Overlays: deeper facts, keyed to the map
 
@@ -100,13 +101,14 @@ join cleanly and every row is anchored to a node that exists. Two ship today, bo
 self-verifying and byte-identical on rerun:
 
 - **`data/std/decls.tsv`** (L1 signatures + L2 doc-comments) — `path · doc · sig` from
-  `src/enrich.zig`. Sparse: a row per `fn` (its as-written signature) plus any decl carrying a
+  `mapper/visit/enrich.zig` (emitted by `mapper/build.zig` on the same parse as the map).
+  Sparse: a row per `fn` (its as-written signature) plus any decl carrying a
   `///`. On Zig 0.16.0: 7,143 rows (5,377 signatures covering the map's 5,377 functions with no
   loss, 4,167 docs). That map↔overlay agreement is a parser-internal loss check, not a
   correctness proof — whether the fn set is right is tested against the compiler in
   `scripts/verify_layers.nu`.
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
-  `src/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
+  `mapper/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On Zig 0.16.0: 1,355 containers swept → **1,324 resolved (15,720
   rows) / 31 genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
   reason); `data/std/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
@@ -137,12 +139,16 @@ the general tool the project is built around now.
 
 ## How it's built
 
-**AST source parsing** (`src/scan.zig`) builds the map; `src/index.zig` builds the table of
-contents; `src/enrich.zig` builds the L1/L2 decls overlay. Parsing (not reflection) is what
-lets it map all of std without dying on poison decls. `src/resolve.zig` does the one job parsing
-can't — resolving real values/types via scoped, subprocess-isolated reflection (the L5 depth
-overlay). `scripts/verify_std.nu` and `scripts/verify_depth.nu` are the backward checks.
-Everything is glued and queried by Nushell. Phases and status: **[PLAN.md](PLAN.md)**.
+The extractor is **[`mapper/`](mapper/)** — its own folder, documented in full at
+**[mapper/README.md](mapper/README.md)** (purpose, the faithfulness contract, and how the
+pieces work). In short: `mapper/build.zig` parses std **once** and drives a single generic
+walk (`mapper/walk.zig`) over two visitors → `nodes.tsv` (the map) + `decls.tsv` (sigs/docs);
+`mapper/index.zig` builds the table of contents; `mapper/tunnels.zig` the L3 reference graph;
+`mapper/resolve.zig` does the one job parsing can't — subprocess-isolated reflection for the L5
+depth overlay. Parsing (not reflection) is what lets it map all of std without dying on poison
+decls. The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The editorial
+shape-clustering experiments live, deliberately unwired, in **[`clusters/`](clusters/)**.
+Phases and status: **[PLAN.md](PLAN.md)**.
 
 ## Toolchain
 

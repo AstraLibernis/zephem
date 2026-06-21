@@ -3,7 +3,7 @@
 #
 # Reflection evaluates decls, so a single platform-gated / @compileError ("poison") decl
 # makes a reflecting program fail to compile. The defense is isolation: reflect ONE
-# container per subprocess (src/resolve.zig, its TARGET lines rewritten per call). A poison
+# container per subprocess (mapper/resolve.zig, its TARGET lines rewritten per call). A poison
 # container fails only its own process — recorded as `path · reason` — while every clean
 # container resolves. The full overlay is the sweep over EVERY container in the map; the same
 # unit also serves a single `--only` container (depth on demand). Poison reports itself; no
@@ -50,7 +50,7 @@
 #   nu scripts/build_depth.nu --check                         # prove the committed overlay rebuilds
 #   nu scripts/build_depth.nu --commit --jobs 3               # cap parallelism (default = all CPUs)
 
-const TEMPLATE = "src/resolve.zig"
+const TEMPLATE = "mapper/resolve.zig"
 const SCRATCH = "/tmp/zephem-depth"
 const NAMES = ["status.tsv" "resolved.tsv" "redirects.tsv" "poison.tsv"]
 const MANIFEST = "data/std/SHA256SUMS.depth"

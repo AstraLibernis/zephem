@@ -14,7 +14,7 @@
 //! one reading the `kind` column straight out of nodes.tsv. Both share one source of truth.
 
 const std = @import("std");
-const walk = @import("walk.zig");
+const walk = @import("../mapper/walk.zig");
 
 pub const Group = enum { namespace, type, member, boundary };
 

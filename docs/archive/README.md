@@ -26,3 +26,28 @@ zcrypto went through three framings before settling:
   the pipeline.
 - `surface.md`, `structure.md`, `clusters.md`, `clusters.svg` — rendered snapshots of the
   generated datasets (point-in-time; regenerate from `data/` instead of reading these).
+
+### Refactor-era architecture docs (archived 2026-06-21)
+
+Superseded when the extractor was folded into `mapper/` (one parse, many visitors) and
+the live "how it works" moved to [`../../mapper/README.md`](../../mapper/README.md). These
+describe the old `src/scan.zig` + `src/enrich.zig` two-walk layout, which no longer exists.
+
+- `REFACTOR-MAP.md` — the working map for the scan+enrich → `build.zig`+`walk.zig` refactor.
+  Its job (plan the move) is done; kept for provenance of *why* the merge happened.
+- `DATAFLOW.md`, `dataflow.html` — the whole-pipeline "star, not a loop" diagram, with the
+  pre-refactor node names (`scan.zig`/`enrich.zig`). The mapper's flow now lives in
+  `mapper/README.md §3`.
+
+### Docs cleared for rewrite (archived 2026-06-21)
+
+The live doc set was deliberately cut to three: the top `README.md`, the summarized `PLAN.md`,
+and `mapper/README.md`. These older docs are accurate-in-spirit but pre-date the `mapper/` +
+`clusters/` split and carry more detail than the new direction wants; **kept verbatim as the
+source material for a future rewrite**, not maintained.
+
+- `USAGE.md` — copy-pasteable query recipes (read one module, find by name, regenerate).
+- `concepts.md` — the shared model (parse-don't-reflect, the pristine bar, the layer principle).
+- `reproducibility.md` — the determinism contract and the `--check` harness story + timings.
+- `layers/` — the per-dataset reference pages (L0 structure, L1/L2 decls, L3 tunnels,
+  L4 examples [planned], L5 depth, L6 version-diff [planned]).

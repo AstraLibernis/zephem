@@ -14,7 +14,7 @@
 //! Run: zig run src/organize.zig -- [nodes.tsv]   (default data/std/nodes.tsv)
 
 const std = @import("std");
-const tsv = @import("common/tsv.zig");
+const tsv = @import("../mapper/common/tsv.zig");
 const grp = @import("group.zig");
 
 /// Cluster order: where you can go deeper → what types exist → what you can call → edges.
