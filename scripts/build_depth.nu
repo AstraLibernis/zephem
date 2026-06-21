@@ -145,7 +145,7 @@ def sweep [targets: list<string>, outdir: string, timeout: int, idx: any, std_di
     # direct child containers per parent — the SKIP set each container hands to resolve.zig.
     let kids = ($idx | get path | insert-parent | group-by parent)
     let results = ($targets | enumerate | par-each --threads $jobs {|row|
-        let krow = ($kids | get -i $row.item | default [])
+        let krow = ($kids | get -o $row.item | default [])
         let skip = (if ($krow | is-empty) { [] } else { $krow | get child })
         reflect-one $row.index $row.item $skip $timeout $std_dir
     } | sort-by i)   # restore target order — bytes must match the serial sweep
@@ -184,8 +184,8 @@ def main [--only: string, --filter: string, --list: string, --limit: int = 0, --
         mut ok = true
         for n in $NAMES {
             let intrinsic = (($a | get $n) == ($b | get $n))                  # build twice -> same bytes
-            let regression = (($a | get $n) == ($manifest | get -i $n))       # rebuild -> recorded truth
-            let integrity = (($committed | get $n) == ($manifest | get -i $n)) # on-disk -> its manifest
+            let regression = (($a | get $n) == ($manifest | get -o $n))       # rebuild -> recorded truth
+            let integrity = (($committed | get $n) == ($manifest | get -o $n)) # on-disk -> its manifest
             if (not $intrinsic) or (not $regression) or (not $integrity) { $ok = false }
             let mi = (if $intrinsic { "✓" } else { "✗ DRIFT" })
             let mr = (if $regression { "✓" } else { "✗ DRIFT" })
