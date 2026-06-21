@@ -101,18 +101,31 @@ self-verifying and byte-identical on rerun:
 
 - **`data/std/decls.tsv`** (L1 signatures + L2 doc-comments) — `path · doc · sig` from
   `src/enrich.zig`. Sparse: a row per `fn` (its as-written signature) plus any decl carrying a
-  `///`. On Zig 0.16.0: 7,143 rows (5,377 signatures — *exactly* the map's function set —
-  4,167 docs).
+  `///`. On Zig 0.16.0: 7,143 rows (5,377 signatures covering the map's 5,377 functions with no
+  loss, 4,167 docs). That map↔overlay agreement is a parser-internal loss check, not a
+  correctness proof — whether the fn set is right is tested against the compiler in
+  `scripts/verify_layers.nu`.
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `src/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On Zig 0.16.0: 1,355 containers swept → **1,324 resolved (15,720
   rows) / 31 genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
   reason); `data/std/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
-  *Not yet wired into `--check`* — an L5 rebuild is a full ~45 min reflection sweep, so its
+  *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
+  strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
   reproducibility harness is a deliberately separate task (see PLAN.md).
 
+- **`data/std/canon.tsv`** (the canonical-link census) — `path · origin · owner · owner_canon ·
+  note` from `scripts/build_canon.nu`. Instead of forcing the text view (`nodes.tsv`) and the
+  reflected view (`resolved.tsv`) to match 1:1 and calling every non-match a "miss", it tags **every**
+  path by what can actually see it: `read+run` (both agree — 13,424), `run-only` (only exists when
+  reflected — a generic/alias member like `Sha256.digest_length` — 2,296), `read-only` (text read it
+  but it can't run here: poison, or the `std` root — 3,082). One row per path in `nodes ∪ resolved`
+  (18,802), each made-member linked to its canonical owner; **zero blanks**, enforced by
+  `scripts/verify_canon.nu` and deterministic (`--check`). This is the layer that makes "nothing is
+  missing" a *checked* property rather than a claim.
+
 The layer model (positions / overlays / tunnels) and the roadmap for the remaining layers
-(L3 tunnels, L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
+(L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
 
 ## Where it started: `std.crypto` (archived)
 

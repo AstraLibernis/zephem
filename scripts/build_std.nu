@@ -3,8 +3,8 @@
 #
 # Two guarantees, both enforced here:
 #
-#   TRUE         FORWARD  (src/scan.zig + src/index.zig + src/enrich.zig) extracts the
-#                map, its table of contents, and the signature/doc overlay.
+#   TRUE         FORWARD  (src/build.zig + src/index.zig) extracts the map and the
+#                signature/doc overlay in one pass, then its table of contents.
 #                BACKWARD (scripts/verify_std.nu) re-reads them the other way — by parent,
 #                by depth, by join — and checks everything reconciles. A regeneration the
 #                backward read rejects is not a regeneration: exits non-zero, claims nothing.
@@ -35,9 +35,9 @@ def std-root [] {
 # normal build and --check, so they cannot diverge.
 def regen [root: string, depth: int, outdir: string] {
     mkdir $outdir
-    (^zig run src/scan.zig -- $root ($depth | into string) | into string) | save -f $"($outdir)/nodes.tsv"
+    # one pass parses std once and writes BOTH the map and the doc/sig overlay.
+    ^zig run src/build.zig -- $root ($depth | into string) $"($outdir)/nodes.tsv" $"($outdir)/decls.tsv"
     (^zig run src/index.zig -- $"($outdir)/nodes.tsv" | into string) | save -f $"($outdir)/index.tsv"
-    (^zig run src/enrich.zig -- $root ($depth | into string) | into string) | save -f $"($outdir)/decls.tsv"
 }
 
 # sha256 of each dataset in `dir`, as a {name: hash} record (raw bytes — no parsing).

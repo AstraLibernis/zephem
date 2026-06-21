@@ -25,8 +25,12 @@ The holes are useful — the gaps in the doc overlay are exactly every undocumen
 On Zig 0.16.0: **7,143 rows (5,377 signatures, 4,167 docs).**
 
 **Verified** by `verify_std.nu`: every overlay path exists in the map (registration), paths are
-unique, and signature coverage is *exactly* the map's set of functions (5,377 ⇔ 5,377).
-Byte-identical reruns.
+unique, and no signature is lost between the map and the overlay (5,377 signatures cover the
+map's 5,377 functions). Note this is a *parser-internal loss check*, not a correctness proof —
+`scan.zig` (map) and `enrich.zig` (overlay) apply the same fn-gate, so their agreement is
+guaranteed by construction and would survive a shared blind spot. Whether the function set is
+*actually right* is tested independently in [`verify_layers.nu`](../../scripts/verify_layers.nu),
+which joins the parser's kinds against the **compiler's** reflected kinds. Byte-identical reruns.
 
 Once these signatures exist, every type name in a signature is a candidate
 [tunnel](L3-tunnels.md) endpoint (→ its definition).

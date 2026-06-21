@@ -39,6 +39,19 @@ const SKIP = [_][]const u8{};
 /// the resolved value the map cannot compute. Kept shallow on purpose.
 const DESCEND: u8 = 1;
 
+/// Source-faithful identifier. The map (scan.zig) keys paths on the verbatim source token, so a
+/// decl named with a keyword or a primitive type appears quoted (`@"type"`, `@"switch"`).
+/// Reflection only has the bare decl name, so re-apply the same `@"..."` quoting — otherwise the
+/// L5 path key (`…section_64.type`) silently diverges from the map key (`…section_64.@"type"`)
+/// and the overlay's "keyed by path" contract breaks for those decls. Rule matches the language:
+/// quote iff the bare name is not a legal identifier OR shadows a primitive.
+fn quoteId(comptime name: []const u8) []const u8 {
+    return if (comptime (!std.zig.isValidId(name) or std.zig.primitives.isPrimitive(name)))
+        "@\"" ++ name ++ "\""
+    else
+        name;
+}
+
 /// True if `name` is one of this container's direct child containers (don't descend into it).
 fn inSkip(comptime name: []const u8) bool {
     inline for (SKIP) |s| {
@@ -72,7 +85,7 @@ fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime
     inline for (decls) |d| {
         const field = @field(T, d.name);
         const FT = @TypeOf(field);
-        const child = path ++ "." ++ d.name;
+        const child = path ++ "." ++ comptime quoteId(d.name);
 
         if (FT == type) {
             try w.print("{s}\ttype\t{s}\n", .{ child, @typeName(field) });

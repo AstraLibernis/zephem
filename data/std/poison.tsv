@@ -18,7 +18,7 @@ std.macho.PROT	std/macho.zig:683:33: error: expected type 'macho.vm_prot_t', fou
 std.os.linux	std/os/linux.zig:68:34: error: root source file struct 'os.linux.x86_64' has no member named 'syscall7'
 std.os.linux.AUDIT	std/os/linux.zig:9949:24: error: enum 'elf.EM' has no member named 'FRV'
 std.os.linux.AUDIT.ARCH	std/os/linux.zig:9949:24: error: enum 'elf.EM' has no member named 'FRV'
-std.os.plan9.ExecData	<gen>:73:23: error: cannot load opaque type 'anyopaque'
+std.os.plan9.ExecData	<gen>:86:23: error: cannot load opaque type 'anyopaque'
 std.os.wasi	std/os/wasi.zig:25:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
 std.os.emscripten	std/os/emscripten.zig:831:12: error: dependency on libc must be explicitly specified in the build command
 std.os.windows	std/os/windows/kernel32.zig:16:12: error: dependency on dynamic library 'kernel32' requires enabling Position Independent Code; fixed by '-lkernel32' or '-fPIC'

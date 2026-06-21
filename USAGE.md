@@ -11,6 +11,7 @@ built separately by `nu scripts/build_depth.nu data/std` (a slow reflection swee
 | `data/std/resolved.tsv` | overlay (L5) — reflected real value/type per leaf, keyed by `path` | ~15.7k rows |
 | `data/std/status.tsv` | L5 per-container ledger — `path · status · n_rows` | ~1.4k rows |
 | `data/std/poison.tsv` | the 31 containers reflection can't resolve, with the compiler's reason | 31 rows |
+| `data/std/canon.tsv` | the canonical-link census — every path tagged `read+run`/`run-only`/`read-only`, each linked to its owner | ~18.8k rows |
 
 The point: **never read `nodes.tsv` whole.** Read the small `index.tsv`, find what you want,
 then pull only that block. Every subtree is a contiguous run of rows, so a block is just
@@ -23,6 +24,7 @@ then pull only that block. Every subtree is a contiguous run of rows, so a block
 `decls.tsv` — `path · doc · sig`  (sparse: a row per fn, plus any documented decl; `doc` lines joined with literal `\n`)
 `resolved.tsv` — `path · kind · detail`  (L5: the reflected real value/type — e.g. `key_length` → its actual int, a fn → its fully-typed signature)
 `status.tsv` — `path · status · n_rows`  (per swept container: `resolved` or `poison`)
+`canon.tsv` — `path · origin · owner · owner_canon · note`  (every path classified: `origin` = `read+run` (text+compiler agree) · `run-only` (only exists when reflected — a generic/alias member) · `read-only` (text-only: poison or the `std` root); `owner` = the readable decl it hangs off; `owner_canon` = that owner's de-aliased `@typeName`; `note` = poison reason or `root`)
 
 `kind`: `ns` (an @import'd file) · `nsref` (ref to a file expanded elsewhere) · `nserr`
 (unreadable) · `struct`/`enum`/`union`/`opaque` (inline container) · `fn` · `const` ·
@@ -77,6 +79,14 @@ open data/std/status.tsv   | where status == 'poison'             # the 31 unres
 open data/std/poison.tsv                                          # ...each with the compiler's reason
 ```
 
+**8 — Canonical links (canon.tsv).** Where does a reflected member *really* live, and why is a path text-only?
+```nu
+open data/std/canon.tsv | group-by origin | items {|k,v| {origin:$k n:($v|length)}}   # the census
+open data/std/canon.tsv | where origin == 'run-only' and ($it.path =~ 'Sha256')        # members made only by reflection, + their canonical owner
+open data/std/canon.tsv | where origin == 'read-only' and note != 'root'               # text-only paths + why they won't run here (poison reason)
+open data/std/canon.tsv | where path == 'std.crypto.hash.sha2.Sha256.digest_length' | first   # one path: owner + de-aliased @typeName
+```
+
 ## From any tool (not just Nushell)
 
 `index.tsv` gives a line range, so any line-addressable reader works:
@@ -89,9 +99,17 @@ After a Zig upgrade (or to rebuild from scratch):
 ```nu
 nu scripts/build_std.nu          # scan → index → enrich → verify; refuses to ship if they disagree
 nu scripts/build_std.nu --check  # prove the committed snapshot rebuilds byte-for-byte
-nu scripts/build_depth.nu data/std   # L5 depth overlay — slow (~45 min reflection sweep)
+nu scripts/build_depth.nu data/std   # L5 depth overlay — slow reflection sweep (machine-dependent)
 nu scripts/verify_depth.nu data/std  # reconcile the depth overlay against the map
+nu scripts/verify_layers.nu --anchor # cross-LAYER: parser kinds vs compiler kinds (independent oracle)
+nu scripts/build_canon.nu            # canon census — tags every path by provenance, links each to its owner
+nu scripts/verify_canon.nu           # reconcile canon vs the map (5 gates: partition · zero-blank · owner real · linked · poison real)
+nu scripts/build_canon.nu --check    # prove the canon overlay rebuilds byte-for-byte (instant — pure derivation)
 ```
+`verify_layers.nu` is the one check that is *not* a single layer reconciling with itself — it joins
+the parser's view (`nodes.tsv`) against the compiler's reflected view (`resolved.tsv`) and reports
+where they disagree. Observability-only (never fails the build); promote a section to a hard gate
+once you've watched it stay clean.
 The map build (`build_std.nu`) is instant and `--check`-proven. The L5 depth overlay is built and
 verified separately — it is *not yet* part of the `--check` reproducibility harness (the sweep is
 too slow to run twice per check); see PLAN.md for that follow-up.

@@ -3191,7 +3191,7 @@ std.Target.csky.cpu.e804dt	const_other	Target.Cpu.Model
 std.Target.csky.cpu.e804f	const_other	Target.Cpu.Model
 std.Target.csky.cpu.e804ft	const_other	Target.Cpu.Model
 std.Target.csky.cpu.generic	const_other	Target.Cpu.Model
-std.Target.csky.cpu.i805	const_other	Target.Cpu.Model
+std.Target.csky.cpu.@"i805"	const_other	Target.Cpu.Model
 std.Target.csky.cpu.i805f	const_other	Target.Cpu.Model
 std.Target.csky.cpu.r807	const_other	Target.Cpu.Model
 std.Target.csky.cpu.r807f	const_other	Target.Cpu.Model
@@ -3308,8 +3308,8 @@ std.Target.mips.all_features	const_other	[56]Target.Cpu.Feature
 std.Target.mips.cpu	type	Target.mips.cpu
 std.Target.mips.cpu.allegrex	const_other	Target.Cpu.Model
 std.Target.mips.cpu.generic	const_other	Target.Cpu.Model
-std.Target.mips.cpu.i6400	const_other	Target.Cpu.Model
-std.Target.mips.cpu.i6500	const_other	Target.Cpu.Model
+std.Target.mips.cpu.@"i6400"	const_other	Target.Cpu.Model
+std.Target.mips.cpu.@"i6500"	const_other	Target.Cpu.Model
 std.Target.mips.cpu.mips1	const_other	Target.Cpu.Model
 std.Target.mips.cpu.mips2	const_other	Target.Cpu.Model
 std.Target.mips.cpu.mips3	const_other	Target.Cpu.Model
@@ -3326,7 +3326,7 @@ std.Target.mips.cpu.mips64r3	const_other	Target.Cpu.Model
 std.Target.mips.cpu.mips64r5	const_other	Target.Cpu.Model
 std.Target.mips.cpu.mips64r6	const_other	Target.Cpu.Model
 std.Target.mips.cpu.octeon	const_other	Target.Cpu.Model
-std.Target.mips.cpu.octeon+	const_other	Target.Cpu.Model
+std.Target.mips.cpu.@"octeon+"	const_other	Target.Cpu.Model
 std.Target.mips.cpu.p5600	const_other	Target.Cpu.Model
 std.Target.msp430.Feature	type	Target.msp430.Feature
 std.Target.msp430.featureSet	fn	fn ([]const Target.msp430.Feature) Target.Cpu.Feature.Set
@@ -3388,20 +3388,20 @@ std.Target.powerpc.featureSetHasAny	fn	fn (Target.Cpu.Feature.Set, anytype) bool
 std.Target.powerpc.featureSetHasAll	fn	fn (Target.Cpu.Feature.Set, anytype) bool
 std.Target.powerpc.all_features	const_other	[79]Target.Cpu.Feature
 std.Target.powerpc.cpu	type	Target.powerpc.cpu
-std.Target.powerpc.cpu.440	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.450	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.601	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.602	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.603	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.603e	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.603ev	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.604	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.604e	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.620	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.7400	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.7450	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.750	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.970	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"440"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"450"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"601"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"602"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"603"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"603e"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"603ev"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"604"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"604e"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"620"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"7400"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"7450"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"750"	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"970"	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.a2	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.e500	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.e500mc	const_other	Target.Cpu.Model
@@ -3409,7 +3409,7 @@ std.Target.powerpc.cpu.e5500	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.future	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.g3	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.g4	const_other	Target.Cpu.Model
-std.Target.powerpc.cpu.g4+	const_other	Target.Cpu.Model
+std.Target.powerpc.cpu.@"g4+"	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.g5	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.generic	const_other	Target.Cpu.Model
 std.Target.powerpc.cpu.ppc	const_other	Target.Cpu.Model
@@ -3644,11 +3644,11 @@ std.Target.x86.cpu.grandridge	const_other	Target.Cpu.Model
 std.Target.x86.cpu.graniterapids	const_other	Target.Cpu.Model
 std.Target.x86.cpu.graniterapids_d	const_other	Target.Cpu.Model
 std.Target.x86.cpu.haswell	const_other	Target.Cpu.Model
-std.Target.x86.cpu.i386	const_other	Target.Cpu.Model
-std.Target.x86.cpu.i486	const_other	Target.Cpu.Model
-std.Target.x86.cpu.i586	const_other	Target.Cpu.Model
-std.Target.x86.cpu.i686	const_other	Target.Cpu.Model
-std.Target.x86.cpu.i86	const_other	Target.Cpu.Model
+std.Target.x86.cpu.@"i386"	const_other	Target.Cpu.Model
+std.Target.x86.cpu.@"i486"	const_other	Target.Cpu.Model
+std.Target.x86.cpu.@"i586"	const_other	Target.Cpu.Model
+std.Target.x86.cpu.@"i686"	const_other	Target.Cpu.Model
+std.Target.x86.cpu.@"i86"	const_other	Target.Cpu.Model
 std.Target.x86.cpu.icelake_client	const_other	Target.Cpu.Model
 std.Target.x86.cpu.icelake_server	const_other	Target.Cpu.Model
 std.Target.x86.cpu.ivybridge	const_other	Target.Cpu.Model
@@ -4118,7 +4118,7 @@ std.coff.IMAGE	type	coff.IMAGE
 std.coff.Header.Flags	type	coff.Header.Flags
 std.coff.OptionalHeader.Magic	type	coff.OptionalHeader.Magic
 std.coff.OptionalHeader.PE32	type	coff.OptionalHeader.PE32
-std.coff.OptionalHeader.PE32+	type	coff.OptionalHeader.PE32+
+std.coff.OptionalHeader.@"PE32+"	type	coff.OptionalHeader.PE32+
 std.coff.ImportLookupEntry32.ByName	type	coff.ImportLookupEntry32.ByName
 std.coff.ImportLookupEntry32.ByOrdinal	type	coff.ImportLookupEntry32.ByOrdinal
 std.coff.ImportLookupEntry32.getImportByName	fn	fn (u32) ?coff.ImportLookupEntry32.ByName
@@ -7185,7 +7185,7 @@ std.dwarf.AT.comp_dir	const_int	27
 std.dwarf.AT.const_value	const_int	28
 std.dwarf.AT.containing_type	const_int	29
 std.dwarf.AT.default_value	const_int	30
-std.dwarf.AT.inline	const_int	32
+std.dwarf.AT.@"inline"	const_int	32
 std.dwarf.AT.is_optional	const_int	33
 std.dwarf.AT.lower_bound	const_int	34
 std.dwarf.AT.producer	const_int	37
@@ -7218,7 +7218,7 @@ std.dwarf.AT.priority	const_int	69
 std.dwarf.AT.segment	const_int	70
 std.dwarf.AT.specification	const_int	71
 std.dwarf.AT.static_link	const_int	72
-std.dwarf.AT.type	const_int	73
+std.dwarf.AT.@"type"	const_int	73
 std.dwarf.AT.use_location	const_int	74
 std.dwarf.AT.variable_parameter	const_int	75
 std.dwarf.AT.virtuality	const_int	76
@@ -7279,7 +7279,7 @@ std.dwarf.AT.call_target	const_int	131
 std.dwarf.AT.call_target_clobbered	const_int	132
 std.dwarf.AT.call_data_location	const_int	133
 std.dwarf.AT.call_data_value	const_int	134
-std.dwarf.AT.noreturn	const_int	135
+std.dwarf.AT.@"noreturn"	const_int	135
 std.dwarf.AT.alignment	const_int	136
 std.dwarf.AT.export_symbols	const_int	137
 std.dwarf.AT.deleted	const_int	138
@@ -7384,14 +7384,14 @@ std.dwarf.OP.swap	const_int	22
 std.dwarf.OP.rot	const_int	23
 std.dwarf.OP.xderef	const_int	24
 std.dwarf.OP.abs	const_int	25
-std.dwarf.OP.and	const_int	26
+std.dwarf.OP.@"and"	const_int	26
 std.dwarf.OP.div	const_int	27
 std.dwarf.OP.minus	const_int	28
 std.dwarf.OP.mod	const_int	29
 std.dwarf.OP.mul	const_int	30
 std.dwarf.OP.neg	const_int	31
 std.dwarf.OP.not	const_int	32
-std.dwarf.OP.or	const_int	33
+std.dwarf.OP.@"or"	const_int	33
 std.dwarf.OP.plus	const_int	34
 std.dwarf.OP.plus_uconst	const_int	35
 std.dwarf.OP.shl	const_int	36
@@ -7673,7 +7673,7 @@ std.dwarf.FORM.GNU_addr_index	const_int	7937
 std.dwarf.FORM.GNU_str_index	const_int	7938
 std.dwarf.FORM.GNU_ref_alt	const_int	7968
 std.dwarf.FORM.GNU_strp_alt	const_int	7969
-std.dwarf.ATE.void	const_int	0
+std.dwarf.ATE.@"void"	const_int	0
 std.dwarf.ATE.address	const_int	1
 std.dwarf.ATE.boolean	const_int	2
 std.dwarf.ATE.complex_float	const_int	3
@@ -7733,7 +7733,7 @@ std.dwarf.CFA.advance_loc2	const_int	3
 std.dwarf.CFA.advance_loc4	const_int	4
 std.dwarf.CFA.offset_extended	const_int	5
 std.dwarf.CFA.restore_extended	const_int	6
-std.dwarf.CFA.undefined	const_int	7
+std.dwarf.CFA.@"undefined"	const_int	7
 std.dwarf.CFA.same_value	const_int	8
 std.dwarf.CFA.register	const_int	9
 std.dwarf.CFA.remember_state	const_int	10
@@ -7779,7 +7779,7 @@ std.dwarf.LNE.lo_user	const_int	128
 std.dwarf.LNE.hi_user	const_int	255
 std.dwarf.LNE.ZIG_set_decl	const_int	236
 std.dwarf.UT.compile	const_int	1
-std.dwarf.UT.type	const_int	2
+std.dwarf.UT.@"type"	const_int	2
 std.dwarf.UT.partial	const_int	3
 std.dwarf.UT.skeleton	const_int	4
 std.dwarf.UT.split_compile	const_int	5
@@ -8985,7 +8985,7 @@ std.macho.segment_command_64.segName	fn	fn (*const macho.segment_command_64) []c
 std.macho.segment_command_64.isWriteable	fn	fn (macho.segment_command_64) bool
 std.macho.section_64.sectName	fn	fn (*const macho.section_64) []const u8
 std.macho.section_64.segName	fn	fn (*const macho.section_64) []const u8
-std.macho.section_64.type	fn	fn (macho.section_64) u8
+std.macho.section_64.@"type"	fn	fn (macho.section_64) u8
 std.macho.section_64.attrs	fn	fn (macho.section_64) u32
 std.macho.section_64.isCode	fn	fn (macho.section_64) bool
 std.macho.section_64.isZerofill	fn	fn (macho.section_64) bool
@@ -10213,13 +10213,13 @@ std.os.linux.IP.DEFAULT_MULTICAST_TTL	const_int	1
 std.os.linux.IP.DEFAULT_MULTICAST_LOOP	const_int	1
 std.os.linux.IP.MAX_MEMBERSHIPS	const_int	20
 std.os.linux.IPV6.ADDRFORM	const_int	1
-std.os.linux.IPV6.2292PKTINFO	const_int	2
-std.os.linux.IPV6.2292HOPOPTS	const_int	3
-std.os.linux.IPV6.2292DSTOPTS	const_int	4
-std.os.linux.IPV6.2292RTHDR	const_int	5
-std.os.linux.IPV6.2292PKTOPTIONS	const_int	6
+std.os.linux.IPV6.@"2292PKTINFO"	const_int	2
+std.os.linux.IPV6.@"2292HOPOPTS"	const_int	3
+std.os.linux.IPV6.@"2292DSTOPTS"	const_int	4
+std.os.linux.IPV6.@"2292RTHDR"	const_int	5
+std.os.linux.IPV6.@"2292PKTOPTIONS"	const_int	6
 std.os.linux.IPV6.CHECKSUM	const_int	7
-std.os.linux.IPV6.2292HOPLIMIT	const_int	8
+std.os.linux.IPV6.@"2292HOPLIMIT"	const_int	8
 std.os.linux.IPV6.NEXTHOP	const_int	9
 std.os.linux.IPV6.AUTHHDR	const_int	10
 std.os.linux.IPV6.FLOWINFO	const_int	11
@@ -10348,16 +10348,16 @@ std.os.linux.ETH.P.PROFINET	const_int	34962
 std.os.linux.ETH.P.REALTEK	const_int	34969
 std.os.linux.ETH.P.AOE	const_int	34978
 std.os.linux.ETH.P.ETHERCAT	const_int	34980
-std.os.linux.ETH.P.8021AD	const_int	34984
-std.os.linux.ETH.P.802_EX1	const_int	34997
+std.os.linux.ETH.P.@"8021AD"	const_int	34984
+std.os.linux.ETH.P.@"802_EX1"	const_int	34997
 std.os.linux.ETH.P.PREAUTH	const_int	35015
 std.os.linux.ETH.P.TIPC	const_int	35018
 std.os.linux.ETH.P.LLDP	const_int	35020
 std.os.linux.ETH.P.MRP	const_int	35043
 std.os.linux.ETH.P.MACSEC	const_int	35045
-std.os.linux.ETH.P.8021AH	const_int	35047
+std.os.linux.ETH.P.@"8021AH"	const_int	35047
 std.os.linux.ETH.P.MVRP	const_int	35061
-std.os.linux.ETH.P.1588	const_int	35063
+std.os.linux.ETH.P.@"1588"	const_int	35063
 std.os.linux.ETH.P.NCSI	const_int	35064
 std.os.linux.ETH.P.PRP	const_int	35067
 std.os.linux.ETH.P.CFM	const_int	35074
@@ -10365,7 +10365,7 @@ std.os.linux.ETH.P.FCOE	const_int	35078
 std.os.linux.ETH.P.IBOE	const_int	35093
 std.os.linux.ETH.P.TDLS	const_int	35085
 std.os.linux.ETH.P.FIP	const_int	35092
-std.os.linux.ETH.P.80221	const_int	35095
+std.os.linux.ETH.P.@"80221"	const_int	35095
 std.os.linux.ETH.P.HSR	const_int	35119
 std.os.linux.ETH.P.NSH	const_int	35151
 std.os.linux.ETH.P.LOOPBACK	const_int	36864
@@ -10377,11 +10377,11 @@ std.os.linux.ETH.P.DSA_8021Q	const_int	56027
 std.os.linux.ETH.P.DSA_A5PSW	const_int	57345
 std.os.linux.ETH.P.IFE	const_int	60734
 std.os.linux.ETH.P.AF_IUCV	const_int	64507
-std.os.linux.ETH.P.802_3_MIN	const_int	1536
-std.os.linux.ETH.P.802_3	const_int	1
+std.os.linux.ETH.P.@"802_3_MIN"	const_int	1536
+std.os.linux.ETH.P.@"802_3"	const_int	1
 std.os.linux.ETH.P.AX25	const_int	2
 std.os.linux.ETH.P.ALL	const_int	3
-std.os.linux.ETH.P.802_2	const_int	4
+std.os.linux.ETH.P.@"802_2"	const_int	4
 std.os.linux.ETH.P.SNAP	const_int	5
 std.os.linux.ETH.P.DDCMP	const_int	6
 std.os.linux.ETH.P.WAN_PPP	const_int	7
@@ -12350,7 +12350,7 @@ std.os.windows.ws2_32.AF.BAN	const_int	21
 std.os.windows.ws2_32.AF.ATM	const_int	22
 std.os.windows.ws2_32.AF.INET6	const_int	23
 std.os.windows.ws2_32.AF.CLUSTER	const_int	24
-std.os.windows.ws2_32.AF.12844	const_int	25
+std.os.windows.ws2_32.AF.@"12844"	const_int	25
 std.os.windows.ws2_32.AF.IRDA	const_int	26
 std.os.windows.ws2_32.AF.NETDES	const_int	28
 std.os.windows.ws2_32.AF.MAX	const_int	29
@@ -12614,7 +12614,7 @@ std.os.windows.DNS.QUERY.REQUEST	type	os.windows.DNS.QUERY.REQUEST
 std.os.windows.DNS.QUERY.RESULT	type	os.windows.DNS.QUERY.RESULT
 std.os.windows.DNS.QUERY.CANCEL	type	os.windows.DNS.QUERY.CANCEL
 std.os.windows.DNS.QUERY.COMPLETION_ROUTINE	type	fn (?*anyopaque, *os.windows.DNS.QUERY.RESULT) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) void
-std.os.windows.DNS.QUERY.REQUEST.3	type	os.windows.DNS.QUERY.REQUEST.3
+std.os.windows.DNS.QUERY.REQUEST.@"3"	type	os.windows.DNS.QUERY.REQUEST.3
 std.os.windows.DNS.RECORD.FLAGS	type	os.windows.DNS.RECORD.FLAGS
 std.os.windows.SYSTEM.INFORMATION_CLASS	type	os.windows.SYSTEM.INFORMATION_CLASS
 std.os.windows.SYSTEM.BASIC_INFORMATION	type	os.windows.SYSTEM.BASIC_INFORMATION
@@ -12873,7 +12873,7 @@ std.os.windows.MEM.FREE	type	os.windows.MEM.FREE
 std.os.windows.MEM.MAP	type	os.windows.MEM.MAP
 std.os.windows.MEM.UNMAP	type	os.windows.MEM.UNMAP
 std.os.windows.MEM.EXTENDED_PARAMETER	type	os.windows.MEM.EXTENDED_PARAMETER
-std.os.windows.MEM.ALLOCATE.64K_PAGES	const_other	os.windows.MEM.ALLOCATE
+std.os.windows.MEM.ALLOCATE.@"64K_PAGES"	const_other	os.windows.MEM.ALLOCATE
 std.os.windows.MEM.EXTENDED_PARAMETER.TYPE	type	os.windows.MEM.EXTENDED_PARAMETER.TYPE
 std.os.windows.MEM.EXTENDED_PARAMETER.TYPE.Max	const_int	7
 std.os.windows.SEC.IMAGE_NO_EXECUTE	const_other	os.windows.SEC
@@ -14610,7 +14610,7 @@ std.zig.Zir.UnwrappedSwitchBlock.Case.Index	type	zig.Zir.UnwrappedSwitchBlock.Ca
 std.zig.Zir.UnwrappedSwitchBlock.Case.NonErr	type	zig.Zir.UnwrappedSwitchBlock.Case.NonErr
 std.zig.Zir.UnwrappedSwitchBlock.Case.Else	type	zig.Zir.UnwrappedSwitchBlock.Case.Else
 std.zig.Zir.UnwrappedSwitchBlock.Case.Iterator	type	zig.Zir.UnwrappedSwitchBlock.Case.Iterator
-std.zig.Zir.UnwrappedSwitchBlock.Case.Index.else	const_other	zig.Zir.UnwrappedSwitchBlock.Case.Index
+std.zig.Zir.UnwrappedSwitchBlock.Case.Index.@"else"	const_other	zig.Zir.UnwrappedSwitchBlock.Case.Index
 std.zig.Zir.UnwrappedSwitchBlock.Case.Iterator.next	fn	fn (*zig.Zir.UnwrappedSwitchBlock.Case.Iterator) ?zig.Zir.UnwrappedSwitchBlock.Case
 std.zig.Zir.UnwrappedStructDecl.iterateFields	fn	fn (zig.Zir.UnwrappedStructDecl) zig.Zir.UnwrappedStructDecl.FieldIterator
 std.zig.Zir.UnwrappedStructDecl.FieldIterator	type	zig.Zir.UnwrappedStructDecl.FieldIterator
@@ -15362,9 +15362,9 @@ std.zig.llvm.Builder.WipFunction.retVoid	fn	fn (*zig.llvm.Builder.WipFunction) e
 std.zig.llvm.Builder.WipFunction.br	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.WipFunction.Block.Index) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
 std.zig.llvm.Builder.WipFunction.brCond	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, zig.llvm.Builder.WipFunction.Block.Index, zig.llvm.Builder.WipFunction.Block.Index, zig.llvm.Builder.WipFunction.brCond__enum) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
 std.zig.llvm.Builder.WipFunction.WipSwitch	type	zig.llvm.Builder.WipFunction.WipSwitch
-std.zig.llvm.Builder.WipFunction.switch	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, zig.llvm.Builder.WipFunction.Block.Index, u32, zig.llvm.Builder.Function.Instruction.BrCond.Weights) error{OutOfMemory}!zig.llvm.Builder.WipFunction.WipSwitch
+std.zig.llvm.Builder.WipFunction.@"switch"	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, zig.llvm.Builder.WipFunction.Block.Index, u32, zig.llvm.Builder.Function.Instruction.BrCond.Weights) error{OutOfMemory}!zig.llvm.Builder.WipFunction.WipSwitch
 std.zig.llvm.Builder.WipFunction.indirectbr	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, []const zig.llvm.Builder.WipFunction.Block.Index) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
-std.zig.llvm.Builder.WipFunction.unreachable	fn	fn (*zig.llvm.Builder.WipFunction) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
+std.zig.llvm.Builder.WipFunction.@"unreachable"	fn	fn (*zig.llvm.Builder.WipFunction) error{OutOfMemory}!zig.llvm.Builder.Function.Instruction.Index
 std.zig.llvm.Builder.WipFunction.un	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Function.Instruction.Tag, zig.llvm.Builder.Value, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.not	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.neg	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
@@ -15570,7 +15570,7 @@ std.zig.c_translation.builtins.strcmp	fn	fn ([*c]const u8, [*c]const u8) callcon
 std.zig.c_translation.builtins.strlen	fn	fn ([*c]const u8) callconv(.@"inline") usize
 std.zig.c_translation.builtins.truncf	fn	fn (f32) callconv(.@"inline") f32
 std.zig.c_translation.builtins.trunc	fn	fn (f64) callconv(.@"inline") f64
-std.zig.c_translation.builtins.unreachable	fn	fn () callconv(.@"inline") noreturn
+std.zig.c_translation.builtins.@"unreachable"	fn	fn () callconv(.@"inline") noreturn
 std.zig.c_translation.helpers.ArithmeticConversion	fn	fn (comptime type, comptime type) type
 std.zig.c_translation.helpers.FlexibleArrayType	fn	fn (comptime type, comptime type) type
 std.zig.c_translation.helpers.promoteIntLiteral	fn	fn (comptime type, comptime comptime_int, comptime zig.c_translation.helpers.CIntLiteralBase) anytype
