@@ -1,17 +1,17 @@
 #!/usr/bin/env nu
 # verify_depth.nu — prove the L5 depth overlay reconciles with the map, read a SECOND way.
 #
-# build_depth.nu sorted every attempted container into exactly one of resolved / redirect /
-# poison and logged it in status.tsv. This script never trusts that ledger on its own: it
-# re-reads the bucket files and the map (index.tsv) and proves they reconcile. Same spirit as
-# verify_std.nu — the data checks itself, no oracle.
+# build_depth.nu sorted every attempted container into exactly one of resolved / poison and
+# logged it in status.tsv. This script never trusts that ledger on its own: it re-reads the
+# bucket files and the map (index.tsv) and proves they reconcile. Same spirit as verify_std.nu —
+# the data checks itself, no oracle.
 #
-#   PARTITION     status holds each attempted container once, in exactly one bucket; the
-#                 redirect/poison bucket files match their status slices.
+#   PARTITION     status holds each attempted container once, as resolved OR poison; the poison
+#                 bucket file matches its status slice.
 #   CONSERVATION  Σ status.n_rows (resolved containers) == rows in resolved.tsv.
 #   REGISTRATION  every attempted container is a real container in index.tsv (no phantom).
-#   NO DATA LOST  every redirect target is itself an index.tsv container — the canonical the
-#                 alias points to exists and is covered; we never redirect into nowhere.
+#   HONEST POISON every poison reason is the compiler's own `error:` line or a `timeout after`
+#                 tag — never a bare `exit N` masquerading as a compile error.
 #   PRISTINE      no path appears in resolved.tsv twice with conflicting (kind, detail).
 #   COVERAGE      (--full) every index.tsv container was attempted — the sweep skipped nothing.
 #
@@ -23,33 +23,29 @@ def col [t: list, name: string] {
 }
 
 def main [outdir: string, --full] {
-    for f in ["status.tsv" "resolved.tsv" "redirects.tsv" "poison.tsv"] {
+    for f in ["status.tsv" "resolved.tsv" "poison.tsv"] {
         if not ($"($outdir)/($f)" | path exists) { print $"missing ($outdir)/($f)"; exit 1 }
     }
     let status = (open $"($outdir)/status.tsv")
     let resolved = (open $"($outdir)/resolved.tsv")
-    let redirects = (open $"($outdir)/redirects.tsv")
     let poison = (open $"($outdir)/poison.tsv")
     let idxpaths = (open data/std/index.tsv | get path)
     mut ok = true
 
     let spaths = (col $status "path")
     let n_res = ($status | where status == "resolved" | length)
-    let s_red = (($status | where status == "redirect" | get path) | sort)
     let s_poi = (($status | where status == "poison" | get path) | sort)
 
-    # 1. PARTITION — one row per container, valid status, bucket files == status slices.
+    # 1. PARTITION — one row per container, resolved OR poison, poison file == status slice.
     let sdups = ($spaths | uniq -d)
-    let badstat = ($status | where status not-in ["resolved" "redirect" "poison"])
-    let f_red = ((col $redirects "path") | sort)
+    let badstat = ($status | where status not-in ["resolved" "poison"])
     let f_poi = ((col $poison "path") | sort)
-    print $"partition:    ($status | length) attempted = ($n_res) resolved + ($s_red | length) redirect + ($s_poi | length) poison"
+    print $"partition:    ($status | length) attempted = ($n_res) resolved + ($s_poi | length) poison"
     if ($sdups | length) > 0 { print $"  ✗ ($sdups | length) container\(s\) appear twice in status"; $ok = false }
     if ($badstat | length) > 0 { print $"  ✗ ($badstat | length) row\(s\) with an unknown status"; $ok = false }
-    if $s_red != $f_red { print "  ✗ redirect status set ≠ redirects.tsv paths"; $ok = false }
     if $s_poi != $f_poi { print "  ✗ poison status set ≠ poison.tsv paths"; $ok = false }
-    if ($n_res + ($s_red | length) + ($s_poi | length)) != ($status | length) { print "  ✗ buckets don't sum to attempted"; $ok = false }
-    if $ok { print "  ✓ every container in exactly one bucket; bucket files agree with the ledger" }
+    if ($n_res + ($s_poi | length)) != ($status | length) { print "  ✗ buckets don't sum to attempted"; $ok = false }
+    if $ok { print "  ✓ every container is resolved or poison; the poison file agrees with the ledger" }
 
     # 2. CONSERVATION — recorded resolved row-counts sum to the actual resolved.tsv rows.
     let declared = ($status | where status == "resolved" | get n_rows | each {|x| $x | into int} | math sum)
@@ -62,12 +58,13 @@ def main [outdir: string, --full] {
     print $"registration: ($spaths | length) attempted containers vs ($idxpaths | length) in index.tsv"
     if ($phantom | length) > 0 { print $"  ✗ ($phantom | length) attempted path\(s\) are not containers in the map"; $phantom | first 10 | print; $ok = false } else { print "  ✓ every attempted container exists in the map" }
 
-    # 4. NO DATA LOST — each redirect target is itself a map container (so it's covered).
-    let targets = (col $redirects "redirect_to")
-    let lost = ($targets | where {|t| $t not-in $idxpaths})
-    let to_resolved = ($targets | where {|t| $t in $s_red or $t in $s_poi } | length)  # info only
-    print $"no-data-lost: ($targets | length) redirect target\(s\)"
-    if ($lost | length) > 0 { print $"  ✗ ($lost | length) redirect\(s\) point to a path not in the map"; $lost | first 10 | print; $ok = false } else { print "  ✓ every redirect target is a real container — the canonical exists and is covered" }
+    # 4. HONEST POISON — every reason is a real compiler `error:` line or a `timeout after` tag.
+    # A bare `exit N` reason means something failed without the compiler refusing (the old
+    # timeout-masquerades-as-poison bug); reject it so poison always means "the compiler said no".
+    let reasons = (col $poison "reason")
+    let dishonest = ($reasons | where {|r| not (($r =~ 'error:') or ($r | str starts-with "timeout after"))})
+    print $"honest-poison: ($reasons | length) poison reason\(s\)"
+    if ($dishonest | length) > 0 { print $"  ✗ ($dishonest | length) reason\(s\) are neither a compiler error nor a timeout tag"; $dishonest | first 10 | print; $ok = false } else { print "  ✓ every poison reason is a compiler error or an explicit timeout" }
 
     # 5. PRISTINE — no path resolved to two different facts.
     let rpaths = (col $resolved "path")

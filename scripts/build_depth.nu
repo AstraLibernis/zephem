@@ -10,15 +10,15 @@
 # target is hunted by hand.
 #
 #   resolved.tsv   path · kind · detail   (resolved const VALUES, expanded generics, typed sigs)
-#   redirects.tsv  path · redirect_to     (a dead-end alias: its parent IS the real one)
-#   poison.tsv     path · reason          (genuinely unresolvable: platform / foreign lib / @compileError)
+#   poison.tsv     path · reason          (didn't resolve: platform / foreign lib / @compileError / timeout)
 #   status.tsv     path · status · n_rows (per-container ledger; the verifier re-derives from this)
 #
-# A path can dead-end two ways. POISON is real: the compiler can't analyze it here (a Windows
-# decl referencing kernel32 on Linux, a comptime @compileError). A REDIRECT is not a failure of
-# the container — it's a redundant alias path (`…Blake3.Blake3`) whose last segment isn't a member
-# because the parent already IS that type. We do NOT point backwards and resolve it there; the
-# canonical path is its own container and resolves on its own turn. We just record the redirect.
+# Binary outcome per container: it RESOLVED (works) or it's POISON (doesn't). Poison is anything
+# the compiler couldn't analyze here — a Windows decl referencing kernel32 on Linux, a comptime
+# @compileError — recorded with the compiler's own first error line as the reason. We don't try to
+# second-guess or re-label that verdict; works-or-doesn't is the whole truth. The one non-compiler
+# outcome is a timeout: it gets its own honest reason (`timeout after Ns`) so it can never
+# masquerade as a compile error.
 #
 # REPRODUCIBILITY (separate from --commit ON PURPOSE — it is SLOW). The map (build_std.nu) is a
 # parse, so its --check is instant; an L5 rebuild is a full reflection sweep, and --check runs
@@ -52,7 +52,7 @@
 
 const TEMPLATE = "reflect/resolve.zig"
 const SCRATCH = "/tmp/zephem-depth"
-const NAMES = ["status.tsv" "resolved.tsv" "redirects.tsv" "poison.tsv"]
+const NAMES = ["status.tsv" "resolved.tsv" "poison.tsv"]
 const MANIFEST = "data/std/SHA256SUMS.depth"
 
 # turn a list of container paths into {parent, child} rows (child = last segment).
@@ -113,23 +113,25 @@ def reflect-one [i: int, path: string, skip: list<string>, timeout: int, std_dir
     (gen $path $skip) | save -f $rfile
     let r = (do { ^timeout $"($timeout)s" zig run $rfile } | complete)
     if $r.exit_code == 0 {
+        # WORKS — the compiler resolved it. Record the rows.
         let rows = ($r.stdout | lines | skip 1 | where ($it | is-not-empty) | each {|x| $x | norm-row })
-        {i: $i, srow: $"($path)\tresolved\t($rows | length)", rows: $rows, rrow: null, prow: null}
-    } else if ($r.stderr | str contains $"has no member named '($path | split row '.' | last)'") {
-        # dead-end alias: the path's OWN last segment isn't a member of its parent (the parent
-        # already IS that type). Don't point backwards — record the redirect to the canonical.
-        let canonical = ($path | split row "." | drop 1 | str join ".")
-        {i: $i, srow: $"($path)\tredirect\t0", rows: [], rrow: $"($path)\t($canonical)", prow: null}
+        {i: $i, srow: $"($path)\tresolved\t($rows | length)", rows: $rows, prow: null}
     } else {
-        # genuine poison. First compiler `error:` line is the reason; fall back to stderr / exit.
-        # Render absolute toolchain paths and the per-lane scratch file relative, so the reason is
-        # reproducible (and lane-index-independent): /usr/lib/zig/std/… → std/…, …/r-<i>.zig → <gen>.
-        let err = ($r.stderr | lines | where ($it =~ 'error:') | first)
-        let raw = ($err | default ($r.stderr | lines | where ($it | str trim | is-not-empty) | first | default $"exit ($r.exit_code)"))
-        let reason = ($raw | str trim
-            | str replace --regex --all '/tmp/zephem-depth/r-[0-9]+\.zig' '<gen>'
-            | str replace --all $"($std_dir)/" "std/")
-        {i: $i, srow: $"($path)\tpoison\t0", rows: [], rrow: null, prow: $"($path)\t($reason)"}
+        # DOESN'T — poison. A timeout (exit 124) is the one non-compiler case: tag it honestly so
+        # it can never masquerade as a compile error (the old `exit 124` mislabel). Otherwise the
+        # reason is the compiler's own first `error:` line; absolute toolchain paths and the
+        # per-lane scratch file are rendered relative so it's reproducible and lane-independent:
+        # /usr/lib/zig/std/… → std/…, …/r-<i>.zig → <gen>.
+        let reason = (if $r.exit_code == 124 {
+            $"timeout after ($timeout)s"
+        } else {
+            let err = ($r.stderr | lines | where ($it =~ 'error:') | first)
+            ($err | default ($r.stderr | lines | where ($it | str trim | is-not-empty) | first | default $"exit ($r.exit_code)")
+                | str trim
+                | str replace --regex --all '/tmp/zephem-depth/r-[0-9]+\.zig' '<gen>'
+                | str replace --all $"($std_dir)/" "std/")
+        })
+        {i: $i, srow: $"($path)\tpoison\t0", rows: [], prow: $"($path)\t($reason)"}
     }
 }
 
@@ -150,17 +152,15 @@ def sweep [targets: list<string>, outdir: string, timeout: int, idx: any, std_di
 
     let status = ($results | get srow)
     let resolved = ($results | get rows | flatten)
-    let redirect = ($results | where rrow != null | get rrow)
     let poison = ($results | where prow != null | get prow)
 
     (["path\tstatus\tn_rows"] | append $status | str join "\n") + "\n" | save -f $"($outdir)/status.tsv"
     (["path\tkind\tdetail"] | append $resolved | str join "\n") + "\n" | save -f $"($outdir)/resolved.tsv"
-    (["path\tredirect_to"] | append $redirect | str join "\n") + "\n" | save -f $"($outdir)/redirects.tsv"
     (["path\treason"] | append $poison | str join "\n") + "\n" | save -f $"($outdir)/poison.tsv"
-    {resolved: ($resolved | length), redirect: ($redirect | length), poison: ($poison | length), attempted: ($targets | length)}
+    {resolved: ($resolved | length), poison: ($poison | length), attempted: ($targets | length)}
 }
 
-def main [--only: string, --filter: string, --list: string, --limit: int = 0, --timeout: int = 30, --jobs: int = 0, --out: string = "/tmp/zephem-depth/out", --commit, --check] {
+def main [--only: string, --filter: string, --list: string, --limit: int = 0, --timeout: int = 90, --jobs: int = 0, --out: string = "/tmp/zephem-depth/out", --commit, --check] {
     let idx = (open data/std/index.tsv)
     let std_dir = (std-dir)
     let jobs = (if $jobs > 0 { $jobs } else { (ncpu) })   # adaptive: one lane per available CPU
@@ -214,12 +214,8 @@ def main [--only: string, --filter: string, --list: string, --limit: int = 0, --
     print $"[L5] reflecting ($targets | length) container\(s\) — ($jobs) parallel lanes, ($timeout)s timeout each, poison isolated per process"
     let c = (sweep $targets $outdir $timeout $idx $std_dir $jobs)
 
-    print $"[L5] resolved: (($c.attempted) - ($c.redirect) - ($c.poison)) containers, ($c.resolved) rows   redirect: ($c.redirect)   poison: ($c.poison)   attempted: ($c.attempted)"
-    print $"[L5] → ($outdir)/{status,resolved,redirects,poison}.tsv"
-    if $c.redirect > 0 and $c.redirect <= 20 {
-        print "[L5] alias redirects (path → use instead):"
-        open $"($outdir)/redirects.tsv" | each {|x| print $"   ($x.path)\t($x.redirect_to)" } | ignore
-    }
+    print $"[L5] resolved: (($c.attempted) - ($c.poison)) containers, ($c.resolved) rows   poison: ($c.poison)   attempted: ($c.attempted)"
+    print $"[L5] → ($outdir)/{status,resolved,poison}.tsv"
     if $c.poison > 0 and $c.poison <= 20 {
         print "[L5] poison (path · reason):"
         open $"($outdir)/poison.tsv" | each {|p| print $"   ($p.path)\t($p.reason)" } | ignore
