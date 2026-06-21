@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # verify_std.nu — prove the std map's integrity by reading it a SECOND way.
 #
-# The extractor (mapper/build.zig) records, per container, how many public children
+# The extractor (parse/build.zig) records, per container, how many public children
 # it declares (`n_children`). This script never trusts that number on its own —
 # it re-derives the truth by grouping every row under its parent path, then
 # checks the two agree. No external tools, no oracle: the data checks itself.

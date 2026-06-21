@@ -15,7 +15,7 @@ or source states or computes — nothing authored.
   *Will building it again give the same thing?*
 
 **The base map is a literal, source-order mirror of Zig** — no sorting, no clustering, no
-invented links. That faithfulness is the contract; see [`mapper/README.md`](mapper/README.md).
+invented links. That faithfulness is the contract; see [`parse/README.md`](parse/README.md).
 Anything we *make up* (purpose groupings, semantic links) is a separate, optional overlay,
 never folded into the base.
 
@@ -29,11 +29,13 @@ never folded into the base.
 2. **zephem** (2026-06-17) — reframed as a general extractor built on **AST parsing**
    (parse-don't-reflect): it reads source as syntax, never evaluates comptime, so it maps
    **all** of std including poison decls. The tool is the extractor, not the crypto.
-3. **`mapper/` + `clusters/` split** (2026-06-21) — the extractor was folded into one folder,
-   `mapper/` (one parse, many visitors — the map and overlays can no longer desync). The
-   editorial shape-clustering experiments were moved out to `clusters/`, **unwired by design**,
-   to keep the base map a pure mirror. Docs were cut to three (this file, `README.md`,
-   `mapper/README.md`); the rest is parked in `docs/archive/` for rewrite.
+3. **engine split** (2026-06-21) — the extractor was first folded into one parse (many
+   visitors, so the map and overlays can no longer desync), then split by *what each reads*
+   into three engines: **`parse/`** (read source as text → map, decls, tunnels), **`reflect/`**
+   (run the compiler → resolved depth), **`derive/`** (transform the datasets, read no Zig →
+   index, canon). The editorial shape-clustering experiments were moved out to `clusters/`,
+   **unwired by design**, to keep the base map a pure mirror. Docs cut to three (this file,
+   `README.md`, `parse/README.md`); the rest parked in `docs/archive/` for rewrite.
 
 ---
 
@@ -44,11 +46,11 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **L0 structure map** — `nodes.tsv` | `mapper/build.zig` | ✅ full std: 16,506 decls / 310 files, depth 8; conservation-checked |
-| **table of contents** — `index.tsv` | `mapper/index.zig` | ✅ contiguous-block index, 1,355 containers, self-checked both ways |
-| **L1+L2 decls** — `decls.tsv` | `mapper/visit/enrich.zig` | ✅ 7,143 rows (5,377 signatures, 4,167 docs) |
-| **L3 tunnels** — `tunnels.tsv` | `mapper/tunnels.zig` | ✅ 5,123 resolved reference edges, no dangling |
-| **L5 resolved depth** — `resolved.tsv` | `mapper/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
+| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ full std: 16,506 decls / 310 files, depth 8; conservation-checked |
+| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 1,355 containers, self-checked both ways |
+| **L1+L2 decls** — `decls.tsv` | `parse/visit/enrich.zig` | ✅ 7,143 rows (5,377 signatures, 4,167 docs) |
+| **L3 tunnels** — `tunnels.tsv` | `parse/tunnels.zig` | ✅ 5,123 resolved reference edges, no dangling |
+| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
 | **canon census** — `canon.tsv` | `scripts/build_canon.nu` | ✅ every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
 | **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds: fn⟹fn 4,823/4,823, container⟹type 2,375/2,375 |
 | **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/decls/index instant; L3 instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
@@ -67,7 +69,7 @@ Each new dataset registers with a harness and ships its own backward check.
 
 ## Standing items
 
-- [ ] Point the mapper at non-std roots (already root-agnostic — needs a target list).
+- [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
 
 ## Known hardening (from the 2026-06-19 adversarial audit)

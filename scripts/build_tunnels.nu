@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # build_tunnels.nu — the L3 (reference graph / tunnels) overlay.
 #
-# mapper/tunnels.zig resolves every reference (alias re-exports, import bindings, and the type
+# parse/tunnels.zig resolves every reference (alias re-exports, import bindings, and the type
 # names in fn signatures) to the canonical logical `path` it points at, parsing each file's root
 # for pub AND private bindings so private import aliases (`const Allocator = std.mem.Allocator`)
 # resolve. It emits one tagged stream:
@@ -36,7 +36,7 @@ def std-root [] {
 # path, shared by the normal build and --check, so they cannot diverge.
 def regen [root: string, outdir: string] {
     mkdir $outdir
-    let raw = (^zig run mapper/tunnels.zig -- $root data/std/nodes.tsv | from tsv)
+    let raw = (^zig run parse/tunnels.zig -- $root data/std/nodes.tsv | from tsv)
     # container → line, for attaching a followable address to resolved edges.
     let idx = (open data/std/index.tsv | select path line)
 

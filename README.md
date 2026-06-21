@@ -49,7 +49,7 @@ open data/std/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}}
 
 The build is **two passes that must agree**, bundled on purpose:
 
-- **forward** (`mapper/build.zig`) reads the source into rows.
+- **forward** (`parse/build.zig`) reads the source into rows.
 - **backward** (`scripts/verify_std.nu`) re-reads `nodes.tsv` *from the other end* —
   grouping rows by parent path — and checks the tree reconciles.
 
@@ -101,14 +101,14 @@ join cleanly and every row is anchored to a node that exists. Two ship today, bo
 self-verifying and byte-identical on rerun:
 
 - **`data/std/decls.tsv`** (L1 signatures + L2 doc-comments) — `path · doc · sig` from
-  `mapper/visit/enrich.zig` (emitted by `mapper/build.zig` on the same parse as the map).
+  `parse/visit/enrich.zig` (emitted by `parse/build.zig` on the same parse as the map).
   Sparse: a row per `fn` (its as-written signature) plus any decl carrying a
   `///`. On Zig 0.16.0: 7,143 rows (5,377 signatures covering the map's 5,377 functions with no
   loss, 4,167 docs). That map↔overlay agreement is a parser-internal loss check, not a
   correctness proof — whether the fn set is right is tested against the compiler in
   `scripts/verify_layers.nu`.
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
-  `mapper/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
+  `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On Zig 0.16.0: 1,355 containers swept → **1,324 resolved (15,720
   rows) / 31 genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
   reason); `data/std/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
@@ -139,14 +139,22 @@ the general tool the project is built around now.
 
 ## How it's built
 
-The extractor is **[`mapper/`](mapper/)** — its own folder, documented in full at
-**[mapper/README.md](mapper/README.md)** (purpose, the faithfulness contract, and how the
-pieces work). In short: `mapper/build.zig` parses std **once** and drives a single generic
-walk (`mapper/walk.zig`) over two visitors → `nodes.tsv` (the map) + `decls.tsv` (sigs/docs);
-`mapper/index.zig` builds the table of contents; `mapper/tunnels.zig` the L3 reference graph;
-`mapper/resolve.zig` does the one job parsing can't — subprocess-isolated reflection for the L5
-depth overlay. Parsing (not reflection) is what lets it map all of std without dying on poison
-decls. The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The editorial
+The extractor is **three engines**, split by *what each reads*:
+
+- **[`parse/`](parse/)** — the **read-it** engine (documented in full at
+  [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
+  single generic walk (`parse/walk.zig`) over two visitors → `nodes.tsv` (the map) +
+  `decls.tsv` (sigs/docs); `parse/tunnels.zig` adds the L3 reference graph. It reads source
+  as text and never runs the compiler, which is what lets it map all of std without dying on
+  poison decls.
+- **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
+  parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
+  (`resolved.tsv`). Resolves real values; dies on poison, by nature.
+- **[`derive/`](derive/)** — the **transform** engine. Reads no Zig at all, only the datasets
+  above: `derive/index.zig` builds the table of contents (`index.tsv`) over the map, and
+  `scripts/build_canon.nu` joins parse vs reflect into the provenance census (`canon.tsv`).
+
+The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The editorial
 shape-clustering experiments live, deliberately unwired, in **[`clusters/`](clusters/)**.
 Phases and status: **[PLAN.md](PLAN.md)**.
 
