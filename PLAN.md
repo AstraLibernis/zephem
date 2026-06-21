@@ -51,13 +51,15 @@ Everything below is self-verifying and byte-identical on rerun.
 | **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's one output: full std, 16,506 decls / 310 files, depth 8; conservation-checked |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 1,355 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
-| **canon census** — `canon.tsv` | `scripts/build_canon.nu` | ✅ every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
+| **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
+| **canon dedup/dealias** — `canon.tsv` | `scripts/build_canon.nu` | ✅ 236 paths in 100 alias/dup families (shared resolved `@typeName`); self-checked |
 | **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds: fn⟹fn 4,823/4,823, container⟹type 2,375/2,375 |
 | **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
 
 We can say *where* anything in std is, *how* it's shaped, and its resolved depth — completely
-and provably. That is the faithful skeleton, the compiler's resolved view, and a total
-provenance census joining the two. Added detail and links come next, as separate layers.
+and provably. That is the faithful skeleton, the compiler's resolved view, a consensus census
+that compares the two, and a canon overlay that dedups/de-aliases. Added detail and links come
+next, as separate layers.
 
 ## Remaining work
 

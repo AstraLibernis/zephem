@@ -97,7 +97,7 @@ Copy-pasteable recipes (read one module, find by name, orient, regenerate) are p
 
 The map is the skeleton — and the *only* thing the parser emits. Deeper facts are produced by
 **separate engines** and join back at the same `path`, so every row anchors to a node that
-exists. Two ship today, both self-verifying and byte-identical on rerun:
+exists. Three ship today, all self-verifying and byte-identical on rerun:
 
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
@@ -108,15 +108,22 @@ exists. Two ship today, both self-verifying and byte-identical on rerun:
   strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
   reproducibility harness is a deliberately separate task (see PLAN.md).
 
-- **`data/std/canon.tsv`** (the canonical-link census) — `path · origin · owner · owner_canon ·
-  note` from `scripts/build_canon.nu`. Instead of forcing the text view (`nodes.tsv`) and the
-  reflected view (`resolved.tsv`) to match 1:1 and calling every non-match a "miss", it tags **every**
-  path by what can actually see it: `read+run` (both agree — 13,424), `run-only` (only exists when
-  reflected — a generic/alias member like `Sha256.digest_length` — 2,296), `read-only` (text read it
-  but it can't run here: poison, or the `std` root — 3,082). One row per path in `nodes ∪ resolved`
-  (18,802), each made-member linked to its canonical owner; **zero blanks**, enforced by
-  `scripts/verify_canon.nu` and deterministic (`--check`). This is the layer that makes "nothing is
-  missing" a *checked* property rather than a claim.
+- **`data/std/consensus.tsv`** (the consensus census) — `path · origin · owner` from
+  `scripts/build_consensus.nu`. Rather than force the text view (`nodes.tsv`) and the reflected view
+  (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
+  **every** path by which witness can see it: `read+run` (both independently agree — 13,424),
+  `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
+  2,296), `read-only` (text read it but it can't run here: poison, or the `std` root — 3,082). The
+  two single-witness buckets **are** the differences; the agreement is independent evidence. One row
+  per path in `nodes ∪ resolved` (18,802), **zero blanks**, enforced by `scripts/verify_consensus.nu`
+  and deterministic (`--check`).
+
+- **`data/std/canon.tsv`** (dedup / dealias) — `path · canon` from `scripts/build_canon.nu`. The
+  compiler resolves every type to a canonical `@typeName`, so two paths that name the *same*
+  underlying type collide on it. This overlay surfaces exactly those collisions — **236 paths in 100
+  alias/dup families** (e.g. `std.BufMap` and `std.buf_map.BufMap` → `buf_map.BufMap`) — while
+  excluding primitive / error-set / anonymous identities that collide by accident, not by aliasing.
+  Reads `resolved.tsv` alone; verified by `scripts/verify_canon.nu`, deterministic (`--check`).
 
 The deferred "organize later" layers (signatures + doc-comments, references/links, grouping by
 purpose) and the roadmap for the remaining work (L4 runnable test examples, L6 version diff)
