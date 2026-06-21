@@ -129,6 +129,16 @@ The deferred "organize later" layers (signatures + doc-comments, references/link
 purpose) and the roadmap for the remaining work (L4 runnable test examples, L6 version diff)
 live in **[PLAN.md](PLAN.md)**.
 
+## Browse it: the generated viewer
+
+**[`docs/architecture.html`](docs/architecture.html)** is a generated site — a hub plus one page
+per derivative under **`docs/views/`** (index, canon, consensus). Each slice charts its primary
+drivers and differences (containers by depth, alias family sizes, the read-only ◀ both ▶ run-only
+split, poison ranked by compiler error) and links to the raw `.tsv`. Nothing is hand-authored:
+`scripts/build_arch.nu` injects every number, chart, and row from `data/std/` on each build, the
+charts are plain CSS bars (no JS — works straight off the filesystem), and the findings update the
+moment the data does. `build_arch.nu --check` proves every page rebuilds byte-identical.
+
 ## Where it started: `std.crypto` (archived)
 
 zephem began life (as `zcrypto`) pointed only at `std.crypto`, via **reflection** — which
@@ -151,8 +161,10 @@ The extractor is **three engines**, split by *what each reads*:
   parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.
 - **[`derive/`](derive/)** — the **transform** engine. Reads no Zig at all, only the datasets
-  above: `derive/index.zig` builds the table of contents (`index.tsv`) over the map, and
-  `scripts/build_canon.nu` joins parse vs reflect into the provenance census (`canon.tsv`).
+  above, each as its own single-purpose overlay: `derive/index.zig` builds the table of contents
+  (`index.tsv`) over the map; `scripts/build_canon.nu` dedups/de-aliases resolved types into
+  alias/dup families (`canon.tsv`); and `scripts/build_consensus.nu` compares parse vs reflect,
+  tagging where the two readers agree or differ (`consensus.tsv`).
 
 The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. Three things are
 **deliberately deferred to "organize later"** layers — *our* organisation laid on the faithful
