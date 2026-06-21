@@ -1,32 +1,74 @@
 #!/usr/bin/env nu
-# build_arch.nu — regenerate docs/architecture.html from the project itself.
+# build_arch.nu — regenerate the docs site (hub + per-slice pages) from the project itself.
 #
-# The viewer is a GENERATED artifact, not hand-authored: the structure/CSS live in
-# docs/architecture.tmpl.html, and every number is injected live from data/std + the engine
-# source line counts. So it can never drift from the data — and --check proves it byte-identical.
+# Nothing here is hand-authored: structure lives in docs/*.tmpl.html + docs/views/*.tmpl.html,
+# styling in docs/style.css, and EVERY number/chart/row is injected live from data/std + the
+# engine source. So the pages can never drift from the data — and --check proves each one
+# byte-identical across a fresh rebuild. Charts are generated CSS bars (no JS, no fetch), so the
+# whole site works straight off the filesystem and updates the moment the data does.
 #
-# Usage:  nu scripts/build_arch.nu            # regenerate docs/architecture.html
-#         nu scripts/build_arch.nu --check    # prove it still matches the data (no write)
+# Usage:  nu scripts/build_arch.nu            # regenerate every page
+#         nu scripts/build_arch.nu --check    # prove each still matches the data (no write)
 
-const TMPL = "docs/architecture.tmpl.html"
-const OUT  = "docs/architecture.html"
+const PAGES = [
+  [tmpl, out];
+  ["docs/architecture.tmpl.html",     "docs/architecture.html"]
+  ["docs/views/index.tmpl.html",      "docs/views/index.html"]
+  ["docs/views/canon.tmpl.html",      "docs/views/canon.html"]
+  ["docs/views/consensus.tmpl.html",  "docs/views/consensus.html"]
+]
 
 # 12345 -> "12,345" (no lookahead in the regex engine, so group from the right by hand).
 def commafy [n: int] {
     let rev = ($n | into string | split chars | reverse | str join)
     $rev | split chars | chunks 3 | each {|c| $c | str join } | str join "," | split chars | reverse | str join
 }
-
 def lc [path: string] { open --raw $path | lines | length }
 
-# Build the filled HTML as a string from the live project state.
+# Escape the three HTML-significant chars so data (poison reasons hold `<gen>`, `&`) renders verbatim.
+def esc [s: string] { $s | str replace --all "&" "&amp;" | str replace --all "<" "&lt;" | str replace --all ">" "&gt;" }
+
+# A list of {k: label, v: count} -> label-on-top CSS bar rows, widths relative to the largest.
+def lbars [items: list, cls: string = ""] {
+    if ($items | is-empty) { return "" }
+    let mx = ($items | get v | math max)
+    $items | each {|r|
+        let raw = ((($r.v * 100) / $mx) | math round | into int)
+        let pct = (if $raw < 1 { 1 } else { $raw })
+        $'    <div class="lbar ($cls)"><div class="lt"><span class="lk">(esc ($r.k | into string))</span><span class="lv">(commafy $r.v)</span></div><div class="ltrack"><span class="lfill" style="width:($pct)%"></span></div></div>'
+    } | str join "\n"
+}
+
+# 2nd path segment = top-level module under std ("(root)" for bare `std`).
+def module-of [p: string] { let s = ($p | split row "."); if ($s | length) >= 2 { $s | get 1 } else { "(root)" } }
+
+# Generalise a poison reason to its error CATEGORY: text after `error:`, quoted names -> '…', tail dropped.
+def errcat [reason: string] {
+    let after = (if ($reason | str contains "error:") { $reason | split row "error:" | last | str trim } else { $reason })
+    $after | str replace --regex --all "'[^']*'" "'…'" | split row ";" | first | str trim
+}
+
+# Fill one template's @@TOKEN@@s from a {token: value} record.
+def fill [tmpl: string, subs: record] {
+    mut html = (open --raw $tmpl)
+    for k in ($subs | columns) { $html = ($html | str replace --all $k ($subs | get $k)) }
+    $html
+}
+
+# Compute every page's filled HTML from the live project state. Returns [{out, html}].
 def render [] {
     let nodes = (open data/std/nodes.tsv)
+    let index = (open data/std/index.tsv)
+    let canon = (open data/std/canon.tsv)
+    let consensus = (open data/std/consensus.tsv)
+    let status = (open data/std/status.tsv)
+    let poison = (open data/std/poison.tsv)
+
     let n     = ($nodes | length)
     let files = ($nodes | where kind == "ns" | length)
     let depth = ($nodes | get depth | math max)
 
-    # kind distribution → data-driven bar rows (widths relative to the largest kind)
+    # hub: kind distribution across the whole map (.kbar style)
     let kinds = ($nodes | group-by kind | items {|k, v| {kind: $k, n: ($v | length)} } | sort-by n --reverse)
     let kmax  = ($kinds | get n | math max)
     let kbars = ($kinds | each {|r|
@@ -35,54 +77,110 @@ def render [] {
         $'        <div class="kbar"><span class="kname">($r.kind)</span><span class="ktrack"><span class="kfill" style="width:($pct)%"></span></span><span class="kn">(commafy $r.n)</span></div>'
     } | str join "\n")
 
-    let status   = (open data/std/status.tsv)
-    let res_cont = ($status | where status == "resolved" | length)
-    let poison   = ($status | where status == "poison" | length)
-    let resolved = (open data/std/resolved.tsv | length)
-    let index    = (open data/std/index.tsv | length)
+    # canon families
+    let families = ($canon | group-by canon | items {|k, v| {canon: $k, n: ($v | length)} })
+    let canon_max = (if ($families | is-empty) { 0 } else { $families | get n | math max })
 
-    let canon    = (open data/std/canon.tsv)
-    let subs = {
+    # consensus split
+    let con_ro = ($consensus | where origin == "read-only" | length)
+    let con_run = ($consensus | where origin == "run-only" | length)
+    let con_rr = ($consensus | where origin == "read+run" | length)
+    let con_total = ($consensus | length)
+    let con_diff = ($con_ro + $con_run)
+
+    # ── shared tokens (used across pages) ──
+    let common = {
         "@@ZIG@@":            (open data/std/PINNED | str trim)
         "@@N_NODES@@":        (commafy $n)
         "@@N_FILES@@":        (commafy $files)
         "@@MAXDEPTH@@":       ($depth | into string)
-        "@@N_RESOLVED@@":     (commafy $resolved)
-        "@@N_RES_CONT@@":     (commafy $res_cont)
-        "@@N_POISON@@":       (commafy $poison)
-        "@@N_INDEX@@":        (commafy $index)
+        "@@N_RESOLVED@@":     (commafy (open data/std/resolved.tsv | length))
+        "@@N_RES_CONT@@":     (commafy ($status | where status == "resolved" | length))
+        "@@N_POISON@@":       (commafy ($poison | length))
+        "@@N_INDEX@@":        (commafy ($index | length))
         "@@N_CANON@@":        (commafy ($canon | length))
-        "@@CANON_RR@@":       (commafy ($canon | where origin == "read+run" | length))
-        "@@CANON_RUNONLY@@":  (commafy ($canon | where origin == "run-only" | length))
-        "@@CANON_READONLY@@": (commafy ($canon | where origin == "read-only" | length))
+        "@@CANON_FAMILIES@@": (commafy ($families | length))
+        "@@N_CONSENSUS@@":    (commafy $con_total)
+        "@@CON_RR@@":         (commafy $con_rr)
+        "@@CON_RUNONLY@@":    (commafy $con_run)
+        "@@CON_READONLY@@":   (commafy $con_ro)
+        "@@CON_DIFF@@":       (commafy $con_diff)
         "@@LC_BUILD@@":       ((lc "parse/build.zig") | into string)
         "@@LC_WALK@@":        ((lc "parse/walk.zig") | into string)
         "@@LC_AST@@":         ((lc "parse/ast.zig") | into string)
         "@@LC_RESOLVE@@":     ((lc "reflect/resolve.zig") | into string)
         "@@LC_INDEX@@":       ((lc "derive/index.zig") | into string)
-        "@@KIND_BARS@@":      $kbars
     }
 
-    mut html = (open --raw $TMPL)
-    for k in ($subs | columns) { $html = ($html | str replace --all $k ($subs | get $k)) }
-    $html
+    # ── hub ──
+    let hub = ($common | merge { "@@KIND_BARS@@": $kbars })
+
+    # ── index slice ──
+    let idx_depth = ($index | group-by depth | items {|k, v| {k: $"depth ($k)", v: ($v | length), d: ($k | into int)} } | sort-by d)
+    let idx_kind  = ($index | group-by kind  | items {|k, v| {k: $k, v: ($v | length)} } | sort-by v --reverse)
+    let idx_big   = ($index | sort-by span --reverse | first 15 | each {|r|
+        $'      <tr><td class="mono">(esc $r.path)</td><td class="num">(commafy $r.span)</td><td class="dim">($r.depth)</td><td class="dim">(esc $r.kind)</td></tr>'
+    } | str join "\n")
+    let idx = ($common | merge {
+        "@@IDX_DEPTH_BARS@@": (lbars $idx_depth)
+        "@@IDX_KIND_BARS@@":  (lbars $idx_kind)
+        "@@IDX_BIG_ROWS@@":   $idx_big
+    })
+
+    # ── canon slice ──
+    let fam_sizes = ($families | group-by n | items {|k, v| {k: $"($k) paths", v: ($v | length), sz: ($k | into int)} } | sort-by sz)
+    let canon_mod = ($canon | insert m {|r| module-of $r.path } | group-by m
+        | items {|k, v| {k: $k, v: ($v | length)} } | sort-by v --reverse | first 12)
+    let canon_rows = ($families | sort-by n --reverse | first 12 | each {|r|
+        let label = (if ($r.canon | str length) > 64 { ($r.canon | str substring 0..63) + "…" } else { $r.canon })
+        $'      <tr><td class="mono">(esc $label)</td><td class="num">×($r.n)</td></tr>'
+    } | str join "\n")
+    let canonp = ($common | merge {
+        "@@CANON_COLLAPSE@@":   (commafy (($canon | length) - ($families | length)))
+        "@@CANON_MAX@@":        (commafy $canon_max)
+        "@@CANON_SIZE_BARS@@":  (lbars $fam_sizes)
+        "@@CANON_MODULE_BARS@@":(lbars $canon_mod)
+        "@@CANON_FAMILY_ROWS@@":$canon_rows
+    })
+
+    # ── consensus slice ──
+    let diff_rows = ($consensus | where origin != "read+run" | insert mod {|r| module-of $r.path }
+        | group-by mod | items {|k, v| {mod: $k, n: ($v | length), ro: ($v | where origin == "read-only" | length), run: ($v | where origin == "run-only" | length)} }
+        | sort-by n --reverse | first 12 | each {|r|
+            $'      <tr><td class="mono">std.($r.mod)</td><td class="num">($r.n)</td><td class="dim">($r.ro)</td><td class="dim">($r.run)</td></tr>'
+    } | str join "\n")
+    let perr = ($poison | insert cat {|r| errcat $r.reason } | group-by cat
+        | items {|k, v| {k: $k, v: ($v | length)} } | sort-by v --reverse | first 10)
+    let poison_rows = ($poison | each {|r|
+        $'      <tr><td class="mono">(esc $r.path)</td><td class="dim">(esc $r.reason)</td></tr>'
+    } | str join "\n")
+    let conp = ($common | merge {
+        "@@CON_RO_PCT@@":          (($con_ro * 100 / $con_total) | math round | into int | into string)
+        "@@CON_RR_PCT@@":          (($con_rr * 100 / $con_total) | math round | into int | into string)
+        "@@CON_RUN_PCT@@":         (($con_run * 100 / $con_total) | math round | into int | into string)
+        "@@CONSENSUS_DIFF_ROWS@@": $diff_rows
+        "@@POISON_ERR_BARS@@":     (lbars $perr "ro")
+        "@@POISON_ROWS@@":         $poison_rows
+    })
+
+    let subs = [$hub, $idx, $canonp, $conp]
+    $PAGES | enumerate | each {|p| {out: $p.item.out, html: (fill $p.item.tmpl ($subs | get $p.index))} }
 }
 
 def main [--check] {
-    let html = (render)
-    let left = ($html | find "@@" | length)
-    if $left > 0 { print $"arch: ✗ ($left) unfilled @@TOKEN@@ line\(s\) remain — template/generator out of sync"; exit 1 }
-
-    if $check {
-        if not ($OUT | path exists) { print $"arch: ✗ ($OUT) missing — run without --check"; exit 1 }
-        if $html == (open --raw $OUT) {
-            print "arch: ✓ regenerates byte-identical from data/std + engine source"
+    let pages = (render)
+    mut ok = true
+    for p in $pages {
+        let left = ($p.html | find "@@" | length)
+        if $left > 0 { print $"arch: ✗ unfilled @@TOKEN@@ remains in ($p.out) — template/generator out of sync"; exit 1 }
+        if $check {
+            if not ($p.out | path exists) { print $"arch: ✗ ($p.out) missing — run without --check"; exit 1 }
+            if $p.html == (open --raw $p.out) { print $"  ✓ ($p.out)" } else { print $"  ✗ DRIFT ($p.out)"; $ok = false }
         } else {
-            print "arch: ✗ DRIFT — docs/architecture.html no longer matches the data; rerun build_arch.nu"
-            exit 1
+            $p.html | save -f $p.out
+            print $"  ✓ ($p.out)"
         }
-        return
     }
-    $html | save -f $OUT
-    print $"arch: ✓ regenerated ($OUT) from data/std + engine source"
+    if not $ok { print "arch: ✗ DRIFT — a page no longer matches the data; rerun build_arch.nu"; exit 1 }
+    if $check { print "arch: ✓ every page regenerates byte-identical from data/std + engine source" } else { print "arch: ✓ regenerated the docs site from data/std + engine source" }
 }

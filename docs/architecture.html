@@ -5,131 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>zephem — architecture</title>
 <!-- GENERATED FILE — do not hand-edit. Regenerate: nu scripts/build_arch.nu
-     Structure/CSS live in docs/architecture.tmpl.html; every number is injected from data/std + engine source. -->
-<style>
-  :root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --ink:#e6edf3; --muted:#8b949e;
-    --line:#30363d; --accent:#d2a8ff;
-    --parse:#3fb950; --parse-bg:#0f2417; --parse-dim:#1a3a26;
-    --reflect:#e3a008; --reflect-bg:#241a07; --reflect-dim:#3a2c10;
-    --derive:#58a6ff; --derive-bg:#0d1f33; --derive-dim:#15324f;
-    --source-bg:#1b2029; --product:#f778ba; --product-bg:#2a1320;
-    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
-       line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1080px;margin:0 auto;padding:40px 24px 80px}
-  h1{font-size:30px;margin:0 0 4px;letter-spacing:-.5px}
-  h1 .z{color:var(--accent)}
-  .sub{color:var(--muted);font-size:15px;margin:0}
-  .badges{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 0}
-  .badge{font-family:var(--mono);font-size:12px;color:var(--muted);
-         border:1px solid var(--line);border-radius:20px;padding:4px 11px;background:var(--panel)}
-  .badge b{color:var(--ink);font-weight:600}
-  h2{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);
-     margin:46px 0 16px;font-weight:600}
-  .lede{color:var(--muted);font-size:15px;max-width:760px;margin:-6px 0 22px}
-  .lede b{color:var(--ink);font-weight:600}
-
-  .arrow{display:flex;justify-content:center;align-items:center;color:var(--muted);
-         font-size:20px;height:34px;position:relative}
-  .arrow span{font-size:11px;font-family:var(--mono);position:absolute;
-              background:var(--bg);padding:0 8px;color:var(--muted)}
-
-  .source{width:100%;background:var(--source-bg);border:1px solid var(--line);
-          border-radius:12px;padding:16px 20px;text-align:center}
-  .source .t{font-family:var(--mono);font-weight:600;color:var(--ink);letter-spacing:.3px}
-  .source .d{color:var(--muted);font-size:13px;margin-top:3px}
-
-  .engines{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
-  .engine{border:1px solid var(--line);border-radius:12px;background:var(--panel);
-          overflow:hidden;display:flex;flex-direction:column}
-  .engine .head{padding:14px 16px 12px;border-bottom:1px solid var(--line)}
-  .engine .num{font-family:var(--mono);font-size:12px;opacity:.8}
-  .engine .name{font-size:18px;font-weight:700;margin:2px 0 1px;font-family:var(--mono)}
-  .engine .role{font-size:13px;color:var(--muted)}
-  .engine .reads{font-size:11px;font-family:var(--mono);margin-top:9px;
-                 display:inline-block;padding:3px 8px;border-radius:6px}
-  .engine .body{padding:13px 16px;font-family:var(--mono);font-size:12.5px;flex:1}
-  .engine .body .f{color:var(--muted);padding:1px 0}
-  .engine .body .f b{color:var(--ink);font-weight:600}
-  .engine .body .dir{color:var(--ink);font-weight:600;margin-top:6px}
-  .engine .body .ln{float:right;opacity:.5}
-  .engine .out{padding:11px 16px;border-top:1px solid var(--line);background:var(--panel2);
-               font-size:12px;color:var(--muted)}
-  .engine .out b{font-family:var(--mono);color:var(--ink);font-weight:600}
-
-  .parse{border-top:3px solid var(--parse)}
-  .parse .num,.parse .name{color:var(--parse)}
-  .parse .reads{background:var(--parse-bg);color:var(--parse);border:1px solid var(--parse-dim)}
-  .reflect{border-top:3px solid var(--reflect)}
-  .reflect .num,.reflect .name{color:var(--reflect)}
-  .reflect .reads{background:var(--reflect-bg);color:var(--reflect);border:1px solid var(--reflect-dim)}
-  .derive{border-top:3px solid var(--derive)}
-  .derive .num,.derive .name{color:var(--derive)}
-  .derive .reads{background:var(--derive-bg);color:var(--derive);border:1px solid var(--derive-dim)}
-
-  .feed-note{text-align:center;font-size:12px;color:var(--muted);font-family:var(--mono);margin:14px 0 0}
-  .feed-note b{color:var(--derive)}
-
-  .product{width:100%;background:var(--product-bg);border:1px solid var(--line);
-           border-top:3px solid var(--product);border-radius:12px;padding:16px 20px}
-  .product .t{font-family:var(--mono);font-weight:700;color:var(--product);text-align:center}
-  .product .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
-  .chip{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-radius:7px;
-        padding:5px 10px;background:var(--panel)}
-  .chip b{color:var(--ink)} .chip .n{color:var(--muted)}
-  .chip.spine{border-color:var(--product);color:var(--product)}
-  .chip.spine b{color:var(--product)}
-  .product .cap{text-align:center;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:11px}
-  .product .cap b{color:var(--ink)}
-
-  .verify{width:100%;border:1px dashed var(--line);border-radius:12px;padding:14px 20px;
-          text-align:center;color:var(--muted);font-size:13px}
-  .verify b{color:var(--ink);font-family:var(--mono)}
-  .verify .ok{color:var(--parse);font-weight:700}
-
-  /* kind distribution */
-  .kinds{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px 20px}
-  .kbar{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12.5px;padding:3px 0}
-  .kname{width:60px;color:var(--ink)}
-  .ktrack{flex:1;height:13px;background:var(--panel2);border-radius:4px;overflow:hidden;border:1px solid var(--line)}
-  .kfill{display:block;height:100%;background:linear-gradient(90deg,var(--derive),var(--accent));border-radius:4px}
-  .kn{width:52px;text-align:right;color:var(--muted)}
-
-  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
-  th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
-  td .eng{font-family:var(--mono);font-weight:700}
-  td.p .eng{color:var(--parse)} td.r .eng{color:var(--reflect)} td.d .eng{color:var(--derive)}
-  .yes{color:var(--parse);font-weight:700} .no{color:#6e7681}
-  td code{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
-
-  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .gcard{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px 20px}
-  .gcard h3{margin:0 0 6px;font-size:16px}
-  .gcard .q{color:var(--muted);font-size:13px;font-style:italic;margin:0 0 10px}
-  .gcard p{margin:0;font-size:13.5px;color:var(--muted)}
-  .gcard code{font-family:var(--mono);color:var(--ink);font-size:12.5px}
-  .gcard .tick{color:var(--parse)}
-
-  .later{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .lcard{border:1px solid var(--line);border-left:3px solid var(--reflect);border-radius:10px;
-         background:var(--panel);padding:13px 16px}
-  .lcard .lt{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:13.5px}
-  .lcard .lwas{font-family:var(--mono);font-size:11px;color:var(--reflect);margin-left:6px}
-  .lcard p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
-
-  footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);
-         color:#6e7681;font-size:12px;font-family:var(--mono);display:flex;
-         justify-content:space-between;flex-wrap:wrap;gap:8px}
-
-  @media(max-width:720px){
-    .engines,.later{grid-template-columns:1fr} .cards2{grid-template-columns:1fr}
-  }
-</style>
+     Structure lives in docs/architecture.tmpl.html, styling in docs/style.css; every number is injected from data/std + engine source. -->
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="wrap">
@@ -204,11 +81,13 @@
         <div class="f"><b>index.zig</b><span class="ln">115</span></div>
         <div class="f">&nbsp;&nbsp;TOC over nodes.tsv</div>
         <div class="f" style="margin-top:8px"><b>scripts/build_canon.nu</b></div>
-        <div class="f">&nbsp;&nbsp;joins parse ⋈ reflect</div>
+        <div class="f">&nbsp;&nbsp;dedup/dealias resolved types</div>
+        <div class="f" style="margin-top:8px"><b>scripts/build_consensus.nu</b></div>
+        <div class="f">&nbsp;&nbsp;compare parse ⋈ reflect</div>
         <div class="f" style="margin-top:8px;line-height:1.45">facts <i>about the data</i> — how to
-          navigate it, how the two readers reconcile.</div>
+          navigate it, what's aliased, where the two readers differ.</div>
       </div>
-      <div class="out">→ <b>index.tsv</b> · <b>canon.tsv</b><br>navigation + provenance census</div>
+      <div class="out">→ <b>index.tsv</b> · <b>canon.tsv</b> · <b>consensus.tsv</b><br>navigation · dedup · comparison</div>
     </div>
 
   </div>
@@ -220,12 +99,13 @@
   <div class="product">
     <div class="t">data/std/ — THE PRODUCT</div>
     <div class="chips">
-      <span class="chip spine">●&nbsp;<b>nodes.tsv</b> <span class="n">16,506 · the map</span></span>
-      <span class="chip"><b>resolved.tsv</b> <span class="n">15,720</span></span>
-      <span class="chip"><b>index.tsv</b> <span class="n">1,355</span></span>
-      <span class="chip"><b>canon.tsv</b> <span class="n">18,802</span></span>
+      <a class="chip spine" href="../data/std/nodes.tsv">●&nbsp;<b>nodes.tsv</b> <span class="n">16,506 · the map</span></a>
+      <a class="chip" href="../data/std/resolved.tsv"><b>resolved.tsv</b> <span class="n">15,720</span></a>
+      <a class="chip" href="../data/std/index.tsv"><b>index.tsv</b> <span class="n">1,355</span></a>
+      <a class="chip" href="../data/std/canon.tsv"><b>canon.tsv</b> <span class="n">236</span></a>
+      <a class="chip" href="../data/std/consensus.tsv"><b>consensus.tsv</b> <span class="n">18,802</span></a>
     </div>
-    <div class="cap">canon census — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b></div>
+    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families</div>
   </div>
 
   <div class="arrow">↓<span>read back the other way</span></div>
@@ -235,6 +115,27 @@
     <b>Σ n_children = rows − 1</b>, referential integrity, parser-vs-compiler agreement.
     <br><b>--check</b> does two fresh rebuilds and diffs them against the snapshot:
     byte-identical <span class="ok">✓</span> or the build claims nothing.
+  </div>
+
+  <h2>Explore each slice — live from the data</h2>
+  <p class="lede">Every derivative gets its own page: the primary drivers and differences, charted from
+    the <code>.tsv</code> on each build, plus the raw rows. They update the moment the data does.</p>
+  <div class="slices">
+    <a class="slice" href="views/index.html">
+      <div class="st">index ↗</div>
+      <div class="sn">1,355 containers</div>
+      <div class="sd">the table of contents — depth, span, the biggest namespaces.</div>
+    </a>
+    <a class="slice" href="views/canon.html">
+      <div class="st">canon ↗</div>
+      <div class="sn">100 families</div>
+      <div class="sd">dedup / dealias — paths that resolve to one identity, ranked.</div>
+    </a>
+    <a class="slice" href="views/consensus.html">
+      <div class="st">consensus ↗</div>
+      <div class="sn">5,378 differences</div>
+      <div class="sd">read-only ◀ both ▶ run-only — where the two readers disagree, and why.</div>
+    </a>
   </div>
 
   <h2>The map by kind — 16,506 public decls</h2>
@@ -256,7 +157,7 @@
     <tbody>
       <tr><td class="p"><span class="eng">parse</span></td><td><span class="yes">yes</span> — as text</td><td><span class="no">no</span></td><td><code>.zig files</code></td><td><code>nodes (one file)</code></td></tr>
       <tr><td class="r"><span class="eng">reflect</span></td><td><span class="no">—</span></td><td><span class="yes">yes</span> — per container</td><td><code>.zig files (run)</code></td><td><code>resolved</code></td></tr>
-      <tr><td class="d"><span class="eng">derive</span></td><td><span class="no">no</span></td><td><span class="no">no</span></td><td><code>the engines' .tsv</code></td><td><code>index · canon</code></td></tr>
+      <tr><td class="d"><span class="eng">derive</span></td><td><span class="no">no</span></td><td><span class="no">no</span></td><td><code>the engines' .tsv</code></td><td><code>index · canon · consensus</code></td></tr>
     </tbody>
   </table>
 
@@ -274,8 +175,8 @@
       <p class="q">Will building it again give the same thing?</p>
       <p>The same Zig version rebuilds the <code>byte-identical</code> snapshot every time.
         <code>--check</code> proves it across two fresh rebuilds; <code>PINNED</code> records the
-        exact version. <b style="color:var(--ink)">This page too</b> — generated from the data by
-        <code>build_arch.nu</code>, so its numbers can't drift.</p>
+        exact version. <b style="color:var(--ink)">These pages too</b> — generated from the data by
+        <code>build_arch.nu</code>, so their numbers can't drift.</p>
     </div>
   </div>
 
