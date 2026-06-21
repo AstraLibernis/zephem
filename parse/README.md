@@ -45,7 +45,7 @@ reproduces it, not the bytes.
 
 | dataset | what it is | built by |
 |---|---|---|
-| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, source order | `build.zig` → `walk.zig` + `visit/map.zig` |
+| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, source order | `build.zig` → `walk.zig` |
 
 One engine, one file. (The `index.tsv` table of contents is built *from* this map by the
 [`../derive/`](../derive/) engine, not by the parser.)
@@ -55,9 +55,9 @@ One engine, one file. (The `index.tsv` table of contents is built *from* this ma
 **① Parse, don't reflect.** Built from `std.zig.Ast` — reads source as syntax, never evaluates
 comptime. Sees all of std; dies on nothing.
 
-**② One walk, one visitor.** `build.zig` parses the root once and drives a single parse-walk
-(`walk.zig`, generic over a `Visitor`); `visit/map.zig` is the structure visitor that turns each
-node into a row.
+**② One walk, one writer.** `build.zig` parses the root once and runs the walk (`walk.zig`),
+which writes each public decl straight out as a TSV row. One traversal, one output — no visitor
+indirection, no second stream to drift from.
 
 **③ Source-order emission.** `walk.zig` emits each decl the instant it sees it and never sorts.
 Proof it is Zig's order: `std`'s children come out `…BufSet, StaticStringMap,
@@ -74,18 +74,15 @@ dropped, doubled, or truncated decl breaks it and the build claims nothing.
 
 ```
 parse/
-  build.zig        #  64  ENTRY: parse a root ONCE → nodes.tsv
-  walk.zig         # 309  the parse-walk, generic over Visitor
-  common/
-    fs.zig         #  31  dirname, relPath, parseFile
-    ast.zig        # 103  parseImport, isAliasChain, findDecl, containerKindOf, countPub
-    tsv.zig        #  15  col() — minimal TSV reader (used by the other engines)
-  visit/
-    map.zig        #  22  structure visitor → nodes.tsv rows
+  build.zig    #  68  ENTRY: parse a root ONCE, run the walk → nodes.tsv
+  walk.zig     # 277  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
+  ast.zig      # 135  read primitives: dirname/relPath/parseFile + parseImport/isAliasChain/
+               #      findDecl/countPub/containerKindOf
 ```
 
-The entry (`build`) sits at `parse/` root; helpers live in subdirs below it, because `zig run`
-sets the module root to the entry's directory and an entry cannot `@import("../…")`.
+Three flat files — one entry, one traversal, one primitives module. (`build` must sit at
+`parse/` root: `zig run` makes the entry's directory the module root, and an entry cannot
+`@import("../…")`.)
 
 ## 5. Running it
 

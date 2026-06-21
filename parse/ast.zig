@@ -1,9 +1,43 @@
-//! common/ast.zig — pure AST predicates shared by the map, the overlay, and the
-//! tunnel resolver. No comptime evaluation: platform-gated / "poison" decls are
-//! harmless text, which is what lets these walk ALL of std without dying.
+//! ast.zig — the parser's low-level reading primitives.
+//!
+//! Two groups, both pure (no comptime evaluation, so platform-gated / "poison" decls are
+//! harmless text — which is what lets the walk read ALL of std without dying):
+//!
+//!   files & paths — dirname, relPath (machine-independent), parseFile (source → Ast)
+//!   AST syntax    — parseImport, isAliasChain, findDecl, countPub, containerKindOf
+//!
+//! `relPath` renders absolute paths relative to the module root so the dataset is identical
+//! regardless of where the toolchain lives on disk; `parseFile` is silent on read failure so
+//! a missing file never injects an off-schema row (the caller emits the right leaf).
 
 const std = @import("std");
 const Ast = std.zig.Ast;
+
+// ── files & paths ────────────────────────────────────────────────────────────
+
+/// The directory part of `path` (everything before the last '/'), or "." if none.
+pub fn dirname(path: []const u8) []const u8 {
+    if (std.mem.lastIndexOfScalar(u8, path, '/')) |i| return path[0..i];
+    return ".";
+}
+
+/// `abs` rendered relative to `root_dir` (machine-independent dataset paths).
+pub fn relPath(root_dir: []const u8, abs: []const u8) []const u8 {
+    if (abs.len > root_dir.len and std.mem.startsWith(u8, abs, root_dir) and abs[root_dir.len] == '/')
+        return abs[root_dir.len + 1 ..];
+    return abs;
+}
+
+/// Parse a file's source into an Ast (caller keeps `arena` alive for the walk).
+/// Returns null on read failure so the caller can emit the right leaf row.
+pub fn parseFile(io: std.Io, arena: std.mem.Allocator, path: []const u8) !?Ast {
+    const src = std.Io.Dir.cwd().readFileAllocOptions(io, path, arena, .unlimited, .of(u8), 0) catch {
+        return null;
+    };
+    return try Ast.parse(arena, src, .zig);
+}
+
+// ── AST syntax predicates ────────────────────────────────────────────────────
 
 /// An `@import` init split into the imported file and any selector that follows.
 ///   `@import("f.zig")`     → { file: "f.zig", selector: "" }   (whole-file namespace)
@@ -14,9 +48,7 @@ pub const ImportRef = struct { file: []const u8, selector: []const u8 };
 /// one (a generic call `@import("f").Foo(args)`, an operator, etc. — those are values).
 /// A present selector is always a pure dotted identifier chain (see `isAliasChain`); a
 /// selector that isn't is treated as "not a clean re-export" → null, so the caller falls
-/// through to its value/alias-leaf path. This is the single, unified parser: the stricter
-/// chain guard is sound for the map/overlay (a non-chain selector there already fell
-/// through to the alias-leaf branch) and is exactly what the tunnel resolver needs.
+/// through to its value/alias-leaf path.
 pub fn parseImport(src: []const u8) ?ImportRef {
     const t = std.mem.trim(u8, src, " \t\r\n");
     const prefix = "@import(\"";

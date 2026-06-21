@@ -1,10 +1,9 @@
-//! build.zig — the parser: parse a Zig source root ONCE, emit the structural map (nodes.tsv).
+//! build.zig — the parser entry: parse a Zig source root ONCE, emit the structural map.
 //!
-//! One walk (walk.zig) drives the structure visitor. The parser reads source as text — it
-//! never runs it — and emits one row per public declaration, in Zig's source order: the
-//! faithful map of paths, names, kinds, child-counts, and files. Nothing resolved, nothing
-//! grouped, no relationships. Parse all → output all; everything else (signatures, docs,
-//! references, grouping) is a separate "organize later" layer, never the parser's job.
+//! Reads source as text (never runs it) and writes one row per public declaration, in Zig's
+//! source order — the faithful map of paths, names, kinds, child-counts, and files. Parse all
+//! → output all; nothing resolved, nothing grouped, no relationships. Everything else
+//! (signatures, docs, references, grouping) is a separate "organize later" layer.
 //!
 //! Run: zig run parse/build.zig -- <root.zig> <max_depth> <nodes_out>
 //!   e.g. zig run parse/build.zig -- /usr/local/zig/lib/std/std.zig 24 nodes.tsv
@@ -12,9 +11,7 @@
 const std = @import("std");
 const Ast = std.zig.Ast;
 const walk = @import("walk.zig");
-const fs = @import("common/fs.zig");
-const astu = @import("common/ast.zig");
-const MapVisitor = @import("visit/map.zig").Visitor;
+const az = @import("ast.zig");
 
 const DEFAULT_ROOT = "/usr/local/zig/lib/std/std.zig";
 const DEFAULT_MAX_DEPTH: u32 = 8;
@@ -43,22 +40,28 @@ pub fn main(init: std.process.Init) !void {
     var visited = std.StringHashMap(void).init(arena);
     try visited.put(root_path, {});
 
-    const root_dir = fs.dirname(root_path);
-    var w = walk.Walker{ .arena = arena, .io = io, .visited = &visited, .max_depth = max_depth, .root_dir = root_dir };
-    const map = MapVisitor{ .w = nw };
+    const root_dir = az.dirname(root_path);
+    var w = walk.Walker{
+        .arena = arena,
+        .io = io,
+        .visited = &visited,
+        .max_depth = max_depth,
+        .root_dir = root_dir,
+        .out = nw,
+    };
 
     try nw.print("path\tdepth\tkind\tname\tn_children\tdetail\n", .{});
 
     const root_logical = std.fs.path.stem(root_path); // "std"
-    if (try fs.parseFile(io, arena, root_path)) |root_ast_v| {
+    if (try az.parseFile(io, arena, root_path)) |root_ast_v| {
         const root_ast = try arena.create(Ast);
         root_ast.* = root_ast_v;
-        const cnt = astu.countPub(root_ast, root_ast.rootDecls());
-        try map.emit(.{ .path = root_logical, .name = root_logical, .depth = 0, .kind = .ns, .n_children = cnt, .detail = fs.relPath(root_dir, root_path), .ds_ast = root_ast, .ds_tok = null });
-        try walk.walkMembers(&w, map, root_ast, root_ast.rootDecls(), root_dir, root_logical, 1);
+        const cnt = az.countPub(root_ast, root_ast.rootDecls());
+        try w.emit(.{ .path = root_logical, .name = root_logical, .depth = 0, .kind = .ns, .n_children = cnt, .detail = az.relPath(root_dir, root_path) });
+        try walk.walkMembers(&w, root_ast, root_ast.rootDecls(), root_dir, root_logical, 1);
     } else {
         // root unreadable → a single nserr row.
-        try map.emit(.{ .path = root_logical, .name = root_logical, .depth = 0, .kind = .nserr, .detail = fs.relPath(root_dir, root_path), .ds_ast = undefined, .ds_tok = null });
+        try w.emit(.{ .path = root_logical, .name = root_logical, .depth = 0, .kind = .nserr, .detail = az.relPath(root_dir, root_path) });
     }
 
     try nw.flush();

@@ -168,14 +168,12 @@
         <div class="reads">reads source as TEXT · never runs</div>
       </div>
       <div class="body">
-        <div class="f"><b>build.zig</b><span class="ln">65</span></div>
-        <div class="f"><b>walk.zig</b><span class="ln">309</span></div>
-        <div class="dir">visit/</div>
-        <div class="f">&nbsp;&nbsp;map.zig<span class="ln">22</span></div>
-        <div class="dir">common/</div>
-        <div class="f">&nbsp;&nbsp;fs · ast · tsv<span class="ln">149</span></div>
+        <div class="f"><b>build.zig</b><span class="ln">68</span> &nbsp;entry</div>
+        <div class="f"><b>walk.zig</b><span class="ln">277</span> &nbsp;traversal + emit</div>
+        <div class="f"><b>ast.zig</b><span class="ln">135</span> &nbsp;read primitives</div>
         <div class="f" style="margin-top:8px;line-height:1.45">parse all → output all: paths,
-          names, kinds, child-counts, files — in source order.</div>
+          names, kinds, child-counts, files — in source order. Three flat files, one walk,
+          one writer.</div>
       </div>
       <div class="out">→ <b>nodes.tsv</b> — ONE file<br>the faithful structural map</div>
     </div>

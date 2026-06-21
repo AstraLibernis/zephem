@@ -57,8 +57,7 @@ def render [] {
         "@@CANON_READONLY@@": (commafy ($canon | where origin == "read-only" | length))
         "@@LC_BUILD@@":       ((lc "parse/build.zig") | into string)
         "@@LC_WALK@@":        ((lc "parse/walk.zig") | into string)
-        "@@LC_MAP@@":         ((lc "parse/visit/map.zig") | into string)
-        "@@LC_COMMON@@":      (((lc "parse/common/fs.zig") + (lc "parse/common/ast.zig") + (lc "parse/common/tsv.zig")) | into string)
+        "@@LC_AST@@":         ((lc "parse/ast.zig") | into string)
         "@@LC_RESOLVE@@":     ((lc "reflect/resolve.zig") | into string)
         "@@LC_INDEX@@":       ((lc "derive/index.zig") | into string)
         "@@KIND_BARS@@":      $kbars
