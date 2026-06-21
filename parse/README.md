@@ -20,8 +20,8 @@ whole contract, and the thing to protect:
 - **No sorting.** Rows come out pre-order, depth-first, children in the exact order the file
   declares them. Never alphabetised, never grouped.
 - **No clustering.** `parse/` does not bucket `crypto`+`hash` into "encoding" or `os`+`fs` into
-  "system". Those are *our* ideas; they are kept out, in [`../clusters/`](../clusters/),
-  unwired by design.
+  "system". Those are *our* ideas; they are deferred to a later phase (after `../derive/`),
+  never folded into the faithful base.
 - **No invented links.** The only relationships recorded are the ones Zig literally wrote
   (`@import` edges, `pub const X = Y.Z` aliases).
 

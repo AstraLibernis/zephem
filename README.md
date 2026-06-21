@@ -154,8 +154,9 @@ The extractor is **three engines**, split by *what each reads*:
   above: `derive/index.zig` builds the table of contents (`index.tsv`) over the map, and
   `scripts/build_canon.nu` joins parse vs reflect into the provenance census (`canon.tsv`).
 
-The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The editorial
-shape-clustering experiments live, deliberately unwired, in **[`clusters/`](clusters/)**.
+The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. Editorial
+shape-clustering (grouping the map "by purpose") is **deliberately deferred to a later phase,
+after `derive/`** — those are *our* ideas laid on top, never part of the faithful base.
 Phases and status: **[PLAN.md](PLAN.md)**.
 
 ## Toolchain

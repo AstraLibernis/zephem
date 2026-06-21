@@ -33,9 +33,10 @@ never folded into the base.
    visitors, so the map and overlays can no longer desync), then split by *what each reads*
    into three engines: **`parse/`** (read source as text → map, decls, tunnels), **`reflect/`**
    (run the compiler → resolved depth), **`derive/`** (transform the datasets, read no Zig →
-   index, canon). The editorial shape-clustering experiments were moved out to `clusters/`,
-   **unwired by design**, to keep the base map a pure mirror. Docs cut to three (this file,
-   `README.md`, `parse/README.md`); the rest parked in `docs/archive/` for rewrite.
+   index, canon). Editorial shape-clustering was **deferred to a later phase** (after
+   `derive/`) to keep the base map a pure mirror — early experiments preserved in git history
+   at commit `933f4a0`. Docs cut to three (this file, `README.md`, `parse/README.md`); the
+   rest parked in `docs/archive/` for rewrite.
 
 ---
 
@@ -64,6 +65,9 @@ three attribute overlays, the graph that connects them, and a total provenance c
 1. **L4 — examples from tests** — extract and *run* `test {}` blocks (executing verification).
    Highest value-per-effort.
 2. **L6 — version diff** — what changed between Zig versions; needs a second pinned snapshot.
+3. **Clustering / grouping** *(after `derive/`)* — the editorial layer that groups the faithful
+   map "by purpose". Deliberately last: it is *our* reading laid on top, never part of the base.
+   Early experiments at commit `933f4a0`.
 
 Each new dataset registers with a harness and ships its own backward check.
 
