@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zephem — doccov slice</title>
+<!-- GENERATED FILE — do not hand-edit. Regenerate: nu scripts/build_arch.nu
+     Structure here, styling in docs/style.css; every number injected from data/std. -->
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav"><a href="../architecture.html">← architecture</a>
+    <span class="raw"><a href="../../data/std/doccov.tsv">doccov.tsv ↗ raw</a></span></div>
+
+  <h1><span class="z">doccov</span> — documentation coverage</h1>
+  <p class="sub">From <code>nodes.tsv</code> ⋈ <code>docs.tsv</code> by <code>scripts/build_doccov.nu</code>:
+    every decl in the map tagged by whether a <code>///</code> doc-comment sits above it. The gaps
+    are first-class data — group them by kind, by module.</p>
+
+  <div class="statrow">
+    <div class="statbox"><div class="sv">16,506</div><div class="sl">decls total</div></div>
+    <div class="statbox both"><div class="sv">4,084</div><div class="sl">documented</div></div>
+    <div class="statbox ro"><div class="sv">12,422</div><div class="sl">undocumented</div></div>
+    <div class="statbox"><div class="sv">25%</div><div class="sl">covered</div></div>
+  </div>
+
+  <h2>documented ◀ &nbsp; &nbsp; ▶ undocumented</h2>
+  <div class="panelcard">
+    <p class="ph">how much of the public surface carries a <code>///</code> doc — most decls don't, and
+      that absence is exactly what this overlay records</p>
+    <div class="divbar">
+      <span class="seg both" style="width:25%"></span>
+      <span class="seg ro" style="width:75%"></span>
+    </div>
+    <p class="ph" style="margin-top:10px"><b>4,084</b> documented (25%) &nbsp;·&nbsp;
+      <b>12,422</b> undocumented (75%)</p>
+  </div>
+
+  <h2>Coverage by kind</h2>
+  <div class="panelcard">
+    <p class="ph">which <b>shapes</b> of decl get documented — functions lead; <code>const</code> and
+      <code>opaque</code> trail</p>
+    <table class="ftab">
+      <thead><tr><th>kind</th><th>total</th><th>documented</th><th>coverage</th></tr></thead>
+      <tbody>
+      <tr><td class="mono">const</td><td class="num">7,098</td><td class="dim">1,131</td><td class="num">16%</td></tr>
+      <tr><td class="mono">fn</td><td class="num">5,377</td><td class="dim">2,318</td><td class="num">43%</td></tr>
+      <tr><td class="mono">struct</td><td class="num">1,854</td><td class="dim">373</td><td class="num">20%</td></tr>
+      <tr><td class="mono">alias</td><td class="num">1,099</td><td class="dim">108</td><td class="num">10%</td></tr>
+      <tr><td class="mono">enum</td><td class="num">586</td><td class="dim">123</td><td class="num">21%</td></tr>
+      <tr><td class="mono">ns</td><td class="num">310</td><td class="dim">14</td><td class="num">5%</td></tr>
+      <tr><td class="mono">union</td><td class="num">124</td><td class="dim">14</td><td class="num">11%</td></tr>
+      <tr><td class="mono">opaque</td><td class="num">52</td><td class="dim">0</td><td class="num">0%</td></tr>
+      <tr><td class="mono">nsref</td><td class="num">6</td><td class="dim">3</td><td class="num">50%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Coverage by module</h2>
+  <div class="panelcard">
+    <p class="ph">top-level modules under <b>std</b> by decl count, with how many carry a doc and the
+      resulting coverage</p>
+    <table class="ftab">
+      <thead><tr><th>module</th><th>decls</th><th>documented</th><th>coverage</th></tr></thead>
+      <tbody>
+      <tr><td class="mono">std.os</td><td class="num">4,995</td><td class="dim">807</td><td class="num">16%</td></tr>
+      <tr><td class="mono">std.Target</td><td class="num">1,599</td><td class="dim">42</td><td class="num">3%</td></tr>
+      <tr><td class="mono">std.zig</td><td class="num">1,455</td><td class="dim">156</td><td class="num">11%</td></tr>
+      <tr><td class="mono">std.crypto</td><td class="num">1,086</td><td class="dim">679</td><td class="num">63%</td></tr>
+      <tr><td class="mono">std.Io</td><td class="num">1,044</td><td class="dim">346</td><td class="num">33%</td></tr>
+      <tr><td class="mono">std.dwarf</td><td class="num">758</td><td class="dim">2</td><td class="num">0%</td></tr>
+      <tr><td class="mono">std.Build</td><td class="num">632</td><td class="dim">193</td><td class="num">31%</td></tr>
+      <tr><td class="mono">std.elf</td><td class="num">599</td><td class="dim">216</td><td class="num">36%</td></tr>
+      <tr><td class="mono">std.c</td><td class="num">593</td><td class="dim">19</td><td class="num">3%</td></tr>
+      <tr><td class="mono">std.math</td><td class="num">353</td><td class="dim">216</td><td class="num">61%</td></tr>
+      <tr><td class="mono">std.macho</td><td class="num">339</td><td class="dim">192</td><td class="num">57%</td></tr>
+      <tr><td class="mono">std.debug</td><td class="num">276</td><td class="dim">56</td><td class="num">20%</td></tr>
+      <tr><td class="mono">std.posix</td><td class="num">242</td><td class="dim">30</td><td class="num">12%</td></tr>
+      <tr><td class="mono">std.compress</td><td class="num">197</td><td class="dim">36</td><td class="num">18%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>zephem · doccov slice</span>
+    <span>build_doccov.nu · nodes ⋈ docs</span>
+    <span>regenerated from data/std · zig 0.16.0</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -45,8 +45,8 @@
         <div class="reads">reads source as TEXT · never runs</div>
       </div>
       <div class="body">
-        <div class="f"><b>build.zig</b><span class="ln">68</span> &nbsp;entry</div>
-        <div class="f"><b>walk.zig</b><span class="ln">277</span> &nbsp;traversal + emit</div>
+        <div class="f"><b>build.zig</b><span class="ln">86</span> &nbsp;entry</div>
+        <div class="f"><b>walk.zig</b><span class="ln">360</span> &nbsp;traversal + emit</div>
         <div class="f"><b>ast.zig</b><span class="ln">135</span> &nbsp;read primitives</div>
         <div class="f" style="margin-top:8px;line-height:1.45">parse all → output all: paths,
           names, kinds, child-counts, files — in source order. Three flat files, one walk,
@@ -84,10 +84,14 @@
         <div class="f">&nbsp;&nbsp;dedup/dealias resolved types</div>
         <div class="f" style="margin-top:8px"><b>scripts/build_consensus.nu</b></div>
         <div class="f">&nbsp;&nbsp;compare parse ⋈ reflect</div>
+        <div class="f" style="margin-top:8px"><b>scripts/build_doccov.nu</b></div>
+        <div class="f">&nbsp;&nbsp;doc coverage over the map</div>
+        <div class="f" style="margin-top:8px"><b>scripts/build_sigshape.nu</b></div>
+        <div class="f">&nbsp;&nbsp;classify the signatures</div>
         <div class="f" style="margin-top:8px;line-height:1.45">facts <i>about the data</i> — how to
           navigate it, what's aliased, where the two readers differ.</div>
       </div>
-      <div class="out">→ <b>index.tsv</b> · <b>canon.tsv</b> · <b>consensus.tsv</b><br>navigation · dedup · comparison</div>
+      <div class="out">→ <b>index</b> · <b>canon</b> · <b>consensus</b> · <b>doccov</b> · <b>sigshape</b><br>navigation · dedup · comparison · coverage · shapes</div>
     </div>
 
   </div>
@@ -104,8 +108,10 @@
       <a class="chip" href="../data/std/index.tsv"><b>index.tsv</b> <span class="n">1,355</span></a>
       <a class="chip" href="../data/std/canon.tsv"><b>canon.tsv</b> <span class="n">236</span></a>
       <a class="chip" href="../data/std/consensus.tsv"><b>consensus.tsv</b> <span class="n">18,802</span></a>
+      <a class="chip" href="../data/std/doccov.tsv"><b>doccov.tsv</b> <span class="n">25% documented</span></a>
+      <a class="chip" href="../data/std/sigshape.tsv"><b>sigshape.tsv</b> <span class="n">5,377 fns</span></a>
     </div>
-    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families</div>
+    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families &nbsp;·&nbsp; doccov — <b>4,084</b> documented &nbsp;·&nbsp; sigshape — <b>1,172</b> methods</div>
   </div>
 
   <div class="arrow">↓<span>read back the other way</span></div>
@@ -135,6 +141,16 @@
       <div class="st">consensus ↗</div>
       <div class="sn">5,378 differences</div>
       <div class="sd">read-only ◀ both ▶ run-only — where the two readers disagree, and why.</div>
+    </a>
+    <a class="slice" href="views/doccov.html">
+      <div class="st">doccov ↗</div>
+      <div class="sn">25% documented</div>
+      <div class="sd">documentation coverage — which decls carry a <code>///</code> doc, by kind and module.</div>
+    </a>
+    <a class="slice" href="views/sigshape.html">
+      <div class="st">sigshape ↗</div>
+      <div class="sn">1,172 methods</div>
+      <div class="sd">signature shapes — receiver, Io-threading, generics across every fn.</div>
     </a>
   </div>
 

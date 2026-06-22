@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zephem — doccov slice</title>
+<!-- GENERATED FILE — do not hand-edit. Regenerate: nu scripts/build_arch.nu
+     Structure here, styling in docs/style.css; every number injected from data/std. -->
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav"><a href="../architecture.html">← architecture</a>
+    <span class="raw"><a href="../../data/std/doccov.tsv">doccov.tsv ↗ raw</a></span></div>
+
+  <h1><span class="z">doccov</span> — documentation coverage</h1>
+  <p class="sub">From <code>nodes.tsv</code> ⋈ <code>docs.tsv</code> by <code>scripts/build_doccov.nu</code>:
+    every decl in the map tagged by whether a <code>///</code> doc-comment sits above it. The gaps
+    are first-class data — group them by kind, by module.</p>
+
+  <div class="statrow">
+    <div class="statbox"><div class="sv">@@N_NODES@@</div><div class="sl">decls total</div></div>
+    <div class="statbox both"><div class="sv">@@DOC_DOCUMENTED@@</div><div class="sl">documented</div></div>
+    <div class="statbox ro"><div class="sv">@@DOC_UNDOC@@</div><div class="sl">undocumented</div></div>
+    <div class="statbox"><div class="sv">@@DOC_PCT@@%</div><div class="sl">covered</div></div>
+  </div>
+
+  <h2>documented ◀ &nbsp; &nbsp; ▶ undocumented</h2>
+  <div class="panelcard">
+    <p class="ph">how much of the public surface carries a <code>///</code> doc — most decls don't, and
+      that absence is exactly what this overlay records</p>
+    <div class="divbar">
+      <span class="seg both" style="width:@@DOC_PCT@@%"></span>
+      <span class="seg ro" style="width:@@DOC_UNDOC_PCT@@%"></span>
+    </div>
+    <p class="ph" style="margin-top:10px"><b>@@DOC_DOCUMENTED@@</b> documented (@@DOC_PCT@@%) &nbsp;·&nbsp;
+      <b>@@DOC_UNDOC@@</b> undocumented (@@DOC_UNDOC_PCT@@%)</p>
+  </div>
+
+  <h2>Coverage by kind</h2>
+  <div class="panelcard">
+    <p class="ph">which <b>shapes</b> of decl get documented — functions lead; <code>const</code> and
+      <code>opaque</code> trail</p>
+    <table class="ftab">
+      <thead><tr><th>kind</th><th>total</th><th>documented</th><th>coverage</th></tr></thead>
+      <tbody>
+@@DOCCOV_KIND_ROWS@@
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Coverage by module</h2>
+  <div class="panelcard">
+    <p class="ph">top-level modules under <b>std</b> by decl count, with how many carry a doc and the
+      resulting coverage</p>
+    <table class="ftab">
+      <thead><tr><th>module</th><th>decls</th><th>documented</th><th>coverage</th></tr></thead>
+      <tbody>
+@@DOCCOV_MODULE_ROWS@@
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>zephem · doccov slice</span>
+    <span>build_doccov.nu · nodes ⋈ docs</span>
+    <span>regenerated from data/std · @@ZIG@@</span>
+  </footer>
+
+</div>
+</body>
+</html>

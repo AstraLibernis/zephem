@@ -16,6 +16,8 @@ const PAGES = [
   ["docs/views/index.tmpl.html",      "docs/views/index.html"]
   ["docs/views/canon.tmpl.html",      "docs/views/canon.html"]
   ["docs/views/consensus.tmpl.html",  "docs/views/consensus.html"]
+  ["docs/views/doccov.tmpl.html",     "docs/views/doccov.html"]
+  ["docs/views/sigshape.tmpl.html",   "docs/views/sigshape.html"]
 ]
 
 # 12345 -> "12,345" (no lookahead in the regex engine, so group from the right by hand).
@@ -63,10 +65,26 @@ def render [] {
     let consensus = (open data/std/consensus.tsv)
     let status = (open data/std/status.tsv)
     let poison = (open data/std/poison.tsv)
+    let doccov = (open data/std/doccov.tsv)
+    let sigshape = (open data/std/sigshape.tsv)
 
     let n     = ($nodes | length)
     let files = ($nodes | where kind == "ns" | length)
     let depth = ($nodes | get depth | math max)
+
+    # doccov — documentation coverage
+    let dc_total = ($doccov | length)
+    let dc_doc   = ($doccov | where documented == "yes" | length)
+    let dc_pct   = (($dc_doc * 100) / $dc_total | math round | into int)
+
+    # sigshape — signature shapes
+    let sg_total = ($sigshape | length)
+    let sg_self  = ($sigshape | where first_param == "self" | length)
+    let sg_none  = ($sigshape | where first_param == "none" | length)
+    let sg_alloc = ($sigshape | where first_param == "allocator" | length)
+    let sg_other = ($sigshape | where first_param == "other" | length)
+    let sg_io    = ($sigshape | where io == "yes" | length)
+    let sg_gen   = ($sigshape | where generic == "yes" | length)
 
     # hub: kind distribution across the whole map (.kbar style)
     let kinds = ($nodes | group-by kind | items {|k, v| {kind: $k, n: ($v | length)} } | sort-by n --reverse)
@@ -110,6 +128,14 @@ def render [] {
         "@@LC_AST@@":         ((lc "parse/ast.zig") | into string)
         "@@LC_RESOLVE@@":     ((lc "reflect/resolve.zig") | into string)
         "@@LC_INDEX@@":       ((lc "derive/index.zig") | into string)
+        "@@DOC_DOCUMENTED@@": (commafy $dc_doc)
+        "@@DOC_UNDOC@@":      (commafy ($dc_total - $dc_doc))
+        "@@DOC_PCT@@":        ($dc_pct | into string)
+        "@@DOC_UNDOC_PCT@@":  ((100 - $dc_pct) | into string)
+        "@@N_SIGSHAPE@@":     (commafy $sg_total)
+        "@@SIG_METHODS@@":    (commafy $sg_self)
+        "@@SIG_IO@@":         (commafy $sg_io)
+        "@@SIG_GENERIC@@":    (commafy $sg_gen)
     }
 
     # ── hub ──
@@ -163,7 +189,46 @@ def render [] {
         "@@POISON_ROWS@@":         $poison_rows
     })
 
-    let subs = [$hub, $idx, $canonp, $conp]
+    # ── doccov slice ──
+    let dc_kind_rows = ($doccov | group-by kind | items {|k, v| {kind: $k, total: ($v | length), doc: ($v | where documented == "yes" | length)} }
+        | sort-by total --reverse | each {|r|
+            let pct = (($r.doc * 100) / $r.total | math round | into int)
+            $'      <tr><td class="mono">($r.kind)</td><td class="num">(commafy $r.total)</td><td class="dim">(commafy $r.doc)</td><td class="num">($pct)%</td></tr>'
+    } | str join "\n")
+    let dc_mod_rows = ($doccov | insert m {|r| module-of $r.path } | group-by m
+        | items {|k, v| {m: $k, total: ($v | length), doc: ($v | where documented == "yes" | length)} }
+        | sort-by total --reverse | first 14 | each {|r|
+            let pct = (($r.doc * 100) / $r.total | math round | into int)
+            $'      <tr><td class="mono">std.($r.m)</td><td class="num">(commafy $r.total)</td><td class="dim">(commafy $r.doc)</td><td class="num">($pct)%</td></tr>'
+    } | str join "\n")
+    let doccovp = ($common | merge {
+        "@@DOCCOV_KIND_ROWS@@":   $dc_kind_rows
+        "@@DOCCOV_MODULE_ROWS@@": $dc_mod_rows
+    })
+
+    # ── sigshape slice ──
+    let fp = ([{k: "other (free fn)", v: $sg_other} {k: "self (method)", v: $sg_self} {k: "none (niladic)", v: $sg_none} {k: "allocator", v: $sg_alloc}] | sort-by v --reverse)
+    let sg_fp_bars = (lbars $fp)
+    let traits = [{t: "method (self-first)", n: $sg_self} {t: "Io-threading", n: $sg_io} {t: "generic (comptime/anytype)", n: $sg_gen} {t: "niladic (no params)", n: $sg_none}]
+    let sg_trait_rows = ($traits | each {|r|
+        let pct = (($r.n * 100) / $sg_total | math round | into int)
+        $'      <tr><td class="mono">($r.t)</td><td class="num">(commafy $r.n)</td><td class="num">($pct)%</td></tr>'
+    } | str join "\n")
+    let sg_mod_rows = ($sigshape | insert m {|r| module-of $r.path } | group-by m
+        | items {|k, v| {m: $k, n: ($v | length), gen: ($v | where generic == "yes" | length), io: ($v | where io == "yes" | length)} }
+        | sort-by n --reverse | first 14 | each {|r|
+            $'      <tr><td class="mono">std.($r.m)</td><td class="num">(commafy $r.n)</td><td class="dim">(commafy $r.gen)</td><td class="dim">(commafy $r.io)</td></tr>'
+    } | str join "\n")
+    let sigshapep = ($common | merge {
+        "@@SIG_NONE@@":         (commafy $sg_none)
+        "@@SIG_ALLOC@@":        (commafy $sg_alloc)
+        "@@SIG_OTHER@@":        (commafy $sg_other)
+        "@@SIG_FP_BARS@@":      $sg_fp_bars
+        "@@SIG_TRAIT_ROWS@@":   $sg_trait_rows
+        "@@SIG_MODULE_ROWS@@":  $sg_mod_rows
+    })
+
+    let subs = [$hub, $idx, $canonp, $conp, $doccovp, $sigshapep]
     $PAGES | enumerate | each {|p| {out: $p.item.out, html: (fill $p.item.tmpl ($subs | get $p.index))} }
 }
 

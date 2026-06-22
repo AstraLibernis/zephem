@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zephem — sigshape slice</title>
+<!-- GENERATED FILE — do not hand-edit. Regenerate: nu scripts/build_arch.nu
+     Structure here, styling in docs/style.css; every number injected from data/std. -->
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav"><a href="../architecture.html">← architecture</a>
+    <span class="raw"><a href="../../data/std/sigshape.tsv">sigshape.tsv ↗ raw</a></span></div>
+
+  <h1><span class="z">sigshape</span> — signature shapes</h1>
+  <p class="sub">From <code>sigs.tsv</code> by <code>scripts/build_sigshape.nu</code>: each fn's
+    as-written signature decomposed into a few structural facts — the receiver, whether it threads
+    <code>Io</code>, whether it's generic — so std's API ergonomics become groupable.</p>
+
+  <div class="statrow">
+    <div class="statbox"><div class="sv">@@N_SIGSHAPE@@</div><div class="sl">functions</div></div>
+    <div class="statbox both"><div class="sv">@@SIG_METHODS@@</div><div class="sl">methods (self)</div></div>
+    <div class="statbox run"><div class="sv">@@SIG_IO@@</div><div class="sl">Io-threading</div></div>
+    <div class="statbox ro"><div class="sv">@@SIG_GENERIC@@</div><div class="sl">generic</div></div>
+  </div>
+
+  <h2>By first parameter</h2>
+  <div class="panelcard">
+    <p class="ph">the receiver shape — <b>self</b> (a method), <b>allocator</b> (allocating),
+      <b>none</b> (niladic), or <b>other</b> (a free function over its args)</p>
+@@SIG_FP_BARS@@
+  </div>
+
+  <h2>Signature traits</h2>
+  <div class="panelcard">
+    <p class="ph">cross-cutting facts, each a share of all <b>@@N_SIGSHAPE@@</b> functions — a signature
+      can carry several at once</p>
+    <table class="ftab">
+      <thead><tr><th>trait</th><th>functions</th><th>share</th></tr></thead>
+      <tbody>
+@@SIG_TRAIT_ROWS@@
+      </tbody>
+    </table>
+  </div>
+
+  <h2>By module</h2>
+  <div class="panelcard">
+    <p class="ph">top-level modules under <b>std</b> by fn count, with how many are generic and how many
+      thread <code>Io</code> — <code>crypto</code> and <code>math</code> skew generic</p>
+    <table class="ftab">
+      <thead><tr><th>module</th><th>fns</th><th>generic</th><th>Io</th></tr></thead>
+      <tbody>
+@@SIG_MODULE_ROWS@@
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>zephem · sigshape slice</span>
+    <span>build_sigshape.nu · over sigs.tsv</span>
+    <span>regenerated from data/std · @@ZIG@@</span>
+  </footer>
+
+</div>
+</body>
+</html>
