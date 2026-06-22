@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zephem — callcard slice</title>
+<!-- GENERATED FILE — do not hand-edit. Regenerate: nu scripts/build_arch.nu
+     Structure here, styling in docs/style.css; every number injected from data/std. -->
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav"><a href="../architecture.html">← architecture</a>
+    <span class="raw"><a href="../../data/std/callcard.tsv">callcard.tsv ↗ raw</a></span></div>
+
+  <h1><span class="z">callcard</span> — merge the two views of a callable</h1>
+  <p class="sub">From <code>sigs.tsv</code> ⋈ <code>resolved.tsv</code> (+ <code>docs.tsv</code>) by
+    <code>scripts/build_callcard.nu</code>: the parser supplies the <em>name</em> and as-written
+    signature; reflection supplies the <em>resolved types</em>. Joined on <code>path</code>, they're
+    one full card per function — the semantic depth comes from combining, not from guessing.</p>
+
+  <div class="statrow">
+    <div class="statbox"><div class="sv">7,099</div><div class="sl">callables</div></div>
+    <div class="statbox both"><div class="sv">4,823</div><div class="sl">both views</div></div>
+    <div class="statbox ro"><div class="sv">554</div><div class="sl">parser-only</div></div>
+    <div class="statbox run"><div class="sv">1,722</div><div class="sl">reflect-only</div></div>
+  </div>
+
+  <h2>parser-only ◀ &nbsp; both &nbsp; ▶ reflect-only</h2>
+  <div class="panelcard">
+    <p class="ph">the parser writes a <em>name</em>, the compiler resolves <em>types</em>; only where
+      both land on the same path do you get a complete card — the wings are half-cards</p>
+    <div class="diverge">
+      <div class="dcell ro"><div class="dn">554</div><div class="dl">parser-only</div>
+        <div class="dx">named · not resolvable here</div></div>
+      <div class="dcell both"><div class="dn">4,823</div><div class="dl">both — full card</div>
+        <div class="dx">name + resolved types</div></div>
+      <div class="dcell run"><div class="dn">1,722</div><div class="dl">reflect-only</div>
+        <div class="dx">compiler-made · unnamed</div></div>
+    </div>
+    <div class="divbar">
+      <span class="seg ro" style="width:8%"></span>
+      <span class="seg both" style="width:68%"></span>
+      <span class="seg run" style="width:24%"></span>
+    </div>
+  </div>
+
+  <h2>The merge in action</h2>
+  <div class="panelcard">
+    <p class="ph">full cards whose as-written signature still says <code>@This()</code>/<code>Self</code> —
+      watch the <b>resolved</b> column fill in the real type the parser couldn't know</p>
+    <table class="ftab">
+      <thead><tr><th style="width:26%">path</th><th>as-written (parser)</th><th>resolved (reflect)</th></tr></thead>
+      <tbody>
+      <tr><td class="mono">std.BitStack.deinit</td><td class="mono dim">fn deinit(self: *@This()) void</td><td class="mono">fn (*BitStack) void</td></tr>
+      <tr><td class="mono">std.BitStack.ensureTotalCapacity</td><td class="mono dim">fn ensureTotalCapacity(self: *@This(), bit_capacity: usize) Allocator.Error!void</td><td class="mono">fn (*BitStack, usize) error{OutOfMemory}!void</td></tr>
+      <tr><td class="mono">std.BitStack.init</td><td class="mono dim">fn init(allocator: Allocator) @This()</td><td class="mono">fn (mem.Allocator) BitStack</td></tr>
+      <tr><td class="mono">std.BitStack.peek</td><td class="mono dim">fn peek(self: *const @This()) u1</td><td class="mono">fn (*const BitStack) u1</td></tr>
+      <tr><td class="mono">std.BitStack.pop</td><td class="mono dim">fn pop(self: *@This()) u1</td><td class="mono">fn (*BitStack) u1</td></tr>
+      <tr><td class="mono">std.BitStack.push</td><td class="mono dim">fn push(self: *@This(), b: u1) Allocator.Error!void</td><td class="mono">fn (*BitStack, u1) error{OutOfMemory}!void</td></tr>
+      <tr><td class="mono">std.Build.abi.fuzz.Uid.hashmap_ctx.eql</td><td class="mono dim">fn eql(_: @This(), a: Uid, b: Uid, _: usize) bool</td><td class="mono">fn (Build.abi.fuzz.Uid.hashmap_ctx, Build.abi.fuzz.Uid, Build.abi.fuzz.Uid, usize) bool</td></tr>
+      <tr><td class="mono">std.Build.abi.fuzz.Uid.hashmap_ctx.hash</td><td class="mono dim">fn hash(_: @This(), u: Uid) u32</td><td class="mono">fn (Build.abi.fuzz.Uid.hashmap_ctx, Build.abi.fuzz.Uid) u32</td></tr>
+      <tr><td class="mono">std.Build.lazyImport</td><td class="mono dim">fn lazyImport( b: *Build, /// The build.zig struct of the package importing the dependency. /// When calling this function from the `build` function of a build.zig file's, you normally /// pass `@This()`. comptime asking_build_zig: type, comptime dep_name: []const u8, ) ?type</td><td class="mono">fn (*Build, comptime type, comptime []const u8) callconv(.@"inline") ?type</td></tr>
+      <tr><td class="mono">std.Io.File.Reader.Mode.toSimple</td><td class="mono dim">fn toSimple(m: @This()) @This()</td><td class="mono">fn (Io.File.Reader.Mode) Io.File.Reader.Mode</td></tr>
+      <tr><td class="mono">std.Io.File.Reader.Mode.toStreaming</td><td class="mono dim">fn toStreaming(m: @This()) @This()</td><td class="mono">fn (Io.File.Reader.Mode) Io.File.Reader.Mode</td></tr>
+      <tr><td class="mono">std.Progress.Node.Index.toOptional</td><td class="mono dim">fn toOptional(i: @This()) OptionalIndex</td><td class="mono">fn (Progress.Node.Index) Progress.Node.OptionalIndex</td></tr>
+      <tr><td class="mono">std.Progress.Node.OptionalIndex.unwrap</td><td class="mono dim">fn unwrap(i: @This()) ?Index</td><td class="mono">fn (Progress.Node.OptionalIndex) ?Progress.Node.Index</td></tr>
+      <tr><td class="mono">std.Random.Ascon.addEntropy</td><td class="mono dim">fn addEntropy(self: *Self, bytes: []const u8) void</td><td class="mono">fn (*Random.Ascon, []const u8) void</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>By module</h2>
+  <div class="panelcard">
+    <p class="ph">top-level modules by callable count, split into <b>both</b> (full card) and
+      <b>reflect-only</b> (compiler-manufactured — generic instantiations)</p>
+    <table class="ftab">
+      <thead><tr><th>module</th><th>callables</th><th>both</th><th>reflect-only</th></tr></thead>
+      <tbody>
+      <tr><td class="mono">std.crypto</td><td class="num">1,133</td><td class="dim">545</td><td class="dim">581</td></tr>
+      <tr><td class="mono">std.zig</td><td class="num">982</td><td class="dim">824</td><td class="dim">158</td></tr>
+      <tr><td class="mono">std.os</td><td class="num">790</td><td class="dim">495</td><td class="dim">10</td></tr>
+      <tr><td class="mono">std.Io</td><td class="num">738</td><td class="dim">549</td><td class="dim">51</td></tr>
+      <tr><td class="mono">std.Build</td><td class="num">707</td><td class="dim">406</td><td class="dim">275</td></tr>
+      <tr><td class="mono">std.math</td><td class="num">314</td><td class="dim">299</td><td class="dim">15</td></tr>
+      <tr><td class="mono">std.debug</td><td class="num">295</td><td class="dim">183</td><td class="dim">112</td></tr>
+      <tr><td class="mono">std.Target</td><td class="num">272</td><td class="dim">141</td><td class="dim">131</td></tr>
+      <tr><td class="mono">std.json</td><td class="num">231</td><td class="dim">68</td><td class="dim">163</td></tr>
+      <tr><td class="mono">std.mem</td><td class="num">184</td><td class="dim">161</td><td class="dim">23</td></tr>
+      <tr><td class="mono">std.process</td><td class="num">98</td><td class="dim">95</td><td class="dim">3</td></tr>
+      <tr><td class="mono">std.http</td><td class="num">96</td><td class="dim">87</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.hash</td><td class="num">84</td><td class="dim">26</td><td class="dim">58</td></tr>
+      <tr><td class="mono">std.compress</td><td class="num">83</td><td class="dim">77</td><td class="dim">6</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>zephem · callcard slice</span>
+    <span>build_callcard.nu · sigs ⋈ resolved</span>
+    <span>regenerated from data/std · zig 0.16.0</span>
+  </footer>
+
+</div>
+</body>
+</html>

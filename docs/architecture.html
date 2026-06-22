@@ -88,10 +88,12 @@
         <div class="f">&nbsp;&nbsp;doc coverage over the map</div>
         <div class="f" style="margin-top:8px"><b>scripts/build_sigshape.nu</b></div>
         <div class="f">&nbsp;&nbsp;classify the signatures</div>
+        <div class="f" style="margin-top:8px"><b>scripts/build_callcard.nu</b></div>
+        <div class="f">&nbsp;&nbsp;merge sigs ⋈ resolved</div>
         <div class="f" style="margin-top:8px;line-height:1.45">facts <i>about the data</i> — how to
-          navigate it, what's aliased, where the two readers differ.</div>
+          navigate it, what's aliased, where the two readers differ, and the two views merged.</div>
       </div>
-      <div class="out">→ <b>index</b> · <b>canon</b> · <b>consensus</b> · <b>doccov</b> · <b>sigshape</b><br>navigation · dedup · comparison · coverage · shapes</div>
+      <div class="out">→ <b>index</b> · <b>canon</b> · <b>consensus</b> · <b>doccov</b> · <b>sigshape</b> · <b>callcard</b><br>navigation · dedup · comparison · coverage · shapes · merge</div>
     </div>
 
   </div>
@@ -110,8 +112,9 @@
       <a class="chip" href="../data/std/consensus.tsv"><b>consensus.tsv</b> <span class="n">18,802</span></a>
       <a class="chip" href="../data/std/doccov.tsv"><b>doccov.tsv</b> <span class="n">25% documented</span></a>
       <a class="chip" href="../data/std/sigshape.tsv"><b>sigshape.tsv</b> <span class="n">5,377 fns</span></a>
+      <a class="chip" href="../data/std/callcard.tsv"><b>callcard.tsv</b> <span class="n">7,099 callables</span></a>
     </div>
-    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families &nbsp;·&nbsp; doccov — <b>4,084</b> documented &nbsp;·&nbsp; sigshape — <b>1,172</b> methods</div>
+    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families &nbsp;·&nbsp; doccov — <b>4,084</b> documented &nbsp;·&nbsp; sigshape — <b>1,172</b> methods &nbsp;·&nbsp; callcard — <b>4,823</b> full cards</div>
   </div>
 
   <div class="arrow">↓<span>read back the other way</span></div>
@@ -151,6 +154,11 @@
       <div class="st">sigshape ↗</div>
       <div class="sn">1,172 methods</div>
       <div class="sd">signature shapes — receiver, Io-threading, generics across every fn.</div>
+    </a>
+    <a class="slice" href="views/callcard.html">
+      <div class="st">callcard ↗</div>
+      <div class="sn">4,823 full cards</div>
+      <div class="sd">parser names ⋈ reflect types — the merged per-callable view, <code>@This()</code> resolved.</div>
     </a>
   </div>
 

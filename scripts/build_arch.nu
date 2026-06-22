@@ -18,6 +18,7 @@ const PAGES = [
   ["docs/views/consensus.tmpl.html",  "docs/views/consensus.html"]
   ["docs/views/doccov.tmpl.html",     "docs/views/doccov.html"]
   ["docs/views/sigshape.tmpl.html",   "docs/views/sigshape.html"]
+  ["docs/views/callcard.tmpl.html",   "docs/views/callcard.html"]
 ]
 
 # 12345 -> "12,345" (no lookahead in the regex engine, so group from the right by hand).
@@ -67,6 +68,7 @@ def render [] {
     let poison = (open data/std/poison.tsv)
     let doccov = (open data/std/doccov.tsv)
     let sigshape = (open data/std/sigshape.tsv)
+    let callcard = (open data/std/callcard.tsv)
 
     let n     = ($nodes | length)
     let files = ($nodes | where kind == "ns" | length)
@@ -85,6 +87,12 @@ def render [] {
     let sg_other = ($sigshape | where first_param == "other" | length)
     let sg_io    = ($sigshape | where io == "yes" | length)
     let sg_gen   = ($sigshape | where generic == "yes" | length)
+
+    # callcard — the sigs ⋈ resolved merge
+    let cc_total   = ($callcard | length)
+    let cc_both    = ($callcard | where witness == "both" | length)
+    let cc_parser  = ($callcard | where witness == "parser-only" | length)
+    let cc_reflect = ($callcard | where witness == "reflect-only" | length)
 
     # hub: kind distribution across the whole map (.kbar style)
     let kinds = ($nodes | group-by kind | items {|k, v| {kind: $k, n: ($v | length)} } | sort-by n --reverse)
@@ -136,6 +144,8 @@ def render [] {
         "@@SIG_METHODS@@":    (commafy $sg_self)
         "@@SIG_IO@@":         (commafy $sg_io)
         "@@SIG_GENERIC@@":    (commafy $sg_gen)
+        "@@N_CALLCARD@@":     (commafy $cc_total)
+        "@@CC_BOTH@@":        (commafy $cc_both)
     }
 
     # ── hub ──
@@ -228,7 +238,30 @@ def render [] {
         "@@SIG_MODULE_ROWS@@":  $sg_mod_rows
     })
 
-    let subs = [$hub, $idx, $canonp, $conp, $doccovp, $sigshapep]
+    # ── callcard slice ──
+    # showcase rows: "both" callables whose as-written sig still says @This()/Self — so the resolved
+    # column visibly fills in the real type. Deterministic (filter + sort + take).
+    let cc_rows = ($callcard | where witness == "both"
+        | where {|r| ($r.sig | str contains "@This()") or ($r.sig | str contains "Self") }
+        | sort-by path | first 14 | each {|r|
+            $'      <tr><td class="mono">(esc $r.path)</td><td class="mono dim">(esc $r.sig)</td><td class="mono">(esc $r.resolved)</td></tr>'
+    } | str join "\n")
+    let cc_mod_rows = ($callcard | insert m {|r| module-of $r.path } | group-by m
+        | items {|k, v| {m: $k, n: ($v | length), both: ($v | where witness == "both" | length), refl: ($v | where witness == "reflect-only" | length)} }
+        | sort-by n --reverse | first 14 | each {|r|
+            $'      <tr><td class="mono">std.($r.m)</td><td class="num">(commafy $r.n)</td><td class="dim">(commafy $r.both)</td><td class="dim">(commafy $r.refl)</td></tr>'
+    } | str join "\n")
+    let callcardp = ($common | merge {
+        "@@CC_PARSER@@":            (commafy $cc_parser)
+        "@@CC_REFLECT@@":           (commafy $cc_reflect)
+        "@@CC_BOTH_PCT@@":          (($cc_both * 100 / $cc_total) | math round | into int | into string)
+        "@@CC_PARSER_PCT@@":        (($cc_parser * 100 / $cc_total) | math round | into int | into string)
+        "@@CC_REFLECT_PCT@@":       (($cc_reflect * 100 / $cc_total) | math round | into int | into string)
+        "@@CALLCARD_ROWS@@":        $cc_rows
+        "@@CALLCARD_MODULE_ROWS@@": $cc_mod_rows
+    })
+
+    let subs = [$hub, $idx, $canonp, $conp, $doccovp, $sigshapep, $callcardp]
     $PAGES | enumerate | each {|p| {out: $p.item.out, html: (fill $p.item.tmpl ($subs | get $p.index))} }
 }
 
