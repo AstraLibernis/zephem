@@ -6,18 +6,19 @@
 # loses the names. Neither half is complete; joined on `path` they're a full card for the callable.
 # This is the sigs ⋈ resolved join PLAN.md calls the call-card. One job.
 #
-#   callcard.tsv   path · witness · documented · sig · resolved
+#   callcard.tsv   path · witness · sig · resolved
 #
 #   witness = both          parser AND reflect saw it — full card (names + resolved types)
 #             parser-only   written sig, but the compiler couldn't build it here (poison / gated /
 #                           uninstantiated generic) → no resolved types
 #             reflect-only  compiler-manufactured (a generic instantiation / synthesised member) →
-#                           resolved types but no as-written name or doc
-#   documented = yes if a `///` doc sits above it (∈ docs.tsv)
+#                           resolved types but no as-written name
 #   sig        the parser's as-written signature ("" when reflect-only)
 #   resolved   reflection's resolved fn type   ("" when parser-only)
 #
-# A pure JOIN of committed outputs — sigs + resolved + docs — keyed by `path` (keyword-quoting
+# (doc coverage is doccov's job; join it on path if you want it — kept out to avoid duplication.)
+#
+# A pure JOIN of committed outputs — sigs + resolved — keyed by `path` (keyword-quoting
 # normalised, the trick consensus uses). Self-checking. Writes data/std/callcard.tsv +
 # SHA256SUMS.callcard; --check rebuilds byte-identical.
 #
@@ -30,19 +31,17 @@ const MANIFEST = "data/std/SHA256SUMS.callcard"
 def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 
 def derive [dir: string] {
-    for f in ["sigs.tsv" "resolved.tsv" "docs.tsv"] {
+    for f in ["sigs.tsv" "resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     let sigs = (open $"($dir)/sigs.tsv" | select path sig | rename --column {path: spath} | insert np {|r| norm-path $r.spath})
     let res = (open $"($dir)/resolved.tsv" | where kind == "fn" | select path detail | uniq-by path | rename --column {path: rpath, detail: resolved} | insert np {|r| norm-path $r.rpath})
-    let docs = (open $"($dir)/docs.tsv" | select path | insert np {|r| norm-path $r.path} | select np | uniq | insert documented "yes")
-    $sigs | join --outer $res np | join --left $docs np | each {|r|
+    $sigs | join --outer $res np | each {|r|
         let path = (if $r.spath != null { $r.spath } else { $r.rpath })
         let witness = (if (($r.spath != null) and ($r.rpath != null)) { "both" } else if ($r.spath != null) { "parser-only" } else { "reflect-only" })
         {
             path: $path,
             witness: $witness,
-            documented: ($r.documented | default "no"),
             sig: ($r.sig | default ""),
             resolved: ($r.resolved | default ""),
         }

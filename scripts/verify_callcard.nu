@@ -1,20 +1,20 @@
 #!/usr/bin/env nu
-# verify_callcard.nu — reconcile the call-card against its three sources, the other way.
+# verify_callcard.nu — reconcile the call-card against its two sources, the other way.
 #
-# build_callcard.nu joined sigs + resolved + docs on the normalised path. This re-reads each source
+# build_callcard.nu joined sigs + resolved on the normalised path. This re-reads each source
 # independently and proves the merged row can't drift from, or invent, what it claims:
 #
 #   1. CENSUS       one row per callable — |callcard| = |sigs-fns ∪ resolved-fns|, no dups, no orphans.
 #   2. WITNESS      witness equals real membership: both = in both, parser-only / reflect-only = one.
 #   3. CONTENT      sig equals sigs.tsv's sig for that path (""=absent); resolved equals resolved.tsv's
-#                   detail; documented = yes ⟺ path ∈ docs.tsv. So presence ⟺ the right witness.
+#                   detail. So presence ⟺ the right witness.
 #
 # Usage:  nu scripts/verify_callcard.nu [data/std]
 
 def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 
 def main [dir: string = "data/std"] {
-    for f in ["callcard.tsv" "sigs.tsv" "resolved.tsv" "docs.tsv"] {
+    for f in ["callcard.tsv" "sigs.tsv" "resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     let cc = (open $"($dir)/callcard.tsv")
@@ -22,7 +22,6 @@ def main [dir: string = "data/std"] {
     let res = (open $"($dir)/resolved.tsv" | where kind == "fn" | select path detail | insert np {|r| norm-path $r.path} | uniq-by np)
     let sigByNp = ($sigs | reduce --fold {} {|r, acc| $acc | upsert $r.np $r.sig})
     let resByNp = ($res | reduce --fold {} {|r, acc| $acc | upsert $r.np $r.detail})
-    let docSet = (open $"($dir)/docs.tsv" | get path | each {|p| norm-path $p} | reduce --fold {} {|p, acc| $acc | upsert $p true})
     let signp = ($sigs | get np)
     let resnp = ($res | get np)
     let union = (($signp ++ $resnp) | uniq | length)
@@ -47,13 +46,12 @@ def main [dir: string = "data/std"] {
         let want_w = (if ($inS and $inR) { "both" } else if $inS { "parser-only" } else if $inR { "reflect-only" } else { "ABSENT" })
         let want_sig = ($s | default "")
         let want_res = ($rv | default "")
-        let want_doc = (if (($docSet | get -o $np) == true) { "yes" } else { "no" })
-        if ($r.witness == $want_w) and ($r.sig == $want_sig) and ($r.resolved == $want_res) and ($r.documented == $want_doc) { null } else {
-            {path: $r.path, witness: $"($r.witness)|($want_w)", sig_ok: ($r.sig == $want_sig), res_ok: ($r.resolved == $want_res), doc: $"($r.documented)|($want_doc)"}
+        if ($r.witness == $want_w) and ($r.sig == $want_sig) and ($r.resolved == $want_res) { null } else {
+            {path: $r.path, witness: $"($r.witness)|($want_w)", sig_ok: ($r.sig == $want_sig), res_ok: ($r.resolved == $want_res)}
         }
     } | compact)
-    print "── 2+3. witness + content (re-derived from sigs / resolved / docs) ──"
-    if ($mism | length) > 0 { print $"  ✗ ($mism | length) row\(s\) disagree with the sources:"; $mism | first 5 | print; $ok = false } else { print "  ✓ every witness, sig, resolved, and documented field matches its source" }
+    print "── 2+3. witness + content (re-derived from sigs / resolved) ──"
+    if ($mism | length) > 0 { print $"  ✗ ($mism | length) row\(s\) disagree with the sources:"; $mism | first 5 | print; $ok = false } else { print "  ✓ every witness, sig, and resolved field matches its source" }
 
     # presence ⟺ witness — a parser-only row must carry no resolved type, and vice-versa.
     let bad_presence = ($cc | where {|r|
@@ -63,5 +61,5 @@ def main [dir: string = "data/std"] {
     if $bad_presence > 0 { print $"  ✗ ($bad_presence) row\(s\) whose filled fields contradict the witness"; $ok = false } else { print "  ✓ sig present ⟺ parser saw it; resolved present ⟺ reflect saw it" }
 
     print ""
-    if $ok { print "CALLCARD VERDICT: ✓ overlay reconciles with sigs + resolved + docs" } else { print "CALLCARD VERDICT: ✗ reconciliation FAILED"; exit 1 }
+    if $ok { print "CALLCARD VERDICT: ✓ overlay reconciles with sigs + resolved" } else { print "CALLCARD VERDICT: ✗ reconciliation FAILED"; exit 1 }
 }
