@@ -21,6 +21,17 @@ const PAGES = [
   ["docs/views/callcard.tmpl.html",   "docs/views/callcard.html"]
 ]
 
+# The hand-written markdown docs, brought under the SAME no-drift discipline as the HTML
+# pages: prose lives in the .tmpl.md, every number is an @@TOKEN@@ injected from data/std.
+# They fill from the shared `common` record only (no page-specific charts/rows).
+const MD_PAGES = [
+  [tmpl, out];
+  ["README.tmpl.md",        "README.md"]
+  ["PLAN.tmpl.md",          "PLAN.md"]
+  ["parse/README.tmpl.md",  "parse/README.md"]
+  ["data/README.tmpl.md",   "data/README.md"]
+]
+
 # 12345 -> "12,345" (no lookahead in the regex engine, so group from the right by hand).
 def commafy [n: int] {
     let rev = ($n | into string | split chars | reverse | str join)
@@ -124,6 +135,11 @@ def render [] {
         "@@N_RES_CONT@@":     (commafy ($status | where status == "resolved" | length))
         "@@N_POISON@@":       (commafy ($poison | length))
         "@@N_INDEX@@":        (commafy ($index | length))
+        "@@N_SIGS@@":         (commafy (open data/std/sigs.tsv | length))
+        "@@N_DOCS@@":         (commafy (open data/std/docs.tsv | length))
+        "@@N_FN@@":           (commafy ($nodes | where kind == "fn" | length))
+        "@@N_NSREF@@":        (commafy ($nodes | where kind == "nsref" | length))
+        "@@N_EDGES@@":        (commafy ($n - 1))
         "@@N_CANON@@":        (commafy ($canon | length))
         "@@CANON_FAMILIES@@": (commafy ($families | length))
         "@@N_CONSENSUS@@":    (commafy $con_total)
@@ -262,7 +278,11 @@ def render [] {
     })
 
     let subs = [$hub, $idx, $canonp, $conp, $doccovp, $sigshapep, $callcardp]
-    $PAGES | enumerate | each {|p| {out: $p.item.out, html: (fill $p.item.tmpl ($subs | get $p.index))} }
+    let html_pages = ($PAGES | enumerate | each {|p| {out: $p.item.out, html: (fill $p.item.tmpl ($subs | get $p.index))} })
+    # markdown docs fill from the shared token set only — same fill, same --check, same no-drift guarantee.
+    # WIP rollout: only render templates that exist yet (README/PLAN/data being templated next).
+    let md_pages = ($MD_PAGES | where ($it.tmpl | path exists) | each {|p| {out: $p.out, html: (fill $p.tmpl $common)} })
+    $html_pages | append $md_pages
 }
 
 def main [--check] {

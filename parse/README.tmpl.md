@@ -35,7 +35,7 @@ Everything beyond the bare map — signatures, docs, references, grouping — is
 and organise on top afterwards.
 
 The product is **ephemeral by design**: never hand-authored, always regenerable from source,
-pinned to one Zig version (`../data/std/PINNED` → zig 0.16.0). The product is the pipeline that
+pinned to one Zig version (`../data/std/PINNED` → @@ZIG@@). The product is the pipeline that
 reproduces it, not the bytes.
 
 > The moment the map sorts, groups, or resolves a link, it stops being Zig and starts being
@@ -48,7 +48,7 @@ reproduces it, not the bytes.
 | `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, source order | `build.zig` → `walk.zig` |
 
 One engine, one file. The parser also emits two raw-source-fact side outputs keyed by the same
-`path` — `sigs.tsv` (5,377 as-written fn signatures) and `docs.tsv` (4,084 `///` docs).
+`path` — `sigs.tsv` (@@N_SIGS@@ as-written fn signatures) and `docs.tsv` (@@N_DOCS@@ `///` docs).
 (The `index.tsv` table of contents is built *from* this map by the [`../derive/`](../derive/)
 engine, not by the parser.)
 
@@ -76,9 +76,9 @@ dropped, doubled, or truncated decl breaks it and the build claims nothing.
 
 ```
 parse/
-  build.zig    # 86  ENTRY: parse a root ONCE, run the walk → nodes.tsv
-  walk.zig     # 360  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
-  ast.zig      # 135  read primitives: dirname/relPath/parseFile + parseImport/isAliasChain/
+  build.zig    # @@LC_BUILD@@  ENTRY: parse a root ONCE, run the walk → nodes.tsv
+  walk.zig     # @@LC_WALK@@  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
+  ast.zig      # @@LC_AST@@  read primitives: dirname/relPath/parseFile + parseImport/isAliasChain/
                #      findDecl/countPub/containerKindOf
 ```
 
