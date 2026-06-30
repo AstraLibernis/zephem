@@ -10,7 +10,7 @@ queries them natively.
 `parse/build.zig` + `parse/walk.zig` (driven by `scripts/build_std.nu`): the whole `std`
 namespace tree, built by **parsing source** (`std.zig.Ast`), not reflection — so it never
 dies on platform-gated / poison decls and maps *all* of std. One row per public decl.
-**16,506 rows / 310 files / max depth 8** on zig 0.16.0 (version pinned in `std/PINNED`).
+**@@N_NODES@@ rows / @@N_FILES@@ files / max depth @@MAXDEPTH@@** on @@ZIG@@ (version pinned in `std/PINNED`).
 Columns: `path · depth · kind · name · n_children · detail`.
 `kind ∈ ns · nsref · nserr · struct · enum · union · opaque · fn · const · alias · modref`.
 
@@ -25,7 +25,7 @@ nothing claimed.
 block lives in `nodes.tsv`. Columns: `path · line · span · depth · kind · n_children`.
 Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
 `line` (1-based file line, header-aware) + `span` (subtree size) pin the exact block.
-Read a whole module in one ranged read instead of scanning 16506 rows:
+Read a whole module in one ranged read instead of scanning @@N_NODES_RAW@@ rows:
 
 ```nu
 let b = (open data/std/index.tsv | where path == 'std.crypto.aead' | first)
@@ -45,9 +45,9 @@ them.
 
 - **`sigs.tsv`** — `path · sig`. `sig` is a function's as-written signature, from the `fn`
   keyword through the return type (body excluded), whitespace-collapsed to one line. One row
-  per public `fn` (including re-exported fns). On zig 0.16.0: **5,377 signatures**.
+  per public `fn` (including re-exported fns). On @@ZIG@@: **@@N_SIGS@@ signatures**.
 - **`docs.tsv`** — `path · doc`. `doc` is the decl's `///` doc-comment text, whitespace-collapsed
-  to one line. A row exists only for documented decls (any kind). On zig 0.16.0: **4,084 docs**.
+  to one line. A row exists only for documented decls (any kind). On @@ZIG@@: **@@N_DOCS@@ docs**.
 
 Join either to `nodes.tsv` by `path` to "read down" the stack — every fn under a module with
 its signature:

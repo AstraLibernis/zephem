@@ -140,6 +140,14 @@ def render [] {
         "@@N_FN@@":           (commafy ($nodes | where kind == "fn" | length))
         "@@N_NSREF@@":        (commafy ($nodes | where kind == "nsref" | length))
         "@@N_EDGES@@":        (commafy ($n - 1))
+        # raw (un-commafied) variants — for sample console transcripts that must match
+        # what build_std.nu actually prints (it prints plain ints, no thousands separators).
+        "@@N_NODES_RAW@@":    ($n | into string)
+        "@@N_INDEX_RAW@@":    (($index | length) | into string)
+        "@@N_EDGES_RAW@@":    (($n - 1) | into string)
+        # std.crypto's own index coordinates (illustrative ranged-read example in README)
+        "@@CRYPTO_LINE@@":    (($index | where path == "std.crypto" | get line.0) | into string)
+        "@@CRYPTO_SPAN@@":    (($index | where path == "std.crypto" | get span.0) | into string)
         "@@N_CANON@@":        (commafy ($canon | length))
         "@@CANON_FAMILIES@@": (commafy ($families | length))
         "@@N_CONSENSUS@@":    (commafy $con_total)
@@ -162,6 +170,8 @@ def render [] {
         "@@SIG_GENERIC@@":    (commafy $sg_gen)
         "@@N_CALLCARD@@":     (commafy $cc_total)
         "@@CC_BOTH@@":        (commafy $cc_both)
+        "@@CC_PARSER@@":      (commafy $cc_parser)
+        "@@CC_REFLECT@@":     (commafy $cc_reflect)
     }
 
     # ── hub ──
@@ -280,8 +290,7 @@ def render [] {
     let subs = [$hub, $idx, $canonp, $conp, $doccovp, $sigshapep, $callcardp]
     let html_pages = ($PAGES | enumerate | each {|p| {out: $p.item.out, html: (fill $p.item.tmpl ($subs | get $p.index))} })
     # markdown docs fill from the shared token set only — same fill, same --check, same no-drift guarantee.
-    # WIP rollout: only render templates that exist yet (README/PLAN/data being templated next).
-    let md_pages = ($MD_PAGES | where ($it.tmpl | path exists) | each {|p| {out: $p.out, html: (fill $p.tmpl $common)} })
+    let md_pages = ($MD_PAGES | each {|p| {out: $p.out, html: (fill $p.tmpl $common)} })
     $html_pages | append $md_pages
 }
 

@@ -44,21 +44,21 @@ never folded into the base.
 
 ## Current status
 
-The datasets live in [`data/std/`](data/std/) (the product), pinned to **zig 0.16.0**.
+The datasets live in [`data/std/`](data/std/) (the product), pinned to **@@ZIG@@**.
 Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, 16,506 decls / 310 files, depth 8; conservation-checked |
-| **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ 5,377 as-written fn signatures + 4,084 `///` docs, keyed by `path`; integrity-checked vs the map |
-| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 1,355 containers, self-checked both ways |
-| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
-| **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
-| **canon dedup/dealias** — `canon.tsv` | `scripts/build_canon.nu` | ✅ 236 paths in 100 alias/dup families (shared resolved `@typeName`); self-checked |
-| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ 25% of decls documented (4,084 carry `///` docs); self-checked vs map + docs overlay |
-| **signature shapes** — `sigshape.tsv` | `scripts/build_sigshape.nu` | ✅ 5,377 signatures classed by first-param / Io / generic; self-checked vs the signatures |
-| **call-card** — `callcard.tsv` | `scripts/build_callcard.nu` | ✅ sigs ⋈ resolved merge, 7,099 callables: 4,823 both / 1,722 reflect-only / 554 parser-only |
-| **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds — 100% agree: every parser fn reflects as fn (4,823 callables), every container as type |
+| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, @@N_NODES@@ decls / @@N_FILES@@ files, depth @@MAXDEPTH@@; conservation-checked |
+| **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ @@N_SIGS@@ as-written fn signatures + @@N_DOCS@@ `///` docs, keyed by `path`; integrity-checked vs the map |
+| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
+| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |
+| **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |
+| **canon dedup/dealias** — `canon.tsv` | `scripts/build_canon.nu` | ✅ @@N_CANON@@ paths in @@CANON_FAMILIES@@ alias/dup families (shared resolved `@typeName`); self-checked |
+| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ @@DOC_PCT@@% of decls documented (@@DOC_DOCUMENTED@@ carry `///` docs); self-checked vs map + docs overlay |
+| **signature shapes** — `sigshape.tsv` | `scripts/build_sigshape.nu` | ✅ @@N_SIGSHAPE@@ signatures classed by first-param / Io / generic; self-checked vs the signatures |
+| **call-card** — `callcard.tsv` | `scripts/build_callcard.nu` | ✅ sigs ⋈ resolved merge, @@N_CALLCARD@@ callables: @@CC_BOTH@@ both / @@CC_REFLECT@@ reflect-only / @@CC_PARSER@@ parser-only |
+| **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds — 100% agree: every parser fn reflects as fn (@@CC_BOTH@@ callables), every container as type |
 | **viewer** — `docs/` site | `scripts/build_arch.nu` | ✅ generated hub + per-slice pages (index/canon/consensus/doccov/sigshape/callcard), CSS-bar charts from the `.tsv`, byte-identical on `--check`; also regenerates the markdown docs |
 | **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
 

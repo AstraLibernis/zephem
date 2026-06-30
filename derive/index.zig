@@ -20,7 +20,7 @@
 //! children's spans. Both are asserted here before a single row is written, so a
 //! bad index never reaches disk.
 //!
-//! Run: zig run src/index.zig -- [nodes.tsv]   (default data/std/nodes.tsv)
+//! Run: zig run derive/index.zig -- [nodes.tsv]   (default data/std/nodes.tsv)
 
 const std = @import("std");
 

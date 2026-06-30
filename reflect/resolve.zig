@@ -1,6 +1,6 @@
 //! resolve.zig — the L5 (resolved depth) reflector for ONE container.
 //!
-//! Where scan.zig/enrich.zig *parse* source (total coverage, never dies), this program
+//! Where parse/walk.zig *parses* source (total coverage, never dies), this program
 //! asks the *compiler*: it reflects a single container the map points at and emits the
 //! resolved truth that parsing cannot compute — constant VALUES (the real
 //! `digest_length = 32`), expanded aliases/generics, and fully-typed function signatures
@@ -20,7 +20,7 @@
 //! the failure as `path · reason` and moves on — depth on demand, poison contained.
 //!
 //! The two TARGET lines below are rewritten per-container by the orchestrator. Left at
-//! their defaults this file is a runnable self-test:  `zig run src/resolve.zig`.
+//! their defaults this file is a runnable self-test:  `zig run reflect/resolve.zig`.
 
 const std = @import("std");
 
@@ -39,7 +39,7 @@ const SKIP = [_][]const u8{};
 /// the resolved value the map cannot compute. Kept shallow on purpose.
 const DESCEND: u8 = 1;
 
-/// Source-faithful identifier. The map (scan.zig) keys paths on the verbatim source token, so a
+/// Source-faithful identifier. The map (parse/walk.zig) keys paths on the verbatim source token, so a
 /// decl named with a keyword or a primitive type appears quoted (`@"type"`, `@"switch"`).
 /// Reflection only has the bare decl name, so re-apply the same `@"..."` quoting — otherwise the
 /// L5 path key (`…section_64.type`) silently diverges from the map key (`…section_64.@"type"`)

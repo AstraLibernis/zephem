@@ -35,13 +35,13 @@ the first un-evaluatable decl.
 ## The headline dataset: the full std map
 
 `nu scripts/build_std.nu` scans the active toolchain's `std` and writes
-`data/std/nodes.tsv`. On zig 0.16.0 that is **16,506 public decls across 310 files**, max
-nesting depth 8.
+`data/std/nodes.tsv`. On @@ZIG@@ that is **@@N_NODES@@ public decls across @@N_FILES@@ files**, max
+nesting depth @@MAXDEPTH@@.
 
 ```nu
 open data/std/nodes.tsv | where kind == 'ns'                  # every std source file
 open data/std/nodes.tsv | where path =~ '^std\.crypto\.'      # the crypto subtree
-open data/std/nodes.tsv | where kind == 'fn' | length         # public fn count (5,377)
+open data/std/nodes.tsv | where kind == 'fn' | length         # public fn count (@@N_FN@@)
 open data/std/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}}
 ```
 
@@ -61,14 +61,14 @@ two passes disagree, `build_std.nu` exits non-zero and claims nothing.
 
 ```
 $ nu scripts/build_std.nu
-[forward]  scanning .../std.zig  (zig 0.16.0, depth 24)
-           rows: 16506   files: 310   max depth: 8
-[index]    containers: 1355   root span: 16506
+[forward]  scanning .../std.zig  (@@ZIG@@, depth 24)
+           rows: @@N_NODES_RAW@@   files: @@N_FILES@@   max depth: @@MAXDEPTH@@
+[index]    containers: @@N_INDEX_RAW@@   root span: @@N_NODES_RAW@@
 [backward] re-reading the datasets — must reconcile...
-conservation:  Σ n_children = 16505   rows − 1 = 16505   ✓
-per-node:       1355 expanded containers checked           ✓
-partition:      Σ kinds = 16506   rows = 16506             ✓
-nsref integrity: 6 refs                                    ✓
+conservation:  Σ n_children = @@N_EDGES_RAW@@   rows − 1 = @@N_EDGES_RAW@@   ✓
+per-node:       @@N_INDEX_RAW@@ expanded containers checked           ✓
+partition:      Σ kinds = @@N_NODES_RAW@@   rows = @@N_NODES_RAW@@             ✓
+nsref integrity: @@N_NSREF@@ refs                                    ✓
 build_std: ✓ true (forward == backward) and recorded.
 ```
 
@@ -79,11 +79,11 @@ Zig are byte-identical (`git diff --exit-code` clean).
 
 The whole file is ~221k tokens — too big to read linearly to answer a narrow question. But
 because rows are emitted pre-order, **every subtree is a contiguous block**, so you never
-have to. `data/std/index.tsv` is a tiny map (1,355 containers) of `path · line · span`: look
+have to. `data/std/index.tsv` is a tiny map (@@N_INDEX@@ containers) of `path · line · span`: look
 up a module, then read exactly its block.
 
 ```nu
-let b = (open data/std/index.tsv | where path == 'std.crypto' | first)  # line 4676, span 1086
+let b = (open data/std/index.tsv | where path == 'std.crypto' | first)  # line @@CRYPTO_LINE@@, span @@CRYPTO_SPAN@@
 open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span            # just the crypto subtree
 ```
 
@@ -101,8 +101,8 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
 
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
-  decl can't kill the sweep. On zig 0.16.0: 1,355 containers swept → **1,324 resolved (15,720
-  rows) / 31 genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
+  decl can't kill the sweep. On @@ZIG@@: @@N_INDEX@@ containers swept → **@@N_RES_CONT@@ resolved (@@N_RESOLVED@@
+  rows) / @@N_POISON@@ genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
   reason); `data/std/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
   *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
   strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
@@ -111,16 +111,16 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
 - **`data/std/consensus.tsv`** (the consensus census) — `path · origin · owner` from
   `scripts/build_consensus.nu`. Rather than force the text view (`nodes.tsv`) and the reflected view
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
-  **every** path by which witness can see it: `read+run` (both independently agree — 13,424),
+  **every** path by which witness can see it: `read+run` (both independently agree — @@CON_RR@@),
   `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
-  2,296), `read-only` (text read it but it can't run here: poison, or the `std` root — 3,082). The
+  @@CON_RUNONLY@@), `read-only` (text read it but it can't run here: poison, or the `std` root — @@CON_READONLY@@). The
   two single-witness buckets **are** the differences; the agreement is independent evidence. One row
-  per path in `nodes ∪ resolved` (18,802), **zero blanks**, enforced by `scripts/verify_consensus.nu`
+  per path in `nodes ∪ resolved` (@@N_CONSENSUS@@), **zero blanks**, enforced by `scripts/verify_consensus.nu`
   and deterministic (`--check`).
 
 - **`data/std/canon.tsv`** (dedup / dealias) — `path · canon` from `scripts/build_canon.nu`. The
   compiler resolves every type to a canonical `@typeName`, so two paths that name the *same*
-  underlying type collide on it. This overlay surfaces exactly those collisions — **236 paths in 100
+  underlying type collide on it. This overlay surfaces exactly those collisions — **@@N_CANON@@ paths in @@CANON_FAMILIES@@
   alias/dup families** (e.g. `std.BufMap` and `std.buf_map.BufMap` → `buf_map.BufMap`) — while
   excluding primitive / error-set / anonymous identities that collide by accident, not by aliasing.
   Reads `resolved.tsv` alone; verified by `scripts/verify_canon.nu`, deterministic (`--check`).
@@ -156,7 +156,7 @@ The extractor is **three engines**, split by *what each reads*:
   [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
   single generic walk (`parse/walk.zig`) → the **map** (`nodes.tsv`: paths, names, kinds,
   child-counts, files, source order) plus the raw source facts only a parser can see:
-  as-written **fn signatures** (`sigs.tsv`, 5,377) and **`///` docs** (`docs.tsv`, 4,084), both
+  as-written **fn signatures** (`sigs.tsv`, @@N_SIGS@@) and **`///` docs** (`docs.tsv`, @@N_DOCS@@), both
   keyed by `path`. It reads source as text and never runs the compiler, which is what lets it map
   all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
