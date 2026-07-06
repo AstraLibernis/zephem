@@ -18,7 +18,9 @@ def main [dir: string = "data/std"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     let con = (open $"($dir)/consensus.tsv")
-    let nodes = (open $"($dir)/nodes.tsv" | select path | insert np {|r| norm-path $r.path})
+    # match build_consensus: field/tag rows are out of the compare's scope (reflect never
+    # resolves them as paths), so the census universe is decls/containers only.
+    let nodes = (open $"($dir)/nodes.tsv" | where kind not-in ["field" "tag"] | select path | insert np {|r| norm-path $r.path})
     let res = (open $"($dir)/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path})
     let nodeset = ($nodes | get np | reduce --fold {} {|p, acc| $acc | upsert $p true})
     let resset = ($res | get np | reduce --fold {} {|p, acc| $acc | upsert $p true})

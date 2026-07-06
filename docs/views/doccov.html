@@ -20,10 +20,10 @@
     are first-class data — group them by kind, by module.</p>
 
   <div class="statrow">
-    <div class="statbox"><div class="sv">16,506</div><div class="sl">decls total</div></div>
-    <div class="statbox both"><div class="sv">4,084</div><div class="sl">documented</div></div>
-    <div class="statbox ro"><div class="sv">12,422</div><div class="sl">undocumented</div></div>
-    <div class="statbox"><div class="sv">25%</div><div class="sl">covered</div></div>
+    <div class="statbox"><div class="sv">47,319</div><div class="sl">decls total</div></div>
+    <div class="statbox both"><div class="sv">10,972</div><div class="sl">documented</div></div>
+    <div class="statbox ro"><div class="sv">36,347</div><div class="sl">undocumented</div></div>
+    <div class="statbox"><div class="sv">23%</div><div class="sl">covered</div></div>
   </div>
 
   <h2>documented ◀ &nbsp; &nbsp; ▶ undocumented</h2>
@@ -31,11 +31,11 @@
     <p class="ph">how much of the public surface carries a <code>///</code> doc — most decls don't, and
       that absence is exactly what this overlay records</p>
     <div class="divbar">
-      <span class="seg both" style="width:25%"></span>
-      <span class="seg ro" style="width:75%"></span>
+      <span class="seg both" style="width:23%"></span>
+      <span class="seg ro" style="width:77%"></span>
     </div>
-    <p class="ph" style="margin-top:10px"><b>4,084</b> documented (25%) &nbsp;·&nbsp;
-      <b>12,422</b> undocumented (75%)</p>
+    <p class="ph" style="margin-top:10px"><b>10,972</b> documented (23%) &nbsp;·&nbsp;
+      <b>36,347</b> undocumented (77%)</p>
   </div>
 
   <h2>Coverage by kind</h2>
@@ -45,6 +45,8 @@
     <table class="ftab">
       <thead><tr><th>kind</th><th>total</th><th>documented</th><th>coverage</th></tr></thead>
       <tbody>
+      <tr><td class="mono">tag</td><td class="num">21,535</td><td class="dim">5,095</td><td class="num">24%</td></tr>
+      <tr><td class="mono">field</td><td class="num">9,278</td><td class="dim">1,793</td><td class="num">19%</td></tr>
       <tr><td class="mono">const</td><td class="num">7,098</td><td class="dim">1,131</td><td class="num">16%</td></tr>
       <tr><td class="mono">fn</td><td class="num">5,377</td><td class="dim">2,318</td><td class="num">43%</td></tr>
       <tr><td class="mono">struct</td><td class="num">1,854</td><td class="dim">373</td><td class="num">20%</td></tr>
@@ -65,20 +67,20 @@
     <table class="ftab">
       <thead><tr><th>module</th><th>decls</th><th>documented</th><th>coverage</th></tr></thead>
       <tbody>
-      <tr><td class="mono">std.os</td><td class="num">4,995</td><td class="dim">807</td><td class="num">16%</td></tr>
-      <tr><td class="mono">std.Target</td><td class="num">1,599</td><td class="dim">42</td><td class="num">3%</td></tr>
-      <tr><td class="mono">std.zig</td><td class="num">1,455</td><td class="dim">156</td><td class="num">11%</td></tr>
-      <tr><td class="mono">std.crypto</td><td class="num">1,086</td><td class="dim">679</td><td class="num">63%</td></tr>
-      <tr><td class="mono">std.Io</td><td class="num">1,044</td><td class="dim">346</td><td class="num">33%</td></tr>
-      <tr><td class="mono">std.dwarf</td><td class="num">758</td><td class="dim">2</td><td class="num">0%</td></tr>
-      <tr><td class="mono">std.Build</td><td class="num">632</td><td class="dim">193</td><td class="num">31%</td></tr>
-      <tr><td class="mono">std.elf</td><td class="num">599</td><td class="dim">216</td><td class="num">36%</td></tr>
-      <tr><td class="mono">std.c</td><td class="num">593</td><td class="dim">19</td><td class="num">3%</td></tr>
-      <tr><td class="mono">std.math</td><td class="num">353</td><td class="dim">216</td><td class="num">61%</td></tr>
-      <tr><td class="mono">std.macho</td><td class="num">339</td><td class="dim">192</td><td class="num">57%</td></tr>
-      <tr><td class="mono">std.debug</td><td class="num">276</td><td class="dim">56</td><td class="num">20%</td></tr>
-      <tr><td class="mono">std.posix</td><td class="num">242</td><td class="dim">30</td><td class="num">12%</td></tr>
-      <tr><td class="mono">std.compress</td><td class="num">197</td><td class="dim">36</td><td class="num">18%</td></tr>
+      <tr><td class="mono">std.os</td><td class="num">23,024</td><td class="dim">4,860</td><td class="num">21%</td></tr>
+      <tr><td class="mono">std.zig</td><td class="num">5,040</td><td class="dim">925</td><td class="num">18%</td></tr>
+      <tr><td class="mono">std.Target</td><td class="num">3,670</td><td class="dim">94</td><td class="num">3%</td></tr>
+      <tr><td class="mono">std.Io</td><td class="num">1,705</td><td class="dim">484</td><td class="num">28%</td></tr>
+      <tr><td class="mono">std.elf</td><td class="num">1,642</td><td class="dim">712</td><td class="num">43%</td></tr>
+      <tr><td class="mono">std.crypto</td><td class="num">1,618</td><td class="dim">775</td><td class="num">48%</td></tr>
+      <tr><td class="mono">std.Build</td><td class="num">1,541</td><td class="dim">395</td><td class="num">26%</td></tr>
+      <tr><td class="mono">std.dwarf</td><td class="num">810</td><td class="dim">3</td><td class="num">0%</td></tr>
+      <tr><td class="mono">std.coff</td><td class="num">695</td><td class="dim">398</td><td class="num">57%</td></tr>
+      <tr><td class="mono">std.macho</td><td class="num">693</td><td class="dim">426</td><td class="num">61%</td></tr>
+      <tr><td class="mono">std.c</td><td class="num">615</td><td class="dim">19</td><td class="num">3%</td></tr>
+      <tr><td class="mono">std.wasm</td><td class="num">599</td><td class="dim">13</td><td class="num">2%</td></tr>
+      <tr><td class="mono">std.debug</td><td class="num">525</td><td class="dim">117</td><td class="num">22%</td></tr>
+      <tr><td class="mono">std.builtin</td><td class="num">525</td><td class="dim">174</td><td class="num">33%</td></tr>
       </tbody>
     </table>
   </div>

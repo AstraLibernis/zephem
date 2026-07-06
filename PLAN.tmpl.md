@@ -49,13 +49,14 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, @@N_NODES@@ decls / @@N_FILES@@ files, depth @@MAXDEPTH@@; conservation-checked |
+| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, @@N_NODES@@ nodes / @@N_FILES@@ files, depth @@MAXDEPTH@@; conservation-checked |
 | **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ @@N_SIGS@@ as-written fn signatures + @@N_DOCS@@ `///` docs, keyed by `path`; integrity-checked vs the map |
+| **fields + tags** — `fields.tsv` | `parse/walk.zig` | ✅ @@N_FIELDS@@ struct/union fields + enum tags (`path·type·value`), 1:1 with the `field`/`tag` nodes; integrity-checked vs the map |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |
 | **canon dedup/dealias** — `canon.tsv` | `scripts/build_canon.nu` | ✅ @@N_CANON@@ paths in @@CANON_FAMILIES@@ alias/dup families (shared resolved `@typeName`); self-checked |
-| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ @@DOC_PCT@@% of decls documented (@@DOC_DOCUMENTED@@ carry `///` docs); self-checked vs map + docs overlay |
+| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ @@DOC_PCT@@% of nodes documented (@@DOC_DOCUMENTED@@ carry `///` docs); per-kind, self-checked vs map + docs overlay |
 | **signature shapes** — `sigshape.tsv` | `scripts/build_sigshape.nu` | ✅ @@N_SIGSHAPE@@ signatures classed by first-param / Io / generic; self-checked vs the signatures |
 | **call-card** — `callcard.tsv` | `scripts/build_callcard.nu` | ✅ sigs ⋈ resolved merge, @@N_CALLCARD@@ callables: @@CC_BOTH@@ both / @@CC_REFLECT@@ reflect-only / @@CC_PARSER@@ parser-only |
 | **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds — 100% agree: every parser fn reflects as fn (@@CC_BOTH@@ callables), every container as type |
@@ -83,13 +84,18 @@ a later overlay. What stays *out* of the parser is genuinely editorial: resolved
 purpose-groupings.
 
 **In the parser now:** structure (`nodes.tsv`), as-written fn signatures (`sigs.tsv`), `///` docs
-(`docs.tsv`) — all keyed by `path`, all integrity-checked.
+(`docs.tsv`), struct/union fields + enum tags (`fields.tsv`) — all keyed by `path`, all
+integrity-checked.
 
 **Still to add to the parser (raw source facts):**
-1. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
+1. **Fields — done for structs/unions/enums** ✅ (`fields.tsv`: name·type·value, `field`/`tag`
+   nodes). *Still open:* **error-set members** — `error{…}` parses as a distinct node, not a
+   container field, so its members aren't descended yet.
+2. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
    `threadlocal`/`var`-vs-`const` flags. Columns on `nodes.tsv`. *(next — easy)*
-2. **Fields** — struct/union fields, enum tags, error-set members (name·type·value). How to
-   construct/read a type; 0% covered today. *(after — needs member descent)*
+3. **Generic type factories** — `fn(...) type` returns a struct whose members (a container's real
+   API, e.g. `ArrayList.append`) live in the fn body. Descending into `return struct {…}` is the
+   next big depth win. *(Phase B)*
 
 **True organize-later (derive — never in the parser):**
 - **References / links** (was `tunnels`) — the resolved reference graph (what name resolves to

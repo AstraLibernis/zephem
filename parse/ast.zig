@@ -103,8 +103,9 @@ pub fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, name: []const 
     return null;
 }
 
-/// Count the public decls a container emits as direct children — the SAME predicate the
-/// walker uses to emit, so recorded count == emitted rows (the conservation law).
+/// Count the public children a container emits — the SAME predicate the walker uses to
+/// emit, so recorded count == emitted rows (the conservation law). Covers public decls
+/// (fns, vars) AND every container field/tag (fields carry no visibility — always public).
 pub fn countPub(ast: *const Ast, members: []const Ast.Node.Index) usize {
     var n: usize = 0;
     for (members) |m| {
@@ -112,6 +113,10 @@ pub fn countPub(ast: *const Ast, members: []const Ast.Node.Index) usize {
             var b: [1]Ast.Node.Index = undefined;
             const proto = ast.fullFnProto(&b, m) orelse continue;
             if (proto.visib_token != null and proto.name_token != null) n += 1;
+            continue;
+        }
+        if (ast.fullContainerField(m) != null) {
+            n += 1;
             continue;
         }
         const vd = ast.fullVarDecl(m) orelse continue;

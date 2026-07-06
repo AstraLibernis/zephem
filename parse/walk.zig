@@ -28,6 +28,8 @@ pub const Kind = enum {
     fn_decl,
     const_decl, // a computed value
     alias, // a re-export `pub const X = a.b.C`
+    field, // a struct/union field (a typed slot) — payload in fields.tsv
+    tag, // an enum member (a named value) — payload in fields.tsv
 };
 
 pub fn kindStr(k: Kind) []const u8 {
@@ -43,6 +45,8 @@ pub fn kindStr(k: Kind) []const u8 {
         .fn_decl => "fn",
         .const_decl => "const",
         .alias => "alias",
+        .field => "field",
+        .tag => "tag",
     };
 }
 
@@ -71,6 +75,8 @@ pub const Walker = struct {
     sigs: *std.Io.Writer,
     /// Side sink: `path · doc` — the `///` doc text, one row per documented decl.
     docs: *std.Io.Writer,
+    /// Side sink: `path · type · value` — one row per field/tag node (the field payload).
+    fields: *std.Io.Writer,
 
     /// Write one node as a map row. The single point of output.
     pub fn emit(w: *Walker, n: Node) !void {
@@ -89,6 +95,13 @@ pub const Walker = struct {
         if (doc.len == 0) return;
         try w.docs.print("{s}\t{s}\n", .{ path, doc });
     }
+
+    /// Record a field/tag's payload — its written `type` and `value` (either may be empty:
+    /// enum tags have no type, plain fields no value). One row per field/tag node, so the
+    /// sidecar is 1:1 with the `field`/`tag` rows in the map.
+    pub fn emitField(w: *Walker, path: []const u8, ty: []const u8, value: []const u8) !void {
+        try w.fields.print("{s}\t{s}\t{s}\n", .{ path, ty, value });
+    }
 };
 
 fn ckToKind(ck: az.ContainerKind) Kind {
@@ -99,6 +112,48 @@ fn ckToKind(ck: az.ContainerKind) Kind {
         .@"opaque" => .@"opaque",
         .none => unreachable,
     };
+}
+
+/// Emit one container-field member: its map row (`field`/`tag`, decided by the *parent*
+/// container's kind — a void union variant looks type-less just like an enum tag, so only
+/// the parent disambiguates), its `///` doc, and its `path·type·value` payload row. Fields
+/// are always public and always leaves. `tuple_idx` names an unnamed (tuple) field by its
+/// ordinal, and is advanced only when one is emitted.
+fn emitField(
+    w: *Walker,
+    ast: *const Ast,
+    node: Ast.Node.Index,
+    cf: Ast.full.ContainerField,
+    parent_kind: Kind,
+    logical_path: []const u8,
+    depth: u32,
+    tuple_idx: *usize,
+) !void {
+    // Enum tags and void union variants parse identically to a tuple field whose "type" is a
+    // bare identifier (`enum { a }` ≡ `struct { a }` at the syntax level). Only the container
+    // keyword disambiguates: in an enum/union that identifier is the member NAME, not a type.
+    // `convertToNonTupleLike` performs exactly that fix (identifier → name, type → none).
+    var field = cf;
+    if (parent_kind == .@"enum" or parent_kind == .@"union") field.convertToNonTupleLike(ast);
+
+    const name = if (field.ast.tuple_like) blk: {
+        const nm = try std.fmt.allocPrint(w.arena, "{d}", .{tuple_idx.*});
+        tuple_idx.* += 1;
+        break :blk nm;
+    } else ast.tokenSlice(field.ast.main_token);
+    const path = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ logical_path, name });
+    const kind: Kind = if (parent_kind == .@"enum") .tag else .field;
+    const ty = if (field.ast.type_expr.unwrap()) |tn|
+        try collapseWs(w.arena, ast.getNodeSource(tn))
+    else
+        "";
+    const value = if (field.ast.value_expr.unwrap()) |vn|
+        try collapseWs(w.arena, ast.getNodeSource(vn))
+    else
+        "";
+    try w.emit(.{ .path = path, .name = name, .depth = depth, .kind = kind });
+    try w.emitDoc(path, try docComment(w, ast, node));
+    try w.emitField(path, ty, value);
 }
 
 /// The map's `detail` for a fn — its parameter count, as a string.
@@ -189,7 +244,9 @@ pub fn walkMembers(
     base_dir: []const u8,
     logical_path: []const u8,
     depth: u32,
+    parent_kind: Kind,
 ) anyerror!void {
+    var tuple_idx: usize = 0; // names unnamed (tuple) fields by ordinal, per container
     for (members) |m| {
         const tag = ast.nodeTag(m);
 
@@ -204,6 +261,12 @@ pub fn walkMembers(
             try w.emit(.{ .path = path, .name = name, .depth = depth, .kind = .fn_decl, .detail = try fnDetail(w, ast, &proto) });
             try w.emitDoc(path, try docComment(w, ast, m));
             if (try fnSig(w, ast, &proto)) |sg| try w.emitSig(path, sg);
+            continue;
+        }
+
+        // container fields — struct/union slots and enum tags. Leaves; always public.
+        if (ast.fullContainerField(m)) |cf| {
+            try emitField(w, ast, m, cf, parent_kind, logical_path, depth, &tuple_idx);
             continue;
         }
 
@@ -236,7 +299,7 @@ pub fn walkMembers(
                         try w.visited.put(child_path, {});
                         const cnt = az.countPub(child_ast, child_ast.rootDecls());
                         try w.emit(.{ .path = child_logical, .name = name, .depth = depth, .kind = .ns, .n_children = cnt, .detail = rel });
-                        try walkMembers(w, child_ast, child_ast.rootDecls(), az.dirname(child_path), child_logical, depth + 1);
+                        try walkMembers(w, child_ast, child_ast.rootDecls(), az.dirname(child_path), child_logical, depth + 1, .ns);
                     } else {
                         try w.emit(.{ .path = child_logical, .name = name, .depth = depth, .kind = .nserr, .detail = rel });
                     }
@@ -258,7 +321,7 @@ pub fn walkMembers(
             const cnt = if (depth < w.max_depth) az.countPub(ast, cd.ast.members) else 0;
             try w.emit(.{ .path = child_logical, .name = name, .depth = depth, .kind = ckToKind(ck), .n_children = cnt });
             if (depth < w.max_depth) {
-                try walkMembers(w, ast, cd.ast.members, base_dir, child_logical, depth + 1);
+                try walkMembers(w, ast, cd.ast.members, base_dir, child_logical, depth + 1, ckToKind(ck));
             }
             continue;
         }
@@ -329,7 +392,7 @@ fn emitReexport(
         const cnt = if (depth < w.max_depth) az.countPub(fast, cd.ast.members) else 0;
         try w.emit(.{ .path = a_logical, .name = a_name, .depth = depth, .kind = ckToKind(ck), .n_children = cnt });
         if (depth < w.max_depth) {
-            try walkMembers(w, fast, cd.ast.members, az.dirname(file_abs), a_logical, depth + 1);
+            try walkMembers(w, fast, cd.ast.members, az.dirname(file_abs), a_logical, depth + 1, ckToKind(ck));
         }
         return;
     }
@@ -345,7 +408,7 @@ fn emitReexport(
                     try w.visited.put(gpath, {});
                     const cnt = az.countPub(gast, gast.rootDecls());
                     try w.emit(.{ .path = a_logical, .name = a_name, .depth = depth, .kind = .ns, .n_children = cnt, .detail = grel });
-                    try walkMembers(w, gast, gast.rootDecls(), az.dirname(gpath), a_logical, depth + 1);
+                    try walkMembers(w, gast, gast.rootDecls(), az.dirname(gpath), a_logical, depth + 1, .ns);
                 } else {
                     try w.emit(.{ .path = a_logical, .name = a_name, .depth = depth, .kind = .nserr, .detail = grel });
                 }

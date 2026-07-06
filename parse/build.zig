@@ -31,6 +31,7 @@ pub fn main(init: std.process.Init) !void {
     const nodes_out: []const u8 = if (args.len > 3) args[3] else "nodes.tsv";
     const sigs_out: []const u8 = if (args.len > 4) args[4] else "sigs.tsv";
     const docs_out: []const u8 = if (args.len > 5) args[5] else "docs.tsv";
+    const fields_out: []const u8 = if (args.len > 6) args[6] else "fields.tsv";
 
     const nodes_file = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nodes_file.close(io);
@@ -38,6 +39,8 @@ pub fn main(init: std.process.Init) !void {
     defer sigs_file.close(io);
     const docs_file = try std.Io.Dir.cwd().createFile(io, docs_out, .{});
     defer docs_file.close(io);
+    const fields_file = try std.Io.Dir.cwd().createFile(io, fields_out, .{});
+    defer fields_file.close(io);
 
     var nbuf: [1 << 16]u8 = undefined;
     var nfw = nodes_file.writer(io, &nbuf);
@@ -48,6 +51,9 @@ pub fn main(init: std.process.Init) !void {
     var dbuf: [1 << 16]u8 = undefined;
     var dfw = docs_file.writer(io, &dbuf);
     const dw = &dfw.interface;
+    var fbuf: [1 << 16]u8 = undefined;
+    var ffw = fields_file.writer(io, &fbuf);
+    const fw = &ffw.interface;
 
     var visited = std.StringHashMap(void).init(arena);
     try visited.put(root_path, {});
@@ -62,11 +68,13 @@ pub fn main(init: std.process.Init) !void {
         .out = nw,
         .sigs = sw,
         .docs = dw,
+        .fields = fw,
     };
 
     try nw.print("path\tdepth\tkind\tname\tn_children\tdetail\n", .{});
     try sw.print("path\tsig\n", .{});
     try dw.print("path\tdoc\n", .{});
+    try fw.print("path\ttype\tvalue\n", .{});
 
     const root_logical = std.fs.path.stem(root_path); // "std"
     if (try az.parseFile(io, arena, root_path)) |root_ast_v| {
@@ -74,7 +82,7 @@ pub fn main(init: std.process.Init) !void {
         root_ast.* = root_ast_v;
         const cnt = az.countPub(root_ast, root_ast.rootDecls());
         try w.emit(.{ .path = root_logical, .name = root_logical, .depth = 0, .kind = .ns, .n_children = cnt, .detail = az.relPath(root_dir, root_path) });
-        try walk.walkMembers(&w, root_ast, root_ast.rootDecls(), root_dir, root_logical, 1);
+        try walk.walkMembers(&w, root_ast, root_ast.rootDecls(), root_dir, root_logical, 1, .ns);
     } else {
         // root unreadable → a single nserr row.
         try w.emit(.{ .path = root_logical, .name = root_logical, .depth = 0, .kind = .nserr, .detail = az.relPath(root_dir, root_path) });
@@ -83,4 +91,5 @@ pub fn main(init: std.process.Init) !void {
     try nw.flush();
     try sw.flush();
     try dw.flush();
+    try fw.flush();
 }

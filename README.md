@@ -35,8 +35,8 @@ the first un-evaluatable decl.
 ## The headline dataset: the full std map
 
 `nu scripts/build_std.nu` scans the active toolchain's `std` and writes
-`data/std/nodes.tsv`. On zig 0.16.0 that is **16,506 public decls across 310 files**, max
-nesting depth 8.
+`data/std/nodes.tsv`. On zig 0.16.0 that is **47,319 public nodes across 310 files**
+(decls plus 30,813 struct/union fields and enum tags), max nesting depth 9.
 
 ```nu
 open data/std/nodes.tsv | where kind == 'ns'                  # every std source file
@@ -62,12 +62,12 @@ two passes disagree, `build_std.nu` exits non-zero and claims nothing.
 ```
 $ nu scripts/build_std.nu
 [forward]  scanning .../std.zig  (zig 0.16.0, depth 24)
-           rows: 16506   files: 310   max depth: 8
-[index]    containers: 1355   root span: 16506
+           rows: 47319   files: 310   max depth: 9
+[index]    containers: 2863   root span: 47319
 [backward] re-reading the datasets — must reconcile...
-conservation:  Σ n_children = 16505   rows − 1 = 16505   ✓
-per-node:       1355 expanded containers checked           ✓
-partition:      Σ kinds = 16506   rows = 16506             ✓
+conservation:  Σ n_children = 47318   rows − 1 = 47318   ✓
+per-node:       2863 expanded containers checked           ✓
+partition:      Σ kinds = 47319   rows = 47319             ✓
 nsref integrity: 6 refs                                    ✓
 build_std: ✓ true (forward == backward) and recorded.
 ```
@@ -79,11 +79,11 @@ Zig are byte-identical (`git diff --exit-code` clean).
 
 The whole file is ~221k tokens — too big to read linearly to answer a narrow question. But
 because rows are emitted pre-order, **every subtree is a contiguous block**, so you never
-have to. `data/std/index.tsv` is a tiny map (1,355 containers) of `path · line · span`: look
+have to. `data/std/index.tsv` is a tiny map (2,863 containers) of `path · line · span`: look
 up a module, then read exactly its block.
 
 ```nu
-let b = (open data/std/index.tsv | where path == 'std.crypto' | first)  # line 4676, span 1086
+let b = (open data/std/index.tsv | where path == 'std.crypto' | first)  # line 9692, span 1618
 open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span            # just the crypto subtree
 ```
 
@@ -101,7 +101,7 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
 
 - **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
-  decl can't kill the sweep. On zig 0.16.0: 1,355 containers swept → **1,324 resolved (15,720
+  decl can't kill the sweep. On zig 0.16.0: 2,863 containers swept → **1,324 resolved (15,720
   rows) / 31 genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
   reason); `data/std/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
   *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
@@ -156,7 +156,8 @@ The extractor is **three engines**, split by *what each reads*:
   [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
   single generic walk (`parse/walk.zig`) → the **map** (`nodes.tsv`: paths, names, kinds,
   child-counts, files, source order) plus the raw source facts only a parser can see:
-  as-written **fn signatures** (`sigs.tsv`, 5,377) and **`///` docs** (`docs.tsv`, 4,084), both
+  as-written **fn signatures** (`sigs.tsv`, 5,377), **`///` docs** (`docs.tsv`, 10,972), and
+  **struct/union fields + enum tags** (`fields.tsv`, 30,813 — `path·type·value`), all
   keyed by `path`. It reads source as text and never runs the compiler, which is what lets it map
   all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
@@ -169,10 +170,10 @@ The extractor is **three engines**, split by *what each reads*:
   tagging where the two readers agree or differ (`consensus.tsv`).
 
 The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The dividing line:
-**raw source facts go in the parser** (structure, signatures, docs — and next, fields +
-location/modifiers); **organisation is deferred to derive** — **references/links** between names
-and **grouping** the map by purpose, never mixed into the parse. Phases and status:
-**[PLAN.md](PLAN.md)**.
+**raw source facts go in the parser** (structure, signatures, docs, fields/tags — and next,
+location/modifiers and generic-factory descent); **organisation is deferred to derive** —
+**references/links** between names and **grouping** the map by purpose, never mixed into the
+parse. Phases and status: **[PLAN.md](PLAN.md)**.
 
 ## Toolchain
 

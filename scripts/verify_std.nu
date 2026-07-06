@@ -14,9 +14,27 @@
 # Usage:  nu scripts/verify_std.nu            # checks data/std/nodes.tsv
 #         nu scripts/verify_std.nu other.tsv
 
+# The parent path — everything but the last segment. Segments are dot-joined, but a segment
+# can be a quoted identifier `@"a.b.c"` that legally contains dots (e.g. LLVM intrinsic enum
+# tags), so we split on top-level dots only, treating `@"..."` as atomic.
 def parent [path: string] {
-    let parts = ($path | split row ".")
-    if ($parts | length) <= 1 { "" } else { $parts | drop 1 | str join "." }
+    mut segs = []
+    mut cur = ""
+    mut inq = false
+    for c in ($path | split chars) {
+        if $inq {
+            $cur = $cur + $c
+            if $c == "\"" { $inq = false }
+        } else if $c == "." {
+            $segs = ($segs | append $cur)
+            $cur = ""
+        } else {
+            $cur = $cur + $c
+            if $c == "\"" { $inq = true }
+        }
+    }
+    $segs = ($segs | append $cur)
+    if ($segs | length) <= 1 { "" } else { $segs | drop 1 | str join "." }
 }
 
 def main [file: string = "data/std/nodes.tsv"] {
@@ -102,6 +120,21 @@ def main [file: string = "data/std/nodes.tsv"] {
         if ($sig_orphan | length) > 0 { print $"  ✗ ($sig_orphan | length) signature\(s\) key onto a non-fn / missing node"; $ok = false } else { print "  ✓ every signature keys onto a real fn node" }
         if ($doc_orphan | length) > 0 { print $"  ✗ ($doc_orphan | length) doc\(s\) key onto a missing node"; $ok = false } else { print "  ✓ every doc keys onto a real node" }
         if (($sig_dup | length) > 0) or (($doc_dup | length) > 0) { print $"  ✗ duplicate keys: ($sig_dup | length) sig / ($doc_dup | length) doc"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
+    }
+
+    # 7. FIELD OVERLAY — fields.tsv (path·type·value) must be 1:1 with the field/tag nodes:
+    #    every payload row keys onto a real field/tag node, no dups, and every field/tag node
+    #    has exactly one payload row. Same self-check spirit as the sig/doc overlays.
+    if ($"($dir)/fields.tsv" | path exists) {
+        let fieldnodes = ($t | where kind in ["field" "tag"])
+        let fieldset = ($fieldnodes | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+        let fields = (open $"($dir)/fields.tsv")
+        let field_orphan = ($fields | where {|r| ($fieldset | get -o $r.path) != true})
+        let field_dup = ($fields | get path | uniq -d)
+        print $"field overlay:  ($fields | length) field/tag payloads for ($fieldnodes | length) field/tag nodes"
+        if ($field_orphan | length) > 0 { print $"  ✗ ($field_orphan | length) payload\(s\) key onto a non-field/tag or missing node"; $ok = false } else { print "  ✓ every payload keys onto a real field/tag node" }
+        if ($field_dup | length) > 0 { print $"  ✗ ($field_dup | length) duplicate field key\(s\)"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
+        if ($fields | length) != ($fieldnodes | length) { print $"  ✗ fields.tsv is not 1:1 with the field/tag nodes"; $ok = false } else { print "  ✓ 1:1 — every field/tag node has exactly one payload row" }
     }
 
     print ""

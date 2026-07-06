@@ -16,9 +16,9 @@
     <p class="sub">Extracts the structure of a Zig module into pristine, self-verifying datasets — for LLM &amp; static research.</p>
     <div class="badges">
       <span class="badge">pinned&nbsp;<b>zig 0.16.0</b></span>
-      <span class="badge"><b>16,506</b>&nbsp;decls</span>
+      <span class="badge"><b>47,319</b>&nbsp;decls</span>
       <span class="badge"><b>310</b>&nbsp;files</span>
-      <span class="badge">max depth&nbsp;<b>8</b></span>
+      <span class="badge">max depth&nbsp;<b>9</b></span>
       <span class="badge">toolchain&nbsp;<b>Zig + Nushell</b></span>
     </div>
   </header>
@@ -45,9 +45,9 @@
         <div class="reads">reads source as TEXT · never runs</div>
       </div>
       <div class="body">
-        <div class="f"><b>build.zig</b><span class="ln">86</span> &nbsp;entry</div>
-        <div class="f"><b>walk.zig</b><span class="ln">360</span> &nbsp;traversal + emit</div>
-        <div class="f"><b>ast.zig</b><span class="ln">135</span> &nbsp;read primitives</div>
+        <div class="f"><b>build.zig</b><span class="ln">95</span> &nbsp;entry</div>
+        <div class="f"><b>walk.zig</b><span class="ln">423</span> &nbsp;traversal + emit</div>
+        <div class="f"><b>ast.zig</b><span class="ln">140</span> &nbsp;read primitives</div>
         <div class="f" style="margin-top:8px;line-height:1.45">parse all → output all: paths,
           names, kinds, child-counts, files — in source order. Three flat files, one walk,
           one writer.</div>
@@ -105,16 +105,16 @@
   <div class="product">
     <div class="t">data/std/ — THE PRODUCT</div>
     <div class="chips">
-      <a class="chip spine" href="../data/std/nodes.tsv">●&nbsp;<b>nodes.tsv</b> <span class="n">16,506 · the map</span></a>
+      <a class="chip spine" href="../data/std/nodes.tsv">●&nbsp;<b>nodes.tsv</b> <span class="n">47,319 · the map</span></a>
       <a class="chip" href="../data/std/resolved.tsv"><b>resolved.tsv</b> <span class="n">15,720</span></a>
-      <a class="chip" href="../data/std/index.tsv"><b>index.tsv</b> <span class="n">1,355</span></a>
+      <a class="chip" href="../data/std/index.tsv"><b>index.tsv</b> <span class="n">2,863</span></a>
       <a class="chip" href="../data/std/canon.tsv"><b>canon.tsv</b> <span class="n">236</span></a>
       <a class="chip" href="../data/std/consensus.tsv"><b>consensus.tsv</b> <span class="n">18,802</span></a>
-      <a class="chip" href="../data/std/doccov.tsv"><b>doccov.tsv</b> <span class="n">25% documented</span></a>
+      <a class="chip" href="../data/std/doccov.tsv"><b>doccov.tsv</b> <span class="n">23% documented</span></a>
       <a class="chip" href="../data/std/sigshape.tsv"><b>sigshape.tsv</b> <span class="n">5,377 fns</span></a>
       <a class="chip" href="../data/std/callcard.tsv"><b>callcard.tsv</b> <span class="n">7,099 callables</span></a>
     </div>
-    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families &nbsp;·&nbsp; doccov — <b>4,084</b> documented &nbsp;·&nbsp; sigshape — <b>1,172</b> methods &nbsp;·&nbsp; callcard — <b>4,823</b> full cards</div>
+    <div class="cap">consensus — read+run <b>13,424</b> · run-only <b>2,296</b> · read-only <b>3,082</b> &nbsp;·&nbsp; canon — <b>100</b> alias/dup families &nbsp;·&nbsp; doccov — <b>10,972</b> documented &nbsp;·&nbsp; sigshape — <b>1,172</b> methods &nbsp;·&nbsp; callcard — <b>4,823</b> full cards</div>
   </div>
 
   <div class="arrow">↓<span>read back the other way</span></div>
@@ -132,7 +132,7 @@
   <div class="slices">
     <a class="slice" href="views/index.html">
       <div class="st">index ↗</div>
-      <div class="sn">1,355 containers</div>
+      <div class="sn">2,863 containers</div>
       <div class="sd">the table of contents — depth, span, the biggest namespaces.</div>
     </a>
     <a class="slice" href="views/canon.html">
@@ -147,7 +147,7 @@
     </a>
     <a class="slice" href="views/doccov.html">
       <div class="st">doccov ↗</div>
-      <div class="sn">25% documented</div>
+      <div class="sn">23% documented</div>
       <div class="sd">documentation coverage — which decls carry a <code>///</code> doc, by kind and module.</div>
     </a>
     <a class="slice" href="views/sigshape.html">
@@ -162,15 +162,17 @@
     </a>
   </div>
 
-  <h2>The map by kind — 16,506 public decls</h2>
+  <h2>The map by kind — 47,319 public decls</h2>
   <div class="kinds">
-        <div class="kbar"><span class="kname">const</span><span class="ktrack"><span class="kfill" style="width:100%"></span></span><span class="kn">7,098</span></div>
-        <div class="kbar"><span class="kname">fn</span><span class="ktrack"><span class="kfill" style="width:76%"></span></span><span class="kn">5,377</span></div>
-        <div class="kbar"><span class="kname">struct</span><span class="ktrack"><span class="kfill" style="width:26%"></span></span><span class="kn">1,854</span></div>
-        <div class="kbar"><span class="kname">alias</span><span class="ktrack"><span class="kfill" style="width:15%"></span></span><span class="kn">1,099</span></div>
-        <div class="kbar"><span class="kname">enum</span><span class="ktrack"><span class="kfill" style="width:8%"></span></span><span class="kn">586</span></div>
-        <div class="kbar"><span class="kname">ns</span><span class="ktrack"><span class="kfill" style="width:4%"></span></span><span class="kn">310</span></div>
-        <div class="kbar"><span class="kname">union</span><span class="ktrack"><span class="kfill" style="width:2%"></span></span><span class="kn">124</span></div>
+        <div class="kbar"><span class="kname">tag</span><span class="ktrack"><span class="kfill" style="width:100%"></span></span><span class="kn">21,535</span></div>
+        <div class="kbar"><span class="kname">field</span><span class="ktrack"><span class="kfill" style="width:43%"></span></span><span class="kn">9,278</span></div>
+        <div class="kbar"><span class="kname">const</span><span class="ktrack"><span class="kfill" style="width:33%"></span></span><span class="kn">7,098</span></div>
+        <div class="kbar"><span class="kname">fn</span><span class="ktrack"><span class="kfill" style="width:25%"></span></span><span class="kn">5,377</span></div>
+        <div class="kbar"><span class="kname">struct</span><span class="ktrack"><span class="kfill" style="width:9%"></span></span><span class="kn">1,854</span></div>
+        <div class="kbar"><span class="kname">alias</span><span class="ktrack"><span class="kfill" style="width:5%"></span></span><span class="kn">1,099</span></div>
+        <div class="kbar"><span class="kname">enum</span><span class="ktrack"><span class="kfill" style="width:3%"></span></span><span class="kn">586</span></div>
+        <div class="kbar"><span class="kname">ns</span><span class="ktrack"><span class="kfill" style="width:1%"></span></span><span class="kn">310</span></div>
+        <div class="kbar"><span class="kname">union</span><span class="ktrack"><span class="kfill" style="width:1%"></span></span><span class="kn">124</span></div>
         <div class="kbar"><span class="kname">opaque</span><span class="ktrack"><span class="kfill" style="width:1%"></span></span><span class="kn">52</span></div>
         <div class="kbar"><span class="kname">nsref</span><span class="ktrack"><span class="kfill" style="width:1%"></span></span><span class="kn">6</span></div>
   </div>

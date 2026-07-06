@@ -35,8 +35,8 @@ the first un-evaluatable decl.
 ## The headline dataset: the full std map
 
 `nu scripts/build_std.nu` scans the active toolchain's `std` and writes
-`data/std/nodes.tsv`. On @@ZIG@@ that is **@@N_NODES@@ public decls across @@N_FILES@@ files**, max
-nesting depth @@MAXDEPTH@@.
+`data/std/nodes.tsv`. On @@ZIG@@ that is **@@N_NODES@@ public nodes across @@N_FILES@@ files**
+(decls plus @@N_FIELDS@@ struct/union fields and enum tags), max nesting depth @@MAXDEPTH@@.
 
 ```nu
 open data/std/nodes.tsv | where kind == 'ns'                  # every std source file
@@ -156,7 +156,8 @@ The extractor is **three engines**, split by *what each reads*:
   [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
   single generic walk (`parse/walk.zig`) → the **map** (`nodes.tsv`: paths, names, kinds,
   child-counts, files, source order) plus the raw source facts only a parser can see:
-  as-written **fn signatures** (`sigs.tsv`, @@N_SIGS@@) and **`///` docs** (`docs.tsv`, @@N_DOCS@@), both
+  as-written **fn signatures** (`sigs.tsv`, @@N_SIGS@@), **`///` docs** (`docs.tsv`, @@N_DOCS@@), and
+  **struct/union fields + enum tags** (`fields.tsv`, @@N_FIELDS@@ — `path·type·value`), all
   keyed by `path`. It reads source as text and never runs the compiler, which is what lets it map
   all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
@@ -169,10 +170,10 @@ The extractor is **three engines**, split by *what each reads*:
   tagging where the two readers agree or differ (`consensus.tsv`).
 
 The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The dividing line:
-**raw source facts go in the parser** (structure, signatures, docs — and next, fields +
-location/modifiers); **organisation is deferred to derive** — **references/links** between names
-and **grouping** the map by purpose, never mixed into the parse. Phases and status:
-**[PLAN.md](PLAN.md)**.
+**raw source facts go in the parser** (structure, signatures, docs, fields/tags — and next,
+location/modifiers and generic-factory descent); **organisation is deferred to derive** —
+**references/links** between names and **grouping** the map by purpose, never mixed into the
+parse. Phases and status: **[PLAN.md](PLAN.md)**.
 
 ## Toolchain
 

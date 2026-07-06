@@ -21,7 +21,7 @@ def main [dir: string = "data/std"] {
     let docpaths = (open $"($dir)/docs.tsv" | get path | uniq)
     let docset = ($docpaths | reduce --fold {} {|p, acc| $acc | upsert $p true})
     mut ok = true
-    print $"doccov: ($dc | length) decls"
+    print $"doccov: ($dc | length) nodes"
 
     # 1. CENSUS — one row per node, no orphan paths, no duplicates.
     let dcount = ($dc | length)

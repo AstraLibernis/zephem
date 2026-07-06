@@ -45,10 +45,11 @@ reproduces it, not the bytes.
 
 | dataset | what it is | built by |
 |---|---|---|
-| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, source order | `build.zig` → `walk.zig` |
+| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, field, or enum tag, source order | `build.zig` → `walk.zig` |
 
-One engine, one file. The parser also emits two raw-source-fact side outputs keyed by the same
-`path` — `sigs.tsv` (@@N_SIGS@@ as-written fn signatures) and `docs.tsv` (@@N_DOCS@@ `///` docs).
+One engine, one file. The parser also emits three raw-source-fact side outputs keyed by the same
+`path` — `sigs.tsv` (@@N_SIGS@@ as-written fn signatures), `docs.tsv` (@@N_DOCS@@ `///` docs), and
+`fields.tsv` (@@N_FIELDS@@ struct/union fields + enum tags, as `path · type · value`).
 (The `index.tsv` table of contents is built *from* this map by the [`../derive/`](../derive/)
 engine, not by the parser.)
 

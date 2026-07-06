@@ -1,9 +1,10 @@
 #!/usr/bin/env nu
-# build_doccov.nu — the documentation-coverage census: which decls carry a `///` doc, which don't.
+# build_doccov.nu — the documentation-coverage census: which nodes carry a `///` doc, which don't.
 #
 # The parser emits two source-only overlays — sigs.tsv (signatures) and docs.tsv (`///` docs). docs
-# is sparse: most decls have no doc-comment. This overlay JOINS the map to docs and tags EVERY node
-# documented/not, so the gaps are first-class data you can group by kind and by module. One job.
+# is sparse: most nodes have no doc-comment. This overlay JOINS the map to docs and tags EVERY node
+# (decls AND fields/tags — fields can be documented too) documented/not, so the gaps are first-class
+# data you can group by kind and by module. Read per-kind, not just the blended headline. One job.
 #
 #   doccov.tsv   path · kind · documented
 #
@@ -46,7 +47,7 @@ def main [--dir: string = "data/std", --check] {
     let n = ($rows | length)
     let doc = ($rows | where documented == "yes" | length)
     let pct = (($doc * 100) / $n | math round | into int)
-    print $"[doccov] ($n) decls → ($dir)/doccov.tsv"
+    print $"[doccov] ($n) nodes → ($dir)/doccov.tsv"
     print $"  documented: ($doc)   undocumented: (($n) - ($doc))   \(($pct)% covered\)"
     $rows | group-by kind | items {|k, v| {kind: $k, total: ($v | length), documented: ($v | where documented == "yes" | length)}} | sort-by total --reverse | print
     let h = ($rows | to tsv | hash sha256)
