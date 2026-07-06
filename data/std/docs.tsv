@@ -869,6 +869,8 @@ std.Io.Timestamp.untilNow	Resolution is determined by `Clock.resolution` which m
 std.Io.Duration.format	Write number of nanoseconds according to its signed magnitude: `[#y][#w][#d][#h][#m]#[.###][n|u|m]s`
 std.Io.Timeout	Declares under what conditions an operation should return `error.Timeout`.
 std.Io.Timeout.sleep	Waits until the timeout has passed. See also: * `Io.sleep` * `Clock.Duration.sleep` * `Clock.Timestamp.wait`
+std.Io.Future().cancel	Equivalent to `await` but places a cancelation request. This causes the task to receive `error.Canceled` from its next "cancelation point" (if any). A cancelation point is a call to a function in `Io` which can return `error.Canceled`. After cancelation of a task is requested, only the next cancelation point in that task will return `error.Canceled`: future points will not re-signal the cancelation. As such, it is usually a bug to ignore `error.Canceled`. However, to defer handling cancelation requests, see also `recancel` and `CancelProtection`. Idempotent. Not threadsafe.
+std.Io.Future().await	Idempotent. Not threadsafe.
 std.Io.Group	An unordered set of tasks which can only be awaited or canceled as a whole. Tasks are spawned in the group with `Group.async` and `Group.concurrent`. The resources associated with each task are *guaranteed* to be released when the individual task returns, as opposed to when the whole group completes or is awaited. For this reason, it is not a resource leak to have a long-lived group which concurrent tasks are repeatedly added to. However, asynchronous tasks are not guaranteed to run until `Group.await` or `Group.cancel` is called, so adding async tasks to a group without ever awaiting it may leak resources.
 std.Io.Group.token	This value indicates whether or not a group has pending tasks. `null` means there are no pending tasks, and no resources associated with the group, so `await` and `cancel` return immediately without calling the implementation. This means that `token` must be accessed atomically to avoid racing with the check in `await` and `cancel`.
 std.Io.Group.state	This value is available for the implementation to use as it wishes.
@@ -883,6 +885,12 @@ std.Io.CancelProtection.blocked	No `Io` function introduces a cancelation point 
 std.Io.swapCancelProtection	Updates the current task's cancel protection state (see `CancelProtection`). The typical usage for this function is to protect a block of code from cancelation: ``` const old_cancel_protect = io.swapCancelProtection(.blocked); defer _ = io.swapCancelProtection(old_cancel_protect); doSomeWork() catch |err| switch (err) { error.Canceled => unreachable, }; ``` For a description of cancelation and cancelation points, see `Future.cancel`.
 std.Io.checkCancel	This function acts as a pure cancelation point (subject to protection; see `CancelProtection`) and does nothing else. In other words, it returns `error.Canceled` if there is an outstanding non-blocked cancelation request, but otherwise is a no-op. It is rarely necessary to call this function. The primary use case is in long-running CPU-bound tasks which may need to respond to cancelation before completing. Short tasks, or those which perform other `Io` operations (and hence have other cancelation points), will typically already respond quickly to cancelation requests. For a description of cancelation and cancelation points, see `Future.cancel`.
 std.Io.Select	Executes tasks together, providing a mechanism to wait until one or more tasks complete. Similar to `Batch` but operates at the higher level task abstraction layer rather than lower level `Operation` abstraction layer. The provided tagged union will be used as the return type of the await function. When calling async or concurrent, one specifies which union field the called function's result will be placed into upon completion.
+std.Io.Select().async	Calls `function` with `args` asynchronously. The resource spawned is owned by the select. `function` must have return type matching the `field` field of `Union`. `function` *may* be called immediately, before `async` returns. When this function returns, it is guaranteed that `function` has already been called and completed, or it has successfully been assigned a unit of concurrency. After this is called, `await` or `cancel` must be called before the select is deinitialized. Threadsafe. Related: * `Io.async` * `Group.async`
+std.Io.Select().concurrent	Calls `function` with `args` concurrently. The resource spawned is owned by the select. `function` must have return type matching the `field` field of `Union`. After this function returns successfully, it is guaranteed that `function` has been assigned a unit of concurrency, and `await` or `cancel` must be called before the select is deinitialized. Threadsafe. Related: * `Io.concurrent` * `Group.concurrent`
+std.Io.Select().await	Blocks until another task of the select finishes. It is legal to call `async` and `concurrent` after this. Threadsafe.
+std.Io.Select().awaitMany	Blocks until at least `min` number of results have been copied into `buffer`. Asserts that `buffer.len >= min`. It is legal to call `async` and `concurrent` after this. Threadsafe.
+std.Io.Select().cancel	Requests cancelation on all remaining tasks owned by the select, then blocks until they all finish. If the select was initialized with insufficient buffer space for all remaining tasks to finish, a deadlock occurs. If any of the select tasks allocate resources, those tasks may have completed, meaning that this function must be called in a loop until `null` is returned in order to deallocate those resources. If there is no possibility of resource leaks, `cancelDiscard` is preferable. It is illegal to call `await` or `awaitMany` after this. It is safe to call this multiple times, even after `null` is returned. Threadsafe.
+std.Io.Select().cancelDiscard	Requests cancelation on all remaining tasks owned by the select, then blocks until they all finish. All return values from outstanding tasks are discarded. This function is therefore inappropriate to call when a task can return an allocated resource. For that use case, see `cancel`. It is illegal to call `await` or `awaitMany` after this. It is safe to call this multiple times. Threadsafe.
 std.Io.futexWait	Atomically checks if the value at `ptr` equals `expected`, and if so, blocks until either: * a matching (same `ptr` argument) `futexWake` call occurs, or * a spurious ("random") wakeup occurs. Typically, `futexWake` should be called immediately after updating the value at `ptr.*`, to unblock tasks using `futexWait` to wait for the value to change from what it previously was. The caller is responsible for identifying spurious wakeups if necessary, typically by checking the value at `ptr.*`. Asserts that `T` is 4 bytes in length and has a well-defined layout with no padding bits.
 std.Io.futexWaitTimeout	Same as `futexWait`, except also unblocks if `timeout` expires. As with `futexWait`, spurious wakeups are possible. It remains the caller's responsibility to differentiate between these three possible wake-up reasons if necessary.
 std.Io.futexWaitUncancelable	Same as `futexWait`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
@@ -903,6 +911,17 @@ std.Io.TypeErasedQueue.close	After this is called, the queue enters a "closed" s
 std.Io.TypeErasedQueue.putUncancelable	Same as `put`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
 std.Io.TypeErasedQueue.getUncancelable	Same as `get`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
 std.Io.Queue	Many producer, many consumer, thread-safe, runtime configurable buffer size. When buffer is empty, consumers suspend and are resumed by producers. When buffer is full, producers suspend and are resumed by consumers.
+std.Io.Queue().close	After this is called, the queue enters a "closed" state. A closed queue always returns `error.Closed` for put attempts even when there is space in the buffer. However, existing elements of the queue are retrieved before `error.Closed` is returned. Threadsafe.
+std.Io.Queue().put	Appends elements to the end of the queue, potentially blocking if there is insufficient capacity. Returns when any one of the following conditions is satisfied: * At least `min` elements have been added to the queue * The queue is closed * The current task is canceled Returns how many of `elements` have been added to the queue, if any. If an error is returned, no elements have been added. If the queue is closed or the task is canceled, but some items were already added before the closure or cancelation, then `put` may return a number lower than `min`, in which case future calls are guaranteed to return `error.Canceled` or `error.Closed`. A return value of 0 is only possible if `min` is 0, in which case the call is guaranteed to queue as many of `elements` as is possible *without* blocking. Asserts that `elements.len >= min`.
+std.Io.Queue().putAll	Same as `put` but blocks until all elements have been added to the queue. If the queue is closed or canceled, `error.Closed` or `error.Canceled` is returned, and it is unspecified how many, if any, of `elements` were added to the queue prior to cancelation or closure.
+std.Io.Queue().putUncancelable	Same as `put`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
+std.Io.Queue().putOne	Appends `item` to the end of the queue, blocking if the queue is full.
+std.Io.Queue().putOneUncancelable	Same as `putOne`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
+std.Io.Queue().get	Receives elements from the beginning of the queue, potentially blocking if there are insufficient elements currently in the queue. Returns when any one of the following conditions is satisfied: * At least `min` elements have been received from the queue * The queue is closed and contains no buffered elements * The current task is canceled Returns how many elements of `buffer` have been populated, if any. If an error is returned, no elements have been populated. If the queue is closed or the task is canceled, but some items were already received before the closure or cancelation, then `get` may return a number lower than `min`, in which case future calls are guaranteed to return `error.Canceled` or `error.Closed`. A return value of 0 is only possible if `min` is 0, in which case the call is guaranteed to fill as much of `buffer` as is possible *without* blocking. Asserts that `buffer.len >= min`.
+std.Io.Queue().getUncancelable	Same as `get`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
+std.Io.Queue().getOne	Receives one element from the beginning of the queue, blocking if the queue is empty.
+std.Io.Queue().getOneUncancelable	Same as `getOne`, except does not introduce a cancelation point. For a description of cancelation and cancelation points, see `Future.cancel`.
+std.Io.Queue().capacity	Returns buffer length in `Elem` units.
 std.Io.async	Calls `function` with `args`, such that the return value of the function is not guaranteed to be available until `await` is called. `function` *may* be called immediately, before `async` returns. This has weaker guarantees than `concurrent`, making more portable and reusable. When this function returns, it is guaranteed that `function` has already been called and completed, or it has successfully been assigned a unit of concurrency. See also: * `Group`
 std.Io.concurrent	Calls `function` with `args`, such that the return value of the function is not guaranteed to be available until `await` is called, allowing the caller to progress while waiting for any `Io` operations. This has stronger guarantee than `async`, placing restrictions on what kind of `Io` implementations are supported. By calling `async` instead, one allows, for example, stackful single-threaded blocking I/O.
 std.Io.sleep	Waits until a specified amount of time has passed on `clock`. See also: * `Clock.Duration.sleep` * `Clock.Timestamp.wait` * `Timeout.sleep`
@@ -1046,6 +1065,10 @@ std.Target.Cpu.Feature.Set.addFeature	Adds the specified feature but not its dep
 std.Target.Cpu.Feature.Set.addFeatureSet	Adds the specified feature set but not its dependencies.
 std.Target.Cpu.Feature.Set.removeFeature	Removes the specified feature but not its dependents.
 std.Target.Cpu.Feature.Set.removeFeatureSet	Removes the specified feature but not its dependents.
+std.Target.Cpu.Feature.FeatureSetFns().featureSet	Populates only the feature bits specified.
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHas	Returns true if the specified feature is enabled.
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAny	Returns true if any specified feature is enabled.
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAll	Returns true if every specified feature is enabled.
 std.Target.Cpu.Arch.Family	An architecture family can encompass multiple architectures as represented by `Arch`. For a given family tag, it is guaranteed that an `std.Target.<tag>` namespace exists containing CPU model and feature data.
 std.Target.Cpu.Arch.isArm	Note that this includes Thumb.
 std.Target.Cpu.Arch.allFeaturesList	All CPU features Zig is aware of, sorted lexicographically by name.
@@ -1115,7 +1138,123 @@ std.StringArrayHashMapUnmanaged	Deprecated; use `array_hash_map.String`.
 std.ArrayList	A contiguous, growable list of items in memory. This is a wrapper around a slice of `T` values. The same allocator must be used throughout its entire lifetime. Initialize directly with `empty` or `initCapacity`, and deinitialize with `deinit` or `toOwnedSlice`.
 std.array_list.Managed	Deprecated.
 std.array_list.AlignedManaged	Deprecated.
+std.array_list.AlignedManaged().items	Contents of the list. This field is intended to be accessed directly. Pointers to elements in this slice are invalidated by various functions of this ArrayList in accordance with the respective documentation. In all cases, "invalidated" means that the memory has been passed to this allocator's resize or free function.
+std.array_list.AlignedManaged().capacity	How many T values this list can hold without allocating additional memory.
+std.array_list.AlignedManaged().init	Deinitialize with `deinit` or use `toOwnedSlice`.
+std.array_list.AlignedManaged().initCapacity	Initialize with capacity to hold `num` elements. The resulting capacity will equal `num` exactly. Deinitialize with `deinit` or use `toOwnedSlice`.
+std.array_list.AlignedManaged().deinit	Release all allocated memory.
+std.array_list.AlignedManaged().fromOwnedSlice	ArrayList takes ownership of the passed in slice. The slice must have been allocated with `gpa`. Deinitialize with `deinit` or use `toOwnedSlice`.
+std.array_list.AlignedManaged().fromOwnedSliceSentinel	ArrayList takes ownership of the passed in slice. The slice must have been allocated with `gpa`. Deinitialize with `deinit` or use `toOwnedSlice`.
+std.array_list.AlignedManaged().moveToUnmanaged	Initializes an ArrayList with the `items` and `capacity` fields of this ArrayList. Empties this ArrayList.
+std.array_list.AlignedManaged().toOwnedSlice	The caller owns the returned memory. Empties this ArrayList. Its capacity is cleared, making `deinit` safe but unnecessary to call.
+std.array_list.AlignedManaged().toOwnedSliceSentinel	The caller owns the returned memory. Empties this ArrayList.
+std.array_list.AlignedManaged().clone	Creates a copy of this ArrayList, using the same allocator.
+std.array_list.AlignedManaged().insert	Insert `item` at index `i`. Moves `list[i .. list.len]` to higher indices to make room. If `i` is equal to the length of the list this operation is equivalent to append. This operation is O(N). Invalidates element pointers if additional memory is needed. Asserts that the index is in bounds or equal to the length.
+std.array_list.AlignedManaged().insertAssumeCapacity	Insert `item` at index `i`. Moves `list[i .. list.len]` to higher indices to make room. If `i` is equal to the length of the list this operation is equivalent to appendAssumeCapacity. This operation is O(N). Asserts that there is enough capacity for the new item. Asserts that the index is in bounds or equal to the length.
+std.array_list.AlignedManaged().addManyAt	Add `count` new elements at position `index`, which have `undefined` values. Returns a slice pointing to the newly allocated elements, which becomes invalid after various `ArrayList` operations. Invalidates pre-existing pointers to elements at and after `index`. Invalidates all pre-existing element pointers if capacity must be increased to accommodate the new elements. Asserts that the index is in bounds or equal to the length.
+std.array_list.AlignedManaged().addManyAtAssumeCapacity	Add `count` new elements at position `index`, which have `undefined` values. Returns a slice pointing to the newly allocated elements, which becomes invalid after various `ArrayList` operations. Asserts that there is enough capacity for the new elements. Invalidates pre-existing pointers to elements at and after `index`, but does not invalidate any before that. Asserts that the index is in bounds or equal to the length.
+std.array_list.AlignedManaged().insertSlice	Insert slice `items` at index `i` by moving `list[i .. list.len]` to make room. This operation is O(N). Invalidates pre-existing pointers to elements at and after `index`. Invalidates all pre-existing element pointers if capacity must be increased to accommodate the new elements. Asserts that the index is in bounds or equal to the length.
+std.array_list.AlignedManaged().replaceRange	Grows or shrinks the list as necessary. Invalidates element pointers if additional capacity is allocated. Asserts that the range is in bounds.
+std.array_list.AlignedManaged().replaceRangeAssumeCapacity	Grows or shrinks the list as necessary. Never invalidates element pointers. Asserts the capacity is enough for additional items.
+std.array_list.AlignedManaged().append	Extends the list by 1 element. Allocates more memory as necessary. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().appendAssumeCapacity	Extends the list by 1 element. Never invalidates element pointers. Asserts that the list can hold one additional item.
+std.array_list.AlignedManaged().orderedRemove	Remove the element at index `i`, shift elements after index `i` forward, and return the removed element. Invalidates element pointers to end of list. This operation is O(N). This preserves item order. Use `swapRemove` if order preservation is not important. Asserts that the index is in bounds. Asserts that the list is not empty.
+std.array_list.AlignedManaged().swapRemove	Removes the element at the specified index and returns it. The empty slot is filled from the end of the list. This operation is O(1). This may not preserve item order. Use `orderedRemove` if you need to preserve order. Asserts that the index is in bounds.
+std.array_list.AlignedManaged().appendSlice	Append the slice of items to the list. Allocates more memory as necessary. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().appendSliceAssumeCapacity	Append the slice of items to the list. Never invalidates element pointers. Asserts that the list can hold the additional items.
+std.array_list.AlignedManaged().appendUnalignedSlice	Append an unaligned slice of items to the list. Allocates more memory as necessary. Only call this function if calling `appendSlice` instead would be a compile error. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().appendUnalignedSliceAssumeCapacity	Append the slice of items to the list. Never invalidates element pointers. This function is only needed when calling `appendSliceAssumeCapacity` instead would be a compile error due to the alignment of the `items` parameter. Asserts that the list can hold the additional items.
+std.array_list.AlignedManaged().appendNTimes	Append a value to the list `n` times. Allocates more memory as necessary. Invalidates element pointers if additional memory is needed. The function is inline so that a comptime-known `value` parameter will have a more optimal memset codegen in case it has a repeated byte pattern.
+std.array_list.AlignedManaged().appendNTimesAssumeCapacity	Append a value to the list `n` times. Never invalidates element pointers. The function is inline so that a comptime-known `value` parameter will have a more optimal memset codegen in case it has a repeated byte pattern. Asserts that the list can hold the additional items.
+std.array_list.AlignedManaged().resize	Adjust the list length to `new_len`. Additional elements contain the value `undefined`. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().shrinkAndFree	Reduce allocated capacity to `new_len`. May invalidate element pointers. Asserts that the new length is less than or equal to the previous length.
+std.array_list.AlignedManaged().shrinkRetainingCapacity	Reduce length to `new_len`. Invalidates element pointers for the elements `items[new_len..]`. Asserts that the new length is less than or equal to the previous length.
+std.array_list.AlignedManaged().clearRetainingCapacity	Reduce length to 0. Invalidates all element pointers.
+std.array_list.AlignedManaged().clearAndFree	Invalidates all element pointers.
+std.array_list.AlignedManaged().ensureTotalCapacity	If the current capacity is less than `new_capacity`, this function will modify the array so that it can hold at least `new_capacity` items. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().ensureTotalCapacityPrecise	If the current capacity is less than `new_capacity`, this function will modify the array so that it can hold exactly `new_capacity` items. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().ensureUnusedCapacity	Modify the array so that it can hold at least `additional_count` **more** items. Invalidates element pointers if additional memory is needed.
+std.array_list.AlignedManaged().expandToCapacity	Increases the array's length to match the full capacity that is already allocated. The new elements have `undefined` values. Never invalidates element pointers.
+std.array_list.AlignedManaged().addOne	Increase length by 1, returning pointer to the new item. The returned pointer becomes invalid when the list resized.
+std.array_list.AlignedManaged().addOneAssumeCapacity	Increase length by 1, returning pointer to the new item. The returned pointer becomes invalid when the list is resized. Never invalidates element pointers. Asserts that the list can hold one additional item.
+std.array_list.AlignedManaged().addManyAsArray	Resize the array, adding `n` new elements, which have `undefined` values. The return value is an array pointing to the newly allocated elements. The returned pointer becomes invalid when the list is resized. Resizes list if `self.capacity` is not large enough.
+std.array_list.AlignedManaged().addManyAsArrayAssumeCapacity	Resize the array, adding `n` new elements, which have `undefined` values. The return value is an array pointing to the newly allocated elements. Never invalidates element pointers. The returned pointer becomes invalid when the list is resized. Asserts that the list can hold the additional items.
+std.array_list.AlignedManaged().addManyAsSlice	Resize the array, adding `n` new elements, which have `undefined` values. The return value is a slice pointing to the newly allocated elements. The returned pointer becomes invalid when the list is resized. Resizes list if `self.capacity` is not large enough.
+std.array_list.AlignedManaged().addManyAsSliceAssumeCapacity	Resize the array, adding `n` new elements, which have `undefined` values. The return value is a slice pointing to the newly allocated elements. Never invalidates element pointers. The returned pointer becomes invalid when the list is resized. Asserts that the list can hold the additional items.
+std.array_list.AlignedManaged().pop	Remove and return the last element from the list, or return `null` if list is empty. Invalidates element pointers to the removed element, if any.
+std.array_list.AlignedManaged().allocatedSlice	Returns a slice of all the items plus the extra capacity, whose memory contents are `undefined`.
+std.array_list.AlignedManaged().unusedCapacitySlice	Returns a slice of only the extra capacity after items. This can be useful for writing directly into an ArrayList. Note that such an operation must be followed up with a direct modification of `self.items.len`.
+std.array_list.AlignedManaged().getLast	Returns the last element from the list. Asserts that the list is not empty.
+std.array_list.AlignedManaged().getLastOrNull	Returns the last element from the list, or `null` if list is empty.
 std.array_list.Aligned	A contiguous, growable list of arbitrarily aligned items in memory. This is a wrapper around an array of T values aligned to `alignment`-byte addresses. If the specified alignment is `null`, then `@alignOf(T)` is used. Functions that potentially allocate memory accept an `Allocator` parameter. Initialize directly or with `initCapacity`, and deinitialize with `deinit` or use `toOwnedSlice`. Default initialization of this struct is deprecated; use `.empty` instead.
+std.array_list.Aligned().items	Contents of the list. This field is intended to be accessed directly. Pointers to elements in this slice are invalidated by various functions of this ArrayList in accordance with the respective documentation. In all cases, "invalidated" means that the memory has been passed to an allocator's resize or free function.
+std.array_list.Aligned().capacity	How many T values this list can hold without allocating additional memory.
+std.array_list.Aligned().empty	An ArrayList containing no elements.
+std.array_list.Aligned().initCapacity	Initialize with capacity to hold exactly `num` elements. Deinitialize with `deinit` or `toOwnedSlice`.
+std.array_list.Aligned().initBuffer	Initialize with externally-managed memory. The buffer determines the capacity, and the length is set to zero. When initialized this way, all functions that accept an Allocator argument cause illegal behavior.
+std.array_list.Aligned().deinit	Release all allocated memory.
+std.array_list.Aligned().toManaged	Convert this list into an analogous memory-managed one. The returned list has ownership of the underlying memory.
+std.array_list.Aligned().fromOwnedSlice	ArrayList takes ownership of the passed in slice. Deinitialize with `deinit` or use `toOwnedSlice`.
+std.array_list.Aligned().fromOwnedSliceSentinel	ArrayList takes ownership of the passed in slice. Deinitialize with `deinit` or use `toOwnedSlice`.
+std.array_list.Aligned().toOwnedSlice	The caller owns the returned memory. Empties this ArrayList. Its capacity is cleared, making deinit() safe but unnecessary to call.
+std.array_list.Aligned().toOwnedSliceSentinel	The caller owns the returned memory. ArrayList becomes empty.
+std.array_list.Aligned().toOwnedSliceAssert	The caller owns the returned memory. Empties this ArrayList. Its capacity is cleared, making deinit() safe but unnecessary to call. Asserts what the capacity is equal to the length.
+std.array_list.Aligned().toOwnedSliceSentinelAssert	The caller owns the returned memory. ArrayList becomes empty. Asserts what the capacity is equal to the length + 1.
+std.array_list.Aligned().clone	Creates a copy of this ArrayList.
+std.array_list.Aligned().insert	Insert `item` at index `i`. Moves `list[i .. list.len]` to higher indices to make room. If `i` is equal to the length of the list this operation is equivalent to append. This operation is O(N). Invalidates element pointers if additional memory is needed. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().insertAssumeCapacity	Insert `item` at index `i`. Moves `list[i .. list.len]` to higher indices to make room. If `i` is equal to the length of the list this operation is equivalent to append. This operation is O(N). Asserts that the list has capacity for one additional item. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().insertBounded	Insert `item` at index `i`, moving `list[i .. list.len]` to higher indices to make room. If `i` is equal to the length of the list this operation is equivalent to append. This operation is O(N). If the list lacks unused capacity for the additional item, returns `error.OutOfMemory`. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().addManyAt	Add `count` new elements at position `index`, which have `undefined` values. Returns a slice pointing to the newly allocated elements, which becomes invalid after various `ArrayList` operations. Invalidates pre-existing pointers to elements at and after `index`. Invalidates all pre-existing element pointers if capacity must be increased to accommodate the new elements. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().addManyAtAssumeCapacity	Add `count` new elements at position `index`, which have `undefined` values. Returns a slice pointing to the newly allocated elements, which becomes invalid after various `ArrayList` operations. Invalidates pre-existing pointers to elements at and after `index`, but does not invalidate any before that. Asserts that the list has capacity for the additional items. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().addManyAtBounded	Add `count` new elements at position `index`, which have `undefined` values, returning a slice pointing to the newly allocated elements, which becomes invalid after various `ArrayList` operations. Invalidates pre-existing pointers to elements at and after `index`, but does not invalidate any before that. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().insertSlice	Insert slice `items` at index `i` by moving `list[i .. list.len]` to make room. This operation is O(N). Invalidates pre-existing pointers to elements at and after `index`. Invalidates all pre-existing element pointers if capacity must be increased to accommodate the new elements. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().insertSliceAssumeCapacity	Insert slice `items` at index `i` by moving `list[i .. list.len]` to make room. This operation is O(N). Invalidates pre-existing pointers to elements at and after `index`. Asserts that the list has capacity for the additional items. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().insertSliceBounded	Insert slice `items` at index `i` by moving `list[i .. list.len]` to make room. This operation is O(N). Invalidates pre-existing pointers to elements at and after `index`. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`. Asserts that the index is in bounds or equal to the length.
+std.array_list.Aligned().replaceRange	Grows or shrinks the list as necessary. Invalidates element pointers if additional capacity is allocated. Asserts that the range is in bounds.
+std.array_list.Aligned().replaceRangeAssumeCapacity	Grows or shrinks the list as necessary. Never invalidates element pointers. Asserts the capacity is enough for additional items.
+std.array_list.Aligned().replaceRangeBounded	Grows or shrinks the list as necessary. Never invalidates element pointers. If the unused capacity is insufficient for additional items, returns `error.OutOfMemory`.
+std.array_list.Aligned().append	Extend the list by 1 element. Allocates more memory as necessary. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().appendAssumeCapacity	Extend the list by 1 element. Never invalidates element pointers. Asserts that the list can hold one additional item.
+std.array_list.Aligned().appendBounded	Extend the list by 1 element. Never invalidates element pointers. If the list lacks unused capacity for the additional item, returns `error.OutOfMemory`.
+std.array_list.Aligned().orderedRemove	Remove the element at index `i` from the list and return its value. Invalidates pointers to the last element. This operation is O(N). Asserts that the index is in bounds.
+std.array_list.Aligned().orderedRemoveMany	Remove the elements indexed by `sorted_indexes`. The indexes to be removed correspond to the array list before deletion. Asserts: * Each index to be removed is in bounds. * The indexes to be removed are sorted ascending. Duplicates in `sorted_indexes` are allowed. This operation is O(N). Invalidates element pointers beyond the first deleted index.
+std.array_list.Aligned().swapRemove	Removes the element at the specified index and returns it. The empty slot is filled from the end of the list. Invalidates pointers to last element. This operation is O(1). Asserts that the index is in bounds.
+std.array_list.Aligned().appendSlice	Append the slice of items to the list. Allocates more memory as necessary. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().appendSliceAssumeCapacity	Append the slice of items to the list. Asserts that the list can hold the additional items.
+std.array_list.Aligned().appendSliceBounded	Append the slice of items to the list. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`.
+std.array_list.Aligned().appendUnalignedSlice	Append the slice of items to the list. Allocates more memory as necessary. Only call this function if a call to `appendSlice` instead would be a compile error. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().appendUnalignedSliceAssumeCapacity	Append an unaligned slice of items to the list. Intended to be used only when `appendSliceAssumeCapacity` would be a compile error. Asserts that the list can hold the additional items.
+std.array_list.Aligned().appendUnalignedSliceBounded	Append an unaligned slice of items to the list. Intended to be used only when `appendSliceAssumeCapacity` would be a compile error. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`.
+std.array_list.Aligned().appendNTimes	Append a value to the list `n` times. Allocates more memory as necessary. Invalidates element pointers if additional memory is needed. The function is inline so that a comptime-known `value` parameter will have a more optimal memset codegen in case it has a repeated byte pattern.
+std.array_list.Aligned().appendNTimesAssumeCapacity	Append a value to the list `n` times. Never invalidates element pointers. The function is inline so that a comptime-known `value` parameter will have better memset codegen in case it has a repeated byte pattern. Asserts that the list can hold the additional items.
+std.array_list.Aligned().appendNTimesBounded	Append a value to the list `n` times. Never invalidates element pointers. The function is inline so that a comptime-known `value` parameter will have better memset codegen in case it has a repeated byte pattern. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`.
+std.array_list.Aligned().resize	Adjust the list length to `new_len`. Additional elements contain the value `undefined`. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().shrinkAndFree	Reduce allocated capacity to `new_len`. May invalidate element pointers. Asserts that the new length is less than or equal to the previous length.
+std.array_list.Aligned().shrinkAndFreePrecise	Reduce allocated capacity to `new_len`. May invalidate element pointers. Asserts that the new length is less than or equal to the previous length. If succeds capacity is guaranteed to be equal to the length.
+std.array_list.Aligned().shrinkToLen	Shrinks capacity to match length. May invalidate element pointers. If succeds it is safe to call toOwnedSliceAssert().
+std.array_list.Aligned().shrinkToLenSentinel	Shrinks or expands capacity to match length + 1. May invalidate element pointers. If succeds it is safe to call toOwnedSliceSentinelAssert().
+std.array_list.Aligned().shrinkRetainingCapacity	Reduce length to `new_len`. Invalidates pointers to elements `items[new_len..]`. Keeps capacity the same. Asserts that the new length is less than or equal to the previous length.
+std.array_list.Aligned().clearRetainingCapacity	Reduce length to 0. Invalidates all element pointers.
+std.array_list.Aligned().clearAndFree	Invalidates all element pointers.
+std.array_list.Aligned().ensureTotalCapacity	Modify the array so that it can hold at least `new_capacity` items. Implements super-linear growth to achieve amortized O(1) append operations. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().ensureTotalCapacityPrecise	If the current capacity is less than `new_capacity`, this function will modify the array so that it can hold exactly `new_capacity` items. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().ensureUnusedCapacity	Modify the array so that it can hold at least `additional_count` **more** items. Invalidates element pointers if additional memory is needed.
+std.array_list.Aligned().expandToCapacity	Increases the array's length to match the full capacity that is already allocated. The new elements have `undefined` values. Never invalidates element pointers.
+std.array_list.Aligned().addOne	Increase length by 1, returning pointer to the new item. The returned element pointer becomes invalid when the list is resized.
+std.array_list.Aligned().addOneAssumeCapacity	Increase length by 1, returning pointer to the new item. Never invalidates element pointers. The returned element pointer becomes invalid when the list is resized. Asserts that the list can hold one additional item.
+std.array_list.Aligned().addOneBounded	Increase length by 1, returning pointer to the new item. Never invalidates element pointers. The returned element pointer becomes invalid when the list is resized. If the list lacks unused capacity for the additional item, returns `error.OutOfMemory`.
+std.array_list.Aligned().addManyAsArray	Resize the array, adding `n` new elements, which have `undefined` values. The return value is an array pointing to the newly allocated elements. The returned pointer becomes invalid when the list is resized.
+std.array_list.Aligned().addManyAsArrayAssumeCapacity	Resize the array, adding `n` new elements, which have `undefined` values. The return value is an array pointing to the newly allocated elements. Never invalidates element pointers. The returned pointer becomes invalid when the list is resized. Asserts that the list can hold the additional items.
+std.array_list.Aligned().addManyAsArrayBounded	Resize the array, adding `n` new elements, which have `undefined` values. The return value is an array pointing to the newly allocated elements. Never invalidates element pointers. The returned pointer becomes invalid when the list is resized. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`.
+std.array_list.Aligned().addManyAsSlice	Resize the array, adding `n` new elements, which have `undefined` values. The return value is a slice pointing to the newly allocated elements. The returned pointer becomes invalid when the list is resized. Resizes list if `self.capacity` is not large enough.
+std.array_list.Aligned().addManyAsSliceAssumeCapacity	Resizes the array, adding `n` new elements, which have `undefined` values, returning a slice pointing to the newly allocated elements. Never invalidates element pointers. The returned pointer becomes invalid when the list is resized. Asserts that the list can hold the additional items.
+std.array_list.Aligned().addManyAsSliceBounded	Resizes the array, adding `n` new elements, which have `undefined` values, returning a slice pointing to the newly allocated elements. Never invalidates element pointers. The returned pointer becomes invalid when the list is resized. If the list lacks unused capacity for the additional items, returns `error.OutOfMemory`.
+std.array_list.Aligned().pop	Remove and return the last element from the list. If the list is empty, returns `null`. Invalidates pointers to last element.
+std.array_list.Aligned().allocatedSlice	Returns a slice of all the items plus the extra capacity, whose memory contents are `undefined`.
+std.array_list.Aligned().unusedCapacitySlice	Returns a slice of only the extra capacity after items. This can be useful for writing directly into an ArrayList. Note that such an operation must be followed up with a direct modification of `self.items.len`.
+std.array_list.Aligned().getLast	Return the last element from the list. Asserts that the list is not empty.
+std.array_list.Aligned().getLastOrNull	Return the last element from the list, or return `null` if list is empty.
+std.array_list.Aligned().growCapacity	Called when memory growth is necessary. Returns a capacity larger than minimum that grows super-linearly.
 std.ArrayListAligned	Deprecated; use `array_list.Aligned`.
 std.ArrayListAlignedUnmanaged	Deprecated; use `array_list.Aligned`.
 std.ArrayListUnmanaged	Deprecated; use `ArrayList`.
@@ -1123,7 +1262,69 @@ std.array_hash_map.Auto	An `ArrayHashMap` with default hash and equal functions.
 std.array_hash_map.String	An `ArrayHashMap` with strings as keys.
 std.array_hash_map.ArrayHashMap	Deprecated; use `Custom`.
 std.array_hash_map.Custom	A hash table of keys and values, each stored sequentially. Insertion order is preserved. In general, this data structure supports the same operations as `std.ArrayList`. Deletion operations: * `swapRemove` - O(1) * `orderedRemove` - O(N) Modifying the hash map while iterating is allowed, however, one must understand the (well defined) behavior when mixing insertions and deletions with iteration. This type does not store an `Allocator` field - the `Allocator` must be passed in with each function call that requires it. See `ArrayHashMap` for a type that stores an `Allocator` field for convenience. Can be initialized directly using the default field values. This type is designed to have low overhead for small numbers of entries. When `store_hash` is `false` and the number of entries in the map is less than 9, the overhead cost of using `ArrayHashMap` rather than `std.ArrayList` is only a single pointer-sized integer. Default initialization of this struct is deprecated; use `.empty` instead.
+std.array_hash_map.Custom().entries	It is permitted to access this field directly. After any modification to the keys, consider calling `reIndex`.
+std.array_hash_map.Custom().index_header	When entries length is less than `linear_scan_max`, this remains `null`. Once entries length grows big enough, this field is allocated. There is an IndexHeader followed by an array of Index(I) structs, where I is defined by how many total indexes there are.
+std.array_hash_map.Custom().pointer_stability	Used to detect memory safety violations.
+std.array_hash_map.Custom().empty	A map containing no keys or values.
+std.array_hash_map.Custom().Entry	Modifying the key is allowed only if it does not change the hash. Modifying the value is allowed. Entry pointers become invalid whenever this ArrayHashMap is modified, unless `ensureTotalCapacity`/`ensureUnusedCapacity` was previously used.
+std.array_hash_map.Custom().KV	A KV pair which has been copied out of the backing store
+std.array_hash_map.Custom().Data	The Data type used for the MultiArrayList backing this map
+std.array_hash_map.Custom().DataList	The MultiArrayList type backing this map
+std.array_hash_map.Custom().Hash	The stored hash type, either u32 or void.
+std.array_hash_map.Custom().GetOrPutResult	getOrPut variants return this structure, with pointers to the backing store and a flag to indicate whether an existing entry was found. Modifying the key is allowed only if it does not change the hash. Modifying the value is allowed. Entry pointers become invalid whenever this ArrayHashMap is modified, unless `ensureTotalCapacity`/`ensureUnusedCapacity` was previously used.
+std.array_hash_map.Custom().reinit	An empty `value_list` may be passed, in which case the values array becomes `undefined`.
+std.array_hash_map.Custom().deinit	Frees the backing allocation and leaves the map in an undefined state. Note that this does not free keys or values. You must take care of that before calling this function, if it is needed.
+std.array_hash_map.Custom().lockPointers	Puts the hash map into a state where any method call that would cause an existing key or value pointer to become invalidated will instead trigger an assertion. An additional call to `lockPointers` in such state also triggers an assertion. `unlockPointers` returns the hash map to the previous state.
+std.array_hash_map.Custom().unlockPointers	Undoes a call to `lockPointers`.
+std.array_hash_map.Custom().clearRetainingCapacity	Clears the map but retains the backing allocation for future use.
+std.array_hash_map.Custom().clearAndFree	Clears the map and releases the backing allocation
+std.array_hash_map.Custom().count	Returns the number of KV pairs stored in this map.
+std.array_hash_map.Custom().keys	Returns the backing array of keys in this map. Modifying the map may invalidate this array. Modifying this array in a way that changes key hashes or key equality puts the map into an unusable state until `reIndex` is called.
+std.array_hash_map.Custom().values	Returns the backing array of values in this map. Modifying the map may invalidate this array. It is permitted to modify the values in this array.
+std.array_hash_map.Custom().iterator	Returns an iterator over the pairs in this map. Modifying the map may invalidate this iterator.
+std.array_hash_map.Custom().Iterator.reset	Reset the iterator to the initial index
+std.array_hash_map.Custom().getOrPut	If key exists this function cannot fail. If there is an existing item with `key`, then the result `Entry` pointer points to it, and found_existing is true. Otherwise, puts a new item with undefined value, and the `Entry` pointer points to it. Caller should then initialize the value (but not the key).
+std.array_hash_map.Custom().getOrPutAssumeCapacity	If there is an existing item with `key`, then the result `Entry` pointer points to it, and found_existing is true. Otherwise, puts a new item with undefined value, and the `Entry` pointer points to it. Caller should then initialize the value (but not the key). If a new entry needs to be stored, this function asserts there is enough capacity to store it.
+std.array_hash_map.Custom().getOrPutAssumeCapacityAdapted	If there is an existing item with `key`, then the result `Entry` pointers point to it, and found_existing is true. Otherwise, puts a new item with undefined key and value, and the `Entry` pointers point to it. Caller must then initialize both the key and the value. If a new entry needs to be stored, this function asserts there is enough capacity to store it.
+std.array_hash_map.Custom().ensureTotalCapacity	Increases capacity, guaranteeing that insertions up until the `expected_count` will not cause an allocation, and therefore cannot fail.
+std.array_hash_map.Custom().ensureUnusedCapacity	Increases capacity, guaranteeing that insertions up until `additional_count` **more** items will not cause an allocation, and therefore cannot fail.
+std.array_hash_map.Custom().capacity	Returns the number of total elements which may be present before it is no longer guaranteed that no allocations will be performed.
+std.array_hash_map.Custom().put	Clobbers any existing data. To detect if a put would clobber existing data, see `getOrPut`.
+std.array_hash_map.Custom().putNoClobber	Inserts a key-value pair into the hash map, asserting that no previous entry with the same key is already present
+std.array_hash_map.Custom().putAssumeCapacity	Asserts there is enough capacity to store the new key-value pair. Clobbers any existing data. To detect if a put would clobber existing data, see `getOrPutAssumeCapacity`.
+std.array_hash_map.Custom().putAssumeCapacityNoClobber	Asserts there is enough capacity to store the new key-value pair. Asserts that it does not clobber any existing data. To detect if a put would clobber existing data, see `getOrPutAssumeCapacity`.
+std.array_hash_map.Custom().fetchPut	Inserts a new `Entry` into the hash map, returning the previous one, if any.
+std.array_hash_map.Custom().fetchPutAssumeCapacity	Inserts a new `Entry` into the hash map, returning the previous one, if any. If insertion happens, asserts there is enough capacity without allocating.
+std.array_hash_map.Custom().getEntry	Finds pointers to the key and value storage associated with a key.
+std.array_hash_map.Custom().getIndex	Finds the index in the `entries` array where a key is stored
+std.array_hash_map.Custom().get	Find the value associated with a key
+std.array_hash_map.Custom().getPtr	Find a pointer to the value associated with a key
+std.array_hash_map.Custom().getKey	Find the actual key associated with an adapted key
+std.array_hash_map.Custom().getKeyPtr	Find a pointer to the actual key associated with an adapted key
+std.array_hash_map.Custom().contains	Check whether a key is stored in the map
+std.array_hash_map.Custom().fetchSwapRemove	If there is an `Entry` with a matching key, it is deleted from the hash map, and then returned from this function. The entry is removed from the underlying array by swapping it with the last element.
+std.array_hash_map.Custom().fetchOrderedRemove	If there is an `Entry` with a matching key, it is deleted from the hash map, and then returned from this function. The entry is removed from the underlying array by shifting all elements forward thereby maintaining the current ordering.
+std.array_hash_map.Custom().swapRemove	If there is an `Entry` with a matching key, it is deleted from the hash map. The entry is removed from the underlying array by swapping it with the last element. Returns true if an entry was removed, false otherwise.
+std.array_hash_map.Custom().orderedRemove	If there is an `Entry` with a matching key, it is deleted from the hash map. The entry is removed from the underlying array by shifting all elements forward, thereby maintaining the current ordering. Returns true if an entry was removed, false otherwise.
+std.array_hash_map.Custom().swapRemoveAt	Deletes the item at the specified index in `entries` from the hash map. The entry is removed from the underlying array by swapping it with the last element.
+std.array_hash_map.Custom().orderedRemoveAt	Deletes the item at the specified index in `entries` from the hash map. The entry is removed from the underlying array by shifting all elements forward, thereby maintaining the current ordering.
+std.array_hash_map.Custom().orderedRemoveAtMany	Remove the entries indexed by `sorted_indexes`. The indexes to be removed correspond to state before deletion. This operation is O(N). Asserts that each index to be removed is in bounds. Invalidates key and element pointers beyond the first deleted index.
+std.array_hash_map.Custom().clone	Create a copy of the hash map which can be modified separately. The copy uses the same context as this instance, but is allocated with the provided allocator.
+std.array_hash_map.Custom().move	Set the map to an empty state, making deinitialization a no-op, and returning a copy of the original.
+std.array_hash_map.Custom().reIndex	Recomputes stored hashes and rebuilds the key indexes. If the underlying keys have been modified directly, call this method to recompute the denormalized metadata necessary for the operation of the methods of this map that lookup entries by key. One use case for this is directly calling `entries.resize()` to grow the underlying storage, and then setting the `keys` and `values` directly without going through the methods of this map. The time complexity of this operation is O(n).
+std.array_hash_map.Custom().setKey	Modify an entry's key without reordering any entries.
+std.array_hash_map.Custom().sort	Sorts the entries and then rebuilds the index. `sort_ctx` must have this method: `fn lessThan(ctx: @TypeOf(ctx), a_index: usize, b_index: usize) bool` Uses a stable sorting algorithm.
+std.array_hash_map.Custom().sortUnstable	Sorts the entries and then rebuilds the index. `sort_ctx` must have this method: `fn lessThan(ctx: @TypeOf(ctx), a_index: usize, b_index: usize) bool` Uses an unstable sorting algorithm.
+std.array_hash_map.Custom().shrinkRetainingCapacity	Shrinks the underlying `Entry` array to `new_len` elements and discards any associated index entries. Keeps capacity the same. Asserts the discarded entries remain initialized and capable of performing hash and equality checks. Any deinitialization of discarded entries must take place *after* calling this function.
+std.array_hash_map.Custom().shrinkRetainingCapacityContext	Shrinks the underlying `Entry` array to `new_len` elements and discards any associated index entries. Keeps capacity the same. Asserts the discarded entries remain initialized and capable of performing hash and equality checks. Any deinitialization of discarded entries must take place *after* calling this function.
+std.array_hash_map.Custom().shrinkAndFree	Shrinks the underlying `Entry` array to `new_len` elements and discards any associated index entries. Reduces allocated capacity. Asserts the discarded entries remain initialized and capable of performing hash and equality checks. It is a bug to call this function if the discarded entries require deinitialization. For that use case, `shrinkRetainingCapacity` can be used instead.
+std.array_hash_map.Custom().shrinkAndFreeContext	Shrinks the underlying `Entry` array to `new_len` elements and discards any associated index entries. Reduces allocated capacity. Asserts the discarded entries remain initialized and capable of performing hash and equality checks. It is a bug to call this function if the discarded entries require deinitialization. For that use case, `shrinkRetainingCapacityContext` can be used instead.
+std.array_hash_map.Custom().pop	Removes the last inserted `Entry` in the hash map and returns it. Otherwise returns null.
 std.atomic.Value	This is a thin wrapper around a primitive value to prevent accidental data races.
+std.atomic.Value().raw	Care must be taken to avoid data races when interacting with this field directly.
+std.atomic.Value().bitSet	Marked `inline` so that if `bit` is comptime-known, the instruction can be lowered to a more efficient machine code instruction if possible.
+std.atomic.Value().bitReset	Marked `inline` so that if `bit` is comptime-known, the instruction can be lowered to a more efficient machine code instruction if possible.
+std.atomic.Value().bitToggle	Marked `inline` so that if `bit` is comptime-known, the instruction can be lowered to a more efficient machine code instruction if possible.
 std.atomic.spinLoopHint	Signals to the processor that the caller is inside a busy-wait spin-loop.
 std.atomic.cache_line	The estimated size of the CPU's cache line when atomically updating memory. Add this much padding or align to this boundary to avoid atomically-updated memory from forcing cache invalidations on near, but non-atomic, memory. https://en.wikipedia.org/wiki/False_sharing https://github.com/golang/go/search?q=CacheLinePadSize
 std.atomic.Mutex	A lock-free single-owner resource.
@@ -1145,7 +1346,71 @@ std.base64.Base64DecoderWithIgnore.calcSizeUpperBound	Return the maximum possibl
 std.base64.Base64DecoderWithIgnore.decode	Invalid characters that are not ignored result in error.InvalidCharacter. Invalid padding results in error.InvalidPadding. Decoding more data than can fit in dest results in error.NoSpaceLeft. See also ::calcSizeUpperBound. Returns the number of bytes written to dest.
 std.bit_set.StaticBitSet	Returns the optimal static bit set type for the specified number of elements: either `IntegerBitSet` or `ArrayBitSet`, both of which fulfill the same interface. The returned type will perform no allocations, can be copied by value, and does not require deinitialization.
 std.bit_set.IntegerBitSet	A bit set with static size, which is backed by a single integer. This set is good for sets with a small size, but may generate inefficient code for larger sets, especially in debug mode.
+std.bit_set.IntegerBitSet().bit_length	The number of items in this bit set
+std.bit_set.IntegerBitSet().MaskInt	The integer type used to represent a mask in this bit set
+std.bit_set.IntegerBitSet().ShiftInt	The integer type used to shift a mask in this bit set
+std.bit_set.IntegerBitSet().mask	The bit mask, as a single integer
+std.bit_set.IntegerBitSet().initEmpty	Deprecated: use `.empty`. Creates a bit set with no elements present.
+std.bit_set.IntegerBitSet().initFull	Deprecated: use `.full`. Creates a bit set with all elements present.
+std.bit_set.IntegerBitSet().empty	A bit set with no elements present.
+std.bit_set.IntegerBitSet().full	A bit set with all elements present.
+std.bit_set.IntegerBitSet().capacity	Returns the number of bits in this bit set
+std.bit_set.IntegerBitSet().isSet	Returns true if the bit at the specified index is present in the set, false otherwise.
+std.bit_set.IntegerBitSet().count	Returns the total number of set bits in this bit set.
+std.bit_set.IntegerBitSet().setValue	Changes the value of the specified bit of the bit set to match the passed boolean.
+std.bit_set.IntegerBitSet().set	Adds a specific bit to the bit set
+std.bit_set.IntegerBitSet().setRangeValue	Changes the value of all bits in the specified range to match the passed boolean.
+std.bit_set.IntegerBitSet().unset	Removes a specific bit from the bit set
+std.bit_set.IntegerBitSet().toggle	Flips a specific bit in the bit set
+std.bit_set.IntegerBitSet().toggleSet	Flips all bits in this bit set which are present in the toggles bit set.
+std.bit_set.IntegerBitSet().toggleAll	Flips every bit in the bit set.
+std.bit_set.IntegerBitSet().setUnion	Performs a union of two bit sets, and stores the result in the first one. Bits in the result are set if the corresponding bits were set in either input.
+std.bit_set.IntegerBitSet().setIntersection	Performs an intersection of two bit sets, and stores the result in the first one. Bits in the result are set if the corresponding bits were set in both inputs.
+std.bit_set.IntegerBitSet().findFirstSet	Finds the index of the first set bit. If no bits are set, returns null.
+std.bit_set.IntegerBitSet().findLastSet	Finds the index of the last set bit. If no bits are set, returns null.
+std.bit_set.IntegerBitSet().toggleFirstSet	Finds the index of the first set bit, and unsets it. If no bits are set, returns null.
+std.bit_set.IntegerBitSet().eql	Returns true iff every corresponding bit in both bit sets are the same.
+std.bit_set.IntegerBitSet().subsetOf	Returns true iff the first bit set is the subset of the second one.
+std.bit_set.IntegerBitSet().supersetOf	Returns true iff the first bit set is the superset of the second one.
+std.bit_set.IntegerBitSet().complement	Returns the complement bit sets. Bits in the result are set if the corresponding bits were not set.
+std.bit_set.IntegerBitSet().unionWith	Returns the union of two bit sets. Bits in the result are set if the corresponding bits were set in either input.
+std.bit_set.IntegerBitSet().intersectWith	Returns the intersection of two bit sets. Bits in the result are set if the corresponding bits were set in both inputs.
+std.bit_set.IntegerBitSet().xorWith	Returns the xor of two bit sets. Bits in the result are set if the corresponding bits were not the same in both inputs.
+std.bit_set.IntegerBitSet().differenceWith	Returns the difference of two bit sets. Bits in the result are set if set in the first but not set in the second set.
+std.bit_set.IntegerBitSet().iterator	Iterates through the items in the set, according to the options. The default options (.{}) will iterate indices of set bits in ascending order. Modifications to the underlying bit set may or may not be observed by the iterator.
 std.bit_set.ArrayBitSet	A bit set with static size, which is backed by an array of usize. This set is good for sets with a larger size, but may use more bytes than necessary if your set is small.
+std.bit_set.ArrayBitSet().bit_length	The number of items in this bit set
+std.bit_set.ArrayBitSet().MaskInt	The integer type used to represent a mask in this bit set
+std.bit_set.ArrayBitSet().ShiftInt	The integer type used to shift a mask in this bit set
+std.bit_set.ArrayBitSet().masks	The bit masks, ordered with lower indices first. Padding bits at the end are undefined.
+std.bit_set.ArrayBitSet().initEmpty	Deprecated: use `.empty`. Creates a bit set with no elements present.
+std.bit_set.ArrayBitSet().initFull	Deprecated: use `.full`. Creates a bit set with all elements present.
+std.bit_set.ArrayBitSet().empty	A bit set with no elements present.
+std.bit_set.ArrayBitSet().full	A bit set with all elements present.
+std.bit_set.ArrayBitSet().capacity	Returns the number of bits in this bit set
+std.bit_set.ArrayBitSet().isSet	Returns true if the bit at the specified index is present in the set, false otherwise.
+std.bit_set.ArrayBitSet().count	Returns the total number of set bits in this bit set.
+std.bit_set.ArrayBitSet().setValue	Changes the value of the specified bit of the bit set to match the passed boolean.
+std.bit_set.ArrayBitSet().set	Adds a specific bit to the bit set
+std.bit_set.ArrayBitSet().setRangeValue	Changes the value of all bits in the specified range to match the passed boolean.
+std.bit_set.ArrayBitSet().unset	Removes a specific bit from the bit set
+std.bit_set.ArrayBitSet().toggle	Flips a specific bit in the bit set
+std.bit_set.ArrayBitSet().toggleSet	Flips all bits in this bit set which are present in the toggles bit set.
+std.bit_set.ArrayBitSet().toggleAll	Flips every bit in the bit set.
+std.bit_set.ArrayBitSet().setUnion	Performs a union of two bit sets, and stores the result in the first one. Bits in the result are set if the corresponding bits were set in either input.
+std.bit_set.ArrayBitSet().setIntersection	Performs an intersection of two bit sets, and stores the result in the first one. Bits in the result are set if the corresponding bits were set in both inputs.
+std.bit_set.ArrayBitSet().findFirstSet	Finds the index of the first set bit. If no bits are set, returns null.
+std.bit_set.ArrayBitSet().findLastSet	Finds the index of the last set bit. If no bits are set, returns null.
+std.bit_set.ArrayBitSet().toggleFirstSet	Finds the index of the first set bit, and unsets it. If no bits are set, returns null.
+std.bit_set.ArrayBitSet().eql	Returns true iff every corresponding bit in both bit sets are the same.
+std.bit_set.ArrayBitSet().subsetOf	Returns true iff the first bit set is the subset of the second one.
+std.bit_set.ArrayBitSet().supersetOf	Returns true iff the first bit set is the superset of the second one.
+std.bit_set.ArrayBitSet().complement	Returns the complement bit sets. Bits in the result are set if the corresponding bits were not set.
+std.bit_set.ArrayBitSet().unionWith	Returns the union of two bit sets. Bits in the result are set if the corresponding bits were set in either input.
+std.bit_set.ArrayBitSet().intersectWith	Returns the intersection of two bit sets. Bits in the result are set if the corresponding bits were set in both inputs.
+std.bit_set.ArrayBitSet().xorWith	Returns the xor of two bit sets. Bits in the result are set if the corresponding bits were not the same in both inputs.
+std.bit_set.ArrayBitSet().differenceWith	Returns the difference of two bit sets. Bits in the result are set if set in the first but not set in the second set.
+std.bit_set.ArrayBitSet().iterator	Iterates through the items in the set, according to the options. The default options (.{}) will iterate indices of set bits in ascending order. Modifications to the underlying bit set may or may not be observed by the iterator.
 std.bit_set.DynamicBitSetUnmanaged	A bit set with runtime-known size, backed by an allocated slice of usize. The allocator must be tracked externally by the user.
 std.bit_set.DynamicBitSetUnmanaged.MaskInt	The integer type used to represent a mask in this bit set
 std.bit_set.DynamicBitSetUnmanaged.ShiftInt	The integer type used to shift a mask in this bit set
@@ -1862,6 +2127,12 @@ std.static_string_map.StaticStringMap	Static string map optimized for small sets
 std.static_string_map.defaultEql	Like `std.mem.eql`, but takes advantage of the fact that the lengths of `a` and `b` are known to be equal.
 std.static_string_map.eqlAsciiIgnoreCase	Like `std.ascii.eqlIgnoreCase` but takes advantage of the fact that the lengths of `a` and `b` are known to be equal.
 std.static_string_map.StaticStringMapWithEql	StaticStringMap, but accepts an equality function (`eql`). The `eql` function is only called to determine the equality of equal length strings. Any strings that are not equal length are never compared using the `eql` function.
+std.static_string_map.StaticStringMapWithEql().initComptime	Returns a map backed by static, comptime allocated memory. `kvs_list` must be either a list of `struct { []const u8, V }` (key-value pair) tuples, or a list of `struct { []const u8 }` (only keys) tuples if `V` is `void`.
+std.static_string_map.StaticStringMapWithEql().init	Returns a map backed by memory allocated with `allocator`. Handles `kvs_list` the same way as `initComptime()`.
+std.static_string_map.StaticStringMapWithEql().deinit	this method should only be used with init() and not with initComptime().
+std.static_string_map.StaticStringMapWithEql().has	Checks if the map has a value for the key.
+std.static_string_map.StaticStringMapWithEql().get	Returns the value for the key if any, else null.
+std.static_string_map.StaticStringMapWithEql().getLongestPrefix	Returns the key-value pair where key is the longest prefix of `str` else null. This is effectively an O(N) algorithm which loops from `max_len` to `min_len` and calls `getIndex()` to check all keys with the given len.
 std.crypto.timing_safe.eql	Compares two arrays in constant time (for a given length) and returns whether they are equal. This function was designed to compare short cryptographic secrets (MACs, signatures). For all other applications, use mem.eql() instead.
 std.crypto.timing_safe.compare	Compare two integers serialized as arrays of the same size, in constant time. Returns .lt if a<b, .gt if a>b and .eq if a=b
 std.crypto.timing_safe.add	Add two integers serialized as arrays of the same size, in constant time. The result is stored into `result`, and `true` is returned if an overflow occurred.
@@ -1894,7 +2165,30 @@ std.crypto.auth.cbc_mac.CbcMac	FIPS 113 (1985): Computer Data Authentication htt
 std.crypto.core	Core functions, that should rarely be used directly by applications.
 std.crypto.core.aes.has_hardware_support	`true` if AES is backed by hardware (AES-NI on x86_64, ARM Crypto Extensions on AArch64). Software implementations are much slower, and should be avoided if possible.
 std.crypto.core.keccak.KeccakF	The Keccak-f permutation.
+std.crypto.core.keccak.KeccakF().block_bytes	Number of bytes in the state.
+std.crypto.core.keccak.KeccakF().max_rounds	Maximum number of rounds for the given f parameter.
+std.crypto.core.keccak.KeccakF().init	Initialize the state from a slice of bytes.
+std.crypto.core.keccak.KeccakF().asBytes	A representation of the state as bytes. The byte order is architecture-dependent.
+std.crypto.core.keccak.KeccakF().endianSwap	Byte-swap the entire state if the architecture doesn't match the required endianness.
+std.crypto.core.keccak.KeccakF().setBytes	Set bytes starting at the beginning of the state.
+std.crypto.core.keccak.KeccakF().addByte	XOR a byte into the state at a given offset.
+std.crypto.core.keccak.KeccakF().addBytes	XOR bytes into the beginning of the state.
+std.crypto.core.keccak.KeccakF().extractBytes	Extract the first bytes of the state.
+std.crypto.core.keccak.KeccakF().xorBytes	XOR the first bytes of the state into a slice of bytes.
+std.crypto.core.keccak.KeccakF().clear	Set the words storing the bytes of a given range to zero.
+std.crypto.core.keccak.KeccakF().secureZero	Clear the entire state, disabling compiler optimizations.
+std.crypto.core.keccak.KeccakF().permuteR	Apply a (possibly) reduced-round permutation to the state.
+std.crypto.core.keccak.KeccakF().permute	Apply a full-round permutation to the state.
 std.crypto.core.keccak.State	A generic Keccak-P state.
+std.crypto.core.keccak.State().rate	The block length, or rate, in bytes.
+std.crypto.core.keccak.State().Options	Keccak does not have any options.
+std.crypto.core.keccak.State().delim	The input delimiter.
+std.crypto.core.keccak.State().absorb	Absorb a slice of bytes into the sponge.
+std.crypto.core.keccak.State().init	Initialize the state from a slice of bytes.
+std.crypto.core.keccak.State().permute	Permute the state
+std.crypto.core.keccak.State().fillBlock	Align the input to the rate boundary and permute.
+std.crypto.core.keccak.State().pad	Mark the end of the input.
+std.crypto.core.keccak.State().squeeze	Squeeze a slice of bytes from the sponge. The function can be called multiple times.
 std.crypto.core.modes	Modes are generic compositions to construct encryption/decryption functions from block ciphers and permutations. These modes are designed to be building blocks for higher-level constructions, and should generally not be used directly by applications, as they may not provide the expected properties and security guarantees. Most applications may want to use AEADs instead.
 std.crypto.core.modes.ctr	Counter mode. This mode creates a key stream by encrypting an incrementing counter using a block cipher, and adding it to the source material. Important: the counter mode doesn't provide authenticated encryption: the ciphertext can be trivially modified without this being detected. As a result, applications should generally never use it directly, but only in a construction that includes a MAC.
 std.crypto.core.modes.ctrSlice	Counter mode with configurable counter position and size. This extended version allows specifying where the counter is located within the IV block and how many bytes it occupies. This is useful for modes like AES-GCM-SIV which use a 32-bit counter at the beginning of the block. @param counter_offset: Byte offset where the counter starts @param counter_size: Size of the counter in bytes
@@ -2000,6 +2294,25 @@ std.crypto.kem.hybrid.Params.Nct	Ciphertext length in bytes.
 std.crypto.kem.hybrid.Params.Nss	Shared secret length in bytes.
 std.crypto.kem.hybrid.Params.Xof	Extendable output function for seed expansion (default: SHAKE256).
 std.crypto.kem.hybrid.HybridKem	Constructs a hybrid KEM type from the given parameters. A hybrid KEM combines a post-quantum KEM with a traditional elliptic curve Diffie-Hellman key exchange. The shared secrets from both components are combined using the C2PRI combiner construction with SHA3-256. The resulting type provides: - `PublicKey`: The hybrid encapsulation (public) key - `SecretKey`: The hybrid decapsulation (secret) key - `KeyPair`: A public/secret key pair - `EncapsulatedSecret`: A shared secret with its ciphertext
+std.crypto.kem.hybrid.HybridKem().PublicKey	A hybrid KEM public key (encapsulation key). The public key is the concatenation of the post-quantum KEM public key and the traditional elliptic curve public key.
+std.crypto.kem.hybrid.HybridKem().PublicKey.encoded_length	Size of a serialized representation of the key, in bytes.
+std.crypto.kem.hybrid.HybridKem().PublicKey.toBytes	Serializes the key into a byte array.
+std.crypto.kem.hybrid.HybridKem().PublicKey.fromBytes	Deserializes the key from a byte array.
+std.crypto.kem.hybrid.HybridKem().PublicKey.encaps	Generates a shared secret, encapsulated for the public key, using random bytes. This is recommended over `encapsDeterministic`.
+std.crypto.kem.hybrid.HybridKem().PublicKey.encapsDeterministic	Generates a shared secret, encapsulated for the public key, using the provided seed. Calling `encaps` instead is recommended.
+std.crypto.kem.hybrid.HybridKem().SecretKey	A hybrid KEM secret key (decapsulation key). The secret key is stored as a seed from which the actual key material is derived on demand. This is more compact than storing expanded keys.
+std.crypto.kem.hybrid.HybridKem().SecretKey.encoded_length	Size of a serialized representation of the key, in bytes.
+std.crypto.kem.hybrid.HybridKem().SecretKey.toBytes	Serializes the key into a byte array.
+std.crypto.kem.hybrid.HybridKem().SecretKey.fromBytes	Deserializes the key from a byte array.
+std.crypto.kem.hybrid.HybridKem().SecretKey.decaps	Decapsulates the shared secret from the ciphertext using the secret key.
+std.crypto.kem.hybrid.HybridKem().KeyPair	A hybrid KEM key pair.
+std.crypto.kem.hybrid.HybridKem().KeyPair.generateDeterministic	Deterministically derives a key pair from a cryptographically secure seed. Except in tests, applications should generally call `generate()` instead.
+std.crypto.kem.hybrid.HybridKem().KeyPair.generate	Generates a new random key pair.
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret	An encapsulated shared secret with its ciphertext.
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.shared_length	Length in bytes of the shared secret.
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.ciphertext_length	Length in bytes of the ciphertext.
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.shared_secret	The shared secret (output of the combiner function).
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.ciphertext	The ciphertext to be transmitted to the decapsulating party.
 std.crypto.ecc	Elliptic-curve arithmetic.
 std.crypto.ecc.Curve25519.Fe	The underlying prime field.
 std.crypto.ecc.Curve25519.Fe.zero	0
@@ -2359,6 +2672,13 @@ std.crypto.hash.sha2.Sha512_256	SHA-512 with a different initialization vector t
 std.crypto.hash.sha3.TurboShake128	TurboSHAKE128 is a XOF (a secure hash function with a variable output length), with a 128 bit security level. It is based on the same permutation as SHA3 and SHAKE128, but which much higher performance. The delimiter is 0x1f by default, but can be changed for context-separation. For a protocol that uses both KangarooTwelve and TurboSHAKE128, it is recommended to avoid using 0x06, 0x07 or 0x0b for the delimiter.
 std.crypto.hash.sha3.TurboShake256	TurboSHAKE256 is a XOF (a secure hash function with a variable output length), with a 256 bit security level. It is based on the same permutation as SHA3 and SHAKE256, but which much higher performance. The delimiter is 0x1f by default, but can be changed for context-separation.
 std.crypto.hash.sha3.Keccak	A generic Keccak hash function.
+std.crypto.hash.sha3.Keccak().digest_length	The output length, in bytes.
+std.crypto.hash.sha3.Keccak().block_length	The block length, or rate, in bytes.
+std.crypto.hash.sha3.Keccak().Options	The delimiter can be overwritten in the options.
+std.crypto.hash.sha3.Keccak().init	Initialize a Keccak hash function.
+std.crypto.hash.sha3.Keccak().hash	Hash a slice of bytes.
+std.crypto.hash.sha3.Keccak().update	Absorb a slice of bytes into the state.
+std.crypto.hash.sha3.Keccak().final	Return the hash of the absorbed bytes.
 std.crypto.hash.sha3.Shake	The SHAKE extendable output hash function.
 std.crypto.hash.sha3.TurboShake	The TurboSHAKE extendable output hash function. It is based on the same permutation as SHA3 and SHAKE, but which much higher performance. The delimiter is 0x1f by default, but can be changed for context-separation. https://eprint.iacr.org/2023/342
 std.crypto.hash.sha3.CShake	The cSHAKE extendable output hash function. cSHAKE is similar to SHAKE, but in addition to the input message, it also takes an optional context (aka customization string).
@@ -2371,6 +2691,15 @@ std.crypto.hash.sha3.NistLengthEncoding.Length.buf	A buffer to store the encoded
 std.crypto.hash.sha3.NistLengthEncoding.Length.slice	Return the encoded length as a slice.
 std.crypto.hash.sha3.NistLengthEncoding.encode	Encode a length according to NIST SP 800-185.
 std.crypto.hash.composition.Composition	The composition of two hash functions: H1 o H2, with the same API as regular hash functions. The security level of a hash cascade doesn't exceed the security level of the weakest function. However, Merkle–Damgård constructions such as SHA-256 are vulnerable to length-extension attacks, where under some conditions, `H(x||e)` can be efficiently computed without knowing `x`. The composition of two hash functions is a common defense against such attacks. This is not necessary with modern hash functions, such as SHA-3, BLAKE2 and BLAKE3.
+std.crypto.hash.composition.Composition().digest_length	The length of the hash output, in bytes.
+std.crypto.hash.composition.Composition().block_length	The block length, in bytes.
+std.crypto.hash.composition.Composition().Options	Options for both hashes.
+std.crypto.hash.composition.Composition().Options.H1	Options for H1.
+std.crypto.hash.composition.Composition().Options.H2	Options for H2.
+std.crypto.hash.composition.Composition().init	Initialize the hash composition with the given options.
+std.crypto.hash.composition.Composition().hash	Compute H1(H2(b)).
+std.crypto.hash.composition.Composition().update	Add content to the hash.
+std.crypto.hash.composition.Composition().final	Compute the final hash for the accumulated content: H1(H2(b)).
 std.crypto.hash.composition.Sha256oSha256	SHA-256(SHA-256())
 std.crypto.hash.composition.Sha384oSha384	SHA-384(SHA-384())
 std.crypto.hash.composition.Sha512oSha512	SHA-512(SHA-512())
@@ -2378,6 +2707,10 @@ std.crypto.kdf	Key derivation functions.
 std.crypto.kdf.hkdf.HkdfSha256	HKDF-SHA256
 std.crypto.kdf.hkdf.HkdfSha512	HKDF-SHA512
 std.crypto.kdf.hkdf.Hkdf	The Hkdf construction takes some source of initial keying material and derives one or more uniform keys from it.
+std.crypto.kdf.hkdf.Hkdf().prk_length	Length of a master key, in bytes.
+std.crypto.kdf.hkdf.Hkdf().extract	Return a master key from a salt and initial keying material.
+std.crypto.kdf.hkdf.Hkdf().extractInit	Initialize the creation of a master key from a salt and keying material that can be added later, possibly in chunks. Example: ``` var prk: [hkdf.prk_length]u8 = undefined; var hkdf = HkdfSha256.extractInit(salt); hkdf.update(ikm1); hkdf.update(ikm2); hkdf.final(&prk); ```
+std.crypto.kdf.hkdf.Hkdf().expand	Derive a subkey from a master key `prk` and a subkey description `ctx`.
 std.crypto.onetimeauth	MAC functions requiring single-use secret keys.
 std.crypto.onetimeauth.Poly1305.pad	Zero-pad to align the next input to the first byte of a block
 std.crypto.pwhash	A password hashing function derives a uniform key from low-entropy input material such as passwords. It is intentionally slow or expensive. With the standard definition of a key derivation function, if a key space is small, an exhaustive search may be practical. Password hashing functions make exhaustive searches way slower or way more expensive, even when implemented on GPUs and ASICs, by using different, optionally combined strategies: - Requiring a lot of computation cycles to complete - Requiring a lot of memory to complete - Requiring multiple CPU cores to complete - Requiring cache-local data to complete in reasonable time - Requiring large static tables - Avoiding precomputations and time/memory tradeoffs - Requiring multi-party computations - Combining the input material with random per-entry data (salts), application-specific contexts and keys Password hashing functions must be used whenever sensitive data has to be directly derived from a password.
@@ -2437,6 +2770,8 @@ std.crypto.pwhash.scrypt.strHashWithSalt	Compute a deterministic hash of a passw
 std.crypto.pwhash.scrypt.VerifyOptions	Options for hash verification. Allocator is required for scrypt.
 std.crypto.pwhash.scrypt.strVerify	Verify that a previously computed hash is valid for a given password.
 std.crypto.pwhash.phc_format.BinValue	A wrapped binary value whose maximum size is `max_len`. This type must be used whenever a binary value is encoded in a PHC-formatted string. This includes `salt`, `hash`, and any other binary parameters such as keys. Once initialized, the actual value can be read with the `constSlice()` function.
+std.crypto.pwhash.phc_format.BinValue().fromSlice	Wrap an existing byte slice
+std.crypto.pwhash.phc_format.BinValue().constSlice	Return the slice containing the actual value.
 std.crypto.pwhash.phc_format.deserialize	Deserialize a PHC-formatted string into a structure `HashResult`. Required field in the `HashResult` structure: - `alg_id`: algorithm identifier Optional, special fields: - `alg_version`: algorithm version (unsigned integer) - `salt`: salt - `hash`: output of the hash function Other fields will also be deserialized from the function parameters section.
 std.crypto.pwhash.phc_format.serialize	Serialize parameters into a PHC string. Required field for `params`: - `alg_id`: algorithm identifier Optional, special fields: - `alg_version`: algorithm version (unsigned integer) - `salt`: salt - `hash`: output of the hash function `params` can also include any additional parameters.
 std.crypto.pwhash.phc_format.calcSize	Compute the number of bytes required to serialize `params`
@@ -2497,6 +2832,43 @@ std.crypto.sign.ecdsa.EcdsaP384Sha3_384	ECDSA over P-384 with SHA3-384.
 std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256	ECDSA over Secp256k1 with SHA-256.
 std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256oSha256	ECDSA over Secp256k1 with SHA-256(SHA-256()) -- The Bitcoin signature system.
 std.crypto.sign.ecdsa.Ecdsa	Elliptic Curve Digital Signature Algorithm (ECDSA).
+std.crypto.sign.ecdsa.Ecdsa().noise_length	Length (in bytes) of optional random bytes, for non-deterministic signatures.
+std.crypto.sign.ecdsa.Ecdsa().SecretKey	An ECDSA secret key.
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.encoded_length	Length (in bytes) of a raw secret key.
+std.crypto.sign.ecdsa.Ecdsa().PublicKey	An ECDSA public key.
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.compressed_sec1_encoded_length	Length (in bytes) of a compressed sec1-encoded key.
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.uncompressed_sec1_encoded_length	Length (in bytes) of an uncompressed sec1-encoded key.
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.fromSec1	Create a public key from a SEC-1 representation.
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toCompressedSec1	Encode the public key using the compressed SEC-1 format.
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toUncompressedSec1	Encoding the public key using the uncompressed SEC-1 format.
+std.crypto.sign.ecdsa.Ecdsa().Signature	An ECDSA signature.
+std.crypto.sign.ecdsa.Ecdsa().Signature.encoded_length	Length (in bytes) of a raw signature.
+std.crypto.sign.ecdsa.Ecdsa().Signature.der_encoded_length_max	Maximum length (in bytes) of a DER-encoded signature.
+std.crypto.sign.ecdsa.Ecdsa().Signature.r	The R component of an ECDSA signature.
+std.crypto.sign.ecdsa.Ecdsa().Signature.s	The S component of an ECDSA signature.
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifier	Create a Verifier for incremental verification of a signature.
+std.crypto.sign.ecdsa.Ecdsa().Signature.verify	Verify the signature against a message and public key. Return IdentityElement or NonCanonical if the public key or signature are not in the expected range, or SignatureVerificationError if the signature is invalid for the given message and key.
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifyPrehashed	Verify the signature against a pre-hashed message and public key. The message must have already been hashed using the scheme's hash function. Returns SignatureVerificationError if the signature is invalid for the given message and key.
+std.crypto.sign.ecdsa.Ecdsa().Signature.toBytes	Return the raw signature (r, s) in big-endian format.
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromBytes	Create a signature from a raw encoding of (r, s). ECDSA always assumes big-endian.
+std.crypto.sign.ecdsa.Ecdsa().Signature.toDer	Encode the signature using the DER format. The maximum length of the DER encoding is der_encoded_length_max. The function returns a slice, that can be shorter than der_encoded_length_max.
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromDer	Create a signature from a DER representation. Returns InvalidEncoding if the DER encoding is invalid.
+std.crypto.sign.ecdsa.Ecdsa().Signer	A Signer is used to incrementally compute a signature. It can be obtained from a `KeyPair`, using the `signer()` function.
+std.crypto.sign.ecdsa.Ecdsa().Signer.update	Add new data to the message being signed.
+std.crypto.sign.ecdsa.Ecdsa().Signer.finalize	Compute a signature over the entire message.
+std.crypto.sign.ecdsa.Ecdsa().Verifier	A Verifier is used to incrementally verify a signature. It can be obtained from a `Signature`, using the `verifier()` function.
+std.crypto.sign.ecdsa.Ecdsa().Verifier.update	Add new content to the message to be verified.
+std.crypto.sign.ecdsa.Ecdsa().Verifier.verify	Verify that the signature is valid for the entire message.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair	An ECDSA key pair.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.seed_length	Length (in bytes) of a seed required to create a key pair.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.public_key	Public part.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.secret_key	Secret scalar.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generateDeterministic	Deterministically derive a key pair from a cryptograpically secure secret seed. Except in tests, applications should generally call `generate()` instead of this function.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generate	Generate a new, random key pair.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.fromSecretKey	Return the public key corresponding to the secret key.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.sign	Sign a message using the key pair. The noise can be null in order to create deterministic signatures. If deterministic signatures are not required, the noise should be randomly generated instead. This helps defend against fault attacks.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signPrehashed	Sign a pre-hashed message using the key pair. The message must have already been hashed using the scheme's hash function. The noise parameter can be null for deterministic signatures, or random bytes for enhanced security against fault attacks.
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signer	Create a Signer, that can be used for incremental signature verification.
 std.crypto.sign.mldsa.MLDSA44	ML-DSA-44 (Module-Lattice-Based Digital Signature Algorithm, 44 parameter set) as specified in NIST FIPS 204. This is a post-quantum signature scheme providing NIST security category 2, which is roughly equivalent to the security of SHA-256 or AES-128. Key sizes: - Public key: 1312 bytes - Secret key: 2560 bytes - Signature: 2420 bytes Example usage: ```zig const kp = MLDSA44.KeyPair.generate(); const msg = "Hello, post-quantum world!"; const sig = try kp.sign(msg, null); try sig.verify(msg, kp.public_key); ```
 std.crypto.sign.mldsa.MLDSA65	ML-DSA-65 (Module-Lattice-Based Digital Signature Algorithm, 65 parameter set) as specified in NIST FIPS 204. This is a post-quantum signature scheme providing NIST security category 3, which is roughly equivalent to the security of SHA-384 or AES-192. Key sizes: - Public key: 1952 bytes - Secret key: 4032 bytes - Signature: 3309 bytes This parameter set offers higher security than ML-DSA-44 at the cost of larger keys and signatures.
 std.crypto.sign.mldsa.MLDSA87	ML-DSA-87 (Module-Lattice-Based Digital Signature Algorithm, 87 parameter set) as specified in NIST FIPS 204. This is a post-quantum signature scheme providing NIST security category 5, which is roughly equivalent to the security of SHA-512 or AES-256. Key sizes: - Public key: 2592 bytes - Secret key: 4896 bytes - Signature: 4627 bytes This parameter set offers the highest security level among the three ML-DSA variants, suitable for applications requiring maximum security assurance.
@@ -2509,7 +2881,44 @@ std.crypto.ff.FieldElementError	Invalid field element for the given modulus.
 std.crypto.ff.RepresentationError	Invalid representation (Montgomery vs non-Montgomery domain.)
 std.crypto.ff.Error	The set of all possible errors `std.crypto.ff` functions can return.
 std.crypto.ff.Uint	An unsigned big integer with a fixed maximum size (`max_bits`), suitable for cryptographic operations. Unless side-channels mitigations are explicitly disabled, operations are designed to be constant-time.
+std.crypto.ff.Uint().limbs_len	The number of active limbs.
+std.crypto.ff.Uint().encoded_bytes	Number of bytes required to serialize an integer.
+std.crypto.ff.Uint().zero	The zero integer.
+std.crypto.ff.Uint().fromPrimitive	Creates a new big integer from a primitive type. This function may not run in constant time.
+std.crypto.ff.Uint().toPrimitive	Converts a big integer to a primitive type. This function may not run in constant time.
+std.crypto.ff.Uint().toBytes	Encodes a big integer into a byte array.
+std.crypto.ff.Uint().fromBytes	Creates a new big integer from a byte array.
+std.crypto.ff.Uint().eql	Returns `true` if both integers are equal.
+std.crypto.ff.Uint().compare	Compares two integers.
+std.crypto.ff.Uint().isZero	Returns `true` if the integer is zero.
+std.crypto.ff.Uint().isOdd	Returns `true` if the integer is odd.
+std.crypto.ff.Uint().addWithOverflow	Adds `y` to `x`, and returns `true` if the operation overflowed.
+std.crypto.ff.Uint().subWithOverflow	Subtracts `y` from `x`, and returns `true` if the operation overflowed.
 std.crypto.ff.Modulus	A modulus, defining a finite field. All operations within the field are performed modulo this modulus, without heap allocations. `max_bits` represents the number of bits in the maximum value the modulus can be set to.
+std.crypto.ff.Modulus().Fe	A field element, representing a value within the field defined by this modulus.
+std.crypto.ff.Modulus().zero	The neutral element.
+std.crypto.ff.Modulus().v	The modulus value.
+std.crypto.ff.Modulus().rr	R^2 for the Montgomery representation.
+std.crypto.ff.Modulus().m0inv	Inverse of the first limb
+std.crypto.ff.Modulus().leading	Number of leading zero bits in the modulus.
+std.crypto.ff.Modulus().bits	Actual size of the modulus, in bits.
+std.crypto.ff.Modulus().one	Returns the element `1`.
+std.crypto.ff.Modulus().fromUint	Creates a new modulus from a `Uint` value. The modulus must be odd and larger than 2.
+std.crypto.ff.Modulus().fromPrimitive	Creates a new modulus from a primitive value. The modulus must be odd and larger than 2.
+std.crypto.ff.Modulus().fromBytes	Creates a new modulus from a byte string.
+std.crypto.ff.Modulus().toBytes	Serializes the modulus to a byte string.
+std.crypto.ff.Modulus().rejectNonCanonical	Rejects field elements that are not in the canonical form.
+std.crypto.ff.Modulus().add	Adds two field elements (mod m).
+std.crypto.ff.Modulus().sub	Subtracts two field elements (mod m).
+std.crypto.ff.Modulus().toMontgomery	Converts a field element to the Montgomery form.
+std.crypto.ff.Modulus().fromMontgomery	Takes a field element out of the Montgomery form.
+std.crypto.ff.Modulus().reduce	Reduces an arbitrary `Uint`, converting it to a field element.
+std.crypto.ff.Modulus().mul	Multiplies two field elements. Result preserves the first operand's form.
+std.crypto.ff.Modulus().sq	Squares a field element.
+std.crypto.ff.Modulus().pow	Returns x^e (mod m) in constant time.
+std.crypto.ff.Modulus().powPublic	Returns x^e (mod m), assuming that the exponent is public. The function remains constant time with respect to `x`.
+std.crypto.ff.Modulus().powWithEncodedExponent	Returns x^e (mod m), with the exponent provided as a byte string. Exponents are usually small, so this function is faster than `powPublic` as a field element doesn't have to be created if a serialized representation is already available. If the exponent is public, `powWithEncodedPublicExponent()` can be used instead for a slight speedup.
+std.crypto.ff.Modulus().powWithEncodedPublicExponent	Returns x^e (mod m), the exponent being public and provided as a byte string. Exponents are usually small, so this function is faster than `powPublic` as a field element doesn't have to be created if a serialized representation is already available. If the exponent is secret, `powWithEncodedExponent` must be used instead.
 std.crypto.codecs	Encoding and decoding
 std.crypto.codecs.asn1.der.Decoder.field_tag	The field tag of the most recently visited field. This is needed because we might visit an implicitly tagged container with a `fn decodeDer`.
 std.crypto.codecs.asn1.der.Decoder.any	Expect a value.
@@ -2648,6 +3057,8 @@ std.debug.Dwarf.expression.Options.addr_size	The address size of the target arch
 std.debug.Dwarf.expression.Options.endian	Endianness of the target architecture
 std.debug.Dwarf.expression.Options.call_frame_context	Restrict the stack machine to a subset of opcodes used in call frame instructions
 std.debug.Dwarf.expression.StackMachine	A stack machine that can decode and run DWARF expressions. Expressions can be decoded for non-native address size and endianness, but can only be executed if the current target matches the configuration.
+std.debug.Dwarf.expression.StackMachine().step	Reads an opcode and its operands from `stream`, then executes it
+std.debug.Dwarf.expression.Builder().writeOpcode	Zero-operand instructions
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule	See section 6.4.1 of the DWARF5 specification for details on each
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule.default	The spec says that the default rule for each column is the undefined rule. However, it also allows ABI / compiler authors to specify alternate defaults, so there is a distinction made here.
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule.offset	offset(N)
@@ -3477,10 +3888,100 @@ std.enums.directEnumArrayLen	Determines the length of a direct-mapped enum array
 std.enums.directEnumArray	Initializes an array of Data which can be indexed by @intCast(usize, @intFromEnum(enum_value)). If the enum is non-exhaustive, the resulting array will only be large enough to hold all explicit fields. If the enum contains any fields with values that cannot be represented by usize, a compile error is issued. The max_unused_slots parameter limits the total number of items which have no matching enum key (holes in the enum numbering). So for example, if an enum has values 1, 2, 5, and 6, max_unused_slots must be at least 3, to allow unused slots 0, 3, and 4. The init_values parameter must be a struct with field names that match the enum values. If the enum has multiple fields with the same value, the name of the first one must be used.
 std.enums.directEnumArrayDefault	Initializes an array of Data which can be indexed by @intCast(usize, @intFromEnum(enum_value)). The enum must be exhaustive. If the enum contains any fields with values that cannot be represented by usize, a compile error is issued. The max_unused_slots parameter limits the total number of items which have no matching enum key (holes in the enum numbering). So for example, if an enum has values 1, 2, 5, and 6, max_unused_slots must be at least 3, to allow unused slots 0, 3, and 4. The init_values parameter must be a struct with field names that match the enum values. If the enum has multiple fields with the same value, the name of the first one must be used.
 std.enums.EnumSet	A set of enum elements, backed by a bitfield. If the enum is exhaustive but not dense, a mapping will be constructed from enum values to dense indices. This type does no dynamic allocation and can be copied by value.
+std.enums.EnumSet().Indexer	The indexing rules for converting between keys and indices.
+std.enums.EnumSet().Key	The element type for this set.
+std.enums.EnumSet().len	The maximum number of items in this set.
+std.enums.EnumSet().init	Initializes the set using a struct of bools
+std.enums.EnumSet().empty	A set containing no keys.
+std.enums.EnumSet().full	A set containing all possible keys.
+std.enums.EnumSet().initEmpty	Deprecated: use `.empty`. Returns a set containing no keys.
+std.enums.EnumSet().initFull	Deprecated: use `.full`. Returns a set containing all possible keys.
+std.enums.EnumSet().initMany	Returns a set containing multiple keys.
+std.enums.EnumSet().initOne	Returns a set containing a single key.
+std.enums.EnumSet().count	Returns the number of keys in the set.
+std.enums.EnumSet().contains	Checks if a key is in the set.
+std.enums.EnumSet().insert	Puts a key in the set.
+std.enums.EnumSet().remove	Removes a key from the set.
+std.enums.EnumSet().setPresent	Changes the presence of a key in the set to match the passed bool.
+std.enums.EnumSet().toggle	Toggles the presence of a key in the set. If the key is in the set, removes it. Otherwise adds it.
+std.enums.EnumSet().toggleSet	Toggles the presence of all keys in the passed set.
+std.enums.EnumSet().toggleAll	Toggles all possible keys in the set.
+std.enums.EnumSet().setUnion	Adds all keys in the passed set to this set.
+std.enums.EnumSet().setIntersection	Removes all keys which are not in the passed set.
+std.enums.EnumSet().eql	Returns true iff both sets have the same keys.
+std.enums.EnumSet().subsetOf	Returns true iff all the keys in this set are in the other set. The other set may have keys not found in this set.
+std.enums.EnumSet().supersetOf	Returns true iff this set contains all the keys in the other set. This set may have keys not found in the other set.
+std.enums.EnumSet().complement	Returns a set with all the keys not in this set.
+std.enums.EnumSet().unionWith	Returns a set with keys that are in either this set or the other set.
+std.enums.EnumSet().intersectWith	Returns a set with keys that are in both this set and the other set.
+std.enums.EnumSet().xorWith	Returns a set with keys that are in either this set or the other set, but not both.
+std.enums.EnumSet().differenceWith	Returns a set with keys that are in this set except for keys in the other set.
+std.enums.EnumSet().iterator	Returns an iterator over this set, which iterates in index order. Modifications to the set during iteration may or may not be observed by the iterator, but will not invalidate it.
 std.enums.EnumMap	A map keyed by an enum, backed by a bitfield and a dense array. If the enum is exhaustive but not dense, a mapping will be constructed from enum values to dense indices. This type does no dynamic allocation and can be copied by value.
+std.enums.EnumMap().Indexer	The index mapping for this map
+std.enums.EnumMap().Key	The key type used to index this map
+std.enums.EnumMap().Value	The value type stored in this map
+std.enums.EnumMap().len	The number of possible keys in the map
+std.enums.EnumMap().bits	Bits determining whether items are in the map
+std.enums.EnumMap().values	Values of items in the map. If the associated bit is zero, the value is undefined.
+std.enums.EnumMap().init	Initializes the map using a sparse struct of optionals
+std.enums.EnumMap().initFull	Initializes a full mapping with all keys set to value. Consider using EnumArray instead if the map will remain full.
+std.enums.EnumMap().initFullWith	Initializes a full mapping with supplied values. Consider using EnumArray instead if the map will remain full.
+std.enums.EnumMap().initFullWithDefault	Initializes a full mapping with a provided default. Consider using EnumArray instead if the map will remain full.
+std.enums.EnumMap().count	The number of items in the map.
+std.enums.EnumMap().contains	Checks if the map contains an item.
+std.enums.EnumMap().get	Gets the value associated with a key. If the key is not in the map, returns null.
+std.enums.EnumMap().getAssertContains	Gets the value associated with a key, which must exist in the map.
+std.enums.EnumMap().getPtr	Gets the address of the value associated with a key. If the key is not in the map, returns null.
+std.enums.EnumMap().getPtrConst	Gets the address of the const value associated with a key. If the key is not in the map, returns null.
+std.enums.EnumMap().getPtrAssertContains	Gets the address of the value associated with a key. The key must be present in the map.
+std.enums.EnumMap().getPtrConstAssertContains	Gets the address of the const value associated with a key. The key must be present in the map.
+std.enums.EnumMap().put	Adds the key to the map with the supplied value. If the key is already in the map, overwrites the value.
+std.enums.EnumMap().putUninitialized	Adds the key to the map with an undefined value. If the key is already in the map, the value becomes undefined. A pointer to the value is returned, which should be used to initialize the value.
+std.enums.EnumMap().fetchPut	Sets the value associated with the key in the map, and returns the old value. If the key was not in the map, returns null.
+std.enums.EnumMap().remove	Removes a key from the map. If the key was not in the map, does nothing.
+std.enums.EnumMap().fetchRemove	Removes a key from the map, and returns the old value. If the key was not in the map, returns null.
+std.enums.EnumMap().iterator	Returns an iterator over the map, which visits items in index order. Modifications to the underlying map may or may not be observed by the iterator, but will not invalidate it.
+std.enums.EnumMap().Entry	An entry in the map.
+std.enums.EnumMap().Entry.key	The key associated with this entry. Modifying this key will not change the map.
+std.enums.EnumMap().Entry.value	A pointer to the value in the map associated with this key. Modifications through this pointer will modify the underlying data.
 std.enums.EnumMultiset	A multiset of enum elements up to a count of usize. Backed by an EnumArray. This type does no dynamic allocation and can be copied by value.
 std.enums.BoundedEnumMultiset	A multiset of enum elements up to CountSize. Backed by an EnumArray. This type does no dynamic allocation and can be copied by value.
+std.enums.BoundedEnumMultiset().init	Initializes the multiset using a struct of counts.
+std.enums.BoundedEnumMultiset().empty	A multiset with a count of zero.
+std.enums.BoundedEnumMultiset().initWithCount	Initializes the multiset with all keys at the same count.
+std.enums.BoundedEnumMultiset().count	Returns the total number of key counts in the multiset.
+std.enums.BoundedEnumMultiset().contains	Checks if at least one key in multiset.
+std.enums.BoundedEnumMultiset().removeAll	Removes all instance of a key from multiset. Same as setCount(key, 0).
+std.enums.BoundedEnumMultiset().addAssertSafe	Increases the key count by given amount. Caller asserts operation will not overflow.
+std.enums.BoundedEnumMultiset().add	Increases the key count by given amount.
+std.enums.BoundedEnumMultiset().remove	Decreases the key count by given amount. If amount is greater than the number of keys in multset, then key count will be set to zero.
+std.enums.BoundedEnumMultiset().getCount	Returns the count for a key.
+std.enums.BoundedEnumMultiset().setCount	Set the count for a key.
+std.enums.BoundedEnumMultiset().addSetAssertSafe	Increases the all key counts by given multiset. Caller asserts operation will not overflow any key.
+std.enums.BoundedEnumMultiset().addSet	Increases the all key counts by given multiset.
+std.enums.BoundedEnumMultiset().removeSet	Decreases the all key counts by given multiset. If the given multiset has more key counts than this, then that key will have a key count of zero.
+std.enums.BoundedEnumMultiset().eql	Returns true iff all key counts are the same as given multiset.
+std.enums.BoundedEnumMultiset().subsetOf	Returns true iff all key counts less than or equal to the given multiset.
+std.enums.BoundedEnumMultiset().supersetOf	Returns true iff all key counts greater than or equal to the given multiset.
+std.enums.BoundedEnumMultiset().plusAssertSafe	Returns a multiset with the total key count of this multiset and the other multiset. Caller asserts operation will not overflow any key.
+std.enums.BoundedEnumMultiset().plus	Returns a multiset with the total key count of this multiset and the other multiset.
+std.enums.BoundedEnumMultiset().minus	Returns a multiset with the key count of this multiset minus the corresponding key count in the other multiset. If the other multiset contains more key count than this set, that key will have a count of zero.
+std.enums.BoundedEnumMultiset().iterator	Returns an iterator over this multiset. Keys with zero counts are included. Modifications to the set during iteration may or may not be observed by the iterator, but will not invalidate it.
 std.enums.EnumArray	An array keyed by an enum, backed by a dense array. If the enum is not dense, a mapping will be constructed from enum values to dense indices. This type does no dynamic allocation and can be copied by value.
+std.enums.EnumArray().Indexer	The index mapping for this map
+std.enums.EnumArray().Key	The key type used to index this map
+std.enums.EnumArray().Value	The value type stored in this map
+std.enums.EnumArray().len	The number of possible keys in the map
+std.enums.EnumArray().initDefault	Initializes values in the enum array, with the specified default.
+std.enums.EnumArray().get	Returns the value in the array associated with a key.
+std.enums.EnumArray().getPtr	Returns a pointer to the slot in the array associated with a key.
+std.enums.EnumArray().getPtrConst	Returns a const pointer to the slot in the array associated with a key.
+std.enums.EnumArray().set	Sets the value in the slot associated with a key.
+std.enums.EnumArray().iterator	Iterates over the items in the array, in index order.
+std.enums.EnumArray().Entry	An entry in the array.
+std.enums.EnumArray().Entry.key	The key associated with this entry. Modifying this key will not change the array.
+std.enums.EnumArray().Entry.value	A pointer to the value in the array associated with this key. Modifications through this pointer will modify the underlying data.
 std.fmt.float.min_buffer_size	Any buffer used for `format` must be at least this large. This is asserted. A runtime check will additionally be performed if more bytes are required.
 std.fmt.float.bufferSize	Returns the minimum buffer size needed to print every float of a specific type and format.
 std.fmt.float.render	Format a floating-point value and write it to buffer. Returns a slice to the buffer containing the string representation. Full precision is the default. Any full precision float can be reparsed with std.fmt.parseFloat unambiguously. Scientific mode is recommended generally as the output is more compact and any type can be written in full precision using a buffer of only `min_buffer_size`. When printing full precision decimals, use `bufferSize` to get the required space. It is recommended to bound decimal output with a fixed precision to reduce the required buffer size.
@@ -3523,6 +4024,18 @@ std.fs.path.relativePosix	Returns the non-absolute path from `from` to `to` acco
 std.fs.path.extension	Searches for a file extension separated by a `.` and returns the string after that `.`. Files that end or start with `.` and have no other `.` in their name are considered to have no extension, in which case this returns "". Examples: - `"main.zig"` ⇒ `".zig"` - `"src/main.zig"` ⇒ `".zig"` - `".gitignore"` ⇒ `""` - `".image.png"` ⇒ `".png"` - `"keep."` ⇒ `"."` - `"src.keep.me"` ⇒ `".me"` - `"/src/keep.me"` ⇒ `".me"` - `"/src/keep.me/"` ⇒ `".me"` The returned slice is guaranteed to have its pointer within the start and end pointer address range of `path`, even if it is length zero.
 std.fs.path.stem	Returns the last component of this path without its extension (if any): - "hello/world/lib.tar.gz" ⇒ "lib.tar" - "hello/world/lib.tar" ⇒ "lib" - "hello/world/lib" ⇒ "lib"
 std.fs.path.ComponentIterator	A path component iterator that can move forwards and backwards. The 'root' of the path (`/` for POSIX, things like `C:\`, `\\server\share\`, etc for Windows) is treated specially and will never be returned by any of the `first`, `last`, `next`, or `previous` functions. Multiple consecutive path separators are skipped (treated as a single separator) when iterating. All returned component names/paths are slices of the original path. There is no normalization of paths performed while iterating.
+std.fs.path.ComponentIterator().root_len	Length of the root with at most one trailing path separator included (e.g. `C:/`).
+std.fs.path.ComponentIterator().root_end_index	Length of the root with all trailing path separators included (e.g. `C://///`).
+std.fs.path.ComponentIterator().Component.name	The current component's path name, e.g. 'b'. This will never contain path separators.
+std.fs.path.ComponentIterator().Component.path	The full path up to and including the current component, e.g. '/a/b' This will never contain trailing path separators.
+std.fs.path.ComponentIterator().init	After `init`, `next` will return the first component after the root (there is no need to call `first` after `init`). To iterate backwards (from the end of the path to the beginning), call `last` after `init` and then iterate via `previous` calls. For Windows paths, paths are assumed to be in the Win32 namespace.
+std.fs.path.ComponentIterator().root	Returns the root of the path if it is not a relative path, or null otherwise. For POSIX paths, this will be `/`. For Windows paths, this will be something like `C:\`, `\\server\share\`, etc. For UEFI paths, this will be `\`.
+std.fs.path.ComponentIterator().first	Returns the first component (from the beginning of the path). For example, if the path is `/a/b/c` then this will return the `a` component. After calling `first`, `previous` will always return `null`, and `next` will return the component to the right of the one returned by `first`, if any exist.
+std.fs.path.ComponentIterator().last	Returns the last component (from the end of the path). For example, if the path is `/a/b/c` then this will return the `c` component. After calling `last`, `next` will always return `null`, and `previous` will return the component to the left of the one returned by `last`, if any exist.
+std.fs.path.ComponentIterator().next	Returns the next component (the component to the right of the most recently returned component), or null if no such component exists. For example, if the path is `/a/b/c` and the most recently returned component is `b`, then this will return the `c` component.
+std.fs.path.ComponentIterator().peekNext	Like `next`, but does not modify the iterator state.
+std.fs.path.ComponentIterator().previous	Returns the previous component (the component to the left of the most recently returned component), or null if no such component exists. For example, if the path is `/a/b/c` and the most recently returned component is `b`, then this will return the `a` component.
+std.fs.path.ComponentIterator().peekPrevious	Like `previous`, but does not modify the iterator state.
 std.fs.path.fmtAsUtf8Lossy	Format a path encoded as bytes for display as UTF-8. Returns a Formatter for the given path. The path will be converted to valid UTF-8 during formatting. This is a lossy conversion if the path contains any ill-formed UTF-8. Ill-formed UTF-8 byte sequences are replaced by the replacement character (U+FFFD) according to "U+FFFD Substitution of Maximal Subparts" from Chapter 3 of the Unicode standard, and as specified by https://encoding.spec.whatwg.org/#utf-8-decoder
 std.fs.path.fmtWtf16LeAsUtf8Lossy	Format a path encoded as WTF-16 LE for display as UTF-8. Return a Formatter for a (potentially ill-formed) UTF-16 LE path. The path will be converted to valid UTF-8 during formatting. This is a lossy conversion if the path contains any unpaired surrogates. Unpaired surrogates are replaced by the replacement character (U+FFFD).
 std.fs.path.Win32PathType	Similar to `RTL_PATH_TYPE`, but without the `UNKNOWN` path type.
@@ -3551,7 +4064,77 @@ std.hash.int	Integer-to-integer hashing for bit widths <= 256.
 std.hash_map.StringHashMap	Builtin hashmap for strings as keys. Key memory is managed by the caller. Keys and values will not automatically be freed.
 std.hash_map.StringHashMapUnmanaged	Key memory is managed by the caller. Keys and values will not automatically be freed.
 std.hash_map.HashMap	General purpose hash table. No order is guaranteed and any modification invalidates live iterators. It provides fast operations (lookup, insertion, deletion) with quite high load factors (up to 80% by default) for low memory usage. For a hash map that can be initialized directly that does not store an Allocator field, see `HashMapUnmanaged`. If iterating over the table entries is a strong usecase and needs to be fast, prefer the alternative `std.ArrayHashMap`. Context must be a struct type with two member functions: hash(self, K) u64 eql(self, K, K) bool Adapted variants of many functions are provided. These variants take a pseudo key instead of a key. Their context must have the functions: hash(self, PseudoKey) u64 eql(self, PseudoKey, K) bool
+std.hash_map.HashMap().Unmanaged	The type of the unmanaged hash map underlying this wrapper
+std.hash_map.HashMap().Entry	An entry, containing pointers to a key and value stored in the map
+std.hash_map.HashMap().KV	A copy of a key and value which are no longer in the map
+std.hash_map.HashMap().Hash	The integer type that is the result of hashing
+std.hash_map.HashMap().Iterator	The iterator type returned by iterator()
+std.hash_map.HashMap().Size	The integer type used to store the size of the map
+std.hash_map.HashMap().GetOrPutResult	The type returned from getOrPut and variants
+std.hash_map.HashMap().init	Create a managed hash map with an empty context. If the context is not zero-sized, you must use initContext(allocator, ctx) instead.
+std.hash_map.HashMap().initContext	Create a managed hash map with a context
+std.hash_map.HashMap().lockPointers	Puts the hash map into a state where any method call that would cause an existing key or value pointer to become invalidated will instead trigger an assertion. An additional call to `lockPointers` in such state also triggers an assertion. `unlockPointers` returns the hash map to the previous state.
+std.hash_map.HashMap().unlockPointers	Undoes a call to `lockPointers`.
+std.hash_map.HashMap().deinit	Release the backing array and invalidate this map. This does *not* deinit keys, values, or the context! If your keys or values need to be released, ensure that that is done before calling this function.
+std.hash_map.HashMap().clearRetainingCapacity	Empty the map, but keep the backing allocation for future use. This does *not* free keys or values! Be sure to release them if they need deinitialization before calling this function.
+std.hash_map.HashMap().clearAndFree	Empty the map and release the backing allocation. This does *not* free keys or values! Be sure to release them if they need deinitialization before calling this function.
+std.hash_map.HashMap().count	Return the number of items in the map.
+std.hash_map.HashMap().iterator	Create an iterator over the entries in the map. The iterator is invalidated if the map is modified.
+std.hash_map.HashMap().keyIterator	Create an iterator over the keys in the map. The iterator is invalidated if the map is modified.
+std.hash_map.HashMap().valueIterator	Create an iterator over the values in the map. The iterator is invalidated if the map is modified.
+std.hash_map.HashMap().getOrPut	If key exists this function cannot fail. If there is an existing item with `key`, then the result's `Entry` pointers point to it, and found_existing is true. Otherwise, puts a new item with undefined value, and the `Entry` pointers point to it. Caller should then initialize the value (but not the key).
+std.hash_map.HashMap().getOrPutAdapted	If key exists this function cannot fail. If there is an existing item with `key`, then the result's `Entry` pointers point to it, and found_existing is true. Otherwise, puts a new item with undefined key and value, and the `Entry` pointers point to it. Caller must then initialize the key and value.
+std.hash_map.HashMap().getOrPutAssumeCapacity	If there is an existing item with `key`, then the result's `Entry` pointers point to it, and found_existing is true. Otherwise, puts a new item with undefined value, and the `Entry` pointers point to it. Caller should then initialize the value (but not the key). If a new entry needs to be stored, this function asserts there is enough capacity to store it.
+std.hash_map.HashMap().getOrPutAssumeCapacityAdapted	If there is an existing item with `key`, then the result's `Entry` pointers point to it, and found_existing is true. Otherwise, puts a new item with undefined value, and the `Entry` pointers point to it. Caller must then initialize the key and value. If a new entry needs to be stored, this function asserts there is enough capacity to store it.
+std.hash_map.HashMap().ensureTotalCapacity	Increases capacity, guaranteeing that insertions up until the `expected_count` will not cause an allocation, and therefore cannot fail.
+std.hash_map.HashMap().ensureUnusedCapacity	Increases capacity, guaranteeing that insertions up until `additional_count` **more** items will not cause an allocation, and therefore cannot fail.
+std.hash_map.HashMap().capacity	Returns the number of total elements which may be present before it is no longer guaranteed that no allocations will be performed.
+std.hash_map.HashMap().put	Clobbers any existing data. To detect if a put would clobber existing data, see `getOrPut`.
+std.hash_map.HashMap().putNoClobber	Inserts a key-value pair into the hash map, asserting that no previous entry with the same key is already present
+std.hash_map.HashMap().putAssumeCapacity	Asserts there is enough capacity to store the new key-value pair. Clobbers any existing data. To detect if a put would clobber existing data, see `getOrPutAssumeCapacity`.
+std.hash_map.HashMap().putAssumeCapacityNoClobber	Asserts there is enough capacity to store the new key-value pair. Asserts that it does not clobber any existing data. To detect if a put would clobber existing data, see `getOrPutAssumeCapacity`.
+std.hash_map.HashMap().fetchPut	Inserts a new `Entry` into the hash map, returning the previous one, if any.
+std.hash_map.HashMap().fetchPutAssumeCapacity	Inserts a new `Entry` into the hash map, returning the previous one, if any. If insertion happens, asserts there is enough capacity without allocating.
+std.hash_map.HashMap().fetchRemove	Removes a value from the map and returns the removed kv pair.
+std.hash_map.HashMap().get	Finds the value associated with a key in the map
+std.hash_map.HashMap().getKey	Finds the actual key associated with an adapted key in the map
+std.hash_map.HashMap().getEntry	Finds the key and value associated with a key in the map
+std.hash_map.HashMap().contains	Check if the map contains a key
+std.hash_map.HashMap().remove	If there is an `Entry` with a matching key, it is deleted from the hash map, and this function returns true. Otherwise this function returns false. TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMap().removeAdapted	TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMap().removeByPtr	Delete the entry with key pointed to by key_ptr from the hash map. key_ptr is assumed to be a valid pointer to a key that is present in the hash map. TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMap().clone	Creates a copy of this map, using the same allocator
+std.hash_map.HashMap().cloneWithAllocator	Creates a copy of this map, using a specified allocator
+std.hash_map.HashMap().cloneWithContext	Creates a copy of this map, using a specified context
+std.hash_map.HashMap().cloneWithAllocatorAndContext	Creates a copy of this map, using a specified allocator and context.
+std.hash_map.HashMap().move	Set the map to an empty state, making deinitialization a no-op, and returning a copy of the original.
+std.hash_map.HashMap().rehash	Rehash the map, in-place. Over time, due to the current tombstone-based implementation, a HashMap could become fragmented due to the buildup of tombstone entries that causes a performance degradation due to excessive probing. The kind of pattern that might cause this is a long-lived HashMap with repeated inserts and deletes. After this function is called, there will be no tombstones in the HashMap, each of the entries is rehashed and any existing key/value pointers into the HashMap are invalidated.
 std.hash_map.HashMapUnmanaged	A HashMap based on open addressing and linear probing. A lookup or modification typically incurs only 2 cache misses. No order is guaranteed and any modification invalidates live iterators. It achieves good performance with quite high load factors (by default, grow is triggered at 80% full) and only one byte of overhead per element. The struct itself is only 16 bytes for a small footprint. This comes at the price of handling size with u32, which should be reasonable enough for almost all uses. Deletions are achieved with tombstones. Default initialization of this struct is deprecated; use `.empty` instead.
+std.hash_map.HashMapUnmanaged().metadata	Pointer to the metadata.
+std.hash_map.HashMapUnmanaged().size	Current number of elements in the hashmap.
+std.hash_map.HashMapUnmanaged().available	Number of available slots before a grow is needed to satisfy the `max_load_percentage`.
+std.hash_map.HashMapUnmanaged().pointer_stability	Used to detect memory safety violations.
+std.hash_map.HashMapUnmanaged().empty	A map containing no keys or values.
+std.hash_map.HashMapUnmanaged().lockPointers	Puts the hash map into a state where any method call that would cause an existing key or value pointer to become invalidated will instead trigger an assertion. An additional call to `lockPointers` in such state also triggers an assertion. `unlockPointers` returns the hash map to the previous state.
+std.hash_map.HashMapUnmanaged().unlockPointers	Undoes a call to `lockPointers`.
+std.hash_map.HashMapUnmanaged().putNoClobber	Insert an entry in the map. Assumes it is not already present.
+std.hash_map.HashMapUnmanaged().putAssumeCapacity	Asserts there is enough capacity to store the new key-value pair. Clobbers any existing data. To detect if a put would clobber existing data, see `getOrPutAssumeCapacity`.
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobber	Insert an entry in the map. Assumes it is not already present, and that no allocation is needed.
+std.hash_map.HashMapUnmanaged().fetchPut	Inserts a new `Entry` into the hash map, returning the previous one, if any.
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacity	Inserts a new `Entry` into the hash map, returning the previous one, if any. If insertion happens, asserts there is enough capacity without allocating.
+std.hash_map.HashMapUnmanaged().fetchRemove	If there is an `Entry` with a matching key, it is deleted from the hash map, and then returned from this function.
+std.hash_map.HashMapUnmanaged().put	Insert an entry if the associated key is not already present, otherwise update preexisting value.
+std.hash_map.HashMapUnmanaged().getKeyPtr	Get an optional pointer to the actual key associated with adapted key, if present.
+std.hash_map.HashMapUnmanaged().getKey	Get a copy of the actual key associated with adapted key, if present.
+std.hash_map.HashMapUnmanaged().getPtr	Get an optional pointer to the value associated with key, if present.
+std.hash_map.HashMapUnmanaged().get	Get a copy of the value associated with key, if present.
+std.hash_map.HashMapUnmanaged().contains	Return true if there is a value associated with key in the map.
+std.hash_map.HashMapUnmanaged().remove	If there is an `Entry` with a matching key, it is deleted from the hash map, and this function returns true. Otherwise this function returns false. TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMapUnmanaged().removeContext	TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMapUnmanaged().removeAdapted	TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMapUnmanaged().removeByPtr	Delete the entry with key pointed to by key_ptr from the hash map. key_ptr is assumed to be a valid pointer to a key that is present in the hash map. TODO: answer the question in these doc comments, does this increase the unused capacity by one?
+std.hash_map.HashMapUnmanaged().move	Set the map to an empty state, making deinitialization a no-op, and returning a copy of the original.
+std.hash_map.HashMapUnmanaged().rehash	Rehash the map, in-place. Over time, due to the current tombstone-based implementation, a HashMap could become fragmented due to the buildup of tombstone entries that causes a performance degradation due to excessive probing. The kind of pattern that might cause this is a long-lived HashMap with repeated inserts and deletes. After this function is called, there will be no tombstones in the HashMap, each of the entries is rehashed and any existing key/value pointers into the HashMap are invalidated.
 std.heap.ArenaAllocator.State	Inner state of ArenaAllocator. Can be stored rather than the entire ArenaAllocator as a memory-saving optimization. Default initialization of this struct is deprecated; use `init` instead.
 std.heap.ArenaAllocator.deinit	Not threadsafe.
 std.heap.ArenaAllocator.queryCapacity	Queries the current memory use of this arena. This will **not** include the storage required for internal keeping. Not threadsafe.
@@ -3582,7 +4165,23 @@ std.heap.memory_pool.AlignedManaged	Deprecated.
 std.heap.memory_pool.Options.alignment	The alignment of the memory pool items. Use `null` for natural alignment.
 std.heap.memory_pool.Options.growable	If `true`, the memory pool can allocate additional items after a initial setup. If `false`, the memory pool will not allocate further after a call to `initPreheated`.
 std.heap.memory_pool.Extra	A memory pool that can allocate objects of a single type very quickly. Use this when you need to allocate a lot of objects of the same type, because it outperforms general purpose allocators. Functions that potentially allocate memory accept an `Allocator` parameter.
+std.heap.memory_pool.Extra().item_size	Size of the memory pool items. This is not necessarily the same as `@sizeOf(Item)` as the pool also uses the items for internal means.
+std.heap.memory_pool.Extra().item_alignment	Alignment of the memory pool items. This is not necessarily the same as `@alignOf(Item)` as the pool also uses the items for internal means.
+std.heap.memory_pool.Extra().empty	A MemoryPool containing no elements.
+std.heap.memory_pool.Extra().initCapacity	Creates a new memory pool and pre-allocates `num` items. This allows up to `num` active allocations before an `OutOfMemory` error might happen when calling `create()`.
+std.heap.memory_pool.Extra().deinit	Destroys the memory pool and frees all allocated memory.
+std.heap.memory_pool.Extra().addCapacity	Pre-allocates `num` items and adds them to the memory pool. This allows at least `num` active allocations before an `OutOfMemory` error might happen when calling `create()`.
+std.heap.memory_pool.Extra().reset	Resets the memory pool and destroys all allocated items. This can be used to batch-destroy all objects without invalidating the memory pool. The function will return whether the reset operation was successful or not. If the reallocation failed `false` is returned. The pool will still be fully functional in that case, all memory is released. Future allocations just might be slower. NOTE: If `mode` is `free_all`, the function will always return `true`.
+std.heap.memory_pool.Extra().create	Creates a new item and adds it to the memory pool. `allocator` may be `undefined` if pool is not `growable`.
+std.heap.memory_pool.Extra().destroy	Destroys a previously created item. Only pass items to `ptr` that were previously created with `create()` of the same memory pool!
 std.heap.memory_pool.ExtraManaged	Deprecated.
+std.heap.memory_pool.ExtraManaged().init	Creates a new memory pool.
+std.heap.memory_pool.ExtraManaged().initCapacity	Creates a new memory pool and pre-allocates `num` items. This allows up to `num` active allocations before an `OutOfMemory` error might happen when calling `create()`.
+std.heap.memory_pool.ExtraManaged().deinit	Destroys the memory pool and frees all allocated memory.
+std.heap.memory_pool.ExtraManaged().addCapacity	Pre-allocates `num` items and adds them to the memory pool. This allows at least `num` active allocations before an `OutOfMemory` error might happen when calling `create()`.
+std.heap.memory_pool.ExtraManaged().reset	Resets the memory pool and destroys all allocated items. This can be used to batch-destroy all objects without invalidating the memory pool. The function will return whether the reset operation was successful or not. If the reallocation failed `false` is returned. The pool will still be fully functional in that case, all memory is released. Future allocations just might be slower. NOTE: If `mode` is `free_all`, the function will always return `true`.
+std.heap.memory_pool.ExtraManaged().create	Creates a new item and adds it to the memory pool.
+std.heap.memory_pool.ExtraManaged().destroy	Destroys a previously created item. Only pass items to `ptr` that were previously created with `create()` of the same memory pool!
 std.heap.MemoryPoolAligned	Deprecated; use `memory_pool.Aligned`.
 std.heap.MemoryPoolExtra	Deprecated; use `memory_pool.Extra`.
 std.heap.MemoryPoolOptions	Deprecated; use `memory_pool.Options`.
@@ -3596,6 +4195,8 @@ std.heap.wasm_allocator	This allocator is fast, small, and specific to WebAssemb
 std.heap.brk_allocator	Supports single-threaded WebAssembly and Linux.
 std.heap.stackFallback	Returns a `StackFallbackAllocator` allocating using either a `FixedBufferAllocator` on an array of size `size` and falling back to `fallback_allocator` if that fails.
 std.heap.StackFallbackAllocator	An allocator that attempts to allocate using a `FixedBufferAllocator` using an array of size `size`. If the allocation fails, it will fall back to using `fallback_allocator`. Easily created with `stackFallback`.
+std.heap.StackFallbackAllocator().get	This function both fetches a `Allocator` interface to this allocator *and* resets the internal buffer allocator.
+std.heap.StackFallbackAllocator().allocator	Unlike most std allocators `StackFallbackAllocator` modifies its internal state before returning an implementation of the`Allocator` interface and therefore also doesn't use the usual `.allocator()` method.
 std.heap.testAllocator	This one should not try alignments that exceed what C malloc can handle.
 std.http.Client.allocator	Used for all client allocations. Must be thread-safe.
 std.http.Client.io	Used for opening TCP connections.
@@ -3789,6 +4390,10 @@ std.log.default_level	The default log level is based on build mode.
 std.log.logEnabled	Determine if a specific log message level and scope combination are enabled for logging.
 std.log.defaultLog	The default implementation for the log function. Custom log functions may forward log messages to this function. Uses a 64-byte buffer for formatted printing which is flushed before this function returns.
 std.log.scoped	Returns a scoped logging namespace that logs all messages using the scope provided here.
+std.log.scoped().err	Log an error message. This log level is intended to be used when something has gone wrong. This might be recoverable or might be followed by the program exiting.
+std.log.scoped().warn	Log a warning message. This log level is intended to be used if it is uncertain whether something has gone wrong or not, but the circumstances would be worth investigating.
+std.log.scoped().info	Log an info message. This log level is intended to be used for general messages about the state of the program.
+std.log.scoped().debug	Log a debug message. This log level is intended to be used for messages which are only useful for debugging.
 std.log.default	The default scoped logging namespace.
 std.log.err	Log an error message using the default scope. This log level is intended to be used when something has gone wrong. This might be recoverable or might be followed by the program exiting.
 std.log.warn	Log a warning message using the default scope. This log level is intended to be used if it is uncertain whether something has gone wrong or not, but the circumstances would be worth investigating.
@@ -4243,6 +4848,18 @@ std.math.degreesToRadians	Converts an angle in degrees to radians. T must be a f
 std.math.exp	Base-e exponential function on a floating point number. Uses a dedicated hardware instruction when available. This is the same as calling the builtin @exp
 std.math.exp2	Base-2 exponential function on a floating point number. Uses a dedicated hardware instruction when available. This is the same as calling the builtin @exp2
 std.math.complex.Complex	A complex number consisting of a real an imaginary part. T must be a floating-point value.
+std.math.complex.Complex().re	Real part.
+std.math.complex.Complex().im	Imaginary part.
+std.math.complex.Complex().init	Create a new Complex number from the given real and imaginary parts.
+std.math.complex.Complex().add	Returns the sum of two complex numbers.
+std.math.complex.Complex().sub	Returns the subtraction of two complex numbers.
+std.math.complex.Complex().mul	Returns the product of two complex numbers.
+std.math.complex.Complex().div	Returns the quotient of two complex numbers.
+std.math.complex.Complex().conjugate	Returns the complex conjugate of a number.
+std.math.complex.Complex().neg	Returns the negation of a complex number.
+std.math.complex.Complex().mulbyi	Returns the product of complex number and i=sqrt(-1)
+std.math.complex.Complex().reciprocal	Returns the reciprocal of a complex number.
+std.math.complex.Complex().magnitude	Returns the magnitude of a complex number.
 std.math.big.int.calcLimbLen	Returns the number of limbs needed to store `scalar`, which must be a primitive integer or float value. Note: A comptime-known upper bound of this value that may be used instead if `scalar` is not already comptime-known is `calcTwosCompLimbCount(@typeInfo(@TypeOf(scalar)).int.bits)`
 std.math.big.int.calcLog10LimbsBufferLen	Same as `calcToStringLimbsBufferLen`, without the useless base check.
 std.math.big.int.calcSetStringLimbCount	Assumes `string_len` doesn't account for minus signs if the number is negative.
@@ -4563,6 +5180,8 @@ std.mem.splitBackwardsAny	Returns an iterator that iterates backwards over the s
 std.mem.splitBackwardsScalar	Returns an iterator that iterates backwards over the slices of `buffer` that are separated by `delimiter`. `splitBackwardsScalar(u8, "abc|def||ghi", '|')` will return slices for "ghi", "", "def", "abc", null, in that order. If `delimiter` does not exist in buffer, the iterator will return `buffer`, null, in that order. See also: `splitBackwardsSequence`, `splitBackwardsAny`, `splitSequence`, `splitAny`,`splitScalar`, `tokenizeAny`, `tokenizeSequence`, and `tokenizeScalar`.
 std.mem.window	Returns an iterator with a sliding window of slices for `buffer`. The sliding window has length `size` and on every iteration moves forward by `advance`. Extract data for moving average with: `window(u8, "abcdefg", 3, 1)` will return slices "abc", "bcd", "cde", "def", "efg", null, in that order. Chunk or split every N items with: `window(u8, "abcdefg", 3, 3)` will return slices "abc", "def", "g", null, in that order. Pick every even index with: `window(u8, "abcdefg", 1, 2)` will return slices "a", "c", "e", "g" null, in that order. The `size` and `advance` must be not be zero.
 std.mem.WindowIterator	Iterator type returned by the `window` function for sliding window operations.
+std.mem.WindowIterator().next	Returns a slice of the next window, or null if window is at end.
+std.mem.WindowIterator().reset	Resets the iterator to the initial window.
 std.mem.startsWith	Returns true if haystack starts with needle. Time complexity: O(needle.len)
 std.mem.endsWith	Returns true if haystack ends with needle. Time complexity: O(needle.len)
 std.mem.cutPrefix	If `slice` starts with `prefix`, returns the rest of `slice` starting at `prefix.len`.
@@ -4573,8 +5192,21 @@ std.mem.cutScalar	Returns slice of `haystack` before and after first occurrence 
 std.mem.cutScalarLast	Returns slice of `haystack` before and after last occurrence of `needle`, or `null` if not found. See also: * `cut` * `splitScalar` * `tokenizeScalar`
 std.mem.DelimiterType	Delimiter type for tokenization and splitting operations.
 std.mem.TokenIterator	Iterator type for tokenization operations, skipping empty sequences and delimiter sequences.
+std.mem.TokenIterator().next	Returns a slice of the current token, or null if tokenization is complete, and advances to the next token.
+std.mem.TokenIterator().peek	Returns a slice of the current token, or null if tokenization is complete. Does not advance to the next token.
+std.mem.TokenIterator().rest	Returns a slice of the remaining bytes. Does not affect iterator state.
+std.mem.TokenIterator().reset	Resets the iterator to the initial token.
 std.mem.SplitIterator	Iterator type for splitting operations, including empty sequences between delimiters.
+std.mem.SplitIterator().first	Returns a slice of the first field. Call this only to get the first field and then use `next` to get all subsequent fields. Asserts that iteration has not begun.
+std.mem.SplitIterator().next	Returns a slice of the next field, or null if splitting is complete.
+std.mem.SplitIterator().peek	Returns a slice of the next field, or null if splitting is complete. This method does not alter self.index.
+std.mem.SplitIterator().rest	Returns a slice of the remaining bytes. Does not affect iterator state.
+std.mem.SplitIterator().reset	Resets the iterator to the initial slice.
 std.mem.SplitBackwardsIterator	Iterator type for splitting operations from the end backwards, including empty sequences.
+std.mem.SplitBackwardsIterator().first	Returns a slice of the first field. Call this only to get the first field and then use `next` to get all subsequent fields. Asserts that iteration has not begun.
+std.mem.SplitBackwardsIterator().next	Returns a slice of the next field, or null if splitting is complete.
+std.mem.SplitBackwardsIterator().rest	Returns a slice of the remaining bytes. Does not affect iterator state.
+std.mem.SplitBackwardsIterator().reset	Resets the iterator to the initial slice.
 std.mem.join	Naively combines a series of slices with a separator. Allocates memory for the result, which must be freed by the caller.
 std.mem.joinZ	Naively combines a series of slices with a separator and null terminator. Allocates memory for the result, which must be freed by the caller.
 std.mem.concat	Copies each T from slices into a new slice that exactly holds all the elements.
@@ -9609,6 +10241,12 @@ std.process.Args.iterateAllocator	You must deinitialize iterator's internal buff
 std.process.Args.toSlice	Returned value may reference several allocations and may point into `a`. Thefore, an arena-style allocator must be used. * On Windows, the result is encoded as [WTF-8](https://wtf-8.codeberg.page/). * On other platforms, the result is an opaque sequence of bytes with no particular encoding. See also: * `iterate` * `iterateAllocator`
 std.process.Args.IteratorGeneralOptions	Optional parameters for `IteratorGeneral`
 std.process.Args.IteratorGeneral	A general Iterator to parse a string into a set of arguments
+std.process.Args.IteratorGeneral().free_cmd_line_on_deinit	Should the cmd_line field be free'd (using the allocator) on deinit()?
+std.process.Args.IteratorGeneral().buffer	buffer MUST be long enough to hold the cmd_line plus a null terminator. buffer will we free'd (using the allocator) on deinit()
+std.process.Args.IteratorGeneral().init	cmd_line_utf8 MUST remain valid and constant while using this instance
+std.process.Args.IteratorGeneral().initTakeOwnership	cmd_line_utf8 will be free'd (with the allocator) on deinit()
+std.process.Args.IteratorGeneral().next	Returns a slice of the internal buffer that contains the next argument. Returns null when it reaches the end.
+std.process.Args.IteratorGeneral().deinit	Call to free the internal buffer of the iterator.
 std.process.Environ.block	Unmodified, unprocessed data provided by the operating system.
 std.process.Environ.Block	On WASI without libc, this is `void` because the environment has to be queried and heap-allocated at runtime. On Windows, the memory pointed at by the PEB changes when the environment is modified, so a long-lived pointer cannot be used. Therefore, on this operating system `void` is also used.
 std.process.Environ.Map.init	Create a Map backed by a specific allocator. That allocator will be used for both backing allocations and string deduplication.

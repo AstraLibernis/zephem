@@ -77,6 +77,8 @@ pub const Walker = struct {
     docs: *std.Io.Writer,
     /// Side sink: `path · type · value` — one row per field/tag node (the field payload).
     fields: *std.Io.Writer,
+    /// Side sink: `path · target` — a delegating factory and the raw call it forwards to.
+    delegates: *std.Io.Writer,
 
     /// Write one node as a map row. The single point of output.
     pub fn emit(w: *Walker, n: Node) !void {
@@ -102,6 +104,11 @@ pub const Walker = struct {
     pub fn emitField(w: *Walker, path: []const u8, ty: []const u8, value: []const u8) !void {
         try w.fields.print("{s}\t{s}\t{s}\n", .{ path, ty, value });
     }
+
+    /// Record a delegating factory — the raw call it forwards to (unresolved source text).
+    pub fn emitDelegate(w: *Walker, path: []const u8, target: []const u8) !void {
+        try w.delegates.print("{s}\t{s}\n", .{ path, target });
+    }
 };
 
 fn ckToKind(ck: az.ContainerKind) Kind {
@@ -112,6 +119,49 @@ fn ckToKind(ck: az.ContainerKind) Kind {
         .@"opaque" => .@"opaque",
         .none => unreachable,
     };
+}
+
+/// How a fn body produces a type — classified from source alone, by its single top-level
+/// `return`. `.descend` = `return <struct/union/enum/opaque {…}>`, the unambiguous "this fn
+/// builds this type" case (we walk into it). `.delegate` = `return Other(args)` on a `type`-
+/// returning fn — it forwards to another factory; we don't copy members (they live on the
+/// target), we record the raw target text so the link isn't lost (resolving it to a path is a
+/// later job). `.none` = a plain fn, a comptime/`@Type`-built type, or an ambiguous multi-return
+/// — left an honest, undescended leaf. Exactly one top-level type-return, or it's `.none`.
+const Factory = union(enum) {
+    none,
+    descend: Ast.Node.Index, // the container-literal node
+    delegate: []const u8, // the raw call expression forwarded to
+};
+
+fn classifyFactory(ast: *const Ast, fn_decl: Ast.Node.Index, proto: *const Ast.full.FnProto) Factory {
+    const body = ast.nodeData(fn_decl).node_and_node[1];
+    var buf: [2]Ast.Node.Index = undefined;
+    const stmts = ast.blockStatements(&buf, body) orelse return .none;
+    var descend: ?Ast.Node.Index = null;
+    var delegate: ?[]const u8 = null;
+    var type_returns: usize = 0;
+    for (stmts) |s| {
+        if (ast.nodeTag(s) != .@"return") continue;
+        const operand = ast.nodeData(s).opt_node.unwrap() orelse continue;
+        if (az.containerKindOf(ast, operand) != .none) {
+            descend = operand;
+            type_returns += 1;
+        } else {
+            var cb: [1]Ast.Node.Index = undefined;
+            if (ast.fullCall(&cb, operand) != null) {
+                delegate = ast.getNodeSource(operand);
+                type_returns += 1;
+            }
+        }
+    }
+    if (type_returns != 1) return .none; // 0 = opaque/passthrough, >1 = ambiguous — don't guess
+    if (descend) |d| return .{ .descend = d };
+    // a returned call is delegation only when the fn's declared return type is `type` (else it's
+    // an ordinary value-returning fn like `return foo()`, not a factory forwarding to a type).
+    const rt = proto.ast.return_type.unwrap() orelse return .none;
+    if (!std.mem.eql(u8, std.mem.trim(u8, ast.getNodeSource(rt), " \t\r\n"), "type")) return .none;
+    return .{ .delegate = delegate.? };
 }
 
 /// Emit one container-field member: its map row (`field`/`tag`, decided by the *parent*
@@ -250,7 +300,10 @@ pub fn walkMembers(
     for (members) |m| {
         const tag = ast.nodeTag(m);
 
-        // functions — leaves (detail = param count)
+        // functions. A plain fn is a leaf (detail = param count). A *type factory* whose body
+        // has a single top-level `return <container literal>` is descended: its produced type's
+        // members hang under `<fn>()` — the `()` marks "instantiate first" (`std.ArrayList().append`
+        // is reachable only after calling, unlike a static `std.mem.Allocator.alloc`).
         if (tag == .fn_decl) {
             var b: [1]Ast.Node.Index = undefined;
             const proto = ast.fullFnProto(&b, m) orelse continue;
@@ -258,9 +311,30 @@ pub fn walkMembers(
             const name_tok = proto.name_token orelse continue;
             const name = ast.tokenSlice(name_tok);
             const path = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ logical_path, name });
-            try w.emit(.{ .path = path, .name = name, .depth = depth, .kind = .fn_decl, .detail = try fnDetail(w, ast, &proto) });
+
+            // classify the body: a descendable factory (walk its produced type's members under
+            // `<fn>()`), a delegating factory (record the raw target — members live there), or
+            // neither (a plain fn / opaque factory — a leaf).
+            const factory = classifyFactory(ast, m, &proto);
+            var ret_members: []const Ast.Node.Index = &.{};
+            var member_kind: Kind = .fn_decl;
+            var cbuf: [2]Ast.Node.Index = undefined;
+            if (factory == .descend) {
+                ret_members = ast.fullContainerDecl(&cbuf, factory.descend).?.ast.members;
+                member_kind = ckToKind(az.containerKindOf(ast, factory.descend));
+            }
+            const nkids = if (depth < w.max_depth) az.countPub(ast, ret_members) else 0;
+            try w.emit(.{ .path = path, .name = name, .depth = depth, .kind = .fn_decl, .n_children = nkids, .detail = try fnDetail(w, ast, &proto) });
             try w.emitDoc(path, try docComment(w, ast, m));
             if (try fnSig(w, ast, &proto)) |sg| try w.emitSig(path, sg);
+            switch (factory) {
+                .descend => if (depth < w.max_depth) {
+                    const child_logical = try std.fmt.allocPrint(w.arena, "{s}()", .{path});
+                    try walkMembers(w, ast, ret_members, base_dir, child_logical, depth + 1, member_kind);
+                },
+                .delegate => |target| try w.emitDelegate(path, try collapseWs(w.arena, target)),
+                .none => {},
+            }
             continue;
         }
 

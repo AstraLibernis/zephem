@@ -1052,6 +1052,9 @@ std.Io.Reader.VTable.stream	*const fn (r: *Reader, w: *Writer, limit: Limit) Str
 std.Io.Reader.VTable.discard	*const fn (r: *Reader, limit: Limit) Error!usize	defaultDiscard
 std.Io.Reader.VTable.readVec	*const fn (r: *Reader, data: [][]u8) Error!usize	defaultReadVec
 std.Io.Reader.VTable.rebase	*const fn (r: *Reader, capacity: usize) RebaseError!void	defaultRebase
+std.Io.Reader.Hashed().in	*Reader	
+std.Io.Reader.Hashed().hasher	Hasher	
+std.Io.Reader.Hashed().reader	Reader	
 std.Io.Writer.vtable	*const VTable	
 std.Io.Writer.buffer	[]u8	
 std.Io.Writer.end	usize	0
@@ -1063,6 +1066,11 @@ std.Io.Writer.ByteSizeUnits.decimal
 std.Io.Writer.ByteSizeUnits.binary		
 std.Io.Writer.Discarding.count	u64	
 std.Io.Writer.Discarding.writer	Writer	
+std.Io.Writer.Hashed().out	*Writer	
+std.Io.Writer.Hashed().hasher	Hasher	
+std.Io.Writer.Hashed().writer	Writer	
+std.Io.Writer.Hashing().hasher	Hasher	
+std.Io.Writer.Hashing().writer	Writer	
 std.Io.Writer.Allocating.allocator	Allocator	
 std.Io.Writer.Allocating.writer	Writer	
 std.Io.Writer.Allocating.alignment	std.mem.Alignment	
@@ -1329,6 +1337,9 @@ std.Io.File.MultiReader.Context.fr	File.Reader
 std.Io.File.MultiReader.Context.vec	[1][]u8	
 std.Io.File.MultiReader.Context.err	?Error	
 std.Io.File.MultiReader.Streams.len	u32	
+std.Io.File.MultiReader.Buffer().len	u32	
+std.Io.File.MultiReader.Buffer().contexts	[n][@sizeOf(Context)]u8	
+std.Io.File.MultiReader.Buffer().storage	[n][@sizeOf(Io.Operation.Storage)]u8	
 std.Io.File.Kind.block_device		
 std.Io.File.Kind.character_device		
 std.Io.File.Kind.directory		
@@ -1556,10 +1567,15 @@ std.Io.Duration.nanoseconds	i96
 std.Io.Timeout.none		
 std.Io.Timeout.duration	Clock.Duration	
 std.Io.Timeout.deadline	Clock.Timestamp	
+std.Io.Future().any_future	?*AnyFuture	
+std.Io.Future().result	Result	
 std.Io.Group.token	std.atomic.Value(?*anyopaque)	
 std.Io.Group.state	usize	
 std.Io.CancelProtection.unblocked		0
 std.Io.CancelProtection.blocked		1
+std.Io.Select().io	Io	
+std.Io.Select().group	Group	
+std.Io.Select().queue	Queue(U)	
 std.Io.Mutex.state	std.atomic.Value(State)	
 std.Io.Mutex.State.unlocked		
 std.Io.Mutex.State.locked_once		
@@ -1576,6 +1592,7 @@ std.Io.TypeErasedQueue.start	usize
 std.Io.TypeErasedQueue.len	usize	
 std.Io.TypeErasedQueue.putters	std.DoublyLinkedList	
 std.Io.TypeErasedQueue.getters	std.DoublyLinkedList	
+std.Io.Queue().type_erased	TypeErasedQueue	
 std.Io.LockedStderr.file_writer	*File.Writer	
 std.Io.LockedStderr.terminal_mode	Terminal.Mode	
 std.Progress.terminal	Io.File	
@@ -1654,6 +1671,9 @@ std.Random.ziggurat.ZigTable.f	[257]f64
 std.Random.ziggurat.ZigTable.pdf	fn (f64) f64	
 std.Random.ziggurat.ZigTable.is_symmetric	bool	
 std.Random.ziggurat.ZigTable.zero_case	fn (Random, f64) f64	
+std.Random.lcg.Wrapping().xi	T	
+std.Random.lcg.Wrapping().a	T	
+std.Random.lcg.Wrapping().c	T	
 std.Random.ptr	*anyopaque	
 std.Random.fillFn	*const fn (ptr: *anyopaque, buf: []u8) void	
 std.Random.IoSource.io	std.Io	
@@ -3759,6 +3779,30 @@ std.Uri.Format.Flags.path	bool	false
 std.Uri.Format.Flags.query	bool	false
 std.Uri.Format.Flags.fragment	bool	false
 std.Uri.Format.Flags.port	bool	true
+std.array_list.AlignedManaged().items	Slice	
+std.array_list.AlignedManaged().capacity	usize	
+std.array_list.AlignedManaged().allocator	Allocator	
+std.array_list.Aligned().items	Slice	
+std.array_list.Aligned().capacity	usize	
+std.array_hash_map.Custom().entries	DataList	.{}
+std.array_hash_map.Custom().index_header	?*IndexHeader	null
+std.array_hash_map.Custom().pointer_stability	std.debug.SafetyLock	.{}
+std.array_hash_map.Custom().Entry.key_ptr	*K	
+std.array_hash_map.Custom().Entry.value_ptr	*V	
+std.array_hash_map.Custom().KV.key	K	
+std.array_hash_map.Custom().KV.value	V	
+std.array_hash_map.Custom().Data.hash	Hash	
+std.array_hash_map.Custom().Data.key	K	
+std.array_hash_map.Custom().Data.value	V	
+std.array_hash_map.Custom().GetOrPutResult.key_ptr	*K	
+std.array_hash_map.Custom().GetOrPutResult.value_ptr	*V	
+std.array_hash_map.Custom().GetOrPutResult.found_existing	bool	
+std.array_hash_map.Custom().GetOrPutResult.index	usize	
+std.array_hash_map.Custom().Iterator.keys	[*]K	
+std.array_hash_map.Custom().Iterator.values	[*]V	
+std.array_hash_map.Custom().Iterator.len	u32	
+std.array_hash_map.Custom().Iterator.index	u32	0
+std.atomic.Value().raw	T	
 std.atomic.Mutex.unlocked		
 std.atomic.Mutex.locked		
 std.base64.Codecs.alphabet_chars	[64]u8	
@@ -3773,6 +3817,8 @@ std.base64.Base64Decoder.fast_char_to_index	[4][256]u32
 std.base64.Base64Decoder.pad_char	?u8	
 std.base64.Base64DecoderWithIgnore.decoder	Base64Decoder	
 std.base64.Base64DecoderWithIgnore.char_is_ignored	[256]bool	
+std.bit_set.IntegerBitSet().mask	MaskInt	
+std.bit_set.ArrayBitSet().masks	[num_masks]MaskInt	
 std.bit_set.DynamicBitSetUnmanaged.bit_length	usize	0
 std.bit_set.DynamicBitSetUnmanaged.masks	[*]MaskInt	empty_masks_ptr
 std.bit_set.DynamicBitSet.allocator	Allocator	
@@ -4877,6 +4923,7 @@ std.compress.lzma.Decode.CircularBuffer.dict_size	usize
 std.compress.lzma.Decode.CircularBuffer.mem_limit	usize	
 std.compress.lzma.Decode.CircularBuffer.cursor	usize	
 std.compress.lzma.Decode.CircularBuffer.len	usize	
+std.compress.lzma.Decode.BitTree().probs	[1 << num_bits]u16	@splat(0x400)
 std.compress.lzma.Decode.LenDecoder.choice	u16	0x400
 std.compress.lzma.Decode.LenDecoder.choice2	u16	0x400
 std.compress.lzma.Decode.LenDecoder.low_coder	[16]BitTree(3)	@splat(.{})
@@ -5015,7 +5062,30 @@ std.compress.zstd.Decompress.Table.rle	u8
 std.compress.zstd.Decompress.Table.Fse.symbol	u8	
 std.compress.zstd.Decompress.Table.Fse.baseline	u16	
 std.compress.zstd.Decompress.Table.Fse.bits	u8	
+std.static_string_map.StaticStringMapWithEql().kvs	*const KVs	&empty_kvs
+std.static_string_map.StaticStringMapWithEql().len_indexes	[*]const u32	&empty_len_indexes
+std.static_string_map.StaticStringMapWithEql().len_indexes_len	u32	0
+std.static_string_map.StaticStringMapWithEql().min_len	u32	std.math.maxInt(u32)
+std.static_string_map.StaticStringMapWithEql().max_len	u32	0
+std.static_string_map.StaticStringMapWithEql().KV.key	[]const u8	
+std.static_string_map.StaticStringMapWithEql().KV.value	V	
 std.crypto.aead.isap.IsapA128A.st	Ascon	
+std.crypto.auth.hmac.Hmac().o_key_pad	[Hash.block_length]u8	
+std.crypto.auth.hmac.Hmac().hash	Hash	
+std.crypto.auth.cmac.Cmac().cipher_ctx	BlockCipherCtx	
+std.crypto.auth.cmac.Cmac().k1	Block	
+std.crypto.auth.cmac.Cmac().k2	Block	
+std.crypto.auth.cmac.Cmac().buf	Block	[_]u8{0} ** block_length
+std.crypto.auth.cmac.Cmac().pos	usize	0
+std.crypto.auth.cbc_mac.CbcMac().cipher_ctx	BlockCipherCtx	
+std.crypto.auth.cbc_mac.CbcMac().buf	Block	[_]u8{0} ** block_length
+std.crypto.auth.cbc_mac.CbcMac().pos	usize	0
+std.crypto.core.keccak.KeccakF().st	Block	[_]T{0} ** 25
+std.crypto.core.keccak.State().delim	u8	
+std.crypto.core.keccak.State().offset	usize	0
+std.crypto.core.keccak.State().buf	[rate]u8	undefined
+std.crypto.core.keccak.State().st	KeccakF(f)	.{}
+std.crypto.core.keccak.State().transition	TransitionTracker	.{}
 std.crypto.dh.X25519.Curve.Fe.limbs	[5]u64	
 std.crypto.dh.X25519.Curve.scalar.Scalar.limbs	Limbs	undefined
 std.crypto.dh.X25519.Curve.x	Fe	
@@ -5032,6 +5102,12 @@ std.crypto.kem.hybrid.Params.Ndk	usize
 std.crypto.kem.hybrid.Params.Nct	usize	
 std.crypto.kem.hybrid.Params.Nss	usize	
 std.crypto.kem.hybrid.Params.Xof	type	sha3.Shake256
+std.crypto.kem.hybrid.HybridKem().PublicKey.bytes	[params.Nek]u8	
+std.crypto.kem.hybrid.HybridKem().SecretKey.seed	[params.Nseed]u8	
+std.crypto.kem.hybrid.HybridKem().KeyPair.public_key	PublicKey	
+std.crypto.kem.hybrid.HybridKem().KeyPair.secret_key	SecretKey	
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.shared_secret	[shared_length]u8	
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.ciphertext	[ciphertext_length]u8	
 std.crypto.ecc.Curve25519.Fe.limbs	[5]u64	
 std.crypto.ecc.Curve25519.x	Fe	
 std.crypto.ecc.Edwards25519.Fe.limbs	[5]u64	
@@ -5064,6 +5140,22 @@ std.crypto.ecc.Secp256k1.z	Fe	Fe.one
 std.crypto.ecc.Secp256k1.is_base	bool	false
 std.crypto.ecc.Secp256k1.Endormorphism.SplitScalar.r1	[32]u8	
 std.crypto.ecc.Secp256k1.Endormorphism.SplitScalar.r2	[32]u8	
+std.crypto.hash.blake2.Blake2s().Options.key	?[]const u8	null
+std.crypto.hash.blake2.Blake2s().Options.salt	?[8]u8	null
+std.crypto.hash.blake2.Blake2s().Options.context	?[8]u8	null
+std.crypto.hash.blake2.Blake2s().Options.expected_out_bits	usize	out_bits
+std.crypto.hash.blake2.Blake2s().h	[8]u32	
+std.crypto.hash.blake2.Blake2s().t	u64	
+std.crypto.hash.blake2.Blake2s().buf	[64]u8	
+std.crypto.hash.blake2.Blake2s().buf_len	u8	
+std.crypto.hash.blake2.Blake2b().Options.key	?[]const u8	null
+std.crypto.hash.blake2.Blake2b().Options.salt	?[16]u8	null
+std.crypto.hash.blake2.Blake2b().Options.context	?[16]u8	null
+std.crypto.hash.blake2.Blake2b().Options.expected_out_bits	usize	out_bits
+std.crypto.hash.blake2.Blake2b().h	[8]u64	
+std.crypto.hash.blake2.Blake2b().t	u128	
+std.crypto.hash.blake2.Blake2b().buf	[128]u8	
+std.crypto.hash.blake2.Blake2b().buf_len	u8	
 std.crypto.hash.Blake3.Options.key	?[key_length]u8	null
 std.crypto.hash.Blake3.key	[8]u32	
 std.crypto.hash.Blake3.chunk	ChunkState	
@@ -5077,10 +5169,16 @@ std.crypto.hash.Sha1.s	[5]u32
 std.crypto.hash.Sha1.buf	[64]u8	undefined
 std.crypto.hash.Sha1.buf_len	u8	0
 std.crypto.hash.Sha1.total_len	u64	0
+std.crypto.hash.sha3.Keccak().st	State	
+std.crypto.hash.sha3.Keccak().Options.delim	u8	default_delim
 std.crypto.hash.sha3.NistLengthEncoding.left		
 std.crypto.hash.sha3.NistLengthEncoding.right		
 std.crypto.hash.sha3.NistLengthEncoding.Length.len	usize	0
 std.crypto.hash.sha3.NistLengthEncoding.Length.buf	[@sizeOf(usize) + 1]u8	undefined
+std.crypto.hash.composition.Composition().H1	H1	
+std.crypto.hash.composition.Composition().H2	H2	
+std.crypto.hash.composition.Composition().Options.H1	H1.Options	.{}
+std.crypto.hash.composition.Composition().Options.H2	H2.Options	.{}
 std.crypto.onetimeauth.Poly1305.r	[2]u64	
 std.crypto.onetimeauth.Poly1305.h	[3]u64	[_]u64{ 0, 0, 0 }
 std.crypto.onetimeauth.Poly1305.end_pad	[2]u64	
@@ -5117,6 +5215,8 @@ std.crypto.pwhash.scrypt.HashOptions.allocator	?mem.Allocator
 std.crypto.pwhash.scrypt.HashOptions.params	Params	
 std.crypto.pwhash.scrypt.HashOptions.encoding	pwhash.Encoding	
 std.crypto.pwhash.scrypt.VerifyOptions.allocator	?mem.Allocator	
+std.crypto.pwhash.phc_format.BinValue().buf	[max_len]u8	undefined
+std.crypto.pwhash.phc_format.BinValue().len	usize	0
 std.crypto.sign.Ed25519.SecretKey.bytes	[encoded_length]u8	
 std.crypto.sign.Ed25519.Signer.h	Sha512	
 std.crypto.sign.Ed25519.Signer.scalar	CompressedScalar	
@@ -5140,6 +5240,26 @@ std.crypto.sign.Ed25519.key_blinding.BlindSecretKey.blind_public_key	BlindPublic
 std.crypto.sign.Ed25519.key_blinding.BlindPublicKey.key	PublicKey	
 std.crypto.sign.Ed25519.key_blinding.BlindKeyPair.blind_public_key	BlindPublicKey	
 std.crypto.sign.Ed25519.key_blinding.BlindKeyPair.blind_secret_key	BlindSecretKey	
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.bytes	Curve.scalar.CompressedScalar	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.p	Curve	
+std.crypto.sign.ecdsa.Ecdsa().Signature.r	Curve.scalar.CompressedScalar	
+std.crypto.sign.ecdsa.Ecdsa().Signature.s	Curve.scalar.CompressedScalar	
+std.crypto.sign.ecdsa.Ecdsa().Signer.h	Hash	
+std.crypto.sign.ecdsa.Ecdsa().Signer.secret_key	SecretKey	
+std.crypto.sign.ecdsa.Ecdsa().Signer.noise	?[noise_length]u8	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.h	Hash	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.r	Curve.scalar.Scalar	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.s	Curve.scalar.Scalar	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.public_key	PublicKey	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.public_key	PublicKey	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.secret_key	SecretKey	
+std.crypto.ff.Uint().limbs_buffer	[max_limbs_count]Limb	
+std.crypto.ff.Uint().limbs_len	usize	
+std.crypto.ff.Modulus().zero	Fe	
+std.crypto.ff.Modulus().v	FeUint	
+std.crypto.ff.Modulus().rr	Fe	
+std.crypto.ff.Modulus().m0inv	Limb	
+std.crypto.ff.Modulus().leading	usize	
 std.crypto.codecs.asn1.der.Decoder.bytes	[]const u8	
 std.crypto.codecs.asn1.der.Decoder.index	Index	0
 std.crypto.codecs.asn1.der.Decoder.field_tag	?FieldTag	null
@@ -5200,6 +5320,7 @@ std.crypto.codecs.asn1.FieldTag.class	Tag.Class
 std.crypto.codecs.asn1.FieldTag.explicit	bool	true
 std.crypto.codecs.asn1.BitString.right_padding	u3	0
 std.crypto.codecs.asn1.BitString.bytes	[]const u8	
+std.crypto.codecs.asn1.Opaque().bytes	[]const u8	
 std.crypto.codecs.asn1.Any.tag	Tag	
 std.crypto.codecs.asn1.Any.bytes	[]const u8	
 std.crypto.codecs.base64.Variant.urlsafe_alphabet	bool	false
@@ -5416,11 +5537,28 @@ std.crypto.tls.KeyUpdateRequest.update_requested		1
 std.crypto.tls.KeyUpdateRequest._		
 std.crypto.tls.ChangeCipherSpecType.change_cipher_spec		1
 std.crypto.tls.ChangeCipherSpecType._		
+std.crypto.tls.HandshakeCipherT().transcript_hash	A.Hash	
+std.crypto.tls.HandshakeCipherT().version	union { tls_1_2: struct { expected_server_verify_data: [A.verify_data_length]u8, app_cipher: A.Tls_1_2, }, tls_1_3: struct { handshake_secret: [A.Hkdf.prk_length]u8, master_secret: [A.Hkdf.prk_length]u8, client_handshake_key: [A.AEAD.key_length]u8, server_handshake_key: [A.AEAD.key_length]u8, client_finished_key: [A.Hmac.key_length]u8, server_finished_key: [A.Hmac.key_length]u8, client_handshake_iv: [A.AEAD.nonce_length]u8, server_handshake_iv: [A.AEAD.nonce_length]u8, }, }	
 std.crypto.tls.HandshakeCipher.AES_128_GCM_SHA256	HandshakeCipherT(crypto.aead.aes_gcm.Aes128Gcm, crypto.hash.sha2.Sha256, 8)	
 std.crypto.tls.HandshakeCipher.AES_256_GCM_SHA384	HandshakeCipherT(crypto.aead.aes_gcm.Aes256Gcm, crypto.hash.sha2.Sha384, 8)	
 std.crypto.tls.HandshakeCipher.CHACHA20_POLY1305_SHA256	HandshakeCipherT(crypto.aead.chacha_poly.ChaCha20Poly1305, crypto.hash.sha2.Sha256, 0)	
 std.crypto.tls.HandshakeCipher.AEGIS_256_SHA512	HandshakeCipherT(crypto.aead.aegis.Aegis256, crypto.hash.sha2.Sha512, 0)	
 std.crypto.tls.HandshakeCipher.AEGIS_128L_SHA256	HandshakeCipherT(crypto.aead.aegis.Aegis128L, crypto.hash.sha2.Sha256, 0)	
+std.crypto.tls.ApplicationCipherT().tls_1_2	Tls_1_2	
+std.crypto.tls.ApplicationCipherT().tls_1_3	Tls_1_3	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_write_MAC_key	[mac_key_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.server_write_MAC_key	[mac_key_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_write_key	[enc_key_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.server_write_key	[enc_key_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_write_IV	[fixed_iv_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.server_write_IV	[fixed_iv_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_salt	[record_iv_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.client_secret	[Hash.digest_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.server_secret	[Hash.digest_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.client_key	[AEAD.key_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.server_key	[AEAD.key_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.client_iv	[AEAD.nonce_length]u8	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.server_iv	[AEAD.nonce_length]u8	
 std.crypto.tls.ApplicationCipher.AES_128_GCM_SHA256	ApplicationCipherT(crypto.aead.aes_gcm.Aes128Gcm, crypto.hash.sha2.Sha256, 8)	
 std.crypto.tls.ApplicationCipher.AES_256_GCM_SHA384	ApplicationCipherT(crypto.aead.aes_gcm.Aes256Gcm, crypto.hash.sha2.Sha384, 8)	
 std.crypto.tls.ApplicationCipher.CHACHA20_POLY1305_SHA256	ApplicationCipherT(crypto.aead.chacha_poly.ChaCha20Poly1305, crypto.hash.sha2.Sha256, 0)	
@@ -5557,6 +5695,7 @@ std.debug.Dwarf.expression.Context.entry_value_context	bool	false
 std.debug.Dwarf.expression.Options.addr_size	u8	@sizeOf(usize)
 std.debug.Dwarf.expression.Options.endian	std.builtin.Endian	native_endian
 std.debug.Dwarf.expression.Options.call_frame_context	bool	false
+std.debug.Dwarf.expression.StackMachine().stack	std.ArrayList(Value)	.empty
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule.default		
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule.undefined		
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule.same_value		
@@ -5795,6 +5934,9 @@ std.debug.StackUnwindOptions.context	?CpuContextPtr	null
 std.debug.StackUnwindOptions.allow_unsafe_unwind	bool	false
 std.debug.FormatStackTrace.stack_trace	StackTrace	
 std.debug.FormatStackTrace.terminal_mode	Io.Terminal.Mode	.no_color
+std.debug.ConfigurableTrace().addrs	[actual_size][stack_frame_count]usize	
+std.debug.ConfigurableTrace().notes	[actual_size][]const u8	
+std.debug.ConfigurableTrace().index	Index	
 std.debug.SafetyLock.state	State	if (runtime_safety) .unlocked else .unknown
 std.dwarf.EH.PE.type	Type	
 std.dwarf.EH.PE.rel	Rel	
@@ -6891,10 +7033,27 @@ std.elf.gnu_hash.Header.bloom_size	u32
 std.elf.gnu_hash.Header.bloom_shift	u32	
 std.elf.gnu_hash.ChainEntry.end_of_chain	bool	
 std.elf.gnu_hash.ChainEntry.hash	u31	
+std.enums.EnumSet().bits	BitSet	.empty
+std.enums.EnumSet().Iterator.inner	BitSet.Iterator(.{})	
+std.enums.EnumMap().bits	BitSet	.empty
+std.enums.EnumMap().values	[Indexer.count]Value	undefined
+std.enums.EnumMap().Entry.key	Key	
+std.enums.EnumMap().Entry.value	*Value	
+std.enums.EnumMap().Iterator.inner	BitSet.Iterator(.{})	
+std.enums.EnumMap().Iterator.values	*[Indexer.count]Value	
+std.enums.BoundedEnumMultiset().counts	EnumArray(E, CountSize)	
+std.enums.EnumArray().values	[Indexer.count]Value	
+std.enums.EnumArray().Entry.key	Key	
+std.enums.EnumArray().Entry.value	*Value	
+std.enums.EnumArray().Iterator.index	usize	0
+std.enums.EnumArray().Iterator.values	*[Indexer.count]Value	
 std.fmt.float.Mode.scientific		
 std.fmt.float.Mode.decimal		
 std.fmt.float.Options.mode	Mode	.scientific
 std.fmt.float.Options.precision	?usize	null
+std.fmt.float.FloatDecimal().mantissa	T	
+std.fmt.float.FloatDecimal().exponent	i32	
+std.fmt.float.FloatDecimal().sign	bool	
 std.fmt.Alignment.left		
 std.fmt.Alignment.center		
 std.fmt.Alignment.right		
@@ -6929,6 +7088,7 @@ std.fmt.Parser.i	usize
 std.fmt.ArgState.next_arg	usize	0
 std.fmt.ArgState.used_args	ArgSetType	0
 std.fmt.ArgState.args_len	usize	
+std.fmt.Alt().data	Data	
 std.fs.path.PathType.windows		
 std.fs.path.PathType.uefi		
 std.fs.path.PathType.posix		
@@ -6938,6 +7098,15 @@ std.fs.path.WindowsPath.disk_designator	[]const u8
 std.fs.path.WindowsPath.Kind.None		
 std.fs.path.WindowsPath.Kind.Drive		
 std.fs.path.WindowsPath.Kind.NetworkShare		
+std.fs.path.WindowsPath2().kind	Win32PathType	
+std.fs.path.WindowsPath2().root	[]const T	
+std.fs.path.ComponentIterator().path	[]const T	
+std.fs.path.ComponentIterator().root_len	usize	
+std.fs.path.ComponentIterator().root_end_index	usize	
+std.fs.path.ComponentIterator().start_index	usize	0
+std.fs.path.ComponentIterator().end_index	usize	0
+std.fs.path.ComponentIterator().Component.name	[]const T	
+std.fs.path.ComponentIterator().Component.path	[]const T	
 std.fs.path.Win32PathType.unc_absolute		
 std.fs.path.Win32PathType.drive_absolute		
 std.fs.path.Win32PathType.drive_relative		
@@ -6965,6 +7134,22 @@ std.gpu.ExecutionMode.LocalSize.z	u32
 std.hash.Adler32.adler	u32	1
 std.hash_map.StringIndexContext.bytes	*const std.ArrayList(u8)	
 std.hash_map.StringIndexAdapter.bytes	*const std.ArrayList(u8)	
+std.hash_map.HashMap().unmanaged	Unmanaged	
+std.hash_map.HashMap().allocator	Allocator	
+std.hash_map.HashMap().ctx	Context	
+std.hash_map.HashMapUnmanaged().metadata	?[*]Metadata	null
+std.hash_map.HashMapUnmanaged().size	Size	0
+std.hash_map.HashMapUnmanaged().available	Size	0
+std.hash_map.HashMapUnmanaged().pointer_stability	std.debug.SafetyLock	.{}
+std.hash_map.HashMapUnmanaged().Entry.key_ptr	*K	
+std.hash_map.HashMapUnmanaged().Entry.value_ptr	*V	
+std.hash_map.HashMapUnmanaged().KV.key	K	
+std.hash_map.HashMapUnmanaged().KV.value	V	
+std.hash_map.HashMapUnmanaged().Iterator.hm	*const Self	
+std.hash_map.HashMapUnmanaged().Iterator.index	Size	0
+std.hash_map.HashMapUnmanaged().GetOrPutResult.key_ptr	*K	
+std.hash_map.HashMapUnmanaged().GetOrPutResult.value_ptr	*V	
+std.hash_map.HashMapUnmanaged().GetOrPutResult.found_existing	bool	
 std.heap.ArenaAllocator.child_allocator	Allocator	
 std.heap.ArenaAllocator.state	State	
 std.heap.ArenaAllocator.State.used_list	?*Node	null
@@ -6995,6 +7180,14 @@ std.heap.Check.ok
 std.heap.Check.leak		
 std.heap.memory_pool.Options.alignment	?Alignment	null
 std.heap.memory_pool.Options.growable	bool	true
+std.heap.memory_pool.Extra().arena_state	std.heap.ArenaAllocator.State	
+std.heap.memory_pool.Extra().free_list	std.SinglyLinkedList	
+std.heap.memory_pool.ExtraManaged().allocator	Allocator	
+std.heap.memory_pool.ExtraManaged().unmanaged	Unmanaged	
+std.heap.StackFallbackAllocator().buffer	[size]u8	
+std.heap.StackFallbackAllocator().fallback_allocator	Allocator	
+std.heap.StackFallbackAllocator().fixed_buffer_allocator	FixedBufferAllocator	
+std.heap.StackFallbackAllocator().get_called	if (std.debug.runtime_safety) bool else void	if (std.debug.runtime_safety) false else {}
 std.http.Client.allocator	Allocator	
 std.http.Client.io	Io	
 std.http.Client.ca_bundle_lock	if (disable_tls) void else Io.RwLock	if (disable_tls) {} else .init
@@ -7357,6 +7550,8 @@ std.json.Stringify.Options.emit_null_optional_fields	bool	true
 std.json.Stringify.Options.emit_strings_as_arrays	bool	false
 std.json.Stringify.Options.escape_unicode	bool	false
 std.json.Stringify.Options.emit_nonportable_numbers_as_strings	bool	false
+std.json.Formatter().value	T	
+std.json.Formatter().options	Stringify.Options	
 std.log.Level.err		
 std.log.Level.warn		
 std.log.Level.info		
@@ -7719,6 +7914,8 @@ std.macho.CompactUnwindEncoding.has_lsda	u1
 std.macho.CompactUnwindEncoding.start	u1	
 std.math.Sign.positive		
 std.math.Sign.negative		
+std.math.complex.Complex().re	T	
+std.math.complex.Complex().im	T	
 std.math.big.int.TwosCompIntLimit.min		
 std.math.big.int.TwosCompIntLimit.max		
 std.math.big.int.Round.nearest_even		
@@ -7761,9 +7958,25 @@ std.mem.Alignment.@"16"		4
 std.mem.Alignment.@"32"		5
 std.mem.Alignment.@"64"		6
 std.mem.Alignment._		
+std.mem.ValidationAllocator().underlying_allocator	T	
+std.mem.WindowIterator().buffer	[]const T	
+std.mem.WindowIterator().index	?usize	
+std.mem.WindowIterator().size	usize	
+std.mem.WindowIterator().advance	usize	
 std.mem.DelimiterType.sequence		
 std.mem.DelimiterType.any		
 std.mem.DelimiterType.scalar		
+std.mem.TokenIterator().buffer	[]const T	
+std.mem.TokenIterator().delimiter	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	
+std.mem.TokenIterator().index	usize	
+std.mem.SplitIterator().buffer	[]const T	
+std.mem.SplitIterator().index	?usize	
+std.mem.SplitIterator().delimiter	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	
+std.mem.SplitBackwardsIterator().buffer	[]const T	
+std.mem.SplitBackwardsIterator().index	?usize	
+std.mem.SplitBackwardsIterator().delimiter	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	
+std.mem.ReverseIterator().ptr	Pointer	
+std.mem.ReverseIterator().index	usize	
 std.os.linux.BPF.btf.ext.Header.magic	u16	
 std.os.linux.BPF.btf.ext.Header.version	u8	
 std.os.linux.BPF.btf.ext.Header.flags	u8	
@@ -20928,8 +21141,15 @@ std.os.windows.CONSOLE.USER_IO.InputBuffer.Size	u32
 std.os.windows.CONSOLE.USER_IO.InputBuffer.Pointer	*const anyopaque	
 std.os.windows.CONSOLE.USER_IO.OutputBuffer.Size	u32	
 std.os.windows.CONSOLE.USER_IO.OutputBuffer.Pointer	*anyopaque	
+std.os.windows.CONSOLE.USER_IO.Request().Handle	?HANDLE	
+std.os.windows.CONSOLE.USER_IO.Request().InputBuffersLength	u32	
+std.os.windows.CONSOLE.USER_IO.Request().OutputBuffersLength	u32	
+std.os.windows.CONSOLE.USER_IO.Request().InputBuffers	[in_len]InputBuffer	
+std.os.windows.CONSOLE.USER_IO.Request().OutputBuffers	[out_len]OutputBuffer	
 std.os.windows.CONSOLE.USER_IO.Header.Operation	Operation	
 std.os.windows.CONSOLE.USER_IO.Header.Size	u32	
+std.os.windows.CONSOLE.USER_IO.Header.With().Header	Header	
+std.os.windows.CONSOLE.USER_IO.Header.With().Data	Data	
 std.os.windows.CONSOLE.USER_IO.Operation.GetCP		0x1000000
 std.os.windows.CONSOLE.USER_IO.Operation.GetMode		0x1000001
 std.os.windows.CONSOLE.USER_IO.Operation.SetMode		0x1000002
@@ -20947,6 +21167,8 @@ std.os.windows.AFD.OVERLAPPED	bool	false
 std.os.windows.AFD.Reserved0	u30	0
 std.os.windows.AFD.Mutability.@"const"		
 std.os.windows.AFD.Mutability.@"var"		
+std.os.windows.AFD.WSABUF().len	ULONG	
+std.os.windows.AFD.WSABUF().buf	switch (mutability) { .@"const" => [*]const u8, .@"var" => [*]u8, }	
 std.os.windows.AFD.GUARANTEE.BestEffort		
 std.os.windows.AFD.GUARANTEE.ControlledLoad		
 std.os.windows.AFD.GUARANTEE.Predictive		
@@ -25604,6 +25826,8 @@ std.os.windows.FILE_BOTH_DIR_INFORMATION.EaSize	ULONG
 std.os.windows.FILE_BOTH_DIR_INFORMATION.ShortNameLength	CHAR	
 std.os.windows.FILE_BOTH_DIR_INFORMATION.ShortName	[12]WCHAR	
 std.os.windows.FILE_BOTH_DIR_INFORMATION.FileName	[1]WCHAR	
+std.os.windows.FileInformationIterator().byte_offset	usize	0
+std.os.windows.FileInformationIterator().buf	[]u8	
 std.os.windows.CURDIR.DosPath	UNICODE_STRING	
 std.os.windows.CURDIR.Handle	HANDLE	
 std.os.windows.MODULEINFO.lpBaseOfDll	LPVOID	
@@ -26265,6 +26489,13 @@ std.process.Args.Iterator.Wasi.index	usize
 std.process.Args.Iterator.Wasi.args	[][:0]u8	
 std.process.Args.IteratorGeneralOptions.comments	bool	false
 std.process.Args.IteratorGeneralOptions.single_quotes	bool	false
+std.process.Args.IteratorGeneral().allocator	Allocator	
+std.process.Args.IteratorGeneral().index	usize	0
+std.process.Args.IteratorGeneral().cmd_line	[]const u8	
+std.process.Args.IteratorGeneral().free_cmd_line_on_deinit	bool	
+std.process.Args.IteratorGeneral().buffer	[]u8	
+std.process.Args.IteratorGeneral().start	usize	0
+std.process.Args.IteratorGeneral().end	usize	0
 std.process.Environ.block	Block	
 std.process.Environ.GlobalBlock.use_global	bool	
 std.process.Environ.PosixBlock.slice	[:null]const ?[*:0]const u8	
@@ -29156,6 +29387,10 @@ std.zig.llvm.bitcode_writer.AbbrevOp.array_fixed	u16
 std.zig.llvm.bitcode_writer.AbbrevOp.array_fixed_runtime	type	
 std.zig.llvm.bitcode_writer.AbbrevOp.array_vbr	u16	
 std.zig.llvm.bitcode_writer.AbbrevOp.array_char6	void	
+std.zig.llvm.bitcode_writer.BitcodeWriter().buffer	std.array_list.Managed(u32)	
+std.zig.llvm.bitcode_writer.BitcodeWriter().bit_buffer	u32	0
+std.zig.llvm.bitcode_writer.BitcodeWriter().bit_count	u5	0
+std.zig.llvm.bitcode_writer.BitcodeWriter().widths	[types.len]u16	
 std.zig.llvm.Builder.gpa	Allocator	
 std.zig.llvm.Builder.strip	bool	
 std.zig.llvm.Builder.source_filename	String	

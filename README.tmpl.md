@@ -156,10 +156,12 @@ The extractor is **three engines**, split by *what each reads*:
   [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
   single generic walk (`parse/walk.zig`) → the **map** (`nodes.tsv`: paths, names, kinds,
   child-counts, files, source order) plus the raw source facts only a parser can see:
-  as-written **fn signatures** (`sigs.tsv`, @@N_SIGS@@), **`///` docs** (`docs.tsv`, @@N_DOCS@@), and
-  **struct/union fields + enum tags** (`fields.tsv`, @@N_FIELDS@@ — `path·type·value`), all
-  keyed by `path`. It reads source as text and never runs the compiler, which is what lets it map
-  all of std without dying on poison decls.
+  as-written **fn signatures** (`sigs.tsv`, @@N_SIGS@@), **`///` docs** (`docs.tsv`, @@N_DOCS@@),
+  **struct/union fields + enum tags** (`fields.tsv`, @@N_FIELDS@@ — `path·type·value`), and
+  **delegating-factory targets** (`delegates.tsv`, @@N_DELEGATES@@), all keyed by `path`. The walk
+  also **descends type factories** — a `fn(…) type` with one `return struct {…}` gets its members
+  mapped under `<fn>()` (`std.HashMap().get`). It reads source as text and never runs the compiler,
+  which is what lets it map all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
   parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.

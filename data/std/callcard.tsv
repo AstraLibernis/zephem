@@ -978,6 +978,7 @@ std.Io.File.MemoryMap.read	both	fn read(mm: *MemoryMap, io: Io) File.ReadPositio
 std.Io.File.MemoryMap.setLength	both	fn setLength(mm: *MemoryMap, io: Io, new_len: usize) SetLengthError!void	fn (*Io.File.MemoryMap, Io, usize) error{AccessDenied,Canceled,FileBusy,FileTooBig,InputOutput,LockedMemoryLimitExceeded,NonResizable,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}!void
 std.Io.File.MemoryMap.write	both	fn write(mm: *MemoryMap, io: Io) File.WritePositionalError!void	fn (*Io.File.MemoryMap, Io) error{AccessDenied,BrokenPipe,Canceled,DeviceBusy,DiskQuota,FileBusy,FileTooBig,InputOutput,LockViolation,NoDevice,NoSpaceLeft,NotOpenForWriting,PermissionDenied,SystemResources,Unexpected,Unseekable,WouldBlock}!void
 std.Io.File.MultiReader.Buffer	both	fn Buffer(comptime n: usize) type	fn (comptime usize) type
+std.Io.File.MultiReader.Buffer().toStreams	parser-only	fn toStreams(b: *@This()) *Streams	
 std.Io.File.MultiReader.Streams.contexts	both	fn contexts(s: *Streams) []Context	fn (*Io.File.MultiReader.Streams) []Io.File.MultiReader.Context
 std.Io.File.MultiReader.Streams.storage	both	fn storage(s: *Streams) []Io.Operation.Storage	fn (*Io.File.MultiReader.Streams) []Io.Operation.Storage
 std.Io.File.MultiReader.checkAnyError	both	fn checkAnyError(mr: *const MultiReader) UnendingError!void	fn (*const Io.File.MultiReader) error{AccessDenied,Canceled,ConcurrencyUnavailable,ConnectionResetByPeer,InputOutput,IsDir,LockViolation,NotOpenForReading,OutOfMemory,SocketUnconnected,SystemResources,Unexpected,WouldBlock}!void
@@ -1056,6 +1057,8 @@ std.Io.File.writeStreamingAll	both	fn writeStreamingAll(file: File, io: Io, byte
 std.Io.File.writer	both	fn writer(file: File, io: Io, buffer: []u8) Writer	fn (Io.File, Io, []u8) Io.File.Writer
 std.Io.File.writerStreaming	both	fn writerStreaming(file: File, io: Io, buffer: []u8) Writer	fn (Io.File, Io, []u8) Io.File.Writer
 std.Io.Future	parser-only	fn Future(Result: type) type	
+std.Io.Future().await	parser-only	fn await(f: *@This(), io: Io) Result	
+std.Io.Future().cancel	parser-only	fn cancel(f: *@This(), io: Io) Result	
 std.Io.Group.async	both	fn async(g: *Group, io: Io, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function))) void	fn (*Io.Group, Io, anytype, anytype) void
 std.Io.Group.await	both	fn await(g: *Group, io: Io) Cancelable!void	fn (*Io.Group, Io) error{Canceled}!void
 std.Io.Group.cancel	both	fn cancel(g: *Group, io: Io) void	fn (*Io.Group, Io) void
@@ -1087,7 +1090,20 @@ std.Io.Mutex.unlock	both	fn unlock(m: *Mutex, io: Io) void	fn (*Io.Mutex, Io) vo
 std.Io.Operation.OptionalIndex.fromIndex	both	fn fromIndex(i: usize) OptionalIndex	fn (usize) Io.Operation.OptionalIndex
 std.Io.Operation.OptionalIndex.toIndex	both	fn toIndex(oi: OptionalIndex) u32	fn (Io.Operation.OptionalIndex) u32
 std.Io.Queue	parser-only	fn Queue(Elem: type) type	
+std.Io.Queue().capacity	parser-only	fn capacity(q: *const @This()) usize	
+std.Io.Queue().close	parser-only	fn close(q: *@This(), io: Io) void	
+std.Io.Queue().get	parser-only	fn get(q: *@This(), io: Io, buffer: []Elem, min: usize) (QueueClosedError || Cancelable)!usize	
+std.Io.Queue().getOne	parser-only	fn getOne(q: *@This(), io: Io) (QueueClosedError || Cancelable)!Elem	
+std.Io.Queue().getOneUncancelable	parser-only	fn getOneUncancelable(q: *@This(), io: Io) QueueClosedError!Elem	
+std.Io.Queue().getUncancelable	parser-only	fn getUncancelable(q: *@This(), io: Io, buffer: []Elem, min: usize) QueueClosedError!usize	
+std.Io.Queue().init	parser-only	fn init(buffer: []Elem) @This()	
+std.Io.Queue().put	parser-only	fn put(q: *@This(), io: Io, elements: []const Elem, min: usize) (QueueClosedError || Cancelable)!usize	
+std.Io.Queue().putAll	parser-only	fn putAll(q: *@This(), io: Io, elements: []const Elem) (QueueClosedError || Cancelable)!void	
+std.Io.Queue().putOne	parser-only	fn putOne(q: *@This(), io: Io, item: Elem) (QueueClosedError || Cancelable)!void	
+std.Io.Queue().putOneUncancelable	parser-only	fn putOneUncancelable(q: *@This(), io: Io, item: Elem) QueueClosedError!void	
+std.Io.Queue().putUncancelable	parser-only	fn putUncancelable(q: *@This(), io: Io, elements: []const Elem, min: usize) QueueClosedError!usize	
 std.Io.Reader.Hashed	both	fn Hashed(comptime Hasher: type) type	fn (comptime type) type
+std.Io.Reader.Hashed().init	parser-only	fn init(in: *Reader, hasher: Hasher, buffer: []u8) @This()	
 std.Io.Reader.Limited.init	both	fn init(reader: *Reader, limit: Limit, buffer: []u8) Limited	fn (*Io.Reader, Io.Limit, []u8) Io.Reader.Limited
 std.Io.Reader.allocRemaining	both	fn allocRemaining(r: *Reader, gpa: Allocator, limit: Limit) LimitedAllocError![]u8	fn (*Io.Reader, mem.Allocator, Io.Limit) error{OutOfMemory,ReadFailed,StreamTooLong}![]u8
 std.Io.Reader.allocRemainingAlignedSentinel	both	fn allocRemainingAlignedSentinel( r: *Reader, gpa: Allocator, limit: Limit, comptime alignment: std.mem.Alignment, comptime sentinel: ?u8, ) LimitedAllocError!(if (sentinel) |s| [:s]align(alignment.toByteUnits()) u8 else []align(alignment.toByteUnits()) u8)	fn (*Io.Reader, mem.Allocator, Io.Limit, comptime mem.Alignment, comptime ?u8) anytype
@@ -1168,6 +1184,13 @@ std.Io.RwLock.tryLockShared	both	fn tryLockShared(rl: *RwLock, io: Io) bool	fn (
 std.Io.RwLock.unlock	both	fn unlock(rl: *RwLock, io: Io) void	fn (*Io.RwLock, Io) void
 std.Io.RwLock.unlockShared	both	fn unlockShared(rl: *RwLock, io: Io) void	fn (*Io.RwLock, Io) void
 std.Io.Select	parser-only	fn Select(comptime U: type) type	
+std.Io.Select().async	parser-only	fn async( s: *S, comptime field: Field, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function)), ) void	
+std.Io.Select().await	parser-only	fn await(s: *S) Cancelable!U	
+std.Io.Select().awaitMany	parser-only	fn awaitMany(s: *S, buffer: []U, min: usize) Cancelable!usize	
+std.Io.Select().cancel	parser-only	fn cancel(s: *S) ?U	
+std.Io.Select().cancelDiscard	parser-only	fn cancelDiscard(s: *S) void	
+std.Io.Select().concurrent	parser-only	fn concurrent( s: *S, comptime field: Field, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function)), ) ConcurrentError!void	
+std.Io.Select().init	parser-only	fn init(io: Io, buffer: []U) S	
 std.Io.Semaphore.post	both	fn post(s: *Semaphore, io: Io) void	fn (*Io.Semaphore, Io) void
 std.Io.Semaphore.wait	both	fn wait(s: *Semaphore, io: Io) Io.Cancelable!void	fn (*Io.Semaphore, Io) error{Canceled}!void
 std.Io.Semaphore.waitUncancelable	both	fn waitUncancelable(s: *Semaphore, io: Io) void	fn (*Io.Semaphore, Io) void
@@ -1267,7 +1290,11 @@ std.Io.Writer.Discarding.fullCount	both	fn fullCount(d: *const Discarding) u64	f
 std.Io.Writer.Discarding.init	both	fn init(buffer: []u8) Discarding	fn ([]u8) Io.Writer.Discarding
 std.Io.Writer.Discarding.sendFile	both	fn sendFile(w: *Writer, file_reader: *File.Reader, limit: Limit) FileError!usize	fn (*Io.Writer, *Io.File.Reader, Io.Limit) error{EndOfStream,ReadFailed,Unimplemented,WriteFailed}!usize
 std.Io.Writer.Hashed	both	fn Hashed(comptime Hasher: type) type	fn (comptime type) type
+std.Io.Writer.Hashed().init	parser-only	fn init(out: *Writer, buffer: []u8) @This()	
+std.Io.Writer.Hashed().initHasher	parser-only	fn initHasher(out: *Writer, hasher: Hasher, buffer: []u8) @This()	
 std.Io.Writer.Hashing	both	fn Hashing(comptime Hasher: type) type	fn (comptime type) type
+std.Io.Writer.Hashing().init	parser-only	fn init(buffer: []u8) @This()	
+std.Io.Writer.Hashing().initHasher	parser-only	fn initHasher(hasher: Hasher, buffer: []u8) @This()	
 std.Io.Writer.advance	both	fn advance(w: *Writer, n: usize) void	fn (*Io.Writer, usize) void
 std.Io.Writer.alignBuffer	both	fn alignBuffer( w: *Writer, buffer: []const u8, width: usize, alignment: std.fmt.Alignment, fill: u8, ) Error!void	fn (*Io.Writer, []const u8, usize, fmt.Alignment, u8) error{WriteFailed}!void
 std.Io.Writer.alignBufferOptions	both	fn alignBufferOptions(w: *Writer, buffer: []const u8, options: std.fmt.Options) Error!void	fn (*Io.Writer, []const u8, fmt.Options) error{WriteFailed}!void
@@ -1633,6 +1660,8 @@ std.Random.intRangeAtMostBiased	both	fn intRangeAtMostBiased(r: Random, comptime
 std.Random.intRangeLessThan	both	fn intRangeLessThan(r: Random, comptime T: type, at_least: T, less_than: T) T	fn (Random, comptime type, anytype, anytype) anytype
 std.Random.intRangeLessThanBiased	both	fn intRangeLessThanBiased(r: Random, comptime T: type, at_least: T, less_than: T) T	fn (Random, comptime type, anytype, anytype) anytype
 std.Random.lcg.Wrapping	both	fn Wrapping(comptime T: type) type	fn (comptime type) type
+std.Random.lcg.Wrapping().init	parser-only	fn init(xi: T, a: T, c: T) LcgSelf	
+std.Random.lcg.Wrapping().next	parser-only	fn next(lcg: *LcgSelf) T	
 std.Random.limitRangeBiased	both	fn limitRangeBiased(comptime T: type, random_int: T, less_than: T) T	fn (comptime type, anytype, anytype) anytype
 std.Random.shuffle	both	fn shuffle(r: Random, comptime T: type, buf: []T) void	"fn (Random, comptime type, anytype) callconv(.@""inline"") void"
 std.Random.shuffleWithIndex	both	fn shuffleWithIndex(r: Random, comptime T: type, buf: []T, comptime Index: type) void	fn (Random, comptime type, anytype, comptime type) void
@@ -1707,6 +1736,10 @@ std.Target.Cpu.Arch.isXtensa	both	fn isXtensa(arch: Arch) bool	"fn (Target.Cpu.A
 std.Target.Cpu.Arch.parseCpuModel	both	fn parseCpuModel(arch: Arch, cpu_name: []const u8) !*const Cpu.Model	"fn (Target.Cpu.Arch, []const u8) @typeInfo(@typeInfo(@TypeOf(Target.Cpu.Arch.parseCpuModel)).@""fn"".return_type.?).error_union.error_set!*const Target.Cpu.Model"
 std.Target.Cpu.Arch.plan9Ext	both	fn plan9Ext(arch: Cpu.Arch) [:0]const u8	fn (Target.Cpu.Arch) [:0]const u8
 std.Target.Cpu.Feature.FeatureSetFns	both	fn FeatureSetFns(comptime F: type) type	fn (comptime type) type
+std.Target.Cpu.Feature.FeatureSetFns().featureSet	parser-only	fn featureSet(features: []const F) Set	
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHas	parser-only	fn featureSetHas(set: Set, feature: F) bool	
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAll	parser-only	fn featureSetHasAll(set: Set, features: anytype) bool	
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAny	parser-only	fn featureSetHasAny(set: Set, features: anytype) bool	
 std.Target.Cpu.Feature.Set.addFeature	both	fn addFeature(set: *Set, arch_feature_index: Index) void	fn (*Target.Cpu.Feature.Set, u9) void
 std.Target.Cpu.Feature.Set.addFeatureSet	both	fn addFeatureSet(set: *Set, other_set: Set) void	fn (*Target.Cpu.Feature.Set, Target.Cpu.Feature.Set) void
 std.Target.Cpu.Feature.Set.asBytes	both	fn asBytes(set: *const Set) *const [byte_count]u8	fn (*const Target.Cpu.Feature.Set) *const [40]u8
@@ -1981,6 +2014,105 @@ std.array_hash_map.ArrayHashMap	reflect-only		fn (comptime type, comptime type, 
 std.array_hash_map.Auto	both	fn Auto(comptime K: type, comptime V: type) type	fn (comptime type, comptime type) type
 std.array_hash_map.AutoContext	both	fn AutoContext(comptime K: type) type	fn (comptime type) type
 std.array_hash_map.Custom	both	fn Custom( comptime K: type, comptime V: type, /// A namespace that provides these two functions: /// * `pub fn hash(self, K) u32` /// * `pub fn eql(self, K, K, usize) bool` /// /// The final `usize` in the `eql` function represents the index of the key /// that's already inside the map. comptime Context: type, /// When `false`, this data structure is biased towards cheap `eql` /// functions and avoids storing each key's hash in the table. Setting /// `store_hash` to `true` incurs more memory cost but limits `eql` to /// being called only once per insertion/deletion (provided there are no /// hash collisions). comptime store_hash: bool, ) type	fn (comptime type, comptime type, comptime type, comptime bool) type
+std.array_hash_map.Custom().Iterator.next	parser-only	fn next(it: *Iterator) ?Entry	
+std.array_hash_map.Custom().Iterator.reset	parser-only	fn reset(it: *Iterator) void	
+std.array_hash_map.Custom().capacity	parser-only	fn capacity(self: Self) usize	
+std.array_hash_map.Custom().clearAndFree	parser-only	fn clearAndFree(self: *Self, gpa: Allocator) void	
+std.array_hash_map.Custom().clearRetainingCapacity	parser-only	fn clearRetainingCapacity(self: *Self) void	
+std.array_hash_map.Custom().clone	parser-only	fn clone(self: Self, gpa: Allocator) Oom!Self	
+std.array_hash_map.Custom().cloneContext	parser-only	fn cloneContext(self: Self, gpa: Allocator, ctx: Context) Oom!Self	
+std.array_hash_map.Custom().contains	parser-only	fn contains(self: Self, key: K) bool	
+std.array_hash_map.Custom().containsAdapted	parser-only	fn containsAdapted(self: Self, key: anytype, ctx: anytype) bool	
+std.array_hash_map.Custom().containsContext	parser-only	fn containsContext(self: Self, key: K, ctx: Context) bool	
+std.array_hash_map.Custom().count	parser-only	fn count(self: Self) usize	
+std.array_hash_map.Custom().deinit	parser-only	fn deinit(self: *Self, gpa: Allocator) void	
+std.array_hash_map.Custom().ensureTotalCapacity	parser-only	fn ensureTotalCapacity(self: *Self, gpa: Allocator, new_capacity: usize) Oom!void	
+std.array_hash_map.Custom().ensureTotalCapacityContext	parser-only	fn ensureTotalCapacityContext(self: *Self, gpa: Allocator, new_capacity: usize, ctx: Context) Oom!void	
+std.array_hash_map.Custom().ensureUnusedCapacity	parser-only	fn ensureUnusedCapacity( self: *Self, gpa: Allocator, additional_capacity: usize, ) Oom!void	
+std.array_hash_map.Custom().ensureUnusedCapacityContext	parser-only	fn ensureUnusedCapacityContext( self: *Self, gpa: Allocator, additional_capacity: usize, ctx: Context, ) Oom!void	
+std.array_hash_map.Custom().fetchOrderedRemove	parser-only	fn fetchOrderedRemove(self: *Self, key: K) ?KV	
+std.array_hash_map.Custom().fetchOrderedRemoveAdapted	parser-only	fn fetchOrderedRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV	
+std.array_hash_map.Custom().fetchOrderedRemoveContext	parser-only	fn fetchOrderedRemoveContext(self: *Self, key: K, ctx: Context) ?KV	
+std.array_hash_map.Custom().fetchOrderedRemoveContextAdapted	parser-only	fn fetchOrderedRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) ?KV	
+std.array_hash_map.Custom().fetchPut	parser-only	fn fetchPut(self: *Self, gpa: Allocator, key: K, value: V) Oom!?KV	
+std.array_hash_map.Custom().fetchPutAssumeCapacity	parser-only	fn fetchPutAssumeCapacity(self: *Self, key: K, value: V) ?KV	
+std.array_hash_map.Custom().fetchPutAssumeCapacityContext	parser-only	fn fetchPutAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) ?KV	
+std.array_hash_map.Custom().fetchPutContext	parser-only	fn fetchPutContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!?KV	
+std.array_hash_map.Custom().fetchSwapRemove	parser-only	fn fetchSwapRemove(self: *Self, key: K) ?KV	
+std.array_hash_map.Custom().fetchSwapRemoveAdapted	parser-only	fn fetchSwapRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV	
+std.array_hash_map.Custom().fetchSwapRemoveContext	parser-only	fn fetchSwapRemoveContext(self: *Self, key: K, ctx: Context) ?KV	
+std.array_hash_map.Custom().fetchSwapRemoveContextAdapted	parser-only	fn fetchSwapRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) ?KV	
+std.array_hash_map.Custom().get	parser-only	fn get(self: Self, key: K) ?V	
+std.array_hash_map.Custom().getAdapted	parser-only	fn getAdapted(self: Self, key: anytype, ctx: anytype) ?V	
+std.array_hash_map.Custom().getContext	parser-only	fn getContext(self: Self, key: K, ctx: Context) ?V	
+std.array_hash_map.Custom().getEntry	parser-only	fn getEntry(self: Self, key: K) ?Entry	
+std.array_hash_map.Custom().getEntryAdapted	parser-only	fn getEntryAdapted(self: Self, key: anytype, ctx: anytype) ?Entry	
+std.array_hash_map.Custom().getEntryContext	parser-only	fn getEntryContext(self: Self, key: K, ctx: Context) ?Entry	
+std.array_hash_map.Custom().getIndex	parser-only	fn getIndex(self: Self, key: K) ?usize	
+std.array_hash_map.Custom().getIndexAdapted	parser-only	fn getIndexAdapted(self: Self, key: anytype, ctx: anytype) ?usize	
+std.array_hash_map.Custom().getIndexContext	parser-only	fn getIndexContext(self: Self, key: K, ctx: Context) ?usize	
+std.array_hash_map.Custom().getKey	parser-only	fn getKey(self: Self, key: K) ?K	
+std.array_hash_map.Custom().getKeyAdapted	parser-only	fn getKeyAdapted(self: Self, key: anytype, ctx: anytype) ?K	
+std.array_hash_map.Custom().getKeyContext	parser-only	fn getKeyContext(self: Self, key: K, ctx: Context) ?K	
+std.array_hash_map.Custom().getKeyPtr	parser-only	fn getKeyPtr(self: Self, key: K) ?*K	
+std.array_hash_map.Custom().getKeyPtrAdapted	parser-only	fn getKeyPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*K	
+std.array_hash_map.Custom().getKeyPtrContext	parser-only	fn getKeyPtrContext(self: Self, key: K, ctx: Context) ?*K	
+std.array_hash_map.Custom().getOrPut	parser-only	fn getOrPut(self: *Self, gpa: Allocator, key: K) Oom!GetOrPutResult	
+std.array_hash_map.Custom().getOrPutAdapted	parser-only	fn getOrPutAdapted(self: *Self, gpa: Allocator, key: anytype, key_ctx: anytype) Oom!GetOrPutResult	
+std.array_hash_map.Custom().getOrPutAssumeCapacity	parser-only	fn getOrPutAssumeCapacity(self: *Self, key: K) GetOrPutResult	
+std.array_hash_map.Custom().getOrPutAssumeCapacityAdapted	parser-only	fn getOrPutAssumeCapacityAdapted(self: *Self, key: anytype, ctx: anytype) GetOrPutResult	
+std.array_hash_map.Custom().getOrPutAssumeCapacityContext	parser-only	fn getOrPutAssumeCapacityContext(self: *Self, key: K, ctx: Context) GetOrPutResult	
+std.array_hash_map.Custom().getOrPutContext	parser-only	fn getOrPutContext(self: *Self, gpa: Allocator, key: K, ctx: Context) Oom!GetOrPutResult	
+std.array_hash_map.Custom().getOrPutContextAdapted	parser-only	fn getOrPutContextAdapted(self: *Self, gpa: Allocator, key: anytype, key_ctx: anytype, ctx: Context) Oom!GetOrPutResult	
+std.array_hash_map.Custom().getOrPutValue	parser-only	fn getOrPutValue(self: *Self, gpa: Allocator, key: K, value: V) Oom!GetOrPutResult	
+std.array_hash_map.Custom().getOrPutValueContext	parser-only	fn getOrPutValueContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!GetOrPutResult	
+std.array_hash_map.Custom().getPtr	parser-only	fn getPtr(self: Self, key: K) ?*V	
+std.array_hash_map.Custom().getPtrAdapted	parser-only	fn getPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*V	
+std.array_hash_map.Custom().getPtrContext	parser-only	fn getPtrContext(self: Self, key: K, ctx: Context) ?*V	
+std.array_hash_map.Custom().init	parser-only	fn init(gpa: Allocator, key_list: []const K, value_list: []const V) Oom!Self	
+std.array_hash_map.Custom().iterator	parser-only	fn iterator(self: Self) Iterator	
+std.array_hash_map.Custom().keys	parser-only	fn keys(self: Self) []K	
+std.array_hash_map.Custom().lockPointers	parser-only	fn lockPointers(self: *Self) void	
+std.array_hash_map.Custom().move	parser-only	fn move(self: *Self) Self	
+std.array_hash_map.Custom().orderedRemove	parser-only	fn orderedRemove(self: *Self, key: K) bool	
+std.array_hash_map.Custom().orderedRemoveAdapted	parser-only	fn orderedRemoveAdapted(self: *Self, key: anytype, ctx: anytype) bool	
+std.array_hash_map.Custom().orderedRemoveAt	parser-only	fn orderedRemoveAt(self: *Self, index: usize) void	
+std.array_hash_map.Custom().orderedRemoveAtContext	parser-only	fn orderedRemoveAtContext(self: *Self, index: usize, ctx: Context) void	
+std.array_hash_map.Custom().orderedRemoveAtMany	parser-only	fn orderedRemoveAtMany(self: *Self, gpa: Allocator, sorted_indexes: []const usize) Oom!void	
+std.array_hash_map.Custom().orderedRemoveAtManyContext	parser-only	fn orderedRemoveAtManyContext( self: *Self, gpa: Allocator, sorted_indexes: []const usize, ctx: Context, ) Oom!void	
+std.array_hash_map.Custom().orderedRemoveContext	parser-only	fn orderedRemoveContext(self: *Self, key: K, ctx: Context) bool	
+std.array_hash_map.Custom().orderedRemoveContextAdapted	parser-only	fn orderedRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) bool	
+std.array_hash_map.Custom().pop	parser-only	fn pop(self: *Self) ?KV	
+std.array_hash_map.Custom().popContext	parser-only	fn popContext(self: *Self, ctx: Context) ?KV	
+std.array_hash_map.Custom().put	parser-only	fn put(self: *Self, gpa: Allocator, key: K, value: V) Oom!void	
+std.array_hash_map.Custom().putAssumeCapacity	parser-only	fn putAssumeCapacity(self: *Self, key: K, value: V) void	
+std.array_hash_map.Custom().putAssumeCapacityContext	parser-only	fn putAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) void	
+std.array_hash_map.Custom().putAssumeCapacityNoClobber	parser-only	fn putAssumeCapacityNoClobber(self: *Self, key: K, value: V) void	
+std.array_hash_map.Custom().putAssumeCapacityNoClobberContext	parser-only	fn putAssumeCapacityNoClobberContext(self: *Self, key: K, value: V, ctx: Context) void	
+std.array_hash_map.Custom().putContext	parser-only	fn putContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!void	
+std.array_hash_map.Custom().putNoClobber	parser-only	fn putNoClobber(self: *Self, gpa: Allocator, key: K, value: V) Oom!void	
+std.array_hash_map.Custom().putNoClobberContext	parser-only	fn putNoClobberContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!void	
+std.array_hash_map.Custom().reIndex	parser-only	fn reIndex(self: *Self, gpa: Allocator) Oom!void	
+std.array_hash_map.Custom().reIndexContext	parser-only	fn reIndexContext(self: *Self, gpa: Allocator, ctx: Context) Oom!void	
+std.array_hash_map.Custom().reinit	parser-only	fn reinit(self: *Self, gpa: Allocator, key_list: []const K, value_list: []const V) Oom!void	
+std.array_hash_map.Custom().setKey	parser-only	fn setKey(self: *Self, gpa: Allocator, index: usize, new_key: K) Oom!void	
+std.array_hash_map.Custom().setKeyContext	parser-only	fn setKeyContext(self: *Self, gpa: Allocator, index: usize, new_key: K, ctx: Context) Oom!void	
+std.array_hash_map.Custom().shrinkAndFree	parser-only	fn shrinkAndFree(self: *Self, gpa: Allocator, new_len: usize) void	
+std.array_hash_map.Custom().shrinkAndFreeContext	parser-only	fn shrinkAndFreeContext(self: *Self, gpa: Allocator, new_len: usize, ctx: Context) void	
+std.array_hash_map.Custom().shrinkRetainingCapacity	parser-only	fn shrinkRetainingCapacity(self: *Self, new_len: usize) void	
+std.array_hash_map.Custom().shrinkRetainingCapacityContext	parser-only	fn shrinkRetainingCapacityContext(self: *Self, new_len: usize, ctx: Context) void	
+std.array_hash_map.Custom().sort	parser-only	fn sort(self: *Self, sort_ctx: anytype) void	
+std.array_hash_map.Custom().sortContext	parser-only	fn sortContext(self: *Self, sort_ctx: anytype, ctx: Context) void	
+std.array_hash_map.Custom().sortUnstable	parser-only	fn sortUnstable(self: *Self, sort_ctx: anytype) void	
+std.array_hash_map.Custom().sortUnstableContext	parser-only	fn sortUnstableContext(self: *Self, sort_ctx: anytype, ctx: Context) void	
+std.array_hash_map.Custom().swapRemove	parser-only	fn swapRemove(self: *Self, key: K) bool	
+std.array_hash_map.Custom().swapRemoveAdapted	parser-only	fn swapRemoveAdapted(self: *Self, key: anytype, ctx: anytype) bool	
+std.array_hash_map.Custom().swapRemoveAt	parser-only	fn swapRemoveAt(self: *Self, index: usize) void	
+std.array_hash_map.Custom().swapRemoveAtContext	parser-only	fn swapRemoveAtContext(self: *Self, index: usize, ctx: Context) void	
+std.array_hash_map.Custom().swapRemoveContext	parser-only	fn swapRemoveContext(self: *Self, key: K, ctx: Context) bool	
+std.array_hash_map.Custom().swapRemoveContextAdapted	parser-only	fn swapRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) bool	
+std.array_hash_map.Custom().unlockPointers	parser-only	fn unlockPointers(self: *Self) void	
+std.array_hash_map.Custom().values	parser-only	fn values(self: Self) []V	
 std.array_hash_map.String	both	fn String(comptime V: type) type	fn (comptime type) type
 std.array_hash_map.StringContext.eql	both	fn eql(self: @This(), a: []const u8, b: []const u8, b_index: usize) bool	fn (array_hash_map.StringContext, []const u8, []const u8, usize) bool
 std.array_hash_map.StringContext.hash	both	fn hash(self: @This(), s: []const u8) u32	fn (array_hash_map.StringContext, []const u8) u32
@@ -1993,7 +2125,124 @@ std.array_hash_map.getHashPtrAddrFn	both	fn getHashPtrAddrFn(comptime K: type, c
 std.array_hash_map.getTrivialEqlFn	both	fn getTrivialEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool)	fn (comptime type, comptime type) anytype
 std.array_hash_map.hashString	both	fn hashString(s: []const u8) u32	fn ([]const u8) u32
 std.array_list.Aligned	both	fn Aligned(comptime T: type, comptime alignment: ?mem.Alignment) type	fn (comptime type, comptime ?mem.Alignment) type
+std.array_list.Aligned().SentinelSlice	parser-only	fn SentinelSlice(comptime s: T) type	
+std.array_list.Aligned().addManyAsArray	parser-only	fn addManyAsArray(self: *Self, gpa: Allocator, comptime n: usize) Allocator.Error!*[n]T	
+std.array_list.Aligned().addManyAsArrayAssumeCapacity	parser-only	fn addManyAsArrayAssumeCapacity(self: *Self, comptime n: usize) *[n]T	
+std.array_list.Aligned().addManyAsArrayBounded	parser-only	fn addManyAsArrayBounded(self: *Self, comptime n: usize) error{OutOfMemory}!*[n]T	
+std.array_list.Aligned().addManyAsSlice	parser-only	fn addManyAsSlice(self: *Self, gpa: Allocator, n: usize) Allocator.Error![]T	
+std.array_list.Aligned().addManyAsSliceAssumeCapacity	parser-only	fn addManyAsSliceAssumeCapacity(self: *Self, n: usize) []T	
+std.array_list.Aligned().addManyAsSliceBounded	parser-only	fn addManyAsSliceBounded(self: *Self, n: usize) error{OutOfMemory}![]T	
+std.array_list.Aligned().addManyAt	parser-only	fn addManyAt( self: *Self, gpa: Allocator, index: usize, count: usize, ) Allocator.Error![]T	
+std.array_list.Aligned().addManyAtAssumeCapacity	parser-only	fn addManyAtAssumeCapacity(self: *Self, index: usize, count: usize) []T	
+std.array_list.Aligned().addManyAtBounded	parser-only	fn addManyAtBounded(self: *Self, index: usize, count: usize) error{OutOfMemory}![]T	
+std.array_list.Aligned().addOne	parser-only	fn addOne(self: *Self, gpa: Allocator) Allocator.Error!*T	
+std.array_list.Aligned().addOneAssumeCapacity	parser-only	fn addOneAssumeCapacity(self: *Self) *T	
+std.array_list.Aligned().addOneBounded	parser-only	fn addOneBounded(self: *Self) error{OutOfMemory}!*T	
+std.array_list.Aligned().allocatedSlice	parser-only	fn allocatedSlice(self: Self) Slice	
+std.array_list.Aligned().append	parser-only	fn append(self: *Self, gpa: Allocator, item: T) Allocator.Error!void	
+std.array_list.Aligned().appendAssumeCapacity	parser-only	fn appendAssumeCapacity(self: *Self, item: T) void	
+std.array_list.Aligned().appendBounded	parser-only	fn appendBounded(self: *Self, item: T) error{OutOfMemory}!void	
+std.array_list.Aligned().appendNTimes	parser-only	fn appendNTimes(self: *Self, gpa: Allocator, value: T, n: usize) Allocator.Error!void	
+std.array_list.Aligned().appendNTimesAssumeCapacity	parser-only	fn appendNTimesAssumeCapacity(self: *Self, value: T, n: usize) void	
+std.array_list.Aligned().appendNTimesBounded	parser-only	fn appendNTimesBounded(self: *Self, value: T, n: usize) error{OutOfMemory}!void	
+std.array_list.Aligned().appendSlice	parser-only	fn appendSlice(self: *Self, gpa: Allocator, items: []const T) Allocator.Error!void	
+std.array_list.Aligned().appendSliceAssumeCapacity	parser-only	fn appendSliceAssumeCapacity(self: *Self, items: []const T) void	
+std.array_list.Aligned().appendSliceBounded	parser-only	fn appendSliceBounded(self: *Self, items: []const T) error{OutOfMemory}!void	
+std.array_list.Aligned().appendUnalignedSlice	parser-only	fn appendUnalignedSlice(self: *Self, gpa: Allocator, items: []align(1) const T) Allocator.Error!void	
+std.array_list.Aligned().appendUnalignedSliceAssumeCapacity	parser-only	fn appendUnalignedSliceAssumeCapacity(self: *Self, items: []align(1) const T) void	
+std.array_list.Aligned().appendUnalignedSliceBounded	parser-only	fn appendUnalignedSliceBounded(self: *Self, items: []align(1) const T) error{OutOfMemory}!void	
+std.array_list.Aligned().clearAndFree	parser-only	fn clearAndFree(self: *Self, gpa: Allocator) void	
+std.array_list.Aligned().clearRetainingCapacity	parser-only	fn clearRetainingCapacity(self: *Self) void	
+std.array_list.Aligned().clone	parser-only	fn clone(self: Self, gpa: Allocator) Allocator.Error!Self	
+std.array_list.Aligned().deinit	parser-only	fn deinit(self: *Self, gpa: Allocator) void	
+std.array_list.Aligned().ensureTotalCapacity	parser-only	fn ensureTotalCapacity(self: *Self, gpa: Allocator, new_capacity: usize) Allocator.Error!void	
+std.array_list.Aligned().ensureTotalCapacityPrecise	parser-only	fn ensureTotalCapacityPrecise(self: *Self, gpa: Allocator, new_capacity: usize) Allocator.Error!void	
+std.array_list.Aligned().ensureUnusedCapacity	parser-only	fn ensureUnusedCapacity( self: *Self, gpa: Allocator, additional_count: usize, ) Allocator.Error!void	
+std.array_list.Aligned().expandToCapacity	parser-only	fn expandToCapacity(self: *Self) void	
+std.array_list.Aligned().fromOwnedSlice	parser-only	fn fromOwnedSlice(slice: Slice) Self	
+std.array_list.Aligned().fromOwnedSliceSentinel	parser-only	fn fromOwnedSliceSentinel(comptime sentinel: T, slice: [:sentinel]T) Self	
+std.array_list.Aligned().getLast	parser-only	fn getLast(self: Self) T	
+std.array_list.Aligned().getLastOrNull	parser-only	fn getLastOrNull(self: Self) ?T	
+std.array_list.Aligned().growCapacity	parser-only	fn growCapacity(minimum: usize) usize	
+std.array_list.Aligned().initBuffer	parser-only	fn initBuffer(buffer: Slice) Self	
+std.array_list.Aligned().initCapacity	parser-only	fn initCapacity(gpa: Allocator, num: usize) Allocator.Error!Self	
+std.array_list.Aligned().insert	parser-only	fn insert(self: *Self, gpa: Allocator, i: usize, item: T) Allocator.Error!void	
+std.array_list.Aligned().insertAssumeCapacity	parser-only	fn insertAssumeCapacity(self: *Self, i: usize, item: T) void	
+std.array_list.Aligned().insertBounded	parser-only	fn insertBounded(self: *Self, i: usize, item: T) error{OutOfMemory}!void	
+std.array_list.Aligned().insertSlice	parser-only	fn insertSlice( self: *Self, gpa: Allocator, index: usize, items: []const T, ) Allocator.Error!void	
+std.array_list.Aligned().insertSliceAssumeCapacity	parser-only	fn insertSliceAssumeCapacity( self: *Self, index: usize, items: []const T, ) void	
+std.array_list.Aligned().insertSliceBounded	parser-only	fn insertSliceBounded( self: *Self, index: usize, items: []const T, ) error{OutOfMemory}!void	
+std.array_list.Aligned().orderedRemove	parser-only	fn orderedRemove(self: *Self, i: usize) T	
+std.array_list.Aligned().orderedRemoveMany	parser-only	fn orderedRemoveMany(self: *Self, sorted_indexes: []const usize) void	
+std.array_list.Aligned().pop	parser-only	fn pop(self: *Self) ?T	
+std.array_list.Aligned().print	parser-only	fn print(self: *Self, gpa: Allocator, comptime fmt: []const u8, args: anytype) error{OutOfMemory}!void	
+std.array_list.Aligned().printAssumeCapacity	parser-only	fn printAssumeCapacity(self: *Self, comptime fmt: []const u8, args: anytype) void	
+std.array_list.Aligned().printBounded	parser-only	fn printBounded(self: *Self, comptime fmt: []const u8, args: anytype) error{OutOfMemory}!void	
+std.array_list.Aligned().replaceRange	parser-only	fn replaceRange( self: *Self, gpa: Allocator, start: usize, len: usize, new_items: []const T, ) Allocator.Error!void	
+std.array_list.Aligned().replaceRangeAssumeCapacity	parser-only	fn replaceRangeAssumeCapacity( self: *Self, start: usize, len: usize, new_items: []const T, ) void	
+std.array_list.Aligned().replaceRangeBounded	parser-only	fn replaceRangeBounded( self: *Self, start: usize, len: usize, new_items: []const T, ) error{OutOfMemory}!void	
+std.array_list.Aligned().resize	parser-only	fn resize(self: *Self, gpa: Allocator, new_len: usize) Allocator.Error!void	
+std.array_list.Aligned().shrinkAndFree	parser-only	fn shrinkAndFree(self: *Self, gpa: Allocator, new_len: usize) void	
+std.array_list.Aligned().shrinkAndFreePrecise	parser-only	fn shrinkAndFreePrecise(self: *Self, gpa: Allocator, new_len: usize) Allocator.Error!void	
+std.array_list.Aligned().shrinkRetainingCapacity	parser-only	fn shrinkRetainingCapacity(self: *Self, new_len: usize) void	
+std.array_list.Aligned().shrinkToLen	parser-only	fn shrinkToLen(self: *Self, gpa: Allocator) Allocator.Error!void	
+std.array_list.Aligned().shrinkToLenSentinel	parser-only	fn shrinkToLenSentinel(self: *Self, gpa: Allocator) Allocator.Error!void	
+std.array_list.Aligned().swapRemove	parser-only	fn swapRemove(self: *Self, i: usize) T	
+std.array_list.Aligned().toManaged	parser-only	fn toManaged(self: *Self, gpa: Allocator) AlignedManaged(T, alignment)	
+std.array_list.Aligned().toOwnedSlice	parser-only	fn toOwnedSlice(self: *Self, gpa: Allocator) Allocator.Error!Slice	
+std.array_list.Aligned().toOwnedSliceAssert	parser-only	fn toOwnedSliceAssert(self: *Self) Slice	
+std.array_list.Aligned().toOwnedSliceSentinel	parser-only	fn toOwnedSliceSentinel(self: *Self, gpa: Allocator, comptime sentinel: T) Allocator.Error!SentinelSlice(sentinel)	
+std.array_list.Aligned().toOwnedSliceSentinelAssert	parser-only	fn toOwnedSliceSentinelAssert(self: *Self, comptime sentinel: T) SentinelSlice(sentinel)	
+std.array_list.Aligned().unusedCapacitySlice	parser-only	fn unusedCapacitySlice(self: Self) []T	
 std.array_list.AlignedManaged	both	fn AlignedManaged(comptime T: type, comptime alignment: ?mem.Alignment) type	fn (comptime type, comptime ?mem.Alignment) type
+std.array_list.AlignedManaged().SentinelSlice	parser-only	fn SentinelSlice(comptime s: T) type	
+std.array_list.AlignedManaged().addManyAsArray	parser-only	fn addManyAsArray(self: *Self, comptime n: usize) Allocator.Error!*[n]T	
+std.array_list.AlignedManaged().addManyAsArrayAssumeCapacity	parser-only	fn addManyAsArrayAssumeCapacity(self: *Self, comptime n: usize) *[n]T	
+std.array_list.AlignedManaged().addManyAsSlice	parser-only	fn addManyAsSlice(self: *Self, n: usize) Allocator.Error![]T	
+std.array_list.AlignedManaged().addManyAsSliceAssumeCapacity	parser-only	fn addManyAsSliceAssumeCapacity(self: *Self, n: usize) []T	
+std.array_list.AlignedManaged().addManyAt	parser-only	fn addManyAt(self: *Self, index: usize, count: usize) Allocator.Error![]T	
+std.array_list.AlignedManaged().addManyAtAssumeCapacity	parser-only	fn addManyAtAssumeCapacity(self: *Self, index: usize, count: usize) []T	
+std.array_list.AlignedManaged().addOne	parser-only	fn addOne(self: *Self) Allocator.Error!*T	
+std.array_list.AlignedManaged().addOneAssumeCapacity	parser-only	fn addOneAssumeCapacity(self: *Self) *T	
+std.array_list.AlignedManaged().allocatedSlice	parser-only	fn allocatedSlice(self: Self) Slice	
+std.array_list.AlignedManaged().append	parser-only	fn append(self: *Self, item: T) Allocator.Error!void	
+std.array_list.AlignedManaged().appendAssumeCapacity	parser-only	fn appendAssumeCapacity(self: *Self, item: T) void	
+std.array_list.AlignedManaged().appendNTimes	parser-only	fn appendNTimes(self: *Self, value: T, n: usize) Allocator.Error!void	
+std.array_list.AlignedManaged().appendNTimesAssumeCapacity	parser-only	fn appendNTimesAssumeCapacity(self: *Self, value: T, n: usize) void	
+std.array_list.AlignedManaged().appendSlice	parser-only	fn appendSlice(self: *Self, items: []const T) Allocator.Error!void	
+std.array_list.AlignedManaged().appendSliceAssumeCapacity	parser-only	fn appendSliceAssumeCapacity(self: *Self, items: []const T) void	
+std.array_list.AlignedManaged().appendUnalignedSlice	parser-only	fn appendUnalignedSlice(self: *Self, items: []align(1) const T) Allocator.Error!void	
+std.array_list.AlignedManaged().appendUnalignedSliceAssumeCapacity	parser-only	fn appendUnalignedSliceAssumeCapacity(self: *Self, items: []align(1) const T) void	
+std.array_list.AlignedManaged().clearAndFree	parser-only	fn clearAndFree(self: *Self) void	
+std.array_list.AlignedManaged().clearRetainingCapacity	parser-only	fn clearRetainingCapacity(self: *Self) void	
+std.array_list.AlignedManaged().clone	parser-only	fn clone(self: Self) Allocator.Error!Self	
+std.array_list.AlignedManaged().deinit	parser-only	fn deinit(self: Self) void	
+std.array_list.AlignedManaged().ensureTotalCapacity	parser-only	fn ensureTotalCapacity(self: *Self, new_capacity: usize) Allocator.Error!void	
+std.array_list.AlignedManaged().ensureTotalCapacityPrecise	parser-only	fn ensureTotalCapacityPrecise(self: *Self, new_capacity: usize) Allocator.Error!void	
+std.array_list.AlignedManaged().ensureUnusedCapacity	parser-only	fn ensureUnusedCapacity(self: *Self, additional_count: usize) Allocator.Error!void	
+std.array_list.AlignedManaged().expandToCapacity	parser-only	fn expandToCapacity(self: *Self) void	
+std.array_list.AlignedManaged().fromOwnedSlice	parser-only	fn fromOwnedSlice(gpa: Allocator, slice: Slice) Self	
+std.array_list.AlignedManaged().fromOwnedSliceSentinel	parser-only	fn fromOwnedSliceSentinel(gpa: Allocator, comptime sentinel: T, slice: [:sentinel]T) Self	
+std.array_list.AlignedManaged().getLast	parser-only	fn getLast(self: Self) T	
+std.array_list.AlignedManaged().getLastOrNull	parser-only	fn getLastOrNull(self: Self) ?T	
+std.array_list.AlignedManaged().init	parser-only	fn init(gpa: Allocator) Self	
+std.array_list.AlignedManaged().initCapacity	parser-only	fn initCapacity(gpa: Allocator, num: usize) Allocator.Error!Self	
+std.array_list.AlignedManaged().insert	parser-only	fn insert(self: *Self, i: usize, item: T) Allocator.Error!void	
+std.array_list.AlignedManaged().insertAssumeCapacity	parser-only	fn insertAssumeCapacity(self: *Self, i: usize, item: T) void	
+std.array_list.AlignedManaged().insertSlice	parser-only	fn insertSlice( self: *Self, index: usize, items: []const T, ) Allocator.Error!void	
+std.array_list.AlignedManaged().moveToUnmanaged	parser-only	fn moveToUnmanaged(self: *Self) Aligned(T, alignment)	
+std.array_list.AlignedManaged().orderedRemove	parser-only	fn orderedRemove(self: *Self, i: usize) T	
+std.array_list.AlignedManaged().pop	parser-only	fn pop(self: *Self) ?T	
+std.array_list.AlignedManaged().print	parser-only	fn print(self: *Self, comptime fmt: []const u8, args: anytype) error{OutOfMemory}!void	
+std.array_list.AlignedManaged().replaceRange	parser-only	fn replaceRange(self: *Self, start: usize, len: usize, new_items: []const T) Allocator.Error!void	
+std.array_list.AlignedManaged().replaceRangeAssumeCapacity	parser-only	fn replaceRangeAssumeCapacity(self: *Self, start: usize, len: usize, new_items: []const T) void	
+std.array_list.AlignedManaged().resize	parser-only	fn resize(self: *Self, new_len: usize) Allocator.Error!void	
+std.array_list.AlignedManaged().shrinkAndFree	parser-only	fn shrinkAndFree(self: *Self, new_len: usize) void	
+std.array_list.AlignedManaged().shrinkRetainingCapacity	parser-only	fn shrinkRetainingCapacity(self: *Self, new_len: usize) void	
+std.array_list.AlignedManaged().swapRemove	parser-only	fn swapRemove(self: *Self, i: usize) T	
+std.array_list.AlignedManaged().toOwnedSlice	parser-only	fn toOwnedSlice(self: *Self) Allocator.Error!Slice	
+std.array_list.AlignedManaged().toOwnedSliceSentinel	parser-only	fn toOwnedSliceSentinel(self: *Self, comptime sentinel: T) Allocator.Error!SentinelSlice(sentinel)	
+std.array_list.AlignedManaged().unusedCapacitySlice	parser-only	fn unusedCapacitySlice(self: Self) []T	
 std.array_list.Managed	both	fn Managed(comptime T: type) type	fn (comptime type) type
 std.ascii.HexEscape.format	both	fn format(se: HexEscape, w: *std.Io.Writer) std.Io.Writer.Error!void	fn (ascii.HexEscape, *Io.Writer) error{WriteFailed}!void
 std.ascii.allocLowerString	both	fn allocLowerString(allocator: std.mem.Allocator, ascii_string: []const u8) ![]u8	"fn (mem.Allocator, []const u8) @typeInfo(@typeInfo(@TypeOf(ascii.allocLowerString)).@""fn"".return_type.?).error_union.error_set![]u8"
@@ -2031,6 +2280,24 @@ std.ascii.upperString	both	fn upperString(output: []u8, ascii_string: []const u8
 std.atomic.Mutex.tryLock	both	fn tryLock(m: *Mutex) bool	fn (*atomic.Mutex) bool
 std.atomic.Mutex.unlock	both	fn unlock(m: *Mutex) void	fn (*atomic.Mutex) void
 std.atomic.Value	both	fn Value(comptime T: type) type	fn (comptime type) type
+std.atomic.Value().bitReset	parser-only	fn bitReset(self: *Self, bit: Bit, comptime order: AtomicOrder) u1	
+std.atomic.Value().bitSet	parser-only	fn bitSet(self: *Self, bit: Bit, comptime order: AtomicOrder) u1	
+std.atomic.Value().bitToggle	parser-only	fn bitToggle(self: *Self, bit: Bit, comptime order: AtomicOrder) u1	
+std.atomic.Value().cmpxchgStrong	parser-only	fn cmpxchgStrong( self: *Self, expected_value: T, new_value: T, comptime success_order: AtomicOrder, comptime fail_order: AtomicOrder, ) ?T	
+std.atomic.Value().cmpxchgWeak	parser-only	fn cmpxchgWeak( self: *Self, expected_value: T, new_value: T, comptime success_order: AtomicOrder, comptime fail_order: AtomicOrder, ) ?T	
+std.atomic.Value().fetchAdd	parser-only	fn fetchAdd(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchAnd	parser-only	fn fetchAnd(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchMax	parser-only	fn fetchMax(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchMin	parser-only	fn fetchMin(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchNand	parser-only	fn fetchNand(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchOr	parser-only	fn fetchOr(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchSub	parser-only	fn fetchSub(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().fetchXor	parser-only	fn fetchXor(self: *Self, operand: T, comptime order: AtomicOrder) T	
+std.atomic.Value().init	parser-only	fn init(value: T) Self	
+std.atomic.Value().load	parser-only	fn load(self: *const Self, comptime order: AtomicOrder) T	
+std.atomic.Value().rmw	parser-only	fn rmw( self: *Self, comptime op: std.builtin.AtomicRmwOp, operand: T, comptime order: AtomicOrder, ) T	
+std.atomic.Value().store	parser-only	fn store(self: *Self, value: T, comptime order: AtomicOrder) void	
+std.atomic.Value().swap	parser-only	fn swap(self: *Self, operand: T, comptime order: AtomicOrder) T	
 std.atomic.cacheLineForCpu	both	fn cacheLineForCpu(cpu: std.Target.Cpu) u16	fn (Target.Cpu) u16
 std.atomic.spinLoopHint	both	fn spinLoopHint() void	"fn () callconv(.@""inline"") void"
 std.base64.Base64Decoder.calcSizeForSlice	both	fn calcSizeForSlice(decoder: *const Base64Decoder, source: []const u8) Error!usize	fn (*const base64.Base64Decoder, []const u8) error{InvalidCharacter,InvalidPadding,NoSpaceLeft}!usize
@@ -2045,6 +2312,33 @@ std.base64.Base64Encoder.encode	both	fn encode(encoder: *const Base64Encoder, de
 std.base64.Base64Encoder.encodeWriter	both	fn encodeWriter(encoder: *const Base64Encoder, dest: *std.Io.Writer, source: []const u8) !void	"fn (*const base64.Base64Encoder, *Io.Writer, []const u8) @typeInfo(@typeInfo(@TypeOf(base64.Base64Encoder.encodeWriter)).@""fn"".return_type.?).error_union.error_set!void"
 std.base64.Base64Encoder.init	both	fn init(alphabet_chars: [64]u8, pad_char: ?u8) Base64Encoder	fn ([64]u8, ?u8) base64.Base64Encoder
 std.bit_set.ArrayBitSet	both	fn ArrayBitSet(comptime MaskIntType: type, comptime size: usize) type	fn (comptime type, comptime usize) type
+std.bit_set.ArrayBitSet().Iterator	parser-only	fn Iterator(comptime options: IteratorOptions) type	
+std.bit_set.ArrayBitSet().capacity	parser-only	fn capacity(self: Self) usize	
+std.bit_set.ArrayBitSet().complement	parser-only	fn complement(self: Self) Self	
+std.bit_set.ArrayBitSet().count	parser-only	fn count(self: Self) usize	
+std.bit_set.ArrayBitSet().differenceWith	parser-only	fn differenceWith(self: Self, other: Self) Self	
+std.bit_set.ArrayBitSet().eql	parser-only	fn eql(self: Self, other: Self) bool	
+std.bit_set.ArrayBitSet().findFirstSet	parser-only	fn findFirstSet(self: Self) ?usize	
+std.bit_set.ArrayBitSet().findLastSet	parser-only	fn findLastSet(self: Self) ?usize	
+std.bit_set.ArrayBitSet().initEmpty	parser-only	fn initEmpty() Self	
+std.bit_set.ArrayBitSet().initFull	parser-only	fn initFull() Self	
+std.bit_set.ArrayBitSet().intersectWith	parser-only	fn intersectWith(self: Self, other: Self) Self	
+std.bit_set.ArrayBitSet().isSet	parser-only	fn isSet(self: Self, index: usize) bool	
+std.bit_set.ArrayBitSet().iterator	parser-only	fn iterator(self: *const Self, comptime options: IteratorOptions) Iterator(options)	
+std.bit_set.ArrayBitSet().set	parser-only	fn set(self: *Self, index: usize) void	
+std.bit_set.ArrayBitSet().setIntersection	parser-only	fn setIntersection(self: *Self, other: Self) void	
+std.bit_set.ArrayBitSet().setRangeValue	parser-only	fn setRangeValue(self: *Self, range: Range, value: bool) void	
+std.bit_set.ArrayBitSet().setUnion	parser-only	fn setUnion(self: *Self, other: Self) void	
+std.bit_set.ArrayBitSet().setValue	parser-only	fn setValue(self: *Self, index: usize, value: bool) void	
+std.bit_set.ArrayBitSet().subsetOf	parser-only	fn subsetOf(self: Self, other: Self) bool	
+std.bit_set.ArrayBitSet().supersetOf	parser-only	fn supersetOf(self: Self, other: Self) bool	
+std.bit_set.ArrayBitSet().toggle	parser-only	fn toggle(self: *Self, index: usize) void	
+std.bit_set.ArrayBitSet().toggleAll	parser-only	fn toggleAll(self: *Self) void	
+std.bit_set.ArrayBitSet().toggleFirstSet	parser-only	fn toggleFirstSet(self: *Self) ?usize	
+std.bit_set.ArrayBitSet().toggleSet	parser-only	fn toggleSet(self: *Self, toggles: Self) void	
+std.bit_set.ArrayBitSet().unionWith	parser-only	fn unionWith(self: Self, other: Self) Self	
+std.bit_set.ArrayBitSet().unset	parser-only	fn unset(self: *Self, index: usize) void	
+std.bit_set.ArrayBitSet().xorWith	parser-only	fn xorWith(self: Self, other: Self) Self	
 std.bit_set.DynamicBitSet.Iterator	reflect-only		fn (comptime bit_set.IteratorOptions) type
 std.bit_set.DynamicBitSet.capacity	both	fn capacity(self: Self) usize	"fn (bit_set.DynamicBitSet) callconv(.@""inline"") usize"
 std.bit_set.DynamicBitSet.clone	both	fn clone(self: *const Self, new_allocator: Allocator) !Self	"fn (*const bit_set.DynamicBitSet, mem.Allocator) @typeInfo(@typeInfo(@TypeOf(bit_set.DynamicBitSet.clone)).@""fn"".return_type.?).error_union.error_set!bit_set.DynamicBitSet"
@@ -2096,6 +2390,33 @@ std.bit_set.DynamicBitSetUnmanaged.toggleSet	both	fn toggleSet(self: *Self, togg
 std.bit_set.DynamicBitSetUnmanaged.unset	both	fn unset(self: *Self, index: usize) void	fn (*bit_set.DynamicBitSetUnmanaged, usize) void
 std.bit_set.DynamicBitSetUnmanaged.unsetAll	both	fn unsetAll(self: *Self) void	fn (*bit_set.DynamicBitSetUnmanaged) void
 std.bit_set.IntegerBitSet	both	fn IntegerBitSet(comptime size: u16) type	fn (comptime u16) type
+std.bit_set.IntegerBitSet().Iterator	parser-only	fn Iterator(comptime options: IteratorOptions) type	
+std.bit_set.IntegerBitSet().capacity	parser-only	fn capacity(self: Self) usize	
+std.bit_set.IntegerBitSet().complement	parser-only	fn complement(self: Self) Self	
+std.bit_set.IntegerBitSet().count	parser-only	fn count(self: Self) usize	
+std.bit_set.IntegerBitSet().differenceWith	parser-only	fn differenceWith(self: Self, other: Self) Self	
+std.bit_set.IntegerBitSet().eql	parser-only	fn eql(self: Self, other: Self) bool	
+std.bit_set.IntegerBitSet().findFirstSet	parser-only	fn findFirstSet(self: Self) ?usize	
+std.bit_set.IntegerBitSet().findLastSet	parser-only	fn findLastSet(self: Self) ?usize	
+std.bit_set.IntegerBitSet().initEmpty	parser-only	fn initEmpty() Self	
+std.bit_set.IntegerBitSet().initFull	parser-only	fn initFull() Self	
+std.bit_set.IntegerBitSet().intersectWith	parser-only	fn intersectWith(self: Self, other: Self) Self	
+std.bit_set.IntegerBitSet().isSet	parser-only	fn isSet(self: Self, index: usize) bool	
+std.bit_set.IntegerBitSet().iterator	parser-only	fn iterator(self: *const Self, comptime options: IteratorOptions) Iterator(options)	
+std.bit_set.IntegerBitSet().set	parser-only	fn set(self: *Self, index: usize) void	
+std.bit_set.IntegerBitSet().setIntersection	parser-only	fn setIntersection(self: *Self, other: Self) void	
+std.bit_set.IntegerBitSet().setRangeValue	parser-only	fn setRangeValue(self: *Self, range: Range, value: bool) void	
+std.bit_set.IntegerBitSet().setUnion	parser-only	fn setUnion(self: *Self, other: Self) void	
+std.bit_set.IntegerBitSet().setValue	parser-only	fn setValue(self: *Self, index: usize, value: bool) void	
+std.bit_set.IntegerBitSet().subsetOf	parser-only	fn subsetOf(self: Self, other: Self) bool	
+std.bit_set.IntegerBitSet().supersetOf	parser-only	fn supersetOf(self: Self, other: Self) bool	
+std.bit_set.IntegerBitSet().toggle	parser-only	fn toggle(self: *Self, index: usize) void	
+std.bit_set.IntegerBitSet().toggleAll	parser-only	fn toggleAll(self: *Self) void	
+std.bit_set.IntegerBitSet().toggleFirstSet	parser-only	fn toggleFirstSet(self: *Self) ?usize	
+std.bit_set.IntegerBitSet().toggleSet	parser-only	fn toggleSet(self: *Self, toggles: Self) void	
+std.bit_set.IntegerBitSet().unionWith	parser-only	fn unionWith(self: Self, other: Self) Self	
+std.bit_set.IntegerBitSet().unset	parser-only	fn unset(self: *Self, index: usize) void	
+std.bit_set.IntegerBitSet().xorWith	parser-only	fn xorWith(self: Self, other: Self) Self	
 std.bit_set.StaticBitSet	both	fn StaticBitSet(comptime size: usize) type	fn (comptime usize) type
 std.builtin.CallingConvention.archs	parser-only	fn archs(cc: CallingConvention) []const std.Target.Cpu.Arch	
 std.builtin.CallingConvention.eql	parser-only	fn eql(a: CallingConvention, b: CallingConvention) bool	
@@ -2194,6 +2515,9 @@ std.compress.flate.Decompress.LiteralDecoder.find	reflect-only		"fn (*compress.f
 std.compress.flate.Decompress.LiteralDecoder.generate	reflect-only		"fn (*compress.flate.Decompress.HuffmanDecoder(286,15,9), []const u4) @typeInfo(@typeInfo(@TypeOf(compress.flate.Decompress.HuffmanDecoder(286,15,9).generate)).@""fn"".return_type.?).error_union.error_set!void"
 std.compress.flate.Decompress.init	both	fn init(input: *Reader, container: Container, buffer: []u8) Decompress	fn (*Io.Reader, compress.flate.Container, []u8) compress.flate.Decompress
 std.compress.lzma.Decode.BitTree	both	fn BitTree(comptime num_bits: usize) type	fn (comptime usize) type
+std.compress.lzma.Decode.BitTree().parse	parser-only	fn parse(self: *@This(), reader: *Reader, decoder: *RangeDecoder, n_read: *u64) !u32	
+std.compress.lzma.Decode.BitTree().parseReverse	parser-only	fn parseReverse( self: *@This(), reader: *Reader, decoder: *RangeDecoder, n_read: *u64, ) !u32	
+std.compress.lzma.Decode.BitTree().reset	parser-only	fn reset(self: *@This()) void	
 std.compress.lzma.Decode.CircularBuffer.appendLiteral	both	fn appendLiteral( self: *CircularBuffer, gpa: Allocator, lit: u8, writer: *Writer, ) !void	"fn (*compress.lzma.Decode.CircularBuffer, mem.Allocator, u8, *Io.Writer) @typeInfo(@typeInfo(@TypeOf(compress.lzma.Decode.CircularBuffer.appendLiteral)).@""fn"".return_type.?).error_union.error_set!void"
 std.compress.lzma.Decode.CircularBuffer.appendLz	both	fn appendLz( self: *CircularBuffer, gpa: Allocator, len: usize, dist: usize, writer: *Writer, ) !void	"fn (*compress.lzma.Decode.CircularBuffer, mem.Allocator, usize, usize, *Io.Writer) @typeInfo(@typeInfo(@TypeOf(compress.lzma.Decode.CircularBuffer.appendLz)).@""fn"".return_type.?).error_union.error_set!void"
 std.compress.lzma.Decode.CircularBuffer.deinit	both	fn deinit(self: *CircularBuffer, gpa: Allocator) void	fn (*compress.lzma.Decode.CircularBuffer, mem.Allocator) void
@@ -2447,16 +2771,28 @@ std.crypto.auth.aegis.Aegis256X4Mac_128.init	reflect-only		fn (*const [32]u8) cr
 std.crypto.auth.aegis.Aegis256X4Mac_128.initWithNonce	reflect-only		fn (*const [32]u8, *const [32]u8) crypto.aegis.AegisMac(crypto.aegis.Aegis256XGeneric(4,128))
 std.crypto.auth.aegis.Aegis256X4Mac_128.update	reflect-only		fn (*crypto.aegis.AegisMac(crypto.aegis.Aegis256XGeneric(4,128)), []const u8) void
 std.crypto.auth.cbc_mac.CbcMac	both	fn CbcMac(comptime BlockCipher: type) type	fn (comptime type) type
+std.crypto.auth.cbc_mac.CbcMac().create	parser-only	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void	
+std.crypto.auth.cbc_mac.CbcMac().final	parser-only	fn final(self: *Self, out: *[mac_length]u8) void	
+std.crypto.auth.cbc_mac.CbcMac().init	parser-only	fn init(key: *const [key_length]u8) Self	
+std.crypto.auth.cbc_mac.CbcMac().update	parser-only	fn update(self: *Self, msg: []const u8) void	
 std.crypto.auth.cbc_mac.CbcMacAes128.create	reflect-only		fn (*[16]u8, []const u8, *const [16]u8) void
 std.crypto.auth.cbc_mac.CbcMacAes128.final	reflect-only		fn (*crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128), *[16]u8) void
 std.crypto.auth.cbc_mac.CbcMacAes128.init	reflect-only		fn (*const [16]u8) crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128)
 std.crypto.auth.cbc_mac.CbcMacAes128.update	reflect-only		fn (*crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128), []const u8) void
 std.crypto.auth.cmac.Cmac	both	fn Cmac(comptime BlockCipher: type) type	fn (comptime type) type
+std.crypto.auth.cmac.Cmac().create	parser-only	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void	
+std.crypto.auth.cmac.Cmac().final	parser-only	fn final(self: *Self, out: *[mac_length]u8) void	
+std.crypto.auth.cmac.Cmac().init	parser-only	fn init(key: *const [key_length]u8) Self	
+std.crypto.auth.cmac.Cmac().update	parser-only	fn update(self: *Self, msg: []const u8) void	
 std.crypto.auth.cmac.CmacAes128.create	reflect-only		fn (*[16]u8, []const u8, *const [16]u8) void
 std.crypto.auth.cmac.CmacAes128.final	reflect-only		fn (*crypto.cmac.Cmac(crypto.aes.aesni.Aes128), *[16]u8) void
 std.crypto.auth.cmac.CmacAes128.init	reflect-only		fn (*const [16]u8) crypto.cmac.Cmac(crypto.aes.aesni.Aes128)
 std.crypto.auth.cmac.CmacAes128.update	reflect-only		fn (*crypto.cmac.Cmac(crypto.aes.aesni.Aes128), []const u8) void
 std.crypto.auth.hmac.Hmac	both	fn Hmac(comptime Hash: type) type	fn (comptime type) type
+std.crypto.auth.hmac.Hmac().create	parser-only	fn create(out: *[mac_length]u8, msg: []const u8, key: []const u8) void	
+std.crypto.auth.hmac.Hmac().final	parser-only	fn final(ctx: *Self, out: *[mac_length]u8) void	
+std.crypto.auth.hmac.Hmac().init	parser-only	fn init(key: []const u8) Self	
+std.crypto.auth.hmac.Hmac().update	parser-only	fn update(ctx: *Self, msg: []const u8) void	
 std.crypto.auth.hmac.HmacMd5.create	reflect-only		fn (*[16]u8, []const u8, []const u8) void
 std.crypto.auth.hmac.HmacMd5.final	reflect-only		fn (*crypto.hmac.Hmac(crypto.md5.Md5), *[16]u8) void
 std.crypto.auth.hmac.HmacMd5.init	reflect-only		fn ([]const u8) crypto.hmac.Hmac(crypto.md5.Md5)
@@ -2499,12 +2835,15 @@ std.crypto.codecs.asn1.FieldTag.initExplicit	both	fn initExplicit(number: std.me
 std.crypto.codecs.asn1.FieldTag.initImplicit	both	fn initImplicit(number: std.meta.Tag(Tag.Number), class: Tag.Class) FieldTag	fn (u16, crypto.codecs.asn1.Tag.Class) crypto.codecs.asn1.FieldTag
 std.crypto.codecs.asn1.FieldTag.toTag	both	fn toTag(self: FieldTag) Tag	fn (crypto.codecs.asn1.FieldTag) crypto.codecs.asn1.Tag
 std.crypto.codecs.asn1.Oid.StaticMap	both	fn StaticMap(comptime Enum: type) type	fn (comptime type) type
+std.crypto.codecs.asn1.Oid.StaticMap().initComptime	parser-only	fn initComptime(comptime key_pairs: anytype) ReturnType	
 std.crypto.codecs.asn1.Oid.decodeDer	both	fn decodeDer(decoder: *der.Decoder) !Oid	"fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Oid.decodeDer)).@""fn"".return_type.?).error_union.error_set!crypto.codecs.asn1.Oid"
 std.crypto.codecs.asn1.Oid.encodeDer	both	fn encodeDer(self: Oid, encoder: *der.Encoder) !void	"fn (crypto.codecs.asn1.Oid, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Oid.encodeDer)).@""fn"".return_type.?).error_union.error_set!void"
 std.crypto.codecs.asn1.Oid.fromDot	both	fn fromDot(dot_notation: []const u8, out: []u8) InitError!Oid	fn ([]const u8, []u8) error{InvalidCharacter,MissingPrefix,Overflow,WriteFailed}!crypto.codecs.asn1.Oid
 std.crypto.codecs.asn1.Oid.fromDotComptime	both	fn fromDotComptime(comptime dot_notation: []const u8) Oid	fn (comptime []const u8) crypto.codecs.asn1.Oid
 std.crypto.codecs.asn1.Oid.toDot	both	fn toDot(self: Oid, writer: anytype) @TypeOf(writer).Error!void	fn (crypto.codecs.asn1.Oid, anytype) anytype
 std.crypto.codecs.asn1.Opaque	both	fn Opaque(comptime tag: Tag) type	fn (comptime crypto.codecs.asn1.Tag) type
+std.crypto.codecs.asn1.Opaque().decodeDer	parser-only	fn decodeDer(decoder: *der.Decoder) !@This()	
+std.crypto.codecs.asn1.Opaque().encodeDer	parser-only	fn encodeDer(self: @This(), encoder: *der.Encoder) !void	
 std.crypto.codecs.asn1.Tag.decode	both	fn decode(reader: *std.Io.Reader) !Tag	"fn (*Io.Reader) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Tag.decode)).@""fn"".return_type.?).error_union.error_set!crypto.codecs.asn1.Tag"
 std.crypto.codecs.asn1.Tag.encode	both	fn encode(self: Tag, writer: *std.Io.Writer) @TypeOf(writer).Error!void	fn (crypto.codecs.asn1.Tag, *Io.Writer) anytype
 std.crypto.codecs.asn1.Tag.fromZig	both	fn fromZig(comptime T: type) Tag	fn (comptime type) crypto.codecs.asn1.Tag
@@ -2558,7 +2897,25 @@ std.crypto.core.aes.Block.xorBlocks	reflect-only		fn (crypto.aes.aesni.Block, cr
 std.crypto.core.aes.Block.xorBytes	reflect-only		fn (crypto.aes.aesni.Block, *const [16]u8) [16]u8
 std.crypto.core.aes.BlockVec	reflect-only		fn (comptime comptime_int) type
 std.crypto.core.keccak.KeccakF	both	fn KeccakF(comptime f: u11) type	fn (comptime u11) type
+std.crypto.core.keccak.KeccakF().addByte	parser-only	fn addByte(self: *Self, byte: u8, offset: usize) void	
+std.crypto.core.keccak.KeccakF().addBytes	parser-only	fn addBytes(self: *Self, bytes: []const u8) void	
+std.crypto.core.keccak.KeccakF().asBytes	parser-only	fn asBytes(self: *Self) *[block_bytes]u8	
+std.crypto.core.keccak.KeccakF().clear	parser-only	fn clear(self: *Self, from: usize, to: usize) void	
+std.crypto.core.keccak.KeccakF().endianSwap	parser-only	fn endianSwap(self: *Self) void	
+std.crypto.core.keccak.KeccakF().extractBytes	parser-only	fn extractBytes(self: *Self, out: []u8) void	
+std.crypto.core.keccak.KeccakF().init	parser-only	fn init(bytes: [block_bytes]u8) Self	
+std.crypto.core.keccak.KeccakF().permute	parser-only	fn permute(self: *Self) void	
+std.crypto.core.keccak.KeccakF().permuteR	parser-only	fn permuteR(self: *Self, comptime rounds: u5) void	
+std.crypto.core.keccak.KeccakF().secureZero	parser-only	fn secureZero(self: *Self) void	
+std.crypto.core.keccak.KeccakF().setBytes	parser-only	fn setBytes(self: *Self, bytes: []const u8) void	
+std.crypto.core.keccak.KeccakF().xorBytes	parser-only	fn xorBytes(self: *Self, out: []u8, in: []const u8) void	
 std.crypto.core.keccak.State	both	fn State(comptime f: u11, comptime capacity: u11, comptime rounds: u5) type	fn (comptime u11, comptime u11, comptime u5) type
+std.crypto.core.keccak.State().absorb	parser-only	fn absorb(self: *Self, bytes: []const u8) void	
+std.crypto.core.keccak.State().fillBlock	parser-only	fn fillBlock(self: *Self) void	
+std.crypto.core.keccak.State().init	parser-only	fn init(bytes: [f / 8]u8, delim: u8) Self	
+std.crypto.core.keccak.State().pad	parser-only	fn pad(self: *Self) void	
+std.crypto.core.keccak.State().permute	parser-only	fn permute(self: *Self) void	
+std.crypto.core.keccak.State().squeeze	parser-only	fn squeeze(self: *Self, out: []u8) void	
 std.crypto.core.modes.ctr	both	fn ctr(comptime BlockCipher: anytype, block_cipher: BlockCipher, dst: []u8, src: []const u8, iv: [BlockCipher.block_length]u8, endian: std.builtin.Endian) void	fn (comptime anytype, anytype, []u8, []const u8, anytype, builtin.Endian) void
 std.crypto.core.modes.ctrSlice	both	fn ctrSlice( comptime BlockCipher: anytype, block_cipher: BlockCipher, dst: []u8, src: []const u8, iv: [BlockCipher.block_length]u8, endian: std.builtin.Endian, comptime counter_offset: usize, comptime counter_size: usize, ) void	fn (comptime anytype, anytype, []u8, []const u8, anytype, builtin.Endian, comptime usize, comptime usize) void
 std.crypto.dh.X25519.Curve.Fe.abs	both	fn abs(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
@@ -3001,7 +3358,35 @@ std.crypto.ecc.Secp256k1.subMixed	both	fn subMixed(p: Secp256k1, q: AffineCoordi
 std.crypto.ecc.Secp256k1.toCompressedSec1	both	fn toCompressedSec1(p: Secp256k1) [33]u8	fn (crypto.pcurves.secp256k1.Secp256k1) [33]u8
 std.crypto.ecc.Secp256k1.toUncompressedSec1	both	fn toUncompressedSec1(p: Secp256k1) [65]u8	fn (crypto.pcurves.secp256k1.Secp256k1) [65]u8
 std.crypto.ff.Modulus	both	fn Modulus(comptime max_bits: comptime_int) type	fn (comptime comptime_int) type
+std.crypto.ff.Modulus().add	parser-only	fn add(self: Self, x: Fe, y: Fe) Fe	
+std.crypto.ff.Modulus().bits	parser-only	fn bits(self: Self) usize	
+std.crypto.ff.Modulus().fromBytes	parser-only	fn fromBytes(bytes: []const u8, comptime endian: Endian) (InvalidModulusError || OverflowError)!Self	
+std.crypto.ff.Modulus().fromMontgomery	parser-only	fn fromMontgomery(self: Self, x: *Fe) RepresentationError!void	
+std.crypto.ff.Modulus().fromPrimitive	parser-only	fn fromPrimitive(comptime T: type, x: T) (InvalidModulusError || OverflowError)!Self	
+std.crypto.ff.Modulus().fromUint	parser-only	fn fromUint(v_: FeUint) InvalidModulusError!Self	
+std.crypto.ff.Modulus().mul	parser-only	fn mul(self: Self, x: Fe, y: Fe) Fe	
+std.crypto.ff.Modulus().one	parser-only	fn one(self: Self) Fe	
+std.crypto.ff.Modulus().pow	parser-only	fn pow(self: Self, x: Fe, e: Fe) (NullExponentError || RepresentationError)!Fe	
+std.crypto.ff.Modulus().powPublic	parser-only	fn powPublic(self: Self, x: Fe, e: Fe) (NullExponentError || RepresentationError)!Fe	
+std.crypto.ff.Modulus().powWithEncodedExponent	parser-only	fn powWithEncodedExponent(self: Self, x: Fe, e: []const u8, endian: Endian) NullExponentError!Fe	
+std.crypto.ff.Modulus().powWithEncodedPublicExponent	parser-only	fn powWithEncodedPublicExponent(self: Self, x: Fe, e: []const u8, endian: Endian) NullExponentError!Fe	
+std.crypto.ff.Modulus().reduce	parser-only	fn reduce(self: Self, x: anytype) Fe	
+std.crypto.ff.Modulus().rejectNonCanonical	parser-only	fn rejectNonCanonical(self: Self, fe: Fe) error{NonCanonical}!void	
+std.crypto.ff.Modulus().sq	parser-only	fn sq(self: Self, x: Fe) Fe	
+std.crypto.ff.Modulus().sub	parser-only	fn sub(self: Self, x: Fe, y: Fe) Fe	
+std.crypto.ff.Modulus().toBytes	parser-only	fn toBytes(self: Self, bytes: []u8, comptime endian: Endian) OverflowError!void	
+std.crypto.ff.Modulus().toMontgomery	parser-only	fn toMontgomery(self: Self, x: *Fe) RepresentationError!void	
 std.crypto.ff.Uint	both	fn Uint(comptime max_bits: comptime_int) type	fn (comptime comptime_int) type
+std.crypto.ff.Uint().addWithOverflow	parser-only	fn addWithOverflow(x: *Self, y: Self) u1	
+std.crypto.ff.Uint().compare	parser-only	fn compare(x: Self, y: Self) math.Order	
+std.crypto.ff.Uint().eql	parser-only	fn eql(x: Self, y: Self) bool	
+std.crypto.ff.Uint().fromBytes	parser-only	fn fromBytes(bytes: []const u8, comptime endian: Endian) OverflowError!Self	
+std.crypto.ff.Uint().fromPrimitive	parser-only	fn fromPrimitive(comptime T: type, init_value: T) OverflowError!Self	
+std.crypto.ff.Uint().isOdd	parser-only	fn isOdd(x: Self) bool	
+std.crypto.ff.Uint().isZero	parser-only	fn isZero(x: Self) bool	
+std.crypto.ff.Uint().subWithOverflow	parser-only	fn subWithOverflow(x: *Self, y: Self) u1	
+std.crypto.ff.Uint().toBytes	parser-only	fn toBytes(self: Self, bytes: []u8, comptime endian: Endian) OverflowError!void	
+std.crypto.ff.Uint().toPrimitive	parser-only	fn toPrimitive(self: Self, comptime T: type) OverflowError!T	
 std.crypto.hash.Blake3.final	both	fn final(self: *const Blake3, out: []u8) void	fn (*const crypto.blake3.Blake3, []u8) void
 std.crypto.hash.Blake3.finalizeSeek	both	fn finalizeSeek(self: *const Blake3, seek: u64, out: []u8) void	fn (*const crypto.blake3.Blake3, u64, []u8) void
 std.crypto.hash.Blake3.hash	both	fn hash(b: []const u8, out: []u8, options: Options) void	fn ([]const u8, []u8, crypto.blake3.Blake3.Options) void
@@ -3034,6 +3419,10 @@ std.crypto.hash.ascon.AsconXof128.init	reflect-only		fn (crypto.ascon.AsconXof12
 std.crypto.hash.ascon.AsconXof128.squeeze	reflect-only		fn (*crypto.ascon.AsconXof128, []u8) void
 std.crypto.hash.ascon.AsconXof128.update	reflect-only		fn (*crypto.ascon.AsconXof128, []const u8) void
 std.crypto.hash.blake2.Blake2b	both	fn Blake2b(comptime out_bits: usize) type	fn (comptime usize) type
+std.crypto.hash.blake2.Blake2b().final	parser-only	fn final(d: *Self, out: *[digest_length]u8) void	
+std.crypto.hash.blake2.Blake2b().hash	parser-only	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void	
+std.crypto.hash.blake2.Blake2b().init	parser-only	fn init(options: Options) Self	
+std.crypto.hash.blake2.Blake2b().update	parser-only	fn update(d: *Self, b: []const u8) void	
 std.crypto.hash.blake2.Blake2b128.final	reflect-only		fn (*crypto.blake2.Blake2b(128), *[16]u8) void
 std.crypto.hash.blake2.Blake2b128.hash	reflect-only		fn ([]const u8, *[16]u8, crypto.blake2.Blake2b(128).Options) void
 std.crypto.hash.blake2.Blake2b128.init	reflect-only		fn (crypto.blake2.Blake2b(128).Options) crypto.blake2.Blake2b(128)
@@ -3055,6 +3444,10 @@ std.crypto.hash.blake2.Blake2b512.hash	reflect-only		fn ([]const u8, *[64]u8, cr
 std.crypto.hash.blake2.Blake2b512.init	reflect-only		fn (crypto.blake2.Blake2b(512).Options) crypto.blake2.Blake2b(512)
 std.crypto.hash.blake2.Blake2b512.update	reflect-only		fn (*crypto.blake2.Blake2b(512), []const u8) void
 std.crypto.hash.blake2.Blake2s	both	fn Blake2s(comptime out_bits: usize) type	fn (comptime usize) type
+std.crypto.hash.blake2.Blake2s().final	parser-only	fn final(d: *Self, out: *[digest_length]u8) void	
+std.crypto.hash.blake2.Blake2s().hash	parser-only	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void	
+std.crypto.hash.blake2.Blake2s().init	parser-only	fn init(options: Options) Self	
+std.crypto.hash.blake2.Blake2s().update	parser-only	fn update(d: *Self, b: []const u8) void	
 std.crypto.hash.blake2.Blake2s128.final	reflect-only		fn (*crypto.blake2.Blake2s(128), *[16]u8) void
 std.crypto.hash.blake2.Blake2s128.hash	reflect-only		fn ([]const u8, *[16]u8, crypto.blake2.Blake2s(128).Options) void
 std.crypto.hash.blake2.Blake2s128.init	reflect-only		fn (crypto.blake2.Blake2s(128).Options) crypto.blake2.Blake2s(128)
@@ -3072,6 +3465,10 @@ std.crypto.hash.blake2.Blake2s256.hash	reflect-only		fn ([]const u8, *[32]u8, cr
 std.crypto.hash.blake2.Blake2s256.init	reflect-only		fn (crypto.blake2.Blake2s(256).Options) crypto.blake2.Blake2s(256)
 std.crypto.hash.blake2.Blake2s256.update	reflect-only		fn (*crypto.blake2.Blake2s(256), []const u8) void
 std.crypto.hash.composition.Composition	both	fn Composition(comptime H1: type, comptime H2: type) type	fn (comptime type, comptime type) type
+std.crypto.hash.composition.Composition().final	parser-only	fn final(d: *Self, out: *[digest_length]u8) void	
+std.crypto.hash.composition.Composition().hash	parser-only	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void	
+std.crypto.hash.composition.Composition().init	parser-only	fn init(options: Options) Self	
+std.crypto.hash.composition.Composition().update	parser-only	fn update(d: *Self, b: []const u8) void	
 std.crypto.hash.composition.Sha256oSha256.final	reflect-only		fn (*crypto.hash_composition.Composition(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256),crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256)), *[32]u8) void
 std.crypto.hash.composition.Sha256oSha256.hash	reflect-only		fn ([]const u8, *[32]u8, crypto.hash_composition.Composition(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256),crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256)).Options) void
 std.crypto.hash.composition.Sha256oSha256.init	reflect-only		fn (crypto.hash_composition.Composition(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256),crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256)).Options) crypto.hash_composition.Composition(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256),crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256))
@@ -3177,6 +3574,10 @@ std.crypto.hash.sha3.KT256.hashParallel	reflect-only		"fn ([]const u8, []u8, cry
 std.crypto.hash.sha3.KT256.init	reflect-only		fn (crypto.kangarootwelve.KTHash(crypto.kangarootwelve.KangarooVariant(128,168,32,crypto.sha3.ShakeLike(128,6,12),1,3,0,4,(function 'turboShake128MultiSliceToBuffer'),(function 'turboShake128MultiSlice')),(function 'turboShake128MultiSliceToBuffer')).Options) crypto.kangarootwelve.KTHash(crypto.kangarootwelve.KangarooVariant(256,136,64,crypto.sha3.ShakeLike(256,6,12),4,0,1,3,(function 'turboShake256MultiSliceToBuffer'),(function 'turboShake256MultiSlice')),(function 'turboShake256MultiSliceToBuffer'))
 std.crypto.hash.sha3.KT256.update	reflect-only		fn (*crypto.kangarootwelve.KTHash(crypto.kangarootwelve.KangarooVariant(256,136,64,crypto.sha3.ShakeLike(256,6,12),4,0,1,3,(function 'turboShake256MultiSliceToBuffer'),(function 'turboShake256MultiSlice')),(function 'turboShake256MultiSliceToBuffer')), []const u8) void
 std.crypto.hash.sha3.Keccak	both	fn Keccak(comptime f: u11, comptime output_bits: u11, comptime default_delim: u8, comptime rounds: u5) type	fn (comptime u11, comptime u11, comptime u8, comptime u5) type
+std.crypto.hash.sha3.Keccak().final	parser-only	fn final(self: *Self, out: *[digest_length]u8) void	
+std.crypto.hash.sha3.Keccak().hash	parser-only	fn hash(bytes: []const u8, out: *[digest_length]u8, options: Options) void	
+std.crypto.hash.sha3.Keccak().init	parser-only	fn init(options: Options) Self	
+std.crypto.hash.sha3.Keccak().update	parser-only	fn update(self: *Self, bytes: []const u8) void	
 std.crypto.hash.sha3.Keccak256.final	reflect-only		fn (*crypto.sha3.Keccak(1600,256,1,24), *[32]u8) void
 std.crypto.hash.sha3.Keccak256.hash	reflect-only		fn ([]const u8, *[32]u8, crypto.sha3.Keccak(1600,256,1,24).Options) void
 std.crypto.hash.sha3.Keccak256.init	reflect-only		fn (crypto.sha3.Keccak(1600,256,1,24).Options) crypto.sha3.Keccak(1600,256,1,24)
@@ -3233,6 +3634,9 @@ std.crypto.hash.sha3.TurboShake	both	fn TurboShake(comptime security_level: u11,
 std.crypto.hash.sha3.TurboShake128	both	fn TurboShake128(delim: ?u7) type	fn (?u7) type
 std.crypto.hash.sha3.TurboShake256	both	fn TurboShake256(comptime delim: ?u7) type	fn (comptime ?u7) type
 std.crypto.kdf.hkdf.Hkdf	both	fn Hkdf(comptime Hmac: type) type	fn (comptime type) type
+std.crypto.kdf.hkdf.Hkdf().expand	parser-only	fn expand(out: []u8, ctx: []const u8, prk: [prk_length]u8) void	
+std.crypto.kdf.hkdf.Hkdf().extract	parser-only	fn extract(salt: []const u8, ikm: []const u8) [prk_length]u8	
+std.crypto.kdf.hkdf.Hkdf().extractInit	parser-only	fn extractInit(salt: []const u8) Hmac	
 std.crypto.kdf.hkdf.HkdfSha256.expand	reflect-only		fn ([]u8, []const u8, [32]u8) void
 std.crypto.kdf.hkdf.HkdfSha256.extract	reflect-only		fn ([]const u8, []const u8) [32]u8
 std.crypto.kdf.hkdf.HkdfSha256.extractInit	reflect-only		fn ([]const u8) crypto.hmac.Hmac(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256))
@@ -3240,6 +3644,15 @@ std.crypto.kdf.hkdf.HkdfSha512.expand	reflect-only		fn ([]u8, []const u8, [64]u8
 std.crypto.kdf.hkdf.HkdfSha512.extract	reflect-only		fn ([]const u8, []const u8) [64]u8
 std.crypto.kdf.hkdf.HkdfSha512.extractInit	reflect-only		fn ([]const u8) crypto.hmac.Hmac(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512))
 std.crypto.kem.hybrid.HybridKem	both	fn HybridKem(comptime params: Params) type	fn (comptime crypto.hybrid_kem.Params) type
+std.crypto.kem.hybrid.HybridKem().KeyPair.generate	parser-only	fn generate(io: std.Io) !KeyPair	
+std.crypto.kem.hybrid.HybridKem().KeyPair.generateDeterministic	parser-only	fn generateDeterministic(seed: [params.Nseed]u8) !KeyPair	
+std.crypto.kem.hybrid.HybridKem().PublicKey.encaps	parser-only	fn encaps(pk: PublicKey, io: std.Io) !EncapsulatedSecret	
+std.crypto.kem.hybrid.HybridKem().PublicKey.encapsDeterministic	parser-only	fn encapsDeterministic(pk: PublicKey, seed: []const u8) !EncapsulatedSecret	
+std.crypto.kem.hybrid.HybridKem().PublicKey.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) PublicKey	
+std.crypto.kem.hybrid.HybridKem().PublicKey.toBytes	parser-only	fn toBytes(self: PublicKey) [encoded_length]u8	
+std.crypto.kem.hybrid.HybridKem().SecretKey.decaps	parser-only	fn decaps(self: SecretKey, ct: *const [params.Nct]u8) ![params.Nss]u8	
+std.crypto.kem.hybrid.HybridKem().SecretKey.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) SecretKey	
+std.crypto.kem.hybrid.HybridKem().SecretKey.toBytes	parser-only	fn toBytes(self: SecretKey) [encoded_length]u8	
 std.crypto.nacl.Box.createSharedSecret	reflect-only		fn ([32]u8, [32]u8) error{IdentityElement,WeakPublicKey}![32]u8
 std.crypto.nacl.Box.open	reflect-only		fn ([]u8, []const u8, [24]u8, [32]u8, [32]u8) error{AuthenticationFailed,IdentityElement,WeakPublicKey}!void
 std.crypto.nacl.Box.seal	reflect-only		fn ([]u8, []const u8, [24]u8, [32]u8, [32]u8) error{IdentityElement,WeakPublicKey}!void
@@ -3276,6 +3689,8 @@ std.crypto.pwhash.bcrypt.strHashWithSalt	both	fn strHashWithSalt( password: []co
 std.crypto.pwhash.bcrypt.strVerify	both	fn strVerify( str: []const u8, password: []const u8, options: VerifyOptions, ) Error!void	fn ([]const u8, []const u8, crypto.bcrypt.VerifyOptions) error{AllocatorRequired,AuthenticationFailed,Canceled,ContextTooLong,IdentityElement,InvalidEncoding,KeyMismatch,LockedMemoryLimitExceeded,NoSpaceLeft,NonCanonical,NotSquare,OutOfMemory,OutputTooLong,PasswordVerificationFailed,SignatureVerificationFailed,SystemResources,ThreadQuotaExceeded,Unexpected,UnexpectedSubgroup,WeakParameters,WeakPublicKey}!void
 std.crypto.pwhash.pbkdf2	both	fn pbkdf2(dk: []u8, password: []const u8, salt: []const u8, rounds: u32, comptime Prf: type) (WeakParametersError || OutputTooLongError)!void	fn ([]u8, []const u8, []const u8, u32, comptime type) error{OutputTooLong,WeakParameters}!void
 std.crypto.pwhash.phc_format.BinValue	both	fn BinValue(comptime max_len: usize) type	fn (comptime usize) type
+std.crypto.pwhash.phc_format.BinValue().constSlice	parser-only	fn constSlice(self: *const Self) []const u8	
+std.crypto.pwhash.phc_format.BinValue().fromSlice	parser-only	fn fromSlice(slice: []const u8) Error!Self	
 std.crypto.pwhash.phc_format.calcSize	both	fn calcSize(params: anytype) usize	fn (anytype) usize
 std.crypto.pwhash.phc_format.deserialize	both	fn deserialize(comptime HashResult: type, str: []const u8) Error!HashResult	fn (comptime type, []const u8) anytype
 std.crypto.pwhash.phc_format.serialize	both	fn serialize(params: anytype, str: []u8) Error![]const u8	fn (anytype, []u8) error{InvalidEncoding,NoSpaceLeft}![]const u8
@@ -3332,6 +3747,28 @@ std.crypto.sign.Ed25519.key_blinding.BlindKeyPair.sign	both	fn sign(key_pair: Bl
 std.crypto.sign.Ed25519.key_blinding.BlindPublicKey.unblind	both	fn unblind(blind_public_key: BlindPublicKey, blind_seed: [blind_seed_length]u8, ctx: []const u8) (IdentityElementError || NonCanonicalError || EncodingError || WeakPublicKeyError)!PublicKey	fn (crypto.25519.ed25519.Ed25519.key_blinding.BlindPublicKey, [32]u8, []const u8) error{IdentityElement,InvalidEncoding,NonCanonical,WeakPublicKey}!crypto.25519.ed25519.Ed25519.PublicKey
 std.crypto.sign.Ed25519.verifyBatch	both	fn verifyBatch(io: std.Io, comptime count: usize, signature_batch: [count]BatchElement) (SignatureVerificationError || IdentityElementError || WeakPublicKeyError || EncodingError || NonCanonicalError)!void	fn (Io, comptime usize, anytype) error{IdentityElement,InvalidEncoding,NonCanonical,SignatureVerificationFailed,WeakPublicKey}!void
 std.crypto.sign.ecdsa.Ecdsa	both	fn Ecdsa(comptime Curve: type, comptime Hash: type) type	fn (comptime type, comptime type) type
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.fromSecretKey	parser-only	fn fromSecretKey(secret_key: SecretKey) IdentityElementError!KeyPair	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generate	parser-only	fn generate(io: std.Io) KeyPair	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generateDeterministic	parser-only	fn generateDeterministic(seed: [seed_length]u8) IdentityElementError!KeyPair	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.sign	parser-only	fn sign(key_pair: KeyPair, msg: []const u8, noise: ?[noise_length]u8) (IdentityElementError || NonCanonicalError)!Signature	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signPrehashed	parser-only	fn signPrehashed(key_pair: KeyPair, msg_hash: [Hash.digest_length]u8, noise: ?[noise_length]u8) (IdentityElementError || NonCanonicalError)!Signature	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signer	parser-only	fn signer(key_pair: KeyPair, noise: ?[noise_length]u8) !Signer	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.fromSec1	parser-only	fn fromSec1(sec1: []const u8) !PublicKey	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toCompressedSec1	parser-only	fn toCompressedSec1(pk: PublicKey) [compressed_sec1_encoded_length]u8	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toUncompressedSec1	parser-only	fn toUncompressedSec1(pk: PublicKey) [uncompressed_sec1_encoded_length]u8	
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.fromBytes	parser-only	fn fromBytes(bytes: [encoded_length]u8) !SecretKey	
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.toBytes	parser-only	fn toBytes(sk: SecretKey) [encoded_length]u8	
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromBytes	parser-only	fn fromBytes(bytes: [encoded_length]u8) Signature	
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromDer	parser-only	fn fromDer(der: []const u8) EncodingError!Signature	
+std.crypto.sign.ecdsa.Ecdsa().Signature.toBytes	parser-only	fn toBytes(sig: Signature) [encoded_length]u8	
+std.crypto.sign.ecdsa.Ecdsa().Signature.toDer	parser-only	fn toDer(sig: Signature, buf: *[der_encoded_length_max]u8) []u8	
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifier	parser-only	fn verifier(sig: Signature, public_key: PublicKey) Verifier.InitError!Verifier	
+std.crypto.sign.ecdsa.Ecdsa().Signature.verify	parser-only	fn verify(sig: Signature, msg: []const u8, public_key: PublicKey) VerifyError!void	
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifyPrehashed	parser-only	fn verifyPrehashed(sig: Signature, msg_hash: [Hash.digest_length]u8, public_key: PublicKey) VerifyError!void	
+std.crypto.sign.ecdsa.Ecdsa().Signer.finalize	parser-only	fn finalize(self: *Signer) (IdentityElementError || NonCanonicalError)!Signature	
+std.crypto.sign.ecdsa.Ecdsa().Signer.update	parser-only	fn update(self: *Signer, data: []const u8) void	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.update	parser-only	fn update(self: *Verifier, data: []const u8) void	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.verify	parser-only	fn verify(self: *Verifier) VerifyError!void	
 std.crypto.sign.mldsa.MLDSA44.newKeyFromSeed	reflect-only		fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 }).newKeyFromSeed__struct
 std.crypto.sign.mldsa.MLDSA65.newKeyFromSeed	reflect-only		fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 6, .l = 5, .eta = 4, .omega = 55, .tau = 49, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 48 }).newKeyFromSeed__struct
 std.crypto.sign.mldsa.MLDSA87.newKeyFromSeed	reflect-only		fn (*const [32]u8) crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 8, .l = 7, .eta = 2, .omega = 75, .tau = 60, .gamma1_bits = 19, .gamma2 = 261888, .tr_size = 64, .ctilde_size = 64 }).newKeyFromSeed__struct
@@ -3389,6 +3826,11 @@ std.crypto.tls.hmac	both	fn hmac(comptime Hmac: type, message: []const u8, key: 
 std.crypto.tls.hmacExpandLabel	both	fn hmacExpandLabel( comptime Hmac: type, secret: []const u8, label_then_seed: []const []const u8, comptime len: usize, ) [len]u8	fn (comptime type, []const u8, []const []const u8, comptime usize) anytype
 std.crypto.tls.int	both	fn int(comptime Int: type, val: Int) [@divExact(@bitSizeOf(Int), 8)]u8	fn (comptime type, anytype) anytype
 std.debug.ConfigurableTrace	both	fn ConfigurableTrace(comptime size: usize, comptime stack_frame_count: usize, comptime is_enabled: bool) type	fn (comptime usize, comptime usize, comptime bool) type
+std.debug.ConfigurableTrace().addAddr	parser-only	fn addAddr(t: *@This(), addr: usize, note: []const u8) void	
+std.debug.ConfigurableTrace().addNoInline	parser-only	fn addNoInline(t: *@This(), note: []const u8) void	
+std.debug.ConfigurableTrace().addNoOp	parser-only	fn addNoOp(t: *@This(), note: []const u8) void	
+std.debug.ConfigurableTrace().dump	parser-only	fn dump(t: @This()) void	
+std.debug.ConfigurableTrace().format	parser-only	fn format( t: @This(), comptime fmt: []const u8, options: std.fmt.Options, writer: *Writer, ) !void	
 std.debug.Coverage.File.MapContext.eql	both	fn eql(self: MapContext, a: File, b: File, b_index: usize) bool	fn (debug.Coverage.File.MapContext, debug.Coverage.File, debug.Coverage.File, usize) bool
 std.debug.Coverage.File.MapContext.hash	both	fn hash(self: MapContext, a: File) u32	fn (debug.Coverage.File.MapContext, debug.Coverage.File) u32
 std.debug.Coverage.File.SliceAdapter.eql	both	fn eql(self: @This(), a: Entry, b: File, b_index: usize) bool	fn (debug.Coverage.File.SliceAdapter, debug.Coverage.File.SliceAdapter.Entry, debug.Coverage.File, usize) bool
@@ -3527,7 +3969,39 @@ std.debug.Dwarf.bad	both	fn bad() error{InvalidDebugInfo}	fn () error{InvalidDeb
 std.debug.Dwarf.compactUnwindToDwarfRegNumber	both	fn compactUnwindToDwarfRegNumber(unwind_reg_number: u3) !u16	"fn (u3) @typeInfo(@typeInfo(@TypeOf(debug.Dwarf.compactUnwindToDwarfRegNumber)).@""fn"".return_type.?).error_union.error_set!u16"
 std.debug.Dwarf.deinit	both	fn deinit(di: *Dwarf, gpa: Allocator) void	fn (*debug.Dwarf, mem.Allocator) void
 std.debug.Dwarf.expression.Builder	both	fn Builder(comptime options: Options) type	fn (comptime debug.Dwarf.expression.Options) type
+std.debug.Dwarf.expression.Builder().writeAddr	parser-only	fn writeAddr(writer: *Writer, value: addr_type) !void	
+std.debug.Dwarf.expression.Builder().writeAddrx	parser-only	fn writeAddrx(writer: *Writer, debug_addr_offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeBra	parser-only	fn writeBra(writer: *Writer, offset: i16) !void	
+std.debug.Dwarf.expression.Builder().writeBreg	parser-only	fn writeBreg(writer: *Writer, register: u8, offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeBregx	parser-only	fn writeBregx(writer: *Writer, register: anytype, offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeCall	parser-only	fn writeCall(writer: *Writer, comptime T: type, offset: T) !void	
+std.debug.Dwarf.expression.Builder().writeCallRef	parser-only	fn writeCallRef(writer: *Writer, comptime is_64: bool, value: if (is_64) u64 else u32) !void	
+std.debug.Dwarf.expression.Builder().writeConst	parser-only	fn writeConst(writer: *Writer, comptime T: type, value: T) !void	
+std.debug.Dwarf.expression.Builder().writeConstType	parser-only	fn writeConstType(writer: *Writer, die_offset: anytype, value_bytes: []const u8) !void	
+std.debug.Dwarf.expression.Builder().writeConstx	parser-only	fn writeConstx(writer: *Writer, debug_addr_offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeConvert	parser-only	fn writeConvert(writer: *Writer, die_offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeDerefSize	parser-only	fn writeDerefSize(writer: *Writer, size: u8) !void	
+std.debug.Dwarf.expression.Builder().writeDerefType	parser-only	fn writeDerefType(writer: *Writer, size: u8, die_offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeEntryValue	parser-only	fn writeEntryValue(writer: *Writer, expression: []const u8) !void	
+std.debug.Dwarf.expression.Builder().writeFbreg	parser-only	fn writeFbreg(writer: *Writer, offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeImplicitValue	parser-only	fn writeImplicitValue(writer: *Writer, value_bytes: []const u8) !void	
+std.debug.Dwarf.expression.Builder().writeLiteral	parser-only	fn writeLiteral(writer: *Writer, literal: u8) !void	
+std.debug.Dwarf.expression.Builder().writeOpcode	parser-only	fn writeOpcode(writer: *Writer, comptime opcode: u8) !void	
+std.debug.Dwarf.expression.Builder().writePick	parser-only	fn writePick(writer: *Writer, index: u8) !void	
+std.debug.Dwarf.expression.Builder().writePlusUconst	parser-only	fn writePlusUconst(writer: *Writer, uint_value: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeReg	parser-only	fn writeReg(writer: *Writer, register: u8) !void	
+std.debug.Dwarf.expression.Builder().writeRegvalType	parser-only	fn writeRegvalType(writer: *Writer, register: anytype, offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeRegx	parser-only	fn writeRegx(writer: *Writer, register: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeReinterpret	parser-only	fn writeReinterpret(writer: *Writer, die_offset: anytype) !void	
+std.debug.Dwarf.expression.Builder().writeSkip	parser-only	fn writeSkip(writer: *Writer, offset: i16) !void	
+std.debug.Dwarf.expression.Builder().writeXDerefSize	parser-only	fn writeXDerefSize(writer: *Writer, size: u8) !void	
+std.debug.Dwarf.expression.Builder().writeXDerefType	parser-only	fn writeXDerefType(writer: *Writer, size: u8, die_offset: anytype) !void	
 std.debug.Dwarf.expression.StackMachine	both	fn StackMachine(comptime options: Options) type	fn (comptime debug.Dwarf.expression.Options) type
+std.debug.Dwarf.expression.StackMachine().deinit	parser-only	fn deinit(self: *Self, allocator: std.mem.Allocator) void	
+std.debug.Dwarf.expression.StackMachine().readOperand	parser-only	fn readOperand(reader: *std.Io.Reader, opcode: u8, context: Context) !?Operand	
+std.debug.Dwarf.expression.StackMachine().reset	parser-only	fn reset(self: *Self) void	
+std.debug.Dwarf.expression.StackMachine().run	parser-only	fn run( self: *Self, expression: []const u8, allocator: std.mem.Allocator, context: Context, initial_value: ?usize, ) Error!?Value	
+std.debug.Dwarf.expression.StackMachine().step	parser-only	fn step( self: *Self, stream: *std.Io.Reader, allocator: std.mem.Allocator, context: Context, ) Error!bool	
 std.debug.Dwarf.findCompileUnit	both	fn findCompileUnit(di: *const Dwarf, endian: Endian, target_address: u64) !*CompileUnit	"fn (*const debug.Dwarf, builtin.Endian, u64) @typeInfo(@typeInfo(@TypeOf(debug.Dwarf.findCompileUnit)).@""fn"".return_type.?).error_union.error_set!*debug.Dwarf.CompileUnit"
 std.debug.Dwarf.fpRegNum	both	fn fpRegNum(arch: std.Target.Cpu.Arch) u16	fn (Target.Cpu.Arch) u16
 std.debug.Dwarf.getLineNumberInfo	both	fn getLineNumberInfo( d: *Dwarf, gpa: Allocator, text_arena: Allocator, endian: Endian, compile_unit: *CompileUnit, target_address: u64, ) !std.debug.SourceLocation	"fn (*debug.Dwarf, mem.Allocator, mem.Allocator, builtin.Endian, *debug.Dwarf.CompileUnit, u64) @typeInfo(@typeInfo(@TypeOf(debug.Dwarf.getLineNumberInfo)).@""fn"".return_type.?).error_union.error_set!debug.SourceLocation"
@@ -3549,6 +4023,31 @@ std.debug.ElfFile.load	both	fn load( gpa: Allocator, io: Io, elf_file: Io.File, 
 std.debug.ElfFile.searchSymtab	both	fn searchSymtab(ef: *ElfFile, gpa: Allocator, vaddr: u64) error{ NoSymtab, NoStrtab, BadSymtab, OutOfMemory, }!std.debug.Symbol	fn (*debug.ElfFile, mem.Allocator, u64) error{BadSymtab,NoStrtab,NoSymtab,OutOfMemory}!debug.Symbol
 std.debug.FormatStackTrace.format	both	fn format(fst: FormatStackTrace, writer: *Writer) Writer.Error!void	fn (debug.FormatStackTrace, *Io.Writer) error{WriteFailed}!void
 std.debug.FullPanic	both	fn FullPanic(comptime panicFn: fn ([]const u8, ?usize) noreturn) type	fn (comptime fn ([]const u8, ?usize) noreturn) type
+std.debug.FullPanic().castToNull	parser-only	fn castToNull() noreturn	
+std.debug.FullPanic().copyLenMismatch	parser-only	fn copyLenMismatch() noreturn	
+std.debug.FullPanic().corruptSwitch	parser-only	fn corruptSwitch() noreturn	
+std.debug.FullPanic().divideByZero	parser-only	fn divideByZero() noreturn	
+std.debug.FullPanic().exactDivisionRemainder	parser-only	fn exactDivisionRemainder() noreturn	
+std.debug.FullPanic().forLenMismatch	parser-only	fn forLenMismatch() noreturn	
+std.debug.FullPanic().inactiveUnionField	parser-only	fn inactiveUnionField(active: anytype, accessed: @TypeOf(active)) noreturn	
+std.debug.FullPanic().incorrectAlignment	parser-only	fn incorrectAlignment() noreturn	
+std.debug.FullPanic().integerOutOfBounds	parser-only	fn integerOutOfBounds() noreturn	
+std.debug.FullPanic().integerOverflow	parser-only	fn integerOverflow() noreturn	
+std.debug.FullPanic().integerPartOutOfBounds	parser-only	fn integerPartOutOfBounds() noreturn	
+std.debug.FullPanic().invalidEnumValue	parser-only	fn invalidEnumValue() noreturn	
+std.debug.FullPanic().invalidErrorCode	parser-only	fn invalidErrorCode() noreturn	
+std.debug.FullPanic().memcpyAlias	parser-only	fn memcpyAlias() noreturn	
+std.debug.FullPanic().noreturnReturned	parser-only	fn noreturnReturned() noreturn	
+std.debug.FullPanic().outOfBounds	parser-only	fn outOfBounds(index: usize, len: usize) noreturn	
+std.debug.FullPanic().reachedUnreachable	parser-only	fn reachedUnreachable() noreturn	
+std.debug.FullPanic().sentinelMismatch	parser-only	fn sentinelMismatch(expected: anytype, found: @TypeOf(expected)) noreturn	
+std.debug.FullPanic().shiftRhsTooBig	parser-only	fn shiftRhsTooBig() noreturn	
+std.debug.FullPanic().shlOverflow	parser-only	fn shlOverflow() noreturn	
+std.debug.FullPanic().shrOverflow	parser-only	fn shrOverflow() noreturn	
+std.debug.FullPanic().sliceCastLenRemainder	parser-only	fn sliceCastLenRemainder(src_len: usize) noreturn	
+std.debug.FullPanic().startGreaterThanEnd	parser-only	fn startGreaterThanEnd(start: usize, end: usize) noreturn	
+std.debug.FullPanic().unwrapError	parser-only	fn unwrapError(err: anyerror) noreturn	
+std.debug.FullPanic().unwrapNull	parser-only	fn unwrapNull() noreturn	
 std.debug.Info.deinit	both	fn deinit(info: *Info, gpa: Allocator) void	fn (*debug.Info, mem.Allocator) void
 std.debug.Info.load	both	fn load( gpa: Allocator, io: Io, path: Path, coverage: *Coverage, format: std.Target.ObjectFormat, arch: std.Target.Cpu.Arch, ) LoadError!Info	fn (mem.Allocator, Io, Build.Cache.Path, *debug.Coverage, Target.ObjectFormat, Target.Cpu.Arch) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,DeviceBusy,EndOfStream,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,InvalidCompressedSection,InvalidDebugInfo,InvalidDwarf,InvalidElfClass,InvalidElfEndian,InvalidElfMagic,InvalidElfVersion,InvalidMachO,IsDir,LockedMemoryLimitExceeded,MemoryMappingNotSupported,MissingDebugInfo,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,OutOfMemory,Overflow,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadFailed,ReadOnlyFileSystem,StreamTooLong,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,TruncatedElfFile,Unexpected,UnsupportedDebugInfo,WouldBlock}!debug.Info
 std.debug.Info.resolveAddresses	both	fn resolveAddresses( info: *Info, gpa: Allocator, io: Io, /// Asserts the addresses are in ascending order. sorted_pc_addrs: []const u64, /// Asserts its length equals length of `sorted_pc_addrs`. output: []SourceLocation, ) ResolveAddressesError!void	fn (*debug.Info, mem.Allocator, Io, []const u64, []debug.Coverage.SourceLocation) error{Canceled,EndOfStream,InvalidDebugInfo,MissingDebugInfo,OutOfMemory,Overflow,ReadFailed,StreamTooLong,UnsupportedDebugInfo}!void
@@ -3724,12 +4223,88 @@ std.elf.takeDynamicSection	parser-only	fn takeDynamicSection(reader: *Io.Reader,
 std.elf.takeProgramHeader	parser-only	fn takeProgramHeader(reader: *Io.Reader, is_64: bool, endian: Endian) !Elf64_Phdr	
 std.elf.takeSectionHeader	parser-only	fn takeSectionHeader(reader: *Io.Reader, is_64: bool, endian: Endian) !Elf64_Shdr	
 std.enums.BoundedEnumMultiset	both	fn BoundedEnumMultiset(comptime E: type, comptime CountSize: type) type	fn (comptime type, comptime type) type
+std.enums.BoundedEnumMultiset().add	parser-only	fn add(self: *Self, key: E, c: CountSize) error{Overflow}!void	
+std.enums.BoundedEnumMultiset().addAssertSafe	parser-only	fn addAssertSafe(self: *Self, key: E, c: CountSize) void	
+std.enums.BoundedEnumMultiset().addSet	parser-only	fn addSet(self: *Self, other: Self) error{Overflow}!void	
+std.enums.BoundedEnumMultiset().addSetAssertSafe	parser-only	fn addSetAssertSafe(self: *Self, other: Self) void	
+std.enums.BoundedEnumMultiset().contains	parser-only	fn contains(self: Self, key: E) bool	
+std.enums.BoundedEnumMultiset().count	parser-only	fn count(self: Self) usize	
+std.enums.BoundedEnumMultiset().eql	parser-only	fn eql(self: Self, other: Self) bool	
+std.enums.BoundedEnumMultiset().getCount	parser-only	fn getCount(self: Self, key: E) CountSize	
+std.enums.BoundedEnumMultiset().init	parser-only	fn init(init_counts: EnumFieldStruct(E, CountSize, 0)) Self	
+std.enums.BoundedEnumMultiset().initWithCount	parser-only	fn initWithCount(comptime c: CountSize) Self	
+std.enums.BoundedEnumMultiset().iterator	parser-only	fn iterator(self: *Self) Iterator	
+std.enums.BoundedEnumMultiset().minus	parser-only	fn minus(self: Self, other: Self) Self	
+std.enums.BoundedEnumMultiset().plus	parser-only	fn plus(self: Self, other: Self) error{Overflow}!Self	
+std.enums.BoundedEnumMultiset().plusAssertSafe	parser-only	fn plusAssertSafe(self: Self, other: Self) Self	
+std.enums.BoundedEnumMultiset().remove	parser-only	fn remove(self: *Self, key: E, c: CountSize) void	
+std.enums.BoundedEnumMultiset().removeAll	parser-only	fn removeAll(self: *Self, key: E) void	
+std.enums.BoundedEnumMultiset().removeSet	parser-only	fn removeSet(self: *Self, other: Self) void	
+std.enums.BoundedEnumMultiset().setCount	parser-only	fn setCount(self: *Self, key: E, c: CountSize) void	
+std.enums.BoundedEnumMultiset().subsetOf	parser-only	fn subsetOf(self: Self, other: Self) bool	
+std.enums.BoundedEnumMultiset().supersetOf	parser-only	fn supersetOf(self: Self, other: Self) bool	
 std.enums.EnumArray	both	fn EnumArray(comptime E: type, comptime V: type) type	fn (comptime type, comptime type) type
+std.enums.EnumArray().Iterator.next	parser-only	fn next(self: *Iterator) ?Entry	
+std.enums.EnumArray().get	parser-only	fn get(self: Self, key: Key) Value	
+std.enums.EnumArray().getPtr	parser-only	fn getPtr(self: *Self, key: Key) *Value	
+std.enums.EnumArray().getPtrConst	parser-only	fn getPtrConst(self: *const Self, key: Key) *const Value	
+std.enums.EnumArray().init	parser-only	fn init(init_values: EnumFieldStruct(E, Value, null)) Self	
+std.enums.EnumArray().initDefault	parser-only	fn initDefault(comptime default: ?Value, init_values: EnumFieldStruct(E, Value, default)) Self	
+std.enums.EnumArray().initFill	parser-only	fn initFill(v: Value) Self	
+std.enums.EnumArray().initUndefined	parser-only	fn initUndefined() Self	
+std.enums.EnumArray().iterator	parser-only	fn iterator(self: *Self) Iterator	
+std.enums.EnumArray().set	parser-only	fn set(self: *Self, key: Key, value: Value) void	
 std.enums.EnumFieldStruct	both	fn EnumFieldStruct(comptime E: type, comptime Data: type, comptime field_default: ?Data) type	fn (comptime type, comptime type, comptime anytype) type
 std.enums.EnumIndexer	both	fn EnumIndexer(comptime E: type) type	fn (comptime type) type
+std.enums.EnumIndexer().indexOf	parser-only	fn indexOf(e: E) usize	
+std.enums.EnumIndexer().keyForIndex	parser-only	fn keyForIndex(i: usize) E	
 std.enums.EnumMap	both	fn EnumMap(comptime E: type, comptime V: type) type	fn (comptime type, comptime type) type
+std.enums.EnumMap().Iterator.next	parser-only	fn next(self: *Iterator) ?Entry	
+std.enums.EnumMap().contains	parser-only	fn contains(self: *const Self, key: Key) bool	
+std.enums.EnumMap().count	parser-only	fn count(self: *const Self) usize	
+std.enums.EnumMap().fetchPut	parser-only	fn fetchPut(self: *Self, key: Key, value: Value) ?Value	
+std.enums.EnumMap().fetchRemove	parser-only	fn fetchRemove(self: *Self, key: Key) ?Value	
+std.enums.EnumMap().get	parser-only	fn get(self: *const Self, key: Key) ?Value	
+std.enums.EnumMap().getAssertContains	parser-only	fn getAssertContains(self: *const Self, key: Key) Value	
+std.enums.EnumMap().getPtr	parser-only	fn getPtr(self: *Self, key: Key) ?*Value	
+std.enums.EnumMap().getPtrAssertContains	parser-only	fn getPtrAssertContains(self: *Self, key: Key) *Value	
+std.enums.EnumMap().getPtrConst	parser-only	fn getPtrConst(self: *const Self, key: Key) ?*const Value	
+std.enums.EnumMap().getPtrConstAssertContains	parser-only	fn getPtrConstAssertContains(self: *const Self, key: Key) *const Value	
+std.enums.EnumMap().init	parser-only	fn init(init_values: EnumFieldStruct(E, ?Value, @as(?Value, null))) Self	
+std.enums.EnumMap().initFull	parser-only	fn initFull(value: Value) Self	
+std.enums.EnumMap().initFullWith	parser-only	fn initFullWith(init_values: EnumFieldStruct(E, Value, null)) Self	
+std.enums.EnumMap().initFullWithDefault	parser-only	fn initFullWithDefault(comptime default: ?Value, init_values: EnumFieldStruct(E, Value, default)) Self	
+std.enums.EnumMap().iterator	parser-only	fn iterator(self: *Self) Iterator	
+std.enums.EnumMap().put	parser-only	fn put(self: *Self, key: Key, value: Value) void	
+std.enums.EnumMap().putUninitialized	parser-only	fn putUninitialized(self: *Self, key: Key) *Value	
+std.enums.EnumMap().remove	parser-only	fn remove(self: *Self, key: Key) void	
 std.enums.EnumMultiset	both	fn EnumMultiset(comptime E: type) type	fn (comptime type) type
 std.enums.EnumSet	both	fn EnumSet(comptime E: type) type	fn (comptime type) type
+std.enums.EnumSet().Iterator.next	parser-only	fn next(self: *Iterator) ?Key	
+std.enums.EnumSet().complement	parser-only	fn complement(self: Self) Self	
+std.enums.EnumSet().contains	parser-only	fn contains(self: Self, key: Key) bool	
+std.enums.EnumSet().count	parser-only	fn count(self: Self) usize	
+std.enums.EnumSet().differenceWith	parser-only	fn differenceWith(self: Self, other: Self) Self	
+std.enums.EnumSet().eql	parser-only	fn eql(self: Self, other: Self) bool	
+std.enums.EnumSet().init	parser-only	fn init(init_values: EnumFieldStruct(E, bool, false)) Self	
+std.enums.EnumSet().initEmpty	parser-only	fn initEmpty() Self	
+std.enums.EnumSet().initFull	parser-only	fn initFull() Self	
+std.enums.EnumSet().initMany	parser-only	fn initMany(keys: []const Key) Self	
+std.enums.EnumSet().initOne	parser-only	fn initOne(key: Key) Self	
+std.enums.EnumSet().insert	parser-only	fn insert(self: *Self, key: Key) void	
+std.enums.EnumSet().intersectWith	parser-only	fn intersectWith(self: Self, other: Self) Self	
+std.enums.EnumSet().iterator	parser-only	fn iterator(self: *const Self) Iterator	
+std.enums.EnumSet().remove	parser-only	fn remove(self: *Self, key: Key) void	
+std.enums.EnumSet().setIntersection	parser-only	fn setIntersection(self: *Self, other: Self) void	
+std.enums.EnumSet().setPresent	parser-only	fn setPresent(self: *Self, key: Key, present: bool) void	
+std.enums.EnumSet().setUnion	parser-only	fn setUnion(self: *Self, other: Self) void	
+std.enums.EnumSet().subsetOf	parser-only	fn subsetOf(self: Self, other: Self) bool	
+std.enums.EnumSet().supersetOf	parser-only	fn supersetOf(self: Self, other: Self) bool	
+std.enums.EnumSet().toggle	parser-only	fn toggle(self: *Self, key: Key) void	
+std.enums.EnumSet().toggleAll	parser-only	fn toggleAll(self: *Self) void	
+std.enums.EnumSet().toggleSet	parser-only	fn toggleSet(self: *Self, other: Self) void	
+std.enums.EnumSet().unionWith	parser-only	fn unionWith(self: Self, other: Self) Self	
+std.enums.EnumSet().xorWith	parser-only	fn xorWith(self: Self, other: Self) Self	
 std.enums.directEnumArray	both	fn directEnumArray( comptime E: type, comptime Data: type, comptime max_unused_slots: comptime_int, init_values: EnumFieldStruct(E, Data, null), ) [directEnumArrayLen(E, max_unused_slots)]Data	fn (comptime type, comptime type, comptime comptime_int, anytype) anytype
 std.enums.directEnumArrayDefault	both	fn directEnumArrayDefault( comptime E: type, comptime Data: type, comptime default: ?Data, comptime max_unused_slots: comptime_int, init_values: EnumFieldStruct(E, Data, default), ) [directEnumArrayLen(E, max_unused_slots)]Data	fn (comptime type, comptime type, comptime anytype, comptime comptime_int, anytype) anytype
 std.enums.directEnumArrayLen	both	fn directEnumArrayLen(comptime E: type, comptime max_unused_slots: comptime_int) comptime_int	fn (comptime type, comptime comptime_int) comptime_int
@@ -3738,6 +4313,7 @@ std.enums.tagName	both	fn tagName(comptime E: type, e: E) ?[:0]const u8	fn (comp
 std.enums.values	both	fn values(comptime E: type) []const E	"fn (comptime type) callconv(.@""inline"") anytype"
 std.enums.valuesFromFields	both	fn valuesFromFields(comptime E: type, comptime fields: []const EnumField) []const E	"fn (comptime type, comptime []const builtin.Type.EnumField) callconv(.@""inline"") anytype"
 std.fmt.Alt	both	fn Alt( comptime Data: type, comptime formatFn: fn (data: Data, writer: *Writer) Writer.Error!void, ) type	fn (comptime type, comptime anytype) type
+std.fmt.Alt().format	parser-only	fn format(self: @This(), writer: *Writer) Writer.Error!void	
 std.fmt.ArgState.hasUnusedArgs	both	fn hasUnusedArgs(self: *@This()) bool	fn (*fmt.ArgState) bool
 std.fmt.ArgState.nextArg	both	fn nextArg(self: *@This(), arg_index: ?usize) ?usize	fn (*fmt.ArgState, ?usize) ?usize
 std.fmt.Number.Mode.base	both	fn base(mode: Mode) ?u8	fn (fmt.Number.Mode) ?u8
@@ -3776,6 +4352,14 @@ std.fmt.parseIntWithGenericCharacter	both	fn parseIntWithGenericCharacter( compt
 std.fmt.parseUnsigned	both	fn parseUnsigned(comptime T: type, buf: []const u8, base: u8) ParseIntError!T	fn (comptime type, []const u8, u8) anytype
 std.fmt.printInt	both	fn printInt(buffer: []u8, value: anytype, base: u8, case: Case, options: Options) usize	fn ([]u8, anytype, u8, fmt.Case, fmt.Options) usize
 std.fs.path.ComponentIterator	both	fn ComponentIterator(comptime path_type: PathType, comptime T: type) type	fn (comptime fs.path.PathType, comptime type) type
+std.fs.path.ComponentIterator().first	parser-only	fn first(self: *Self) ?Component	
+std.fs.path.ComponentIterator().init	parser-only	fn init(path: []const T) Self	
+std.fs.path.ComponentIterator().last	parser-only	fn last(self: *Self) ?Component	
+std.fs.path.ComponentIterator().next	parser-only	fn next(self: *Self) ?Component	
+std.fs.path.ComponentIterator().peekNext	parser-only	fn peekNext(self: Self) ?Component	
+std.fs.path.ComponentIterator().peekPrevious	parser-only	fn peekPrevious(self: Self) ?Component	
+std.fs.path.ComponentIterator().previous	parser-only	fn previous(self: *Self) ?Component	
+std.fs.path.ComponentIterator().root	parser-only	fn root(self: Self) ?[]const T	
 std.fs.path.NativeComponentIterator.first	reflect-only		fn (*fs.path.ComponentIterator(.posix,u8)) ?fs.path.ComponentIterator(.posix,u8).Component
 std.fs.path.NativeComponentIterator.init	reflect-only		fn ([]const u8) fs.path.ComponentIterator(.posix,u8)
 std.fs.path.NativeComponentIterator.last	reflect-only		fn (*fs.path.ComponentIterator(.posix,u8)) ?fs.path.ComponentIterator(.posix,u8).Component
@@ -3911,7 +4495,122 @@ std.hash_map.AutoContext	both	fn AutoContext(comptime K: type) type	fn (comptime
 std.hash_map.AutoHashMap	both	fn AutoHashMap(comptime K: type, comptime V: type) type	fn (comptime type, comptime type) type
 std.hash_map.AutoHashMapUnmanaged	both	fn AutoHashMapUnmanaged(comptime K: type, comptime V: type) type	fn (comptime type, comptime type) type
 std.hash_map.HashMap	both	fn HashMap( comptime K: type, comptime V: type, comptime Context: type, comptime max_load_percentage: u64, ) type	fn (comptime type, comptime type, comptime type, comptime u64) type
+std.hash_map.HashMap().capacity	parser-only	fn capacity(self: Self) Size	
+std.hash_map.HashMap().clearAndFree	parser-only	fn clearAndFree(self: *Self) void	
+std.hash_map.HashMap().clearRetainingCapacity	parser-only	fn clearRetainingCapacity(self: *Self) void	
+std.hash_map.HashMap().clone	parser-only	fn clone(self: Self) Allocator.Error!Self	
+std.hash_map.HashMap().cloneWithAllocator	parser-only	fn cloneWithAllocator(self: Self, new_allocator: Allocator) Allocator.Error!Self	
+std.hash_map.HashMap().cloneWithAllocatorAndContext	parser-only	fn cloneWithAllocatorAndContext( self: Self, new_allocator: Allocator, new_ctx: anytype, ) Allocator.Error!HashMap(K, V, @TypeOf(new_ctx), max_load_percentage)	
+std.hash_map.HashMap().cloneWithContext	parser-only	fn cloneWithContext(self: Self, new_ctx: anytype) Allocator.Error!HashMap(K, V, @TypeOf(new_ctx), max_load_percentage)	
+std.hash_map.HashMap().contains	parser-only	fn contains(self: Self, key: K) bool	
+std.hash_map.HashMap().containsAdapted	parser-only	fn containsAdapted(self: Self, key: anytype, ctx: anytype) bool	
+std.hash_map.HashMap().count	parser-only	fn count(self: Self) Size	
+std.hash_map.HashMap().deinit	parser-only	fn deinit(self: *Self) void	
+std.hash_map.HashMap().ensureTotalCapacity	parser-only	fn ensureTotalCapacity(self: *Self, expected_count: Size) Allocator.Error!void	
+std.hash_map.HashMap().ensureUnusedCapacity	parser-only	fn ensureUnusedCapacity(self: *Self, additional_count: Size) Allocator.Error!void	
+std.hash_map.HashMap().fetchPut	parser-only	fn fetchPut(self: *Self, key: K, value: V) Allocator.Error!?KV	
+std.hash_map.HashMap().fetchPutAssumeCapacity	parser-only	fn fetchPutAssumeCapacity(self: *Self, key: K, value: V) ?KV	
+std.hash_map.HashMap().fetchRemove	parser-only	fn fetchRemove(self: *Self, key: K) ?KV	
+std.hash_map.HashMap().fetchRemoveAdapted	parser-only	fn fetchRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV	
+std.hash_map.HashMap().get	parser-only	fn get(self: Self, key: K) ?V	
+std.hash_map.HashMap().getAdapted	parser-only	fn getAdapted(self: Self, key: anytype, ctx: anytype) ?V	
+std.hash_map.HashMap().getEntry	parser-only	fn getEntry(self: Self, key: K) ?Entry	
+std.hash_map.HashMap().getEntryAdapted	parser-only	fn getEntryAdapted(self: Self, key: anytype, ctx: anytype) ?Entry	
+std.hash_map.HashMap().getKey	parser-only	fn getKey(self: Self, key: K) ?K	
+std.hash_map.HashMap().getKeyAdapted	parser-only	fn getKeyAdapted(self: Self, key: anytype, ctx: anytype) ?K	
+std.hash_map.HashMap().getKeyPtr	parser-only	fn getKeyPtr(self: Self, key: K) ?*K	
+std.hash_map.HashMap().getKeyPtrAdapted	parser-only	fn getKeyPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*K	
+std.hash_map.HashMap().getOrPut	parser-only	fn getOrPut(self: *Self, key: K) Allocator.Error!GetOrPutResult	
+std.hash_map.HashMap().getOrPutAdapted	parser-only	fn getOrPutAdapted(self: *Self, key: anytype, ctx: anytype) Allocator.Error!GetOrPutResult	
+std.hash_map.HashMap().getOrPutAssumeCapacity	parser-only	fn getOrPutAssumeCapacity(self: *Self, key: K) GetOrPutResult	
+std.hash_map.HashMap().getOrPutAssumeCapacityAdapted	parser-only	fn getOrPutAssumeCapacityAdapted(self: *Self, key: anytype, ctx: anytype) GetOrPutResult	
+std.hash_map.HashMap().getOrPutValue	parser-only	fn getOrPutValue(self: *Self, key: K, value: V) Allocator.Error!Entry	
+std.hash_map.HashMap().getPtr	parser-only	fn getPtr(self: Self, key: K) ?*V	
+std.hash_map.HashMap().getPtrAdapted	parser-only	fn getPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*V	
+std.hash_map.HashMap().init	parser-only	fn init(allocator: Allocator) Self	
+std.hash_map.HashMap().initContext	parser-only	fn initContext(allocator: Allocator, ctx: Context) Self	
+std.hash_map.HashMap().iterator	parser-only	fn iterator(self: *const Self) Iterator	
+std.hash_map.HashMap().keyIterator	parser-only	fn keyIterator(self: Self) KeyIterator	
+std.hash_map.HashMap().lockPointers	parser-only	fn lockPointers(self: *Self) void	
+std.hash_map.HashMap().move	parser-only	fn move(self: *Self) Self	
+std.hash_map.HashMap().put	parser-only	fn put(self: *Self, key: K, value: V) Allocator.Error!void	
+std.hash_map.HashMap().putAssumeCapacity	parser-only	fn putAssumeCapacity(self: *Self, key: K, value: V) void	
+std.hash_map.HashMap().putAssumeCapacityNoClobber	parser-only	fn putAssumeCapacityNoClobber(self: *Self, key: K, value: V) void	
+std.hash_map.HashMap().putNoClobber	parser-only	fn putNoClobber(self: *Self, key: K, value: V) Allocator.Error!void	
+std.hash_map.HashMap().rehash	parser-only	fn rehash(self: *Self) void	
+std.hash_map.HashMap().remove	parser-only	fn remove(self: *Self, key: K) bool	
+std.hash_map.HashMap().removeAdapted	parser-only	fn removeAdapted(self: *Self, key: anytype, ctx: anytype) bool	
+std.hash_map.HashMap().removeByPtr	parser-only	fn removeByPtr(self: *Self, key_ptr: *K) void	
+std.hash_map.HashMap().unlockPointers	parser-only	fn unlockPointers(self: *Self) void	
+std.hash_map.HashMap().valueIterator	parser-only	fn valueIterator(self: Self) ValueIterator	
 std.hash_map.HashMapUnmanaged	both	fn HashMapUnmanaged( comptime K: type, comptime V: type, comptime Context: type, comptime max_load_percentage: u64, ) type	fn (comptime type, comptime type, comptime type, comptime u64) type
+std.hash_map.HashMapUnmanaged().Iterator.next	parser-only	fn next(it: *Iterator) ?Entry	
+std.hash_map.HashMapUnmanaged().capacity	parser-only	fn capacity(self: Self) Size	
+std.hash_map.HashMapUnmanaged().clearAndFree	parser-only	fn clearAndFree(self: *Self, allocator: Allocator) void	
+std.hash_map.HashMapUnmanaged().clearRetainingCapacity	parser-only	fn clearRetainingCapacity(self: *Self) void	
+std.hash_map.HashMapUnmanaged().clone	parser-only	fn clone(self: Self, allocator: Allocator) Allocator.Error!Self	
+std.hash_map.HashMapUnmanaged().cloneContext	parser-only	fn cloneContext(self: Self, allocator: Allocator, new_ctx: anytype) Allocator.Error!HashMapUnmanaged(K, V, @TypeOf(new_ctx), max_load_percentage)	
+std.hash_map.HashMapUnmanaged().contains	parser-only	fn contains(self: Self, key: K) bool	
+std.hash_map.HashMapUnmanaged().containsAdapted	parser-only	fn containsAdapted(self: Self, key: anytype, ctx: anytype) bool	
+std.hash_map.HashMapUnmanaged().containsContext	parser-only	fn containsContext(self: Self, key: K, ctx: Context) bool	
+std.hash_map.HashMapUnmanaged().count	parser-only	fn count(self: Self) Size	
+std.hash_map.HashMapUnmanaged().deinit	parser-only	fn deinit(self: *Self, allocator: Allocator) void	
+std.hash_map.HashMapUnmanaged().ensureTotalCapacity	parser-only	fn ensureTotalCapacity(self: *Self, allocator: Allocator, new_size: Size) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().ensureTotalCapacityContext	parser-only	fn ensureTotalCapacityContext(self: *Self, allocator: Allocator, new_size: Size, ctx: Context) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().ensureUnusedCapacity	parser-only	fn ensureUnusedCapacity(self: *Self, allocator: Allocator, additional_size: Size) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().ensureUnusedCapacityContext	parser-only	fn ensureUnusedCapacityContext(self: *Self, allocator: Allocator, additional_size: Size, ctx: Context) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().fetchPut	parser-only	fn fetchPut(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!?KV	
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacity	parser-only	fn fetchPutAssumeCapacity(self: *Self, key: K, value: V) ?KV	
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacityContext	parser-only	fn fetchPutAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) ?KV	
+std.hash_map.HashMapUnmanaged().fetchPutContext	parser-only	fn fetchPutContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!?KV	
+std.hash_map.HashMapUnmanaged().fetchRemove	parser-only	fn fetchRemove(self: *Self, key: K) ?KV	
+std.hash_map.HashMapUnmanaged().fetchRemoveAdapted	parser-only	fn fetchRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV	
+std.hash_map.HashMapUnmanaged().fetchRemoveContext	parser-only	fn fetchRemoveContext(self: *Self, key: K, ctx: Context) ?KV	
+std.hash_map.HashMapUnmanaged().get	parser-only	fn get(self: Self, key: K) ?V	
+std.hash_map.HashMapUnmanaged().getAdapted	parser-only	fn getAdapted(self: Self, key: anytype, ctx: anytype) ?V	
+std.hash_map.HashMapUnmanaged().getContext	parser-only	fn getContext(self: Self, key: K, ctx: Context) ?V	
+std.hash_map.HashMapUnmanaged().getEntry	parser-only	fn getEntry(self: Self, key: K) ?Entry	
+std.hash_map.HashMapUnmanaged().getEntryAdapted	parser-only	fn getEntryAdapted(self: Self, key: anytype, ctx: anytype) ?Entry	
+std.hash_map.HashMapUnmanaged().getEntryContext	parser-only	fn getEntryContext(self: Self, key: K, ctx: Context) ?Entry	
+std.hash_map.HashMapUnmanaged().getKey	parser-only	fn getKey(self: Self, key: K) ?K	
+std.hash_map.HashMapUnmanaged().getKeyAdapted	parser-only	fn getKeyAdapted(self: Self, key: anytype, ctx: anytype) ?K	
+std.hash_map.HashMapUnmanaged().getKeyContext	parser-only	fn getKeyContext(self: Self, key: K, ctx: Context) ?K	
+std.hash_map.HashMapUnmanaged().getKeyPtr	parser-only	fn getKeyPtr(self: Self, key: K) ?*K	
+std.hash_map.HashMapUnmanaged().getKeyPtrAdapted	parser-only	fn getKeyPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*K	
+std.hash_map.HashMapUnmanaged().getKeyPtrContext	parser-only	fn getKeyPtrContext(self: Self, key: K, ctx: Context) ?*K	
+std.hash_map.HashMapUnmanaged().getOrPut	parser-only	fn getOrPut(self: *Self, allocator: Allocator, key: K) Allocator.Error!GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutAdapted	parser-only	fn getOrPutAdapted(self: *Self, allocator: Allocator, key: anytype, key_ctx: anytype) Allocator.Error!GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacity	parser-only	fn getOrPutAssumeCapacity(self: *Self, key: K) GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacityAdapted	parser-only	fn getOrPutAssumeCapacityAdapted(self: *Self, key: anytype, ctx: anytype) GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacityContext	parser-only	fn getOrPutAssumeCapacityContext(self: *Self, key: K, ctx: Context) GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutContext	parser-only	fn getOrPutContext(self: *Self, allocator: Allocator, key: K, ctx: Context) Allocator.Error!GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutContextAdapted	parser-only	fn getOrPutContextAdapted(self: *Self, allocator: Allocator, key: anytype, key_ctx: anytype, ctx: Context) Allocator.Error!GetOrPutResult	
+std.hash_map.HashMapUnmanaged().getOrPutValue	parser-only	fn getOrPutValue(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!Entry	
+std.hash_map.HashMapUnmanaged().getOrPutValueContext	parser-only	fn getOrPutValueContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!Entry	
+std.hash_map.HashMapUnmanaged().getPtr	parser-only	fn getPtr(self: Self, key: K) ?*V	
+std.hash_map.HashMapUnmanaged().getPtrAdapted	parser-only	fn getPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*V	
+std.hash_map.HashMapUnmanaged().getPtrContext	parser-only	fn getPtrContext(self: Self, key: K, ctx: Context) ?*V	
+std.hash_map.HashMapUnmanaged().iterator	parser-only	fn iterator(self: *const Self) Iterator	
+std.hash_map.HashMapUnmanaged().keyIterator	parser-only	fn keyIterator(self: Self) KeyIterator	
+std.hash_map.HashMapUnmanaged().lockPointers	parser-only	fn lockPointers(self: *Self) void	
+std.hash_map.HashMapUnmanaged().move	parser-only	fn move(self: *Self) Self	
+std.hash_map.HashMapUnmanaged().promote	parser-only	fn promote(self: Self, allocator: Allocator) Managed	
+std.hash_map.HashMapUnmanaged().promoteContext	parser-only	fn promoteContext(self: Self, allocator: Allocator, ctx: Context) Managed	
+std.hash_map.HashMapUnmanaged().put	parser-only	fn put(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().putAssumeCapacity	parser-only	fn putAssumeCapacity(self: *Self, key: K, value: V) void	
+std.hash_map.HashMapUnmanaged().putAssumeCapacityContext	parser-only	fn putAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) void	
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobber	parser-only	fn putAssumeCapacityNoClobber(self: *Self, key: K, value: V) void	
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobberContext	parser-only	fn putAssumeCapacityNoClobberContext(self: *Self, key: K, value: V, ctx: Context) void	
+std.hash_map.HashMapUnmanaged().putContext	parser-only	fn putContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().putNoClobber	parser-only	fn putNoClobber(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().putNoClobberContext	parser-only	fn putNoClobberContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!void	
+std.hash_map.HashMapUnmanaged().rehash	parser-only	fn rehash(self: *Self, ctx: anytype) void	
+std.hash_map.HashMapUnmanaged().remove	parser-only	fn remove(self: *Self, key: K) bool	
+std.hash_map.HashMapUnmanaged().removeAdapted	parser-only	fn removeAdapted(self: *Self, key: anytype, ctx: anytype) bool	
+std.hash_map.HashMapUnmanaged().removeByPtr	parser-only	fn removeByPtr(self: *Self, key_ptr: *K) void	
+std.hash_map.HashMapUnmanaged().removeContext	parser-only	fn removeContext(self: *Self, key: K, ctx: Context) bool	
+std.hash_map.HashMapUnmanaged().unlockPointers	parser-only	fn unlockPointers(self: *Self) void	
+std.hash_map.HashMapUnmanaged().valueIterator	parser-only	fn valueIterator(self: Self) ValueIterator	
 std.hash_map.StringContext.eql	both	fn eql(self: @This(), a: []const u8, b: []const u8) bool	fn (hash_map.StringContext, []const u8, []const u8) bool
 std.hash_map.StringContext.hash	both	fn hash(self: @This(), s: []const u8) u64	fn (hash_map.StringContext, []const u8) u64
 std.hash_map.StringHashMap	both	fn StringHashMap(comptime V: type) type	fn (comptime type) type
@@ -3947,11 +4646,26 @@ std.heap.PageAllocator.map	both	fn map(n: usize, alignment: Alignment) ?[*]u8	fn
 std.heap.PageAllocator.realloc	both	fn realloc(uncasted_memory: []u8, alignment: Alignment, new_len: usize, may_move: bool) ?[*]u8	fn ([]u8, mem.Alignment, usize, bool) ?[*]u8
 std.heap.PageAllocator.unmap	both	fn unmap(memory: []align(page_size_min) u8) void	fn ([]align(4096) u8) void
 std.heap.StackFallbackAllocator	parser-only	fn StackFallbackAllocator(comptime size: usize) type	
+std.heap.StackFallbackAllocator().get	parser-only	fn get(self: *Self) Allocator	
 std.heap.defaultQueryPageSize	parser-only	fn defaultQueryPageSize() usize	
 std.heap.memory_pool.Aligned	both	fn Aligned(comptime Item: type, comptime alignment: Alignment) type	fn (comptime type, comptime mem.Alignment) type
 std.heap.memory_pool.AlignedManaged	both	fn AlignedManaged(comptime Item: type, comptime alignment: Alignment) type	fn (comptime type, comptime mem.Alignment) type
 std.heap.memory_pool.Extra	both	fn Extra(comptime Item: type, comptime pool_options: Options) type	fn (comptime type, comptime heap.memory_pool.Options) type
+std.heap.memory_pool.Extra().addCapacity	parser-only	fn addCapacity(pool: *Pool, allocator: Allocator, num: usize) Allocator.Error!void	
+std.heap.memory_pool.Extra().create	parser-only	fn create(pool: *Pool, allocator: Allocator) Allocator.Error!ItemPtr	
+std.heap.memory_pool.Extra().deinit	parser-only	fn deinit(pool: *Pool, allocator: Allocator) void	
+std.heap.memory_pool.Extra().destroy	parser-only	fn destroy(pool: *Pool, ptr: ItemPtr) void	
+std.heap.memory_pool.Extra().initCapacity	parser-only	fn initCapacity(allocator: Allocator, num: usize) Allocator.Error!Pool	
+std.heap.memory_pool.Extra().reset	parser-only	fn reset(pool: *Pool, allocator: Allocator, mode: ResetMode) bool	
+std.heap.memory_pool.Extra().toManaged	parser-only	fn toManaged(pool: Pool, allocator: Allocator) ExtraManaged(Item, pool_options)	
 std.heap.memory_pool.ExtraManaged	both	fn ExtraManaged(comptime Item: type, comptime pool_options: Options) type	fn (comptime type, comptime heap.memory_pool.Options) type
+std.heap.memory_pool.ExtraManaged().addCapacity	parser-only	fn addCapacity(pool: *Pool, num: usize) Allocator.Error!void	
+std.heap.memory_pool.ExtraManaged().create	parser-only	fn create(pool: *Pool) Allocator.Error!ItemPtr	
+std.heap.memory_pool.ExtraManaged().deinit	parser-only	fn deinit(pool: *Pool) void	
+std.heap.memory_pool.ExtraManaged().destroy	parser-only	fn destroy(pool: *Pool, ptr: ItemPtr) void	
+std.heap.memory_pool.ExtraManaged().init	parser-only	fn init(allocator: Allocator) Pool	
+std.heap.memory_pool.ExtraManaged().initCapacity	parser-only	fn initCapacity(allocator: Allocator, num: usize) Allocator.Error!Pool	
+std.heap.memory_pool.ExtraManaged().reset	parser-only	fn reset(pool: *Pool, mode: ResetMode) bool	
 std.heap.memory_pool.Managed	both	fn Managed(comptime Item: type) type	fn (comptime type) type
 std.heap.pageSize	parser-only	fn pageSize() usize	
 std.heap.stackFallback	parser-only	fn stackFallback(comptime size: usize, fallback_allocator: Allocator) StackFallbackAllocator(size)	
@@ -4108,6 +4822,7 @@ std.json.Diagnostics.getByteOffset	reflect-only		fn (*const json.Scanner.Diagnos
 std.json.Diagnostics.getColumn	reflect-only		fn (*const json.Scanner.Diagnostics) u64
 std.json.Diagnostics.getLine	reflect-only		fn (*const json.Scanner.Diagnostics) u64
 std.json.Formatter	both	fn Formatter(comptime T: type) type	fn (comptime type) type
+std.json.Formatter().format	parser-only	fn format(self: @This(), writer: *std.Io.Writer) std.Io.Writer.Error!void	
 std.json.ObjectMap.capacity	reflect-only		fn (array_hash_map.Custom([]const u8,json.dynamic.Value,array_hash_map.StringContext,true)) usize
 std.json.ObjectMap.clearAndFree	reflect-only		fn (*array_hash_map.Custom([]const u8,json.dynamic.Value,array_hash_map.StringContext,true), mem.Allocator) void
 std.json.ObjectMap.clearRetainingCapacity	reflect-only		fn (*array_hash_map.Custom([]const u8,json.dynamic.Value,array_hash_map.StringContext,true)) void
@@ -4302,6 +5017,10 @@ std.log.err	reflect-only		fn (comptime []const u8, anytype) void
 std.log.info	reflect-only		fn (comptime []const u8, anytype) void
 std.log.logEnabled	both	fn logEnabled(comptime level: Level, comptime scope: @EnumLiteral()) bool	fn (comptime log.Level, comptime @EnumLiteral()) bool
 std.log.scoped	both	fn scoped(comptime scope: @EnumLiteral()) type	fn (comptime @EnumLiteral()) type
+std.log.scoped().debug	parser-only	fn debug( comptime format: []const u8, args: anytype, ) void	
+std.log.scoped().err	parser-only	fn err( comptime format: []const u8, args: anytype, ) void	
+std.log.scoped().info	parser-only	fn info( comptime format: []const u8, args: anytype, ) void	
+std.log.scoped().warn	parser-only	fn warn( comptime format: []const u8, args: anytype, ) void	
 std.log.terminalMode	reflect-only		fn () Io.Terminal.Mode
 std.log.warn	reflect-only		fn (comptime []const u8, anytype) void
 std.macho.LoadCommandIterator.LoadCommand.cast	both	fn cast(lc: LoadCommand, comptime Cmd: type) ?Cmd	fn (macho.LoadCommandIterator.LoadCommand, comptime type) anytype
@@ -4527,6 +5246,17 @@ std.math.ceilPowerOfTwoPromote	both	fn ceilPowerOfTwoPromote(comptime T: type, v
 std.math.clamp	both	fn clamp(val: anytype, lower: anytype, upper: anytype) @TypeOf(val, lower, upper)	fn (anytype, anytype, anytype) anytype
 std.math.compare	both	fn compare(a: anytype, op: CompareOperator, b: anytype) bool	fn (anytype, math.CompareOperator, anytype) bool
 std.math.complex.Complex	both	fn Complex(comptime T: type) type	fn (comptime type) type
+std.math.complex.Complex().add	parser-only	fn add(self: Self, other: Self) Self	
+std.math.complex.Complex().conjugate	parser-only	fn conjugate(self: Self) Self	
+std.math.complex.Complex().div	parser-only	fn div(self: Self, other: Self) Self	
+std.math.complex.Complex().init	parser-only	fn init(re: T, im: T) Self	
+std.math.complex.Complex().magnitude	parser-only	fn magnitude(self: Self) T	
+std.math.complex.Complex().mul	parser-only	fn mul(self: Self, other: Self) Self	
+std.math.complex.Complex().mulbyi	parser-only	fn mulbyi(self: Self) Self	
+std.math.complex.Complex().neg	parser-only	fn neg(self: Self) Self	
+std.math.complex.Complex().reciprocal	parser-only	fn reciprocal(self: Self) Self	
+std.math.complex.Complex().squaredMagnitude	parser-only	fn squaredMagnitude(self: Self) T	
+std.math.complex.Complex().sub	parser-only	fn sub(self: Self, other: Self) Self	
 std.math.complex.abs	both	fn abs(z: anytype) @TypeOf(z.re, z.im)	fn (anytype) anytype
 std.math.complex.acos	both	fn acos(z: anytype) Complex(@TypeOf(z.re, z.im))	fn (anytype) anytype
 std.math.complex.acosh	both	fn acosh(z: anytype) Complex(@TypeOf(z.re, z.im))	fn (anytype) anytype
@@ -4674,11 +5404,35 @@ std.mem.Allocator.reallocAdvanced	both	fn reallocAdvanced( self: Allocator, old_
 std.mem.Allocator.remap	both	fn remap(self: Allocator, allocation: anytype, new_len: usize) ?@TypeOf(allocation)	fn (mem.Allocator, anytype, usize) anytype
 std.mem.Allocator.resize	both	fn resize(self: Allocator, allocation: anytype, new_len: usize) bool	fn (mem.Allocator, anytype, usize) bool
 std.mem.ReverseIterator	both	fn ReverseIterator(comptime T: type) type	fn (comptime type) type
+std.mem.ReverseIterator().next	parser-only	fn next(self: *@This()) ?Element	
+std.mem.ReverseIterator().nextPtr	parser-only	fn nextPtr(self: *@This()) ?ElementPointer	
 std.mem.SplitBackwardsIterator	both	fn SplitBackwardsIterator(comptime T: type, comptime delimiter_type: DelimiterType) type	fn (comptime type, comptime mem.DelimiterType) type
+std.mem.SplitBackwardsIterator().first	parser-only	fn first(self: *Self) []const T	
+std.mem.SplitBackwardsIterator().next	parser-only	fn next(self: *Self) ?[]const T	
+std.mem.SplitBackwardsIterator().reset	parser-only	fn reset(self: *Self) void	
+std.mem.SplitBackwardsIterator().rest	parser-only	fn rest(self: Self) []const T	
 std.mem.SplitIterator	both	fn SplitIterator(comptime T: type, comptime delimiter_type: DelimiterType) type	fn (comptime type, comptime mem.DelimiterType) type
+std.mem.SplitIterator().first	parser-only	fn first(self: *Self) []const T	
+std.mem.SplitIterator().next	parser-only	fn next(self: *Self) ?[]const T	
+std.mem.SplitIterator().peek	parser-only	fn peek(self: *const Self) ?[]const T	
+std.mem.SplitIterator().reset	parser-only	fn reset(self: *Self) void	
+std.mem.SplitIterator().rest	parser-only	fn rest(self: Self) []const T	
 std.mem.TokenIterator	both	fn TokenIterator(comptime T: type, comptime delimiter_type: DelimiterType) type	fn (comptime type, comptime mem.DelimiterType) type
+std.mem.TokenIterator().next	parser-only	fn next(self: *Self) ?[]const T	
+std.mem.TokenIterator().peek	parser-only	fn peek(self: *Self) ?[]const T	
+std.mem.TokenIterator().reset	parser-only	fn reset(self: *Self) void	
+std.mem.TokenIterator().rest	parser-only	fn rest(self: Self) []const T	
 std.mem.ValidationAllocator	both	fn ValidationAllocator(comptime T: type) type	fn (comptime type) type
+std.mem.ValidationAllocator().alloc	parser-only	fn alloc( ctx: *anyopaque, n: usize, alignment: mem.Alignment, ret_addr: usize, ) ?[*]u8	
+std.mem.ValidationAllocator().allocator	parser-only	fn allocator(self: *Self) Allocator	
+std.mem.ValidationAllocator().free	parser-only	fn free( ctx: *anyopaque, buf: []u8, alignment: Alignment, ret_addr: usize, ) void	
+std.mem.ValidationAllocator().init	parser-only	fn init(underlying_allocator: T) @This()	
+std.mem.ValidationAllocator().remap	parser-only	fn remap( ctx: *anyopaque, buf: []u8, alignment: Alignment, new_len: usize, ret_addr: usize, ) ?[*]u8	
+std.mem.ValidationAllocator().reset	parser-only	fn reset(self: *Self) void	
+std.mem.ValidationAllocator().resize	parser-only	fn resize( ctx: *anyopaque, buf: []u8, alignment: Alignment, new_len: usize, ret_addr: usize, ) bool	
 std.mem.WindowIterator	both	fn WindowIterator(comptime T: type) type	fn (comptime type) type
+std.mem.WindowIterator().next	parser-only	fn next(self: *Self) ?[]const T	
+std.mem.WindowIterator().reset	parser-only	fn reset(self: *Self) void	
 std.mem.absorbSentinel	both	fn absorbSentinel(slice: anytype) AbsorbSentinelReturnType(@TypeOf(slice))	fn (anytype) anytype
 std.mem.alignBackward	both	fn alignBackward(comptime T: type, addr: T, alignment: T) T	fn (comptime type, anytype, anytype) anytype
 std.mem.alignBackwardAnyAlign	both	fn alignBackwardAnyAlign(comptime T: type, addr: T, alignment: T) T	fn (comptime type, anytype, anytype) anytype
@@ -5584,8 +6338,12 @@ std.os.windows.AFD.WSABUF	parser-only	fn WSABUF(comptime mutability: Mutability)
 std.os.windows.CONSOLE.USER_IO.FILL	both	fn FILL(with: INFO.FILL.WITH, len: DWORD, coord: COORD) Header.With(INFO.FILL)	fn (os.windows.CONSOLE.USER_IO.INFO.FILL.WITH, u32, os.windows.COORD) os.windows.CONSOLE.USER_IO.Header.With(os.windows.CONSOLE.USER_IO.INFO.FILL)
 std.os.windows.CONSOLE.USER_IO.GET_CP	both	fn GET_CP(mode: INFO.CP.MODE) Header.With(INFO.CP)	fn (os.windows.CONSOLE.USER_IO.INFO.CP.MODE) os.windows.CONSOLE.USER_IO.Header.With(os.windows.CONSOLE.USER_IO.INFO.CP)
 std.os.windows.CONSOLE.USER_IO.Header.With	both	fn With(comptime Data: type) type	fn (comptime type) type
+std.os.windows.CONSOLE.USER_IO.Header.With().init	parser-only	fn init(operation: Operation, data: Data) @This()	
+std.os.windows.CONSOLE.USER_IO.Header.With().operate	parser-only	fn operate(with: *@This(), io: Io, file: ?Io.File) Io.Cancelable!NTSTATUS	
+std.os.windows.CONSOLE.USER_IO.Header.With().request	parser-only	fn request( with: *@This(), file: ?Io.File, comptime in_len: u32, in: [in_len]InputBuffer, comptime out_len: u32, out: [out_len]OutputBuffer, ) Request(1 + in_len, 1 + out_len)	
 std.os.windows.CONSOLE.USER_IO.READ_OUTPUT_CHARACTER	both	fn READ_OUTPUT_CHARACTER( coord: COORD, mode: INFO.READ_OUTPUT_CHARACTER.MODE, ) Header.With(INFO.READ_OUTPUT_CHARACTER)	fn (os.windows.COORD, os.windows.CONSOLE.USER_IO.INFO.READ_OUTPUT_CHARACTER.MODE) os.windows.CONSOLE.USER_IO.Header.With(os.windows.CONSOLE.USER_IO.INFO.READ_OUTPUT_CHARACTER)
 std.os.windows.CONSOLE.USER_IO.Request	both	fn Request(comptime in_len: u32, comptime out_len: u32) type	fn (comptime u32, comptime u32) type
+std.os.windows.CONSOLE.USER_IO.Request().init	parser-only	fn init( handle: ?HANDLE, in: [in_len]InputBuffer, out: [out_len]OutputBuffer, ) @This()	
 std.os.windows.CONSOLE.USER_IO.SET_CP	both	fn SET_CP(mode: INFO.CP.MODE, cp: UINT) Header.With(INFO.CP)	fn (os.windows.CONSOLE.USER_IO.INFO.CP.MODE, c_uint) os.windows.CONSOLE.USER_IO.Header.With(os.windows.CONSOLE.USER_IO.INFO.CP)
 std.os.windows.CONSOLE.USER_IO.SET_CURSOR_POSITION	both	fn SET_CURSOR_POSITION(coord: COORD) Header.With(COORD)	fn (os.windows.COORD) os.windows.CONSOLE.USER_IO.Header.With(os.windows.COORD)
 std.os.windows.CONSOLE.USER_IO.SET_MODE	both	fn SET_MODE(mode: DWORD) Header.With(DWORD)	fn (u32) os.windows.CONSOLE.USER_IO.Header.With(u32)
@@ -5603,6 +6361,7 @@ std.os.windows.FILE.RENAME_INFORMATION.getFileName	both	fn getFileName(ri: *cons
 std.os.windows.FILE.RENAME_INFORMATION.init	both	fn init(opts: struct { Flags: FLAGS = .{}, RootDirectory: ?HANDLE = null, FileName: []const WCHAR, }) RENAME_INFORMATION	fn (os.windows.FILE.RENAME_INFORMATION.init__struct) os.windows.FILE.RENAME_INFORMATION
 std.os.windows.FILE.RENAME_INFORMATION.toBuffer	both	fn toBuffer(fri: *RENAME_INFORMATION) []u8	fn (*os.windows.FILE.RENAME_INFORMATION) []u8
 std.os.windows.FileInformationIterator	parser-only	fn FileInformationIterator(comptime FileInformationType: type) type	
+std.os.windows.FileInformationIterator().next	parser-only	fn next(self: *@This()) ?*FileInformationType	
 std.os.windows.GUID.format	both	fn format(self: GUID, w: *std.Io.Writer) std.Io.Writer.Error!void	fn (os.windows.GUID, *Io.Writer) error{WriteFailed}!void
 std.os.windows.GUID.parse	both	fn parse(s: []const u8) GUID	fn ([]const u8) os.windows.GUID
 std.os.windows.GUID.parseNoBraces	both	fn parseNoBraces(s: []const u8) !GUID	"fn ([]const u8) @typeInfo(@typeInfo(@TypeOf(os.windows.GUID.parseNoBraces)).@""fn"".return_type.?).error_union.error_set!os.windows.GUID"
@@ -5712,6 +6471,11 @@ std.process.Args.Iterator.initAllocator	both	fn initAllocator(a: Args, gpa: Allo
 std.process.Args.Iterator.next	both	fn next(it: *Iterator) ?[:0]const u8	fn (*process.Args.Iterator) ?[:0]const u8
 std.process.Args.Iterator.skip	both	fn skip(it: *Iterator) bool	fn (*process.Args.Iterator) bool
 std.process.Args.IteratorGeneral	both	fn IteratorGeneral(comptime options: IteratorGeneralOptions) type	fn (comptime process.Args.IteratorGeneralOptions) type
+std.process.Args.IteratorGeneral().deinit	parser-only	fn deinit(self: *Self) void	
+std.process.Args.IteratorGeneral().init	parser-only	fn init(allocator: Allocator, cmd_line_utf8: []const u8) InitError!Self	
+std.process.Args.IteratorGeneral().initTakeOwnership	parser-only	fn initTakeOwnership(allocator: Allocator, cmd_line_utf8: []const u8) InitError!Self	
+std.process.Args.IteratorGeneral().next	parser-only	fn next(self: *Self) ?[:0]const u8	
+std.process.Args.IteratorGeneral().skip	parser-only	fn skip(self: *Self) bool	
 std.process.Args.iterate	both	fn iterate(a: Args) Iterator	fn (process.Args) process.Args.Iterator
 std.process.Args.iterateAllocator	both	fn iterateAllocator(a: Args, gpa: Allocator) Iterator.InitError!Iterator	fn (process.Args, mem.Allocator) error{}!process.Args.Iterator
 std.process.Args.toSlice	both	fn toSlice(a: Args, arena: Allocator) ToSliceError![]const [:0]const u8	fn (process.Args, mem.Allocator) error{OutOfMemory,Unexpected}![]const [:0]const u8
@@ -5838,6 +6602,16 @@ std.sort.pdqContext	both	fn pdqContext(a: usize, b: usize, context: anytype) voi
 std.sort.upperBound	both	fn upperBound( comptime T: type, items: []const T, context: anytype, comptime compareFn: fn (@TypeOf(context), T) std.math.Order, ) usize	fn (comptime type, anytype, anytype, comptime anytype) usize
 std.static_string_map.StaticStringMap	both	fn StaticStringMap(comptime V: type) type	fn (comptime type) type
 std.static_string_map.StaticStringMapWithEql	both	fn StaticStringMapWithEql( comptime V: type, comptime eql: fn (a: []const u8, b: []const u8) bool, ) type	fn (comptime type, comptime fn ([]const u8, []const u8) bool) type
+std.static_string_map.StaticStringMapWithEql().deinit	parser-only	fn deinit(self: Self, allocator: mem.Allocator) void	
+std.static_string_map.StaticStringMapWithEql().get	parser-only	fn get(self: Self, str: []const u8) ?V	
+std.static_string_map.StaticStringMapWithEql().getIndex	parser-only	fn getIndex(self: Self, str: []const u8) ?usize	
+std.static_string_map.StaticStringMapWithEql().getLongestPrefix	parser-only	fn getLongestPrefix(self: Self, str: []const u8) ?KV	
+std.static_string_map.StaticStringMapWithEql().getLongestPrefixIndex	parser-only	fn getLongestPrefixIndex(self: Self, str: []const u8) ?usize	
+std.static_string_map.StaticStringMapWithEql().has	parser-only	fn has(self: Self, str: []const u8) bool	
+std.static_string_map.StaticStringMapWithEql().init	parser-only	fn init(kvs_list: anytype, allocator: mem.Allocator) !Self	
+std.static_string_map.StaticStringMapWithEql().initComptime	parser-only	fn initComptime(comptime kvs_list: anytype) Self	
+std.static_string_map.StaticStringMapWithEql().keys	parser-only	fn keys(self: Self) []const []const u8	
+std.static_string_map.StaticStringMapWithEql().values	parser-only	fn values(self: Self) []const V	
 std.static_string_map.defaultEql	both	fn defaultEql(a: []const u8, b: []const u8) bool	fn ([]const u8, []const u8) bool
 std.static_string_map.eqlAsciiIgnoreCase	both	fn eqlAsciiIgnoreCase(a: []const u8, b: []const u8) bool	fn ([]const u8, []const u8) bool
 std.tar.Diagnostics.deinit	both	fn deinit(d: *Diagnostics) void	fn (*tar.Diagnostics) void
@@ -6981,6 +7755,18 @@ std.zig.llvm.Builder.x86_fp80Value	both	fn x86_fp80Value(self: *Builder, value: 
 std.zig.llvm.Builder.zeroInitConst	both	fn zeroInitConst(self: *Builder, ty: Type) Allocator.Error!Constant	fn (*zig.llvm.Builder, zig.llvm.Builder.Type) error{OutOfMemory}!zig.llvm.Builder.Constant
 std.zig.llvm.Builder.zeroInitValue	both	fn zeroInitValue(self: *Builder, ty: Type) Allocator.Error!Value	fn (*zig.llvm.Builder, zig.llvm.Builder.Type) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.bitcode_writer.BitcodeWriter	both	fn BitcodeWriter(comptime types: []const type) type	fn (comptime []const type) type
+std.zig.llvm.bitcode_writer.BitcodeWriter().alignTo32	parser-only	fn alignTo32(self: *BcWriter) Error!void	
+std.zig.llvm.bitcode_writer.BitcodeWriter().bitsVbr	parser-only	fn bitsVbr(value: anytype, comptime vbr_bits: usize) u16	
+std.zig.llvm.bitcode_writer.BitcodeWriter().deinit	parser-only	fn deinit(self: BcWriter) void	
+std.zig.llvm.bitcode_writer.BitcodeWriter().enterTopBlock	parser-only	fn enterTopBlock(self: *BcWriter, comptime SubBlock: type) Error!BlockWriter(SubBlock)	
+std.zig.llvm.bitcode_writer.BitcodeWriter().getTypeWidth	parser-only	fn getTypeWidth(self: BcWriter, comptime Type: type) u16	
+std.zig.llvm.bitcode_writer.BitcodeWriter().init	parser-only	fn init(allocator: std.mem.Allocator, widths: [types.len]u16) BcWriter	
+std.zig.llvm.bitcode_writer.BitcodeWriter().length	parser-only	fn length(self: BcWriter) usize	
+std.zig.llvm.bitcode_writer.BitcodeWriter().toOwnedSlice	parser-only	fn toOwnedSlice(self: *BcWriter) Error![]const u32	
+std.zig.llvm.bitcode_writer.BitcodeWriter().write6BitChar	parser-only	fn write6BitChar(self: *BcWriter, c: u8) Error!void	
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeBits	parser-only	fn writeBits(self: *BcWriter, value: anytype, bits: u16) Error!void	
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeBlob	parser-only	fn writeBlob(self: *BcWriter, blob: []const u8) Error!void	
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeVbr	parser-only	fn writeVbr(self: *BcWriter, value: anytype, comptime vbr_bits: usize) Error!void	
 std.zig.number_literal.parseNumberLiteral	both	fn parseNumberLiteral(bytes: []const u8) Result	fn ([]const u8) zig.number_literal.Result
 std.zig.parseCharLiteral	reflect-only		fn ([]const u8) zig.string_literal.ParsedCharLiteral
 std.zig.parseNumberLiteral	reflect-only		fn ([]const u8) zig.number_literal.Result

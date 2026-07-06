@@ -49,16 +49,17 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, 47,319 nodes / 310 files, depth 9; conservation-checked |
-| **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ 5,377 as-written fn signatures + 10,972 `///` docs, keyed by `path`; integrity-checked vs the map |
-| **fields + tags** — `fields.tsv` | `parse/walk.zig` | ✅ 30,813 struct/union fields + enum tags (`path·type·value`), 1:1 with the `field`/`tag` nodes; integrity-checked vs the map |
-| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 2,863 containers, self-checked both ways |
+| **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, 48,499 nodes / 310 files, depth 9; conservation-checked |
+| **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ 6,163 as-written fn signatures + 11,610 `///` docs, keyed by `path`; integrity-checked vs the map |
+| **fields + tags** — `fields.tsv` | `parse/walk.zig` | ✅ 31,048 struct/union fields + enum tags (`path·type·value`), 1:1 with the `field`/`tag` nodes; integrity-checked vs the map |
+| **factory descent + delegates** — `nodes.tsv` · `delegates.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); 32 delegators record their raw target; conservation-checked |
+| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 2,966 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |
 | **canon dedup/dealias** — `canon.tsv` | `scripts/build_canon.nu` | ✅ 236 paths in 100 alias/dup families (shared resolved `@typeName`); self-checked |
-| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ 23% of nodes documented (10,972 carry `///` docs); per-kind, self-checked vs map + docs overlay |
-| **signature shapes** — `sigshape.tsv` | `scripts/build_sigshape.nu` | ✅ 5,377 signatures classed by first-param / Io / generic; self-checked vs the signatures |
-| **call-card** — `callcard.tsv` | `scripts/build_callcard.nu` | ✅ sigs ⋈ resolved merge, 7,099 callables: 4,823 both / 1,722 reflect-only / 554 parser-only |
+| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ 24% of nodes documented (11,610 carry `///` docs); per-kind, self-checked vs map + docs overlay |
+| **signature shapes** — `sigshape.tsv` | `scripts/build_sigshape.nu` | ✅ 6,163 signatures classed by first-param / Io / generic; self-checked vs the signatures |
+| **call-card** — `callcard.tsv` | `scripts/build_callcard.nu` | ✅ sigs ⋈ resolved merge, 7,885 callables: 4,823 both / 1,722 reflect-only / 1,340 parser-only |
 | **cross-layer oracle** | `scripts/verify_layers.nu` | ✅ parser kinds vs **compiler** reflected kinds — 100% agree: every parser fn reflects as fn (4,823 callables), every container as type |
 | **viewer** — `docs/` site | `scripts/build_arch.nu` | ✅ generated hub + per-slice pages (index/canon/consensus/doccov/sigshape/callcard), CSS-bar charts from the `.tsv`, byte-identical on `--check`; also regenerates the markdown docs |
 | **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
@@ -84,22 +85,26 @@ a later overlay. What stays *out* of the parser is genuinely editorial: resolved
 purpose-groupings.
 
 **In the parser now:** structure (`nodes.tsv`), as-written fn signatures (`sigs.tsv`), `///` docs
-(`docs.tsv`), struct/union fields + enum tags (`fields.tsv`) — all keyed by `path`, all
+(`docs.tsv`), struct/union fields + enum tags (`fields.tsv`), type-factory members (descended
+under `<fn>()`) and delegating-factory targets (`delegates.tsv`) — all keyed by `path`, all
 integrity-checked.
 
 **Still to add to the parser (raw source facts):**
-1. **Fields — done for structs/unions/enums** ✅ (`fields.tsv`: name·type·value, `field`/`tag`
-   nodes). *Still open:* **error-set members** — `error{…}` parses as a distinct node, not a
-   container field, so its members aren't descended yet.
-2. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
+1. **Fields — done for structs/unions/enums** ✅ (`fields.tsv`). *Still open:* **error-set
+   members** — `error{…}` parses as a distinct node, not a container field, so its members aren't
+   descended yet.
+2. **Generic type factories — done for single-return + delegators** ✅ (Phase B): a `fn(…) type`
+   with one top-level `return struct {…}` is descended (`std.HashMap().get`); a delegator
+   (`return Other(args)`) records its raw target in `delegates.tsv`. *Still open:* **opaque**
+   (`@Type`/comptime-built) and **multi-branch** factories — invisible to text; need instantiated
+   reflection (Phase D).
+3. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
    `threadlocal`/`var`-vs-`const` flags. Columns on `nodes.tsv`. *(next — easy)*
-3. **Generic type factories** — `fn(...) type` returns a struct whose members (a container's real
-   API, e.g. `ArrayList.append`) live in the fn body. Descending into `return struct {…}` is the
-   next big depth win. *(Phase B)*
 
 **True organize-later (derive — never in the parser):**
-- **References / links** (was `tunnels`) — the resolved reference graph (what name resolves to
-   what). A relationship layer a "direction" the parser must not bake in. *(still to do)*
+- **References / links** (was `tunnels`) — the *resolved* reference graph (what name resolves to
+   what). A relationship layer a "direction" the parser must not bake in. *(still to do — will
+   read the parser's raw `delegates.tsv` targets and resolve them to canonical paths.)*
 - **Grouping by purpose** (clustering) — bucket the map into themes. The most editorial; last.
 - **Call-card** — ✅ **built** (`callcard.tsv`): joins the as-written signatures with the
    resolved view into one per-callable row.
@@ -108,6 +113,11 @@ integrity-checked.
 
 - [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
+- [ ] **Before the next reflect sweep**: descended factory `fn`s now carry children, so they show
+  up as containers in `index.tsv` (which `build_depth.nu` reads for targets). Reflecting a *fn*
+  (rather than a type) yields no members, so the sweep should **skip factory-`fn` targets** — real
+  factory-member resolution is Phase D (instantiate the generic, then reflect). Not urgent (the
+  reflect sweep is not rerun on a parse-only change), but must be handled before it runs again.
 
 ## Known hardening (from the 2026-06-19 adversarial audit)
 

@@ -138,6 +138,7 @@ def render [] {
         "@@N_SIGS@@":         (commafy (open data/std/sigs.tsv | length))
         "@@N_DOCS@@":         (commafy (open data/std/docs.tsv | length))
         "@@N_FIELDS@@":       (commafy (open data/std/fields.tsv | length))
+        "@@N_DELEGATES@@":    (commafy (open data/std/delegates.tsv | length))
         "@@N_FN@@":           (commafy ($nodes | where kind == "fn" | length))
         "@@N_NSREF@@":        (commafy ($nodes | where kind == "nsref" | length))
         "@@N_EDGES@@":        (commafy ($n - 1))

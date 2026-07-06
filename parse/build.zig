@@ -32,6 +32,7 @@ pub fn main(init: std.process.Init) !void {
     const sigs_out: []const u8 = if (args.len > 4) args[4] else "sigs.tsv";
     const docs_out: []const u8 = if (args.len > 5) args[5] else "docs.tsv";
     const fields_out: []const u8 = if (args.len > 6) args[6] else "fields.tsv";
+    const delegates_out: []const u8 = if (args.len > 7) args[7] else "delegates.tsv";
 
     const nodes_file = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nodes_file.close(io);
@@ -41,6 +42,8 @@ pub fn main(init: std.process.Init) !void {
     defer docs_file.close(io);
     const fields_file = try std.Io.Dir.cwd().createFile(io, fields_out, .{});
     defer fields_file.close(io);
+    const delegates_file = try std.Io.Dir.cwd().createFile(io, delegates_out, .{});
+    defer delegates_file.close(io);
 
     var nbuf: [1 << 16]u8 = undefined;
     var nfw = nodes_file.writer(io, &nbuf);
@@ -54,6 +57,9 @@ pub fn main(init: std.process.Init) !void {
     var fbuf: [1 << 16]u8 = undefined;
     var ffw = fields_file.writer(io, &fbuf);
     const fw = &ffw.interface;
+    var gbuf: [1 << 16]u8 = undefined;
+    var gfw = delegates_file.writer(io, &gbuf);
+    const gw = &gfw.interface;
 
     var visited = std.StringHashMap(void).init(arena);
     try visited.put(root_path, {});
@@ -69,12 +75,14 @@ pub fn main(init: std.process.Init) !void {
         .sigs = sw,
         .docs = dw,
         .fields = fw,
+        .delegates = gw,
     };
 
     try nw.print("path\tdepth\tkind\tname\tn_children\tdetail\n", .{});
     try sw.print("path\tsig\n", .{});
     try dw.print("path\tdoc\n", .{});
     try fw.print("path\ttype\tvalue\n", .{});
+    try gw.print("path\ttarget\n", .{});
 
     const root_logical = std.fs.path.stem(root_path); // "std"
     if (try az.parseFile(io, arena, root_path)) |root_ast_v| {
@@ -92,4 +100,5 @@ pub fn main(init: std.process.Init) !void {
     try sw.flush();
     try dw.flush();
     try fw.flush();
+    try gw.flush();
 }

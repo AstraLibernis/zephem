@@ -45,11 +45,14 @@ reproduces it, not the bytes.
 
 | dataset | what it is | built by |
 |---|---|---|
-| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, field, or enum tag, source order | `build.zig` → `walk.zig` |
+| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, field, enum tag, or **type-factory member** (pathed `<fn>()`), source order | `build.zig` → `walk.zig` |
 
-One engine, one file. The parser also emits three raw-source-fact side outputs keyed by the same
-`path` — `sigs.tsv` (5,377 as-written fn signatures), `docs.tsv` (10,972 `///` docs), and
-`fields.tsv` (30,813 struct/union fields + enum tags, as `path · type · value`).
+One engine, one file. The walk also **descends type factories**: a `fn(…) type` whose body has one
+top-level `return struct {…}` gets its produced type's members mapped under `<fn>()` (so
+`std.HashMap().get` exists, not just `std.HashMap`). The parser also emits four raw-source-fact side
+outputs keyed by the same `path` — `sigs.tsv` (6,163 as-written fn signatures), `docs.tsv`
+(11,610 `///` docs), `fields.tsv` (31,048 struct/union fields + enum tags, as
+`path · type · value`), and `delegates.tsv` (32 delegating factories → their raw target).
 (The `index.tsv` table of contents is built *from* this map by the [`../derive/`](../derive/)
 engine, not by the parser.)
 
@@ -77,8 +80,8 @@ dropped, doubled, or truncated decl breaks it and the build claims nothing.
 
 ```
 parse/
-  build.zig    # 95  ENTRY: parse a root ONCE, run the walk → nodes.tsv
-  walk.zig     # 423  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
+  build.zig    # 104  ENTRY: parse a root ONCE, run the walk → nodes.tsv
+  walk.zig     # 497  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
   ast.zig      # 140  read primitives: dirname/relPath/parseFile + parseImport/isAliasChain/
                #      findDecl/countPub/containerKindOf
 ```

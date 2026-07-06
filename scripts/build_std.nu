@@ -22,7 +22,7 @@
 #         nu scripts/build_std.nu --depth 24
 #         nu scripts/build_std.nu --check       # prove the committed snapshot rebuilds
 
-const NAMES = ["nodes.tsv" "index.tsv" "sigs.tsv" "docs.tsv" "fields.tsv"]
+const NAMES = ["nodes.tsv" "index.tsv" "sigs.tsv" "docs.tsv" "fields.tsv" "delegates.tsv"]
 
 # The active toolchain's std root. `zig env` emits ZON, not JSON — pull the path out.
 def std-root [] {
@@ -37,7 +37,7 @@ def regen [root: string, depth: int, outdir: string] {
     mkdir $outdir
     # the parser reads std once → the structural map + as-written signatures + `///` docs.
     # derive builds its TOC.
-    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/nodes.tsv" $"($outdir)/sigs.tsv" $"($outdir)/docs.tsv" $"($outdir)/fields.tsv"
+    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/nodes.tsv" $"($outdir)/sigs.tsv" $"($outdir)/docs.tsv" $"($outdir)/fields.tsv" $"($outdir)/delegates.tsv"
     (^zig run derive/index.zig -- $"($outdir)/nodes.tsv" | into string) | save -f $"($outdir)/index.tsv"
 }
 
@@ -91,7 +91,7 @@ def main [--depth: int = 24, --check] {
     print $"           rows: (($t | length))   files: (($t | where kind == 'ns' | length))   max depth: (($t | get depth | math max))"
     let it = (open data/std/index.tsv)
     print $"[index]    containers: (($it | length))   root span: (($it | get span | math max))"
-    print $"[detail]   signatures: (open data/std/sigs.tsv | length)   documented decls: (open data/std/docs.tsv | length)   fields/tags: (open data/std/fields.tsv | length)"
+    print $"[detail]   signatures: (open data/std/sigs.tsv | length)   documented decls: (open data/std/docs.tsv | length)   fields/tags: (open data/std/fields.tsv | length)   delegators: (open data/std/delegates.tsv | length)"
 
     # ---- TRUE (backward): read the data the other way; it must agree ---------
     print "[backward] re-reading the datasets — must reconcile..."

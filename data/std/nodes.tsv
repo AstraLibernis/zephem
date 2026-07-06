@@ -1949,7 +1949,11 @@ std.Io.Reader.TakeLeb128Error	3	const	TakeLeb128Error	0
 std.Io.Reader.takeLeb128	3	fn	takeLeb128	0	2
 std.Io.Reader.rebase	3	fn	rebase	0	2
 std.Io.Reader.defaultRebase	3	fn	defaultRebase	0	2
-std.Io.Reader.Hashed	3	fn	Hashed	0	1
+std.Io.Reader.Hashed	3	fn	Hashed	4	1
+std.Io.Reader.Hashed().in	4	field	in	0	
+std.Io.Reader.Hashed().hasher	4	field	hasher	0	
+std.Io.Reader.Hashed().reader	4	field	reader	0	
+std.Io.Reader.Hashed().init	4	fn	init	0	3
 std.Io.Reader.writableVectorPosix	3	fn	writableVectorPosix	0	3
 std.Io.Reader.writableVectorWsa	3	fn	writableVectorWsa	0	3
 std.Io.Reader.writableVector	3	fn	writableVector	0	3
@@ -2054,8 +2058,17 @@ std.Io.Writer.unreachableDrain	3	fn	unreachableDrain	0	3
 std.Io.Writer.unreachableRebase	3	fn	unreachableRebase	0	3
 std.Io.Writer.fromArrayList	3	fn	fromArrayList	0	1
 std.Io.Writer.toArrayList	3	fn	toArrayList	0	1
-std.Io.Writer.Hashed	3	fn	Hashed	0	1
-std.Io.Writer.Hashing	3	fn	Hashing	0	1
+std.Io.Writer.Hashed	3	fn	Hashed	5	1
+std.Io.Writer.Hashed().out	4	field	out	0	
+std.Io.Writer.Hashed().hasher	4	field	hasher	0	
+std.Io.Writer.Hashed().writer	4	field	writer	0	
+std.Io.Writer.Hashed().init	4	fn	init	0	2
+std.Io.Writer.Hashed().initHasher	4	fn	initHasher	0	3
+std.Io.Writer.Hashing	3	fn	Hashing	4	1
+std.Io.Writer.Hashing().hasher	4	field	hasher	0	
+std.Io.Writer.Hashing().writer	4	field	writer	0	
+std.Io.Writer.Hashing().init	4	fn	init	0	1
+std.Io.Writer.Hashing().initHasher	4	fn	initHasher	0	2
 std.Io.Writer.Allocating	3	struct	Allocating	21	
 std.Io.Writer.Allocating.allocator	4	field	allocator	0	
 std.Io.Writer.Allocating.writer	4	field	writer	0	
@@ -2693,7 +2706,11 @@ std.Io.File.MultiReader.Streams	4	struct	Streams	3
 std.Io.File.MultiReader.Streams.len	5	field	len	0	
 std.Io.File.MultiReader.Streams.contexts	5	fn	contexts	0	1
 std.Io.File.MultiReader.Streams.storage	5	fn	storage	0	1
-std.Io.File.MultiReader.Buffer	4	fn	Buffer	0	1
+std.Io.File.MultiReader.Buffer	4	fn	Buffer	4	1
+std.Io.File.MultiReader.Buffer().len	5	field	len	0	
+std.Io.File.MultiReader.Buffer().contexts	5	field	contexts	0	
+std.Io.File.MultiReader.Buffer().storage	5	field	storage	0	
+std.Io.File.MultiReader.Buffer().toStreams	5	fn	toStreams	0	1
 std.Io.File.MultiReader.init	4	fn	init	0	5
 std.Io.File.MultiReader.deinit	4	fn	deinit	0	1
 std.Io.File.MultiReader.fileReader	4	fn	fileReader	0	2
@@ -3125,7 +3142,11 @@ std.Io.Timeout.toDeadline	3	fn	toDeadline	0	2
 std.Io.Timeout.toDurationFromNow	3	fn	toDurationFromNow	0	2
 std.Io.Timeout.sleep	3	fn	sleep	0	2
 std.Io.AnyFuture	2	opaque	AnyFuture	0	
-std.Io.Future	2	fn	Future	0	1
+std.Io.Future	2	fn	Future	4	1
+std.Io.Future().any_future	3	field	any_future	0	
+std.Io.Future().result	3	field	result	0	
+std.Io.Future().cancel	3	fn	cancel	0	2
+std.Io.Future().await	3	fn	await	0	2
 std.Io.Group	2	struct	Group	7	
 std.Io.Group.token	3	field	token	0	
 std.Io.Group.state	3	field	state	0	
@@ -3140,7 +3161,19 @@ std.Io.CancelProtection.unblocked	3	tag	unblocked	0
 std.Io.CancelProtection.blocked	3	tag	blocked	0	
 std.Io.swapCancelProtection	2	fn	swapCancelProtection	0	2
 std.Io.checkCancel	2	fn	checkCancel	0	1
-std.Io.Select	2	fn	Select	0	1
+std.Io.Select	2	fn	Select	12	1
+std.Io.Select().io	3	field	io	0	
+std.Io.Select().group	3	field	group	0	
+std.Io.Select().queue	3	field	queue	0	
+std.Io.Select().Union	3	alias	Union	0	U
+std.Io.Select().Field	3	const	Field	0	
+std.Io.Select().init	3	fn	init	0	2
+std.Io.Select().async	3	fn	async	0	4
+std.Io.Select().concurrent	3	fn	concurrent	0	4
+std.Io.Select().await	3	fn	await	0	1
+std.Io.Select().awaitMany	3	fn	awaitMany	0	3
+std.Io.Select().cancel	3	fn	cancel	0	1
+std.Io.Select().cancelDiscard	3	fn	cancelDiscard	0	1
 std.Io.futexWait	2	fn	futexWait	0	4
 std.Io.futexWaitTimeout	2	fn	futexWaitTimeout	0	5
 std.Io.futexWaitUncancelable	2	fn	futexWaitUncancelable	0	4
@@ -3190,7 +3223,20 @@ std.Io.TypeErasedQueue.put	3	fn	put	0	4
 std.Io.TypeErasedQueue.putUncancelable	3	fn	putUncancelable	0	4
 std.Io.TypeErasedQueue.get	3	fn	get	0	4
 std.Io.TypeErasedQueue.getUncancelable	3	fn	getUncancelable	0	4
-std.Io.Queue	2	fn	Queue	0	1
+std.Io.Queue	2	fn	Queue	13	1
+std.Io.Queue().type_erased	3	field	type_erased	0	
+std.Io.Queue().init	3	fn	init	0	1
+std.Io.Queue().close	3	fn	close	0	2
+std.Io.Queue().put	3	fn	put	0	4
+std.Io.Queue().putAll	3	fn	putAll	0	3
+std.Io.Queue().putUncancelable	3	fn	putUncancelable	0	4
+std.Io.Queue().putOne	3	fn	putOne	0	3
+std.Io.Queue().putOneUncancelable	3	fn	putOneUncancelable	0	3
+std.Io.Queue().get	3	fn	get	0	4
+std.Io.Queue().getUncancelable	3	fn	getUncancelable	0	4
+std.Io.Queue().getOne	3	fn	getOne	0	2
+std.Io.Queue().getOneUncancelable	3	fn	getOneUncancelable	0	2
+std.Io.Queue().capacity	3	fn	capacity	0	1
 std.Io.async	2	fn	async	0	3
 std.Io.ConcurrentError	2	const	ConcurrentError	0	
 std.Io.concurrent	2	fn	concurrent	0	3
@@ -3497,7 +3543,12 @@ std.Random.ziggurat.exp_f	3	fn	exp_f	0	1
 std.Random.ziggurat.exp_f_inv	3	fn	exp_f_inv	0	1
 std.Random.ziggurat.exp_zero_case	3	fn	exp_zero_case	0	2
 std.Random.lcg	2	ns	lcg	1	Random/lcg.zig
-std.Random.lcg.Wrapping	3	fn	Wrapping	0	1
+std.Random.lcg.Wrapping	3	fn	Wrapping	5	1
+std.Random.lcg.Wrapping().xi	4	field	xi	0	
+std.Random.lcg.Wrapping().a	4	field	a	0	
+std.Random.lcg.Wrapping().c	4	field	c	0	
+std.Random.lcg.Wrapping().init	4	fn	init	0	3
+std.Random.lcg.Wrapping().next	4	fn	next	0	1
 std.Random.ptr	2	field	ptr	0	
 std.Random.fillFn	2	field	fillFn	0	
 std.Random.IoSource	2	struct	IoSource	2	
@@ -7020,7 +7071,11 @@ std.Target.Cpu.Feature.Set.populateDependencies	5	fn	populateDependencies	0	2
 std.Target.Cpu.Feature.Set.asBytes	5	fn	asBytes	0	1
 std.Target.Cpu.Feature.Set.eql	5	fn	eql	0	2
 std.Target.Cpu.Feature.Set.isSuperSetOf	5	fn	isSuperSetOf	0	2
-std.Target.Cpu.Feature.FeatureSetFns	4	fn	FeatureSetFns	0	1
+std.Target.Cpu.Feature.FeatureSetFns	4	fn	FeatureSetFns	4	1
+std.Target.Cpu.Feature.FeatureSetFns().featureSet	5	fn	featureSet	0	1
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHas	5	fn	featureSetHas	0	2
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAny	5	fn	featureSetHasAny	0	2
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAll	5	fn	featureSetHasAll	0	2
 std.Target.Cpu.Arch	3	enum	Arch	90	
 std.Target.Cpu.Arch.aarch64	4	tag	aarch64	0	
 std.Target.Cpu.Arch.aarch64_be	4	tag	aarch64_be	0	
@@ -7310,8 +7365,133 @@ std.StringArrayHashMapUnmanaged	1	alias	StringArrayHashMapUnmanaged	0	array_hash
 std.ArrayList	1	fn	ArrayList	0	1
 std.array_list	1	ns	array_list	3	array_list.zig
 std.array_list.Managed	2	fn	Managed	0	1
-std.array_list.AlignedManaged	2	fn	AlignedManaged	0	2
-std.array_list.Aligned	2	fn	Aligned	0	2
+std.array_list.AlignedManaged	2	fn	AlignedManaged	52	2
+std.array_list.AlignedManaged().items	3	field	items	0	
+std.array_list.AlignedManaged().capacity	3	field	capacity	0	
+std.array_list.AlignedManaged().allocator	3	field	allocator	0	
+std.array_list.AlignedManaged().Slice	3	const	Slice	0	
+std.array_list.AlignedManaged().SentinelSlice	3	fn	SentinelSlice	0	1
+std.array_list.AlignedManaged().init	3	fn	init	0	1
+std.array_list.AlignedManaged().initCapacity	3	fn	initCapacity	0	2
+std.array_list.AlignedManaged().deinit	3	fn	deinit	0	1
+std.array_list.AlignedManaged().fromOwnedSlice	3	fn	fromOwnedSlice	0	2
+std.array_list.AlignedManaged().fromOwnedSliceSentinel	3	fn	fromOwnedSliceSentinel	0	3
+std.array_list.AlignedManaged().moveToUnmanaged	3	fn	moveToUnmanaged	0	1
+std.array_list.AlignedManaged().toOwnedSlice	3	fn	toOwnedSlice	0	1
+std.array_list.AlignedManaged().toOwnedSliceSentinel	3	fn	toOwnedSliceSentinel	0	2
+std.array_list.AlignedManaged().clone	3	fn	clone	0	1
+std.array_list.AlignedManaged().insert	3	fn	insert	0	3
+std.array_list.AlignedManaged().insertAssumeCapacity	3	fn	insertAssumeCapacity	0	3
+std.array_list.AlignedManaged().addManyAt	3	fn	addManyAt	0	3
+std.array_list.AlignedManaged().addManyAtAssumeCapacity	3	fn	addManyAtAssumeCapacity	0	3
+std.array_list.AlignedManaged().insertSlice	3	fn	insertSlice	0	3
+std.array_list.AlignedManaged().replaceRange	3	fn	replaceRange	0	4
+std.array_list.AlignedManaged().replaceRangeAssumeCapacity	3	fn	replaceRangeAssumeCapacity	0	4
+std.array_list.AlignedManaged().append	3	fn	append	0	2
+std.array_list.AlignedManaged().appendAssumeCapacity	3	fn	appendAssumeCapacity	0	2
+std.array_list.AlignedManaged().orderedRemove	3	fn	orderedRemove	0	2
+std.array_list.AlignedManaged().swapRemove	3	fn	swapRemove	0	2
+std.array_list.AlignedManaged().appendSlice	3	fn	appendSlice	0	2
+std.array_list.AlignedManaged().appendSliceAssumeCapacity	3	fn	appendSliceAssumeCapacity	0	2
+std.array_list.AlignedManaged().appendUnalignedSlice	3	fn	appendUnalignedSlice	0	2
+std.array_list.AlignedManaged().appendUnalignedSliceAssumeCapacity	3	fn	appendUnalignedSliceAssumeCapacity	0	2
+std.array_list.AlignedManaged().print	3	fn	print	0	3
+std.array_list.AlignedManaged().appendNTimes	3	fn	appendNTimes	0	3
+std.array_list.AlignedManaged().appendNTimesAssumeCapacity	3	fn	appendNTimesAssumeCapacity	0	3
+std.array_list.AlignedManaged().resize	3	fn	resize	0	2
+std.array_list.AlignedManaged().shrinkAndFree	3	fn	shrinkAndFree	0	2
+std.array_list.AlignedManaged().shrinkRetainingCapacity	3	fn	shrinkRetainingCapacity	0	2
+std.array_list.AlignedManaged().clearRetainingCapacity	3	fn	clearRetainingCapacity	0	1
+std.array_list.AlignedManaged().clearAndFree	3	fn	clearAndFree	0	1
+std.array_list.AlignedManaged().ensureTotalCapacity	3	fn	ensureTotalCapacity	0	2
+std.array_list.AlignedManaged().ensureTotalCapacityPrecise	3	fn	ensureTotalCapacityPrecise	0	2
+std.array_list.AlignedManaged().ensureUnusedCapacity	3	fn	ensureUnusedCapacity	0	2
+std.array_list.AlignedManaged().expandToCapacity	3	fn	expandToCapacity	0	1
+std.array_list.AlignedManaged().addOne	3	fn	addOne	0	1
+std.array_list.AlignedManaged().addOneAssumeCapacity	3	fn	addOneAssumeCapacity	0	1
+std.array_list.AlignedManaged().addManyAsArray	3	fn	addManyAsArray	0	2
+std.array_list.AlignedManaged().addManyAsArrayAssumeCapacity	3	fn	addManyAsArrayAssumeCapacity	0	2
+std.array_list.AlignedManaged().addManyAsSlice	3	fn	addManyAsSlice	0	2
+std.array_list.AlignedManaged().addManyAsSliceAssumeCapacity	3	fn	addManyAsSliceAssumeCapacity	0	2
+std.array_list.AlignedManaged().pop	3	fn	pop	0	1
+std.array_list.AlignedManaged().allocatedSlice	3	fn	allocatedSlice	0	1
+std.array_list.AlignedManaged().unusedCapacitySlice	3	fn	unusedCapacitySlice	0	1
+std.array_list.AlignedManaged().getLast	3	fn	getLast	0	1
+std.array_list.AlignedManaged().getLastOrNull	3	fn	getLastOrNull	0	1
+std.array_list.Aligned	2	fn	Aligned	73	2
+std.array_list.Aligned().items	3	field	items	0	
+std.array_list.Aligned().capacity	3	field	capacity	0	
+std.array_list.Aligned().empty	3	const	empty	0	
+std.array_list.Aligned().Slice	3	const	Slice	0	
+std.array_list.Aligned().SentinelSlice	3	fn	SentinelSlice	0	1
+std.array_list.Aligned().initCapacity	3	fn	initCapacity	0	2
+std.array_list.Aligned().initBuffer	3	fn	initBuffer	0	1
+std.array_list.Aligned().deinit	3	fn	deinit	0	2
+std.array_list.Aligned().toManaged	3	fn	toManaged	0	2
+std.array_list.Aligned().fromOwnedSlice	3	fn	fromOwnedSlice	0	1
+std.array_list.Aligned().fromOwnedSliceSentinel	3	fn	fromOwnedSliceSentinel	0	2
+std.array_list.Aligned().toOwnedSlice	3	fn	toOwnedSlice	0	2
+std.array_list.Aligned().toOwnedSliceSentinel	3	fn	toOwnedSliceSentinel	0	3
+std.array_list.Aligned().toOwnedSliceAssert	3	fn	toOwnedSliceAssert	0	1
+std.array_list.Aligned().toOwnedSliceSentinelAssert	3	fn	toOwnedSliceSentinelAssert	0	2
+std.array_list.Aligned().clone	3	fn	clone	0	2
+std.array_list.Aligned().insert	3	fn	insert	0	4
+std.array_list.Aligned().insertAssumeCapacity	3	fn	insertAssumeCapacity	0	3
+std.array_list.Aligned().insertBounded	3	fn	insertBounded	0	3
+std.array_list.Aligned().addManyAt	3	fn	addManyAt	0	4
+std.array_list.Aligned().addManyAtAssumeCapacity	3	fn	addManyAtAssumeCapacity	0	3
+std.array_list.Aligned().addManyAtBounded	3	fn	addManyAtBounded	0	3
+std.array_list.Aligned().insertSlice	3	fn	insertSlice	0	4
+std.array_list.Aligned().insertSliceAssumeCapacity	3	fn	insertSliceAssumeCapacity	0	3
+std.array_list.Aligned().insertSliceBounded	3	fn	insertSliceBounded	0	3
+std.array_list.Aligned().replaceRange	3	fn	replaceRange	0	5
+std.array_list.Aligned().replaceRangeAssumeCapacity	3	fn	replaceRangeAssumeCapacity	0	4
+std.array_list.Aligned().replaceRangeBounded	3	fn	replaceRangeBounded	0	4
+std.array_list.Aligned().append	3	fn	append	0	3
+std.array_list.Aligned().appendAssumeCapacity	3	fn	appendAssumeCapacity	0	2
+std.array_list.Aligned().appendBounded	3	fn	appendBounded	0	2
+std.array_list.Aligned().orderedRemove	3	fn	orderedRemove	0	2
+std.array_list.Aligned().orderedRemoveMany	3	fn	orderedRemoveMany	0	2
+std.array_list.Aligned().swapRemove	3	fn	swapRemove	0	2
+std.array_list.Aligned().appendSlice	3	fn	appendSlice	0	3
+std.array_list.Aligned().appendSliceAssumeCapacity	3	fn	appendSliceAssumeCapacity	0	2
+std.array_list.Aligned().appendSliceBounded	3	fn	appendSliceBounded	0	2
+std.array_list.Aligned().appendUnalignedSlice	3	fn	appendUnalignedSlice	0	3
+std.array_list.Aligned().appendUnalignedSliceAssumeCapacity	3	fn	appendUnalignedSliceAssumeCapacity	0	2
+std.array_list.Aligned().appendUnalignedSliceBounded	3	fn	appendUnalignedSliceBounded	0	2
+std.array_list.Aligned().print	3	fn	print	0	4
+std.array_list.Aligned().printAssumeCapacity	3	fn	printAssumeCapacity	0	3
+std.array_list.Aligned().printBounded	3	fn	printBounded	0	3
+std.array_list.Aligned().appendNTimes	3	fn	appendNTimes	0	4
+std.array_list.Aligned().appendNTimesAssumeCapacity	3	fn	appendNTimesAssumeCapacity	0	3
+std.array_list.Aligned().appendNTimesBounded	3	fn	appendNTimesBounded	0	3
+std.array_list.Aligned().resize	3	fn	resize	0	3
+std.array_list.Aligned().shrinkAndFree	3	fn	shrinkAndFree	0	3
+std.array_list.Aligned().shrinkAndFreePrecise	3	fn	shrinkAndFreePrecise	0	3
+std.array_list.Aligned().shrinkToLen	3	fn	shrinkToLen	0	2
+std.array_list.Aligned().shrinkToLenSentinel	3	fn	shrinkToLenSentinel	0	2
+std.array_list.Aligned().shrinkRetainingCapacity	3	fn	shrinkRetainingCapacity	0	2
+std.array_list.Aligned().clearRetainingCapacity	3	fn	clearRetainingCapacity	0	1
+std.array_list.Aligned().clearAndFree	3	fn	clearAndFree	0	2
+std.array_list.Aligned().ensureTotalCapacity	3	fn	ensureTotalCapacity	0	3
+std.array_list.Aligned().ensureTotalCapacityPrecise	3	fn	ensureTotalCapacityPrecise	0	3
+std.array_list.Aligned().ensureUnusedCapacity	3	fn	ensureUnusedCapacity	0	3
+std.array_list.Aligned().expandToCapacity	3	fn	expandToCapacity	0	1
+std.array_list.Aligned().addOne	3	fn	addOne	0	2
+std.array_list.Aligned().addOneAssumeCapacity	3	fn	addOneAssumeCapacity	0	1
+std.array_list.Aligned().addOneBounded	3	fn	addOneBounded	0	1
+std.array_list.Aligned().addManyAsArray	3	fn	addManyAsArray	0	3
+std.array_list.Aligned().addManyAsArrayAssumeCapacity	3	fn	addManyAsArrayAssumeCapacity	0	2
+std.array_list.Aligned().addManyAsArrayBounded	3	fn	addManyAsArrayBounded	0	2
+std.array_list.Aligned().addManyAsSlice	3	fn	addManyAsSlice	0	3
+std.array_list.Aligned().addManyAsSliceAssumeCapacity	3	fn	addManyAsSliceAssumeCapacity	0	2
+std.array_list.Aligned().addManyAsSliceBounded	3	fn	addManyAsSliceBounded	0	2
+std.array_list.Aligned().pop	3	fn	pop	0	1
+std.array_list.Aligned().allocatedSlice	3	fn	allocatedSlice	0	1
+std.array_list.Aligned().unusedCapacitySlice	3	fn	unusedCapacitySlice	0	1
+std.array_list.Aligned().getLast	3	fn	getLast	0	1
+std.array_list.Aligned().getLastOrNull	3	fn	getLastOrNull	0	1
+std.array_list.Aligned().growCapacity	3	fn	growCapacity	0	1
 std.ArrayListAligned	1	alias	ArrayListAligned	0	array_list.Aligned
 std.ArrayListAlignedUnmanaged	1	alias	ArrayListAlignedUnmanaged	0	array_list.Aligned
 std.ArrayListUnmanaged	1	alias	ArrayListUnmanaged	0	ArrayList
@@ -7324,16 +7504,162 @@ std.array_hash_map.StringContext.eql	3	fn	eql	0	4
 std.array_hash_map.eqlString	2	fn	eqlString	0	2
 std.array_hash_map.hashString	2	fn	hashString	0	1
 std.array_hash_map.ArrayHashMap	2	alias	ArrayHashMap	0	Custom
-std.array_hash_map.Custom	2	fn	Custom	0	4
+std.array_hash_map.Custom	2	fn	Custom	108	4
+std.array_hash_map.Custom().entries	3	field	entries	0	
+std.array_hash_map.Custom().index_header	3	field	index_header	0	
+std.array_hash_map.Custom().pointer_stability	3	field	pointer_stability	0	
+std.array_hash_map.Custom().empty	3	const	empty	0	
+std.array_hash_map.Custom().Entry	3	struct	Entry	2	
+std.array_hash_map.Custom().Entry.key_ptr	4	field	key_ptr	0	
+std.array_hash_map.Custom().Entry.value_ptr	4	field	value_ptr	0	
+std.array_hash_map.Custom().KV	3	struct	KV	2	
+std.array_hash_map.Custom().KV.key	4	field	key	0	
+std.array_hash_map.Custom().KV.value	4	field	value	0	
+std.array_hash_map.Custom().Data	3	struct	Data	3	
+std.array_hash_map.Custom().Data.hash	4	field	hash	0	
+std.array_hash_map.Custom().Data.key	4	field	key	0	
+std.array_hash_map.Custom().Data.value	4	field	value	0	
+std.array_hash_map.Custom().DataList	3	const	DataList	0	
+std.array_hash_map.Custom().Hash	3	const	Hash	0	
+std.array_hash_map.Custom().GetOrPutResult	3	struct	GetOrPutResult	4	
+std.array_hash_map.Custom().GetOrPutResult.key_ptr	4	field	key_ptr	0	
+std.array_hash_map.Custom().GetOrPutResult.value_ptr	4	field	value_ptr	0	
+std.array_hash_map.Custom().GetOrPutResult.found_existing	4	field	found_existing	0	
+std.array_hash_map.Custom().GetOrPutResult.index	4	field	index	0	
+std.array_hash_map.Custom().init	3	fn	init	0	3
+std.array_hash_map.Custom().reinit	3	fn	reinit	0	4
+std.array_hash_map.Custom().deinit	3	fn	deinit	0	2
+std.array_hash_map.Custom().lockPointers	3	fn	lockPointers	0	1
+std.array_hash_map.Custom().unlockPointers	3	fn	unlockPointers	0	1
+std.array_hash_map.Custom().clearRetainingCapacity	3	fn	clearRetainingCapacity	0	1
+std.array_hash_map.Custom().clearAndFree	3	fn	clearAndFree	0	2
+std.array_hash_map.Custom().count	3	fn	count	0	1
+std.array_hash_map.Custom().keys	3	fn	keys	0	1
+std.array_hash_map.Custom().values	3	fn	values	0	1
+std.array_hash_map.Custom().iterator	3	fn	iterator	0	1
+std.array_hash_map.Custom().Iterator	3	struct	Iterator	6	
+std.array_hash_map.Custom().Iterator.keys	4	field	keys	0	
+std.array_hash_map.Custom().Iterator.values	4	field	values	0	
+std.array_hash_map.Custom().Iterator.len	4	field	len	0	
+std.array_hash_map.Custom().Iterator.index	4	field	index	0	
+std.array_hash_map.Custom().Iterator.next	4	fn	next	0	1
+std.array_hash_map.Custom().Iterator.reset	4	fn	reset	0	1
+std.array_hash_map.Custom().getOrPut	3	fn	getOrPut	0	3
+std.array_hash_map.Custom().getOrPutContext	3	fn	getOrPutContext	0	4
+std.array_hash_map.Custom().getOrPutAdapted	3	fn	getOrPutAdapted	0	4
+std.array_hash_map.Custom().getOrPutContextAdapted	3	fn	getOrPutContextAdapted	0	5
+std.array_hash_map.Custom().getOrPutAssumeCapacity	3	fn	getOrPutAssumeCapacity	0	2
+std.array_hash_map.Custom().getOrPutAssumeCapacityContext	3	fn	getOrPutAssumeCapacityContext	0	3
+std.array_hash_map.Custom().getOrPutAssumeCapacityAdapted	3	fn	getOrPutAssumeCapacityAdapted	0	3
+std.array_hash_map.Custom().getOrPutValue	3	fn	getOrPutValue	0	4
+std.array_hash_map.Custom().getOrPutValueContext	3	fn	getOrPutValueContext	0	5
+std.array_hash_map.Custom().ensureTotalCapacity	3	fn	ensureTotalCapacity	0	3
+std.array_hash_map.Custom().ensureTotalCapacityContext	3	fn	ensureTotalCapacityContext	0	4
+std.array_hash_map.Custom().ensureUnusedCapacity	3	fn	ensureUnusedCapacity	0	3
+std.array_hash_map.Custom().ensureUnusedCapacityContext	3	fn	ensureUnusedCapacityContext	0	4
+std.array_hash_map.Custom().capacity	3	fn	capacity	0	1
+std.array_hash_map.Custom().put	3	fn	put	0	4
+std.array_hash_map.Custom().putContext	3	fn	putContext	0	5
+std.array_hash_map.Custom().putNoClobber	3	fn	putNoClobber	0	4
+std.array_hash_map.Custom().putNoClobberContext	3	fn	putNoClobberContext	0	5
+std.array_hash_map.Custom().putAssumeCapacity	3	fn	putAssumeCapacity	0	3
+std.array_hash_map.Custom().putAssumeCapacityContext	3	fn	putAssumeCapacityContext	0	4
+std.array_hash_map.Custom().putAssumeCapacityNoClobber	3	fn	putAssumeCapacityNoClobber	0	3
+std.array_hash_map.Custom().putAssumeCapacityNoClobberContext	3	fn	putAssumeCapacityNoClobberContext	0	4
+std.array_hash_map.Custom().fetchPut	3	fn	fetchPut	0	4
+std.array_hash_map.Custom().fetchPutContext	3	fn	fetchPutContext	0	5
+std.array_hash_map.Custom().fetchPutAssumeCapacity	3	fn	fetchPutAssumeCapacity	0	3
+std.array_hash_map.Custom().fetchPutAssumeCapacityContext	3	fn	fetchPutAssumeCapacityContext	0	4
+std.array_hash_map.Custom().getEntry	3	fn	getEntry	0	2
+std.array_hash_map.Custom().getEntryContext	3	fn	getEntryContext	0	3
+std.array_hash_map.Custom().getEntryAdapted	3	fn	getEntryAdapted	0	3
+std.array_hash_map.Custom().getIndex	3	fn	getIndex	0	2
+std.array_hash_map.Custom().getIndexContext	3	fn	getIndexContext	0	3
+std.array_hash_map.Custom().getIndexAdapted	3	fn	getIndexAdapted	0	3
+std.array_hash_map.Custom().get	3	fn	get	0	2
+std.array_hash_map.Custom().getContext	3	fn	getContext	0	3
+std.array_hash_map.Custom().getAdapted	3	fn	getAdapted	0	3
+std.array_hash_map.Custom().getPtr	3	fn	getPtr	0	2
+std.array_hash_map.Custom().getPtrContext	3	fn	getPtrContext	0	3
+std.array_hash_map.Custom().getPtrAdapted	3	fn	getPtrAdapted	0	3
+std.array_hash_map.Custom().getKey	3	fn	getKey	0	2
+std.array_hash_map.Custom().getKeyContext	3	fn	getKeyContext	0	3
+std.array_hash_map.Custom().getKeyAdapted	3	fn	getKeyAdapted	0	3
+std.array_hash_map.Custom().getKeyPtr	3	fn	getKeyPtr	0	2
+std.array_hash_map.Custom().getKeyPtrContext	3	fn	getKeyPtrContext	0	3
+std.array_hash_map.Custom().getKeyPtrAdapted	3	fn	getKeyPtrAdapted	0	3
+std.array_hash_map.Custom().contains	3	fn	contains	0	2
+std.array_hash_map.Custom().containsContext	3	fn	containsContext	0	3
+std.array_hash_map.Custom().containsAdapted	3	fn	containsAdapted	0	3
+std.array_hash_map.Custom().fetchSwapRemove	3	fn	fetchSwapRemove	0	2
+std.array_hash_map.Custom().fetchSwapRemoveContext	3	fn	fetchSwapRemoveContext	0	3
+std.array_hash_map.Custom().fetchSwapRemoveAdapted	3	fn	fetchSwapRemoveAdapted	0	3
+std.array_hash_map.Custom().fetchSwapRemoveContextAdapted	3	fn	fetchSwapRemoveContextAdapted	0	4
+std.array_hash_map.Custom().fetchOrderedRemove	3	fn	fetchOrderedRemove	0	2
+std.array_hash_map.Custom().fetchOrderedRemoveContext	3	fn	fetchOrderedRemoveContext	0	3
+std.array_hash_map.Custom().fetchOrderedRemoveAdapted	3	fn	fetchOrderedRemoveAdapted	0	3
+std.array_hash_map.Custom().fetchOrderedRemoveContextAdapted	3	fn	fetchOrderedRemoveContextAdapted	0	4
+std.array_hash_map.Custom().swapRemove	3	fn	swapRemove	0	2
+std.array_hash_map.Custom().swapRemoveContext	3	fn	swapRemoveContext	0	3
+std.array_hash_map.Custom().swapRemoveAdapted	3	fn	swapRemoveAdapted	0	3
+std.array_hash_map.Custom().swapRemoveContextAdapted	3	fn	swapRemoveContextAdapted	0	4
+std.array_hash_map.Custom().orderedRemove	3	fn	orderedRemove	0	2
+std.array_hash_map.Custom().orderedRemoveContext	3	fn	orderedRemoveContext	0	3
+std.array_hash_map.Custom().orderedRemoveAdapted	3	fn	orderedRemoveAdapted	0	3
+std.array_hash_map.Custom().orderedRemoveContextAdapted	3	fn	orderedRemoveContextAdapted	0	4
+std.array_hash_map.Custom().swapRemoveAt	3	fn	swapRemoveAt	0	2
+std.array_hash_map.Custom().swapRemoveAtContext	3	fn	swapRemoveAtContext	0	3
+std.array_hash_map.Custom().orderedRemoveAt	3	fn	orderedRemoveAt	0	2
+std.array_hash_map.Custom().orderedRemoveAtContext	3	fn	orderedRemoveAtContext	0	3
+std.array_hash_map.Custom().orderedRemoveAtMany	3	fn	orderedRemoveAtMany	0	3
+std.array_hash_map.Custom().orderedRemoveAtManyContext	3	fn	orderedRemoveAtManyContext	0	4
+std.array_hash_map.Custom().clone	3	fn	clone	0	2
+std.array_hash_map.Custom().cloneContext	3	fn	cloneContext	0	3
+std.array_hash_map.Custom().move	3	fn	move	0	1
+std.array_hash_map.Custom().reIndex	3	fn	reIndex	0	2
+std.array_hash_map.Custom().reIndexContext	3	fn	reIndexContext	0	3
+std.array_hash_map.Custom().setKey	3	fn	setKey	0	4
+std.array_hash_map.Custom().setKeyContext	3	fn	setKeyContext	0	5
+std.array_hash_map.Custom().sort	3	fn	sort	0	2
+std.array_hash_map.Custom().sortUnstable	3	fn	sortUnstable	0	2
+std.array_hash_map.Custom().sortContext	3	fn	sortContext	0	3
+std.array_hash_map.Custom().sortUnstableContext	3	fn	sortUnstableContext	0	3
+std.array_hash_map.Custom().shrinkRetainingCapacity	3	fn	shrinkRetainingCapacity	0	2
+std.array_hash_map.Custom().shrinkRetainingCapacityContext	3	fn	shrinkRetainingCapacityContext	0	3
+std.array_hash_map.Custom().shrinkAndFree	3	fn	shrinkAndFree	0	3
+std.array_hash_map.Custom().shrinkAndFreeContext	3	fn	shrinkAndFreeContext	0	4
+std.array_hash_map.Custom().pop	3	fn	pop	0	1
+std.array_hash_map.Custom().popContext	3	fn	popContext	0	2
 std.array_hash_map.getHashPtrAddrFn	2	fn	getHashPtrAddrFn	0	2
 std.array_hash_map.getTrivialEqlFn	2	fn	getTrivialEqlFn	0	2
-std.array_hash_map.AutoContext	2	fn	AutoContext	0	1
+std.array_hash_map.AutoContext	2	fn	AutoContext	2	1
+std.array_hash_map.AutoContext().hash	3	const	hash	0	
+std.array_hash_map.AutoContext().eql	3	const	eql	0	
 std.array_hash_map.getAutoHashFn	2	fn	getAutoHashFn	0	2
 std.array_hash_map.getAutoEqlFn	2	fn	getAutoEqlFn	0	2
 std.array_hash_map.autoEqlIsCheap	2	fn	autoEqlIsCheap	0	1
 std.array_hash_map.getAutoHashStratFn	2	fn	getAutoHashStratFn	0	3
 std.atomic	1	ns	atomic	5	atomic.zig
-std.atomic.Value	2	fn	Value	0	1
+std.atomic.Value	2	fn	Value	19	1
+std.atomic.Value().raw	3	field	raw	0	
+std.atomic.Value().init	3	fn	init	0	1
+std.atomic.Value().load	3	fn	load	0	2
+std.atomic.Value().store	3	fn	store	0	3
+std.atomic.Value().swap	3	fn	swap	0	3
+std.atomic.Value().cmpxchgWeak	3	fn	cmpxchgWeak	0	5
+std.atomic.Value().cmpxchgStrong	3	fn	cmpxchgStrong	0	5
+std.atomic.Value().fetchAdd	3	fn	fetchAdd	0	3
+std.atomic.Value().fetchSub	3	fn	fetchSub	0	3
+std.atomic.Value().fetchMin	3	fn	fetchMin	0	3
+std.atomic.Value().fetchMax	3	fn	fetchMax	0	3
+std.atomic.Value().fetchAnd	3	fn	fetchAnd	0	3
+std.atomic.Value().fetchNand	3	fn	fetchNand	0	3
+std.atomic.Value().fetchXor	3	fn	fetchXor	0	3
+std.atomic.Value().fetchOr	3	fn	fetchOr	0	3
+std.atomic.Value().rmw	3	fn	rmw	0	4
+std.atomic.Value().bitSet	3	fn	bitSet	0	3
+std.atomic.Value().bitReset	3	fn	bitReset	0	3
+std.atomic.Value().bitToggle	3	fn	bitToggle	0	3
 std.atomic.spinLoopHint	2	fn	spinLoopHint	0	0
 std.atomic.cacheLineForCpu	2	fn	cacheLineForCpu	0	1
 std.atomic.cache_line	2	const	cache_line	0	
@@ -7379,8 +7705,75 @@ std.base64.Base64DecoderWithIgnore.calcSizeUpperBound	3	fn	calcSizeUpperBound	0	
 std.base64.Base64DecoderWithIgnore.decode	3	fn	decode	0	3
 std.bit_set	1	ns	bit_set	7	bit_set.zig
 std.bit_set.StaticBitSet	2	fn	StaticBitSet	0	1
-std.bit_set.IntegerBitSet	2	fn	IntegerBitSet	0	1
-std.bit_set.ArrayBitSet	2	fn	ArrayBitSet	0	2
+std.bit_set.IntegerBitSet	2	fn	IntegerBitSet	33	1
+std.bit_set.IntegerBitSet().bit_length	3	alias	bit_length	0	size
+std.bit_set.IntegerBitSet().MaskInt	3	const	MaskInt	0	
+std.bit_set.IntegerBitSet().ShiftInt	3	const	ShiftInt	0	
+std.bit_set.IntegerBitSet().mask	3	field	mask	0	
+std.bit_set.IntegerBitSet().initEmpty	3	fn	initEmpty	0	0
+std.bit_set.IntegerBitSet().initFull	3	fn	initFull	0	0
+std.bit_set.IntegerBitSet().empty	3	const	empty	0	
+std.bit_set.IntegerBitSet().full	3	const	full	0	
+std.bit_set.IntegerBitSet().capacity	3	fn	capacity	0	1
+std.bit_set.IntegerBitSet().isSet	3	fn	isSet	0	2
+std.bit_set.IntegerBitSet().count	3	fn	count	0	1
+std.bit_set.IntegerBitSet().setValue	3	fn	setValue	0	3
+std.bit_set.IntegerBitSet().set	3	fn	set	0	2
+std.bit_set.IntegerBitSet().setRangeValue	3	fn	setRangeValue	0	3
+std.bit_set.IntegerBitSet().unset	3	fn	unset	0	2
+std.bit_set.IntegerBitSet().toggle	3	fn	toggle	0	2
+std.bit_set.IntegerBitSet().toggleSet	3	fn	toggleSet	0	2
+std.bit_set.IntegerBitSet().toggleAll	3	fn	toggleAll	0	1
+std.bit_set.IntegerBitSet().setUnion	3	fn	setUnion	0	2
+std.bit_set.IntegerBitSet().setIntersection	3	fn	setIntersection	0	2
+std.bit_set.IntegerBitSet().findFirstSet	3	fn	findFirstSet	0	1
+std.bit_set.IntegerBitSet().findLastSet	3	fn	findLastSet	0	1
+std.bit_set.IntegerBitSet().toggleFirstSet	3	fn	toggleFirstSet	0	1
+std.bit_set.IntegerBitSet().eql	3	fn	eql	0	2
+std.bit_set.IntegerBitSet().subsetOf	3	fn	subsetOf	0	2
+std.bit_set.IntegerBitSet().supersetOf	3	fn	supersetOf	0	2
+std.bit_set.IntegerBitSet().complement	3	fn	complement	0	1
+std.bit_set.IntegerBitSet().unionWith	3	fn	unionWith	0	2
+std.bit_set.IntegerBitSet().intersectWith	3	fn	intersectWith	0	2
+std.bit_set.IntegerBitSet().xorWith	3	fn	xorWith	0	2
+std.bit_set.IntegerBitSet().differenceWith	3	fn	differenceWith	0	2
+std.bit_set.IntegerBitSet().iterator	3	fn	iterator	0	2
+std.bit_set.IntegerBitSet().Iterator	3	fn	Iterator	0	1
+std.bit_set.ArrayBitSet	2	fn	ArrayBitSet	34	2
+std.bit_set.ArrayBitSet().bit_length	3	alias	bit_length	0	size
+std.bit_set.ArrayBitSet().MaskInt	3	alias	MaskInt	0	MaskIntType
+std.bit_set.ArrayBitSet().ShiftInt	3	const	ShiftInt	0	
+std.bit_set.ArrayBitSet().last_item_mask	3	const	last_item_mask	0	
+std.bit_set.ArrayBitSet().masks	3	field	masks	0	
+std.bit_set.ArrayBitSet().initEmpty	3	fn	initEmpty	0	0
+std.bit_set.ArrayBitSet().initFull	3	fn	initFull	0	0
+std.bit_set.ArrayBitSet().empty	3	const	empty	0	
+std.bit_set.ArrayBitSet().full	3	const	full	0	
+std.bit_set.ArrayBitSet().capacity	3	fn	capacity	0	1
+std.bit_set.ArrayBitSet().isSet	3	fn	isSet	0	2
+std.bit_set.ArrayBitSet().count	3	fn	count	0	1
+std.bit_set.ArrayBitSet().setValue	3	fn	setValue	0	3
+std.bit_set.ArrayBitSet().set	3	fn	set	0	2
+std.bit_set.ArrayBitSet().setRangeValue	3	fn	setRangeValue	0	3
+std.bit_set.ArrayBitSet().unset	3	fn	unset	0	2
+std.bit_set.ArrayBitSet().toggle	3	fn	toggle	0	2
+std.bit_set.ArrayBitSet().toggleSet	3	fn	toggleSet	0	2
+std.bit_set.ArrayBitSet().toggleAll	3	fn	toggleAll	0	1
+std.bit_set.ArrayBitSet().setUnion	3	fn	setUnion	0	2
+std.bit_set.ArrayBitSet().setIntersection	3	fn	setIntersection	0	2
+std.bit_set.ArrayBitSet().findFirstSet	3	fn	findFirstSet	0	1
+std.bit_set.ArrayBitSet().findLastSet	3	fn	findLastSet	0	1
+std.bit_set.ArrayBitSet().toggleFirstSet	3	fn	toggleFirstSet	0	1
+std.bit_set.ArrayBitSet().eql	3	fn	eql	0	2
+std.bit_set.ArrayBitSet().subsetOf	3	fn	subsetOf	0	2
+std.bit_set.ArrayBitSet().supersetOf	3	fn	supersetOf	0	2
+std.bit_set.ArrayBitSet().complement	3	fn	complement	0	1
+std.bit_set.ArrayBitSet().unionWith	3	fn	unionWith	0	2
+std.bit_set.ArrayBitSet().intersectWith	3	fn	intersectWith	0	2
+std.bit_set.ArrayBitSet().xorWith	3	fn	xorWith	0	2
+std.bit_set.ArrayBitSet().differenceWith	3	fn	differenceWith	0	2
+std.bit_set.ArrayBitSet().iterator	3	fn	iterator	0	2
+std.bit_set.ArrayBitSet().Iterator	3	fn	Iterator	0	1
 std.bit_set.DynamicBitSetUnmanaged	2	struct	DynamicBitSetUnmanaged	31	
 std.bit_set.DynamicBitSetUnmanaged.MaskInt	3	alias	MaskInt	0	usize
 std.bit_set.DynamicBitSetUnmanaged.ShiftInt	3	const	ShiftInt	0	
@@ -9420,7 +9813,11 @@ std.compress.lzma.Decode.CircularBuffer.appendLiteral	5	fn	appendLiteral	0	4
 std.compress.lzma.Decode.CircularBuffer.appendLz	5	fn	appendLz	0	5
 std.compress.lzma.Decode.CircularBuffer.finish	5	fn	finish	0	2
 std.compress.lzma.Decode.CircularBuffer.deinit	5	fn	deinit	0	2
-std.compress.lzma.Decode.BitTree	4	fn	BitTree	0	1
+std.compress.lzma.Decode.BitTree	4	fn	BitTree	4	1
+std.compress.lzma.Decode.BitTree().probs	5	field	probs	0	
+std.compress.lzma.Decode.BitTree().parse	5	fn	parse	0	4
+std.compress.lzma.Decode.BitTree().parseReverse	5	fn	parseReverse	0	4
+std.compress.lzma.Decode.BitTree().reset	5	fn	reset	0	1
 std.compress.lzma.Decode.LenDecoder	4	struct	LenDecoder	7	
 std.compress.lzma.Decode.LenDecoder.choice	5	field	choice	0	
 std.compress.lzma.Decode.LenDecoder.choice2	5	field	choice2	0	
@@ -9688,7 +10085,25 @@ std.static_string_map	1	ns	static_string_map	4	static_string_map.zig
 std.static_string_map.StaticStringMap	2	fn	StaticStringMap	0	1
 std.static_string_map.defaultEql	2	fn	defaultEql	0	2
 std.static_string_map.eqlAsciiIgnoreCase	2	fn	eqlAsciiIgnoreCase	0	2
-std.static_string_map.StaticStringMapWithEql	2	fn	StaticStringMapWithEql	0	2
+std.static_string_map.StaticStringMapWithEql	2	fn	StaticStringMapWithEql	16	2
+std.static_string_map.StaticStringMapWithEql().kvs	3	field	kvs	0	
+std.static_string_map.StaticStringMapWithEql().len_indexes	3	field	len_indexes	0	
+std.static_string_map.StaticStringMapWithEql().len_indexes_len	3	field	len_indexes_len	0	
+std.static_string_map.StaticStringMapWithEql().min_len	3	field	min_len	0	
+std.static_string_map.StaticStringMapWithEql().max_len	3	field	max_len	0	
+std.static_string_map.StaticStringMapWithEql().KV	3	struct	KV	2	
+std.static_string_map.StaticStringMapWithEql().KV.key	4	field	key	0	
+std.static_string_map.StaticStringMapWithEql().KV.value	4	field	value	0	
+std.static_string_map.StaticStringMapWithEql().initComptime	3	fn	initComptime	0	1
+std.static_string_map.StaticStringMapWithEql().init	3	fn	init	0	2
+std.static_string_map.StaticStringMapWithEql().deinit	3	fn	deinit	0	2
+std.static_string_map.StaticStringMapWithEql().has	3	fn	has	0	2
+std.static_string_map.StaticStringMapWithEql().get	3	fn	get	0	2
+std.static_string_map.StaticStringMapWithEql().getIndex	3	fn	getIndex	0	2
+std.static_string_map.StaticStringMapWithEql().getLongestPrefix	3	fn	getLongestPrefix	0	2
+std.static_string_map.StaticStringMapWithEql().getLongestPrefixIndex	3	fn	getLongestPrefixIndex	0	2
+std.static_string_map.StaticStringMapWithEql().keys	3	fn	keys	0	1
+std.static_string_map.StaticStringMapWithEql().values	3	fn	values	0	1
 std.crypto	1	ns	crypto	22	crypto.zig
 std.crypto.timing_safe	2	ns	timing_safe	6	crypto/timing_safe.zig
 std.crypto.timing_safe.eql	3	fn	eql	0	3
@@ -9769,7 +10184,16 @@ std.crypto.auth.hmac.sha2.HmacSha224	5	const	HmacSha224	0
 std.crypto.auth.hmac.sha2.HmacSha256	5	const	HmacSha256	0	
 std.crypto.auth.hmac.sha2.HmacSha384	5	const	HmacSha384	0	
 std.crypto.auth.hmac.sha2.HmacSha512	5	const	HmacSha512	0	
-std.crypto.auth.hmac.Hmac	4	fn	Hmac	0	1
+std.crypto.auth.hmac.Hmac	4	fn	Hmac	9	1
+std.crypto.auth.hmac.Hmac().mac_length	5	alias	mac_length	0	Hash.digest_length
+std.crypto.auth.hmac.Hmac().key_length_min	5	const	key_length_min	0	
+std.crypto.auth.hmac.Hmac().key_length	5	alias	key_length	0	mac_length
+std.crypto.auth.hmac.Hmac().o_key_pad	5	field	o_key_pad	0	
+std.crypto.auth.hmac.Hmac().hash	5	field	hash	0	
+std.crypto.auth.hmac.Hmac().create	5	fn	create	0	3
+std.crypto.auth.hmac.Hmac().init	5	fn	init	0	1
+std.crypto.auth.hmac.Hmac().update	5	fn	update	0	2
+std.crypto.auth.hmac.Hmac().final	5	fn	final	0	2
 std.crypto.auth.siphash	3	ns	siphash	2	crypto/siphash.zig
 std.crypto.auth.siphash.SipHash64	4	fn	SipHash64	0	2
 std.crypto.auth.siphash.SipHash128	4	fn	SipHash128	0	2
@@ -9788,10 +10212,32 @@ std.crypto.auth.aegis.Aegis256X2Mac_128	4	alias	Aegis256X2Mac_128	0	variants.Aeg
 std.crypto.auth.aegis.Aegis256Mac_128	4	alias	Aegis256Mac_128	0	variants.Aegis256Mac_128
 std.crypto.auth.cmac	3	ns	cmac	2	crypto/cmac.zig
 std.crypto.auth.cmac.CmacAes128	4	const	CmacAes128	0	
-std.crypto.auth.cmac.Cmac	4	fn	Cmac	0	1
+std.crypto.auth.cmac.Cmac	4	fn	Cmac	12	1
+std.crypto.auth.cmac.Cmac().key_length	5	const	key_length	0	
+std.crypto.auth.cmac.Cmac().block_length	5	alias	block_length	0	BlockCipher.block.block_length
+std.crypto.auth.cmac.Cmac().mac_length	5	alias	mac_length	0	block_length
+std.crypto.auth.cmac.Cmac().cipher_ctx	5	field	cipher_ctx	0	
+std.crypto.auth.cmac.Cmac().k1	5	field	k1	0	
+std.crypto.auth.cmac.Cmac().k2	5	field	k2	0	
+std.crypto.auth.cmac.Cmac().buf	5	field	buf	0	
+std.crypto.auth.cmac.Cmac().pos	5	field	pos	0	
+std.crypto.auth.cmac.Cmac().create	5	fn	create	0	3
+std.crypto.auth.cmac.Cmac().init	5	fn	init	0	1
+std.crypto.auth.cmac.Cmac().update	5	fn	update	0	2
+std.crypto.auth.cmac.Cmac().final	5	fn	final	0	2
 std.crypto.auth.cbc_mac	3	ns	cbc_mac	2	crypto/cbc_mac.zig
 std.crypto.auth.cbc_mac.CbcMacAes128	4	const	CbcMacAes128	0	
-std.crypto.auth.cbc_mac.CbcMac	4	fn	CbcMac	0	1
+std.crypto.auth.cbc_mac.CbcMac	4	fn	CbcMac	10	1
+std.crypto.auth.cbc_mac.CbcMac().key_length	5	const	key_length	0	
+std.crypto.auth.cbc_mac.CbcMac().block_length	5	alias	block_length	0	BlockCipher.block.block_length
+std.crypto.auth.cbc_mac.CbcMac().mac_length	5	alias	mac_length	0	block_length
+std.crypto.auth.cbc_mac.CbcMac().cipher_ctx	5	field	cipher_ctx	0	
+std.crypto.auth.cbc_mac.CbcMac().buf	5	field	buf	0	
+std.crypto.auth.cbc_mac.CbcMac().pos	5	field	pos	0	
+std.crypto.auth.cbc_mac.CbcMac().create	5	fn	create	0	3
+std.crypto.auth.cbc_mac.CbcMac().init	5	fn	init	0	1
+std.crypto.auth.cbc_mac.CbcMac().update	5	fn	update	0	2
+std.crypto.auth.cbc_mac.CbcMac().final	5	fn	final	0	2
 std.crypto.core	2	struct	core	4	
 std.crypto.core.aes	3	ns	aes	7	crypto/aes.zig
 std.crypto.core.aes.has_hardware_support	4	const	has_hardware_support	0	
@@ -9802,8 +10248,36 @@ std.crypto.core.aes.AesDecryptCtx	4	alias	AesDecryptCtx	0	impl.AesDecryptCtx
 std.crypto.core.aes.Aes128	4	alias	Aes128	0	impl.Aes128
 std.crypto.core.aes.Aes256	4	alias	Aes256	0	impl.Aes256
 std.crypto.core.keccak	3	ns	keccak	2	crypto/keccak_p.zig
-std.crypto.core.keccak.KeccakF	4	fn	KeccakF	0	1
-std.crypto.core.keccak.State	4	fn	State	0	3
+std.crypto.core.keccak.KeccakF	4	fn	KeccakF	15	1
+std.crypto.core.keccak.KeccakF().block_bytes	5	const	block_bytes	0	
+std.crypto.core.keccak.KeccakF().max_rounds	5	const	max_rounds	0	
+std.crypto.core.keccak.KeccakF().st	5	field	st	0	
+std.crypto.core.keccak.KeccakF().init	5	fn	init	0	1
+std.crypto.core.keccak.KeccakF().asBytes	5	fn	asBytes	0	1
+std.crypto.core.keccak.KeccakF().endianSwap	5	fn	endianSwap	0	1
+std.crypto.core.keccak.KeccakF().setBytes	5	fn	setBytes	0	2
+std.crypto.core.keccak.KeccakF().addByte	5	fn	addByte	0	3
+std.crypto.core.keccak.KeccakF().addBytes	5	fn	addBytes	0	2
+std.crypto.core.keccak.KeccakF().extractBytes	5	fn	extractBytes	0	2
+std.crypto.core.keccak.KeccakF().xorBytes	5	fn	xorBytes	0	3
+std.crypto.core.keccak.KeccakF().clear	5	fn	clear	0	3
+std.crypto.core.keccak.KeccakF().secureZero	5	fn	secureZero	0	1
+std.crypto.core.keccak.KeccakF().permuteR	5	fn	permuteR	0	2
+std.crypto.core.keccak.KeccakF().permute	5	fn	permute	0	1
+std.crypto.core.keccak.State	4	fn	State	13	3
+std.crypto.core.keccak.State().rate	5	const	rate	0	
+std.crypto.core.keccak.State().Options	5	struct	Options	0	
+std.crypto.core.keccak.State().delim	5	field	delim	0	
+std.crypto.core.keccak.State().offset	5	field	offset	0	
+std.crypto.core.keccak.State().buf	5	field	buf	0	
+std.crypto.core.keccak.State().st	5	field	st	0	
+std.crypto.core.keccak.State().transition	5	field	transition	0	
+std.crypto.core.keccak.State().absorb	5	fn	absorb	0	2
+std.crypto.core.keccak.State().init	5	fn	init	0	2
+std.crypto.core.keccak.State().permute	5	fn	permute	0	1
+std.crypto.core.keccak.State().fillBlock	5	fn	fillBlock	0	1
+std.crypto.core.keccak.State().pad	5	fn	pad	0	1
+std.crypto.core.keccak.State().squeeze	5	fn	squeeze	0	2
 std.crypto.core.Ascon	3	fn	Ascon	0	1
 std.crypto.core.modes	3	ns	modes	2	crypto/modes.zig
 std.crypto.core.modes.ctr	4	fn	ctr	0	6
@@ -9914,7 +10388,30 @@ std.crypto.kem.hybrid.Params.Ndk	5	field	Ndk	0
 std.crypto.kem.hybrid.Params.Nct	5	field	Nct	0	
 std.crypto.kem.hybrid.Params.Nss	5	field	Nss	0	
 std.crypto.kem.hybrid.Params.Xof	5	field	Xof	0	
-std.crypto.kem.hybrid.HybridKem	4	fn	HybridKem	0	1
+std.crypto.kem.hybrid.HybridKem	4	fn	HybridKem	4	1
+std.crypto.kem.hybrid.HybridKem().PublicKey	5	struct	PublicKey	6	
+std.crypto.kem.hybrid.HybridKem().PublicKey.bytes	6	field	bytes	0	
+std.crypto.kem.hybrid.HybridKem().PublicKey.encoded_length	6	alias	encoded_length	0	params.Nek
+std.crypto.kem.hybrid.HybridKem().PublicKey.toBytes	6	fn	toBytes	0	1
+std.crypto.kem.hybrid.HybridKem().PublicKey.fromBytes	6	fn	fromBytes	0	1
+std.crypto.kem.hybrid.HybridKem().PublicKey.encaps	6	fn	encaps	0	2
+std.crypto.kem.hybrid.HybridKem().PublicKey.encapsDeterministic	6	fn	encapsDeterministic	0	2
+std.crypto.kem.hybrid.HybridKem().SecretKey	5	struct	SecretKey	5	
+std.crypto.kem.hybrid.HybridKem().SecretKey.seed	6	field	seed	0	
+std.crypto.kem.hybrid.HybridKem().SecretKey.encoded_length	6	alias	encoded_length	0	params.Ndk
+std.crypto.kem.hybrid.HybridKem().SecretKey.toBytes	6	fn	toBytes	0	1
+std.crypto.kem.hybrid.HybridKem().SecretKey.fromBytes	6	fn	fromBytes	0	1
+std.crypto.kem.hybrid.HybridKem().SecretKey.decaps	6	fn	decaps	0	2
+std.crypto.kem.hybrid.HybridKem().KeyPair	5	struct	KeyPair	4	
+std.crypto.kem.hybrid.HybridKem().KeyPair.public_key	6	field	public_key	0	
+std.crypto.kem.hybrid.HybridKem().KeyPair.secret_key	6	field	secret_key	0	
+std.crypto.kem.hybrid.HybridKem().KeyPair.generateDeterministic	6	fn	generateDeterministic	0	1
+std.crypto.kem.hybrid.HybridKem().KeyPair.generate	6	fn	generate	0	1
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret	5	struct	EncapsulatedSecret	4	
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.shared_length	6	alias	shared_length	0	params.Nss
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.ciphertext_length	6	alias	ciphertext_length	0	params.Nct
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.shared_secret	6	field	shared_secret	0	
+std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret.ciphertext	6	field	ciphertext	0	
 std.crypto.kem.kyber_d00	3	struct	kyber_d00	3	
 std.crypto.kem.kyber_d00.Kyber512	4	const	Kyber512	0	
 std.crypto.kem.kyber_d00.Kyber768	4	const	Kyber768	0	
@@ -10322,13 +10819,49 @@ std.crypto.hash.blake2.Blake2s128	4	const	Blake2s128	0
 std.crypto.hash.blake2.Blake2s160	4	const	Blake2s160	0	
 std.crypto.hash.blake2.Blake2s224	4	const	Blake2s224	0	
 std.crypto.hash.blake2.Blake2s256	4	const	Blake2s256	0	
-std.crypto.hash.blake2.Blake2s	4	fn	Blake2s	0	1
+std.crypto.hash.blake2.Blake2s	4	fn	Blake2s	14	1
+std.crypto.hash.blake2.Blake2s().block_length	5	const	block_length	0	
+std.crypto.hash.blake2.Blake2s().digest_length	5	const	digest_length	0	
+std.crypto.hash.blake2.Blake2s().key_length_min	5	const	key_length_min	0	
+std.crypto.hash.blake2.Blake2s().key_length_max	5	const	key_length_max	0	
+std.crypto.hash.blake2.Blake2s().key_length	5	const	key_length	0	
+std.crypto.hash.blake2.Blake2s().Options	5	struct	Options	4	
+std.crypto.hash.blake2.Blake2s().Options.key	6	field	key	0	
+std.crypto.hash.blake2.Blake2s().Options.salt	6	field	salt	0	
+std.crypto.hash.blake2.Blake2s().Options.context	6	field	context	0	
+std.crypto.hash.blake2.Blake2s().Options.expected_out_bits	6	field	expected_out_bits	0	
+std.crypto.hash.blake2.Blake2s().h	5	field	h	0	
+std.crypto.hash.blake2.Blake2s().t	5	field	t	0	
+std.crypto.hash.blake2.Blake2s().buf	5	field	buf	0	
+std.crypto.hash.blake2.Blake2s().buf_len	5	field	buf_len	0	
+std.crypto.hash.blake2.Blake2s().init	5	fn	init	0	1
+std.crypto.hash.blake2.Blake2s().hash	5	fn	hash	0	3
+std.crypto.hash.blake2.Blake2s().update	5	fn	update	0	2
+std.crypto.hash.blake2.Blake2s().final	5	fn	final	0	2
 std.crypto.hash.blake2.Blake2b128	4	const	Blake2b128	0	
 std.crypto.hash.blake2.Blake2b160	4	const	Blake2b160	0	
 std.crypto.hash.blake2.Blake2b256	4	const	Blake2b256	0	
 std.crypto.hash.blake2.Blake2b384	4	const	Blake2b384	0	
 std.crypto.hash.blake2.Blake2b512	4	const	Blake2b512	0	
-std.crypto.hash.blake2.Blake2b	4	fn	Blake2b	0	1
+std.crypto.hash.blake2.Blake2b	4	fn	Blake2b	14	1
+std.crypto.hash.blake2.Blake2b().block_length	5	const	block_length	0	
+std.crypto.hash.blake2.Blake2b().digest_length	5	const	digest_length	0	
+std.crypto.hash.blake2.Blake2b().key_length_min	5	const	key_length_min	0	
+std.crypto.hash.blake2.Blake2b().key_length_max	5	const	key_length_max	0	
+std.crypto.hash.blake2.Blake2b().key_length	5	const	key_length	0	
+std.crypto.hash.blake2.Blake2b().Options	5	struct	Options	4	
+std.crypto.hash.blake2.Blake2b().Options.key	6	field	key	0	
+std.crypto.hash.blake2.Blake2b().Options.salt	6	field	salt	0	
+std.crypto.hash.blake2.Blake2b().Options.context	6	field	context	0	
+std.crypto.hash.blake2.Blake2b().Options.expected_out_bits	6	field	expected_out_bits	0	
+std.crypto.hash.blake2.Blake2b().h	5	field	h	0	
+std.crypto.hash.blake2.Blake2b().t	5	field	t	0	
+std.crypto.hash.blake2.Blake2b().buf	5	field	buf	0	
+std.crypto.hash.blake2.Blake2b().buf_len	5	field	buf_len	0	
+std.crypto.hash.blake2.Blake2b().init	5	fn	init	0	1
+std.crypto.hash.blake2.Blake2b().hash	5	fn	hash	0	3
+std.crypto.hash.blake2.Blake2b().update	5	fn	update	0	2
+std.crypto.hash.blake2.Blake2b().final	5	fn	final	0	2
 std.crypto.hash.Blake3	3	struct	Blake3	17	
 std.crypto.hash.Blake3.block_length	4	const	block_length	0	
 std.crypto.hash.Blake3.digest_length	4	const	digest_length	0	
@@ -10404,7 +10937,16 @@ std.crypto.hash.sha3.KT128	4	alias	KT128	0	kangarootwelve.KT128
 std.crypto.hash.sha3.KT256	4	alias	KT256	0	kangarootwelve.KT256
 std.crypto.hash.sha3.TurboShake128	4	fn	TurboShake128	0	1
 std.crypto.hash.sha3.TurboShake256	4	fn	TurboShake256	0	1
-std.crypto.hash.sha3.Keccak	4	fn	Keccak	0	4
+std.crypto.hash.sha3.Keccak	4	fn	Keccak	8	4
+std.crypto.hash.sha3.Keccak().st	5	field	st	0	
+std.crypto.hash.sha3.Keccak().digest_length	5	const	digest_length	0	
+std.crypto.hash.sha3.Keccak().block_length	5	alias	block_length	0	State.rate
+std.crypto.hash.sha3.Keccak().Options	5	struct	Options	1	
+std.crypto.hash.sha3.Keccak().Options.delim	6	field	delim	0	
+std.crypto.hash.sha3.Keccak().init	5	fn	init	0	1
+std.crypto.hash.sha3.Keccak().hash	5	fn	hash	0	3
+std.crypto.hash.sha3.Keccak().update	5	fn	update	0	2
+std.crypto.hash.sha3.Keccak().final	5	fn	final	0	2
 std.crypto.hash.sha3.Shake	4	fn	Shake	0	1
 std.crypto.hash.sha3.TurboShake	4	fn	TurboShake	0	2
 std.crypto.hash.sha3.CShake	4	fn	CShake	0	2
@@ -10419,7 +10961,18 @@ std.crypto.hash.sha3.NistLengthEncoding.Length.buf	6	field	buf	0
 std.crypto.hash.sha3.NistLengthEncoding.Length.slice	6	fn	slice	0	1
 std.crypto.hash.sha3.NistLengthEncoding.encode	5	fn	encode	0	2
 std.crypto.hash.composition	3	ns	composition	4	crypto/hash_composition.zig
-std.crypto.hash.composition.Composition	4	fn	Composition	0	2
+std.crypto.hash.composition.Composition	4	fn	Composition	9	2
+std.crypto.hash.composition.Composition().H1	5	field	H1	0	
+std.crypto.hash.composition.Composition().H2	5	field	H2	0	
+std.crypto.hash.composition.Composition().digest_length	5	alias	digest_length	0	H1.digest_length
+std.crypto.hash.composition.Composition().block_length	5	alias	block_length	0	H1.block_length
+std.crypto.hash.composition.Composition().Options	5	struct	Options	2	
+std.crypto.hash.composition.Composition().Options.H1	6	field	H1	0	
+std.crypto.hash.composition.Composition().Options.H2	6	field	H2	0	
+std.crypto.hash.composition.Composition().init	5	fn	init	0	1
+std.crypto.hash.composition.Composition().hash	5	fn	hash	0	3
+std.crypto.hash.composition.Composition().update	5	fn	update	0	2
+std.crypto.hash.composition.Composition().final	5	fn	final	0	2
 std.crypto.hash.composition.Sha256oSha256	4	const	Sha256oSha256	0	
 std.crypto.hash.composition.Sha384oSha384	4	const	Sha384oSha384	0	
 std.crypto.hash.composition.Sha512oSha512	4	const	Sha512oSha512	0	
@@ -10427,7 +10980,11 @@ std.crypto.kdf	2	struct	kdf	1
 std.crypto.kdf.hkdf	3	ns	hkdf	3	crypto/hkdf.zig
 std.crypto.kdf.hkdf.HkdfSha256	4	const	HkdfSha256	0	
 std.crypto.kdf.hkdf.HkdfSha512	4	const	HkdfSha512	0	
-std.crypto.kdf.hkdf.Hkdf	4	fn	Hkdf	0	1
+std.crypto.kdf.hkdf.Hkdf	4	fn	Hkdf	4	1
+std.crypto.kdf.hkdf.Hkdf().prk_length	5	alias	prk_length	0	Hmac.mac_length
+std.crypto.kdf.hkdf.Hkdf().extract	5	fn	extract	0	2
+std.crypto.kdf.hkdf.Hkdf().extractInit	5	fn	extractInit	0	1
+std.crypto.kdf.hkdf.Hkdf().expand	5	fn	expand	0	3
 std.crypto.onetimeauth	2	struct	onetimeauth	3	
 std.crypto.onetimeauth.Ghash	3	alias	Ghash	0	crypto/ghash_polyval.zig
 std.crypto.onetimeauth.Polyval	3	alias	Polyval	0	crypto/ghash_polyval.zig
@@ -10527,7 +11084,11 @@ std.crypto.pwhash.scrypt.strVerify	4	fn	strVerify	0	3
 std.crypto.pwhash.pbkdf2	3	fn	pbkdf2	0	5
 std.crypto.pwhash.phc_format	3	ns	phc_format	5	crypto/phc_encoding.zig
 std.crypto.pwhash.phc_format.Error	4	const	Error	0	
-std.crypto.pwhash.phc_format.BinValue	4	fn	BinValue	0	1
+std.crypto.pwhash.phc_format.BinValue	4	fn	BinValue	4	1
+std.crypto.pwhash.phc_format.BinValue().buf	5	field	buf	0	
+std.crypto.pwhash.phc_format.BinValue().len	5	field	len	0	
+std.crypto.pwhash.phc_format.BinValue().fromSlice	5	fn	fromSlice	0	1
+std.crypto.pwhash.phc_format.BinValue().constSlice	5	fn	constSlice	0	1
 std.crypto.pwhash.phc_format.deserialize	4	fn	deserialize	0	2
 std.crypto.pwhash.phc_format.serialize	4	fn	serialize	0	2
 std.crypto.pwhash.phc_format.calcSize	4	fn	calcSize	0	1
@@ -10610,7 +11171,58 @@ std.crypto.sign.ecdsa.EcdsaP384Sha384	4	const	EcdsaP384Sha384	0
 std.crypto.sign.ecdsa.EcdsaP384Sha3_384	4	const	EcdsaP384Sha3_384	0	
 std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256	4	const	EcdsaSecp256k1Sha256	0	
 std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256oSha256	4	const	EcdsaSecp256k1Sha256oSha256	0	
-std.crypto.sign.ecdsa.Ecdsa	4	fn	Ecdsa	0	2
+std.crypto.sign.ecdsa.Ecdsa	4	fn	Ecdsa	7	2
+std.crypto.sign.ecdsa.Ecdsa().noise_length	5	alias	noise_length	0	Curve.scalar.encoded_length
+std.crypto.sign.ecdsa.Ecdsa().SecretKey	5	struct	SecretKey	4	
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.encoded_length	6	alias	encoded_length	0	Curve.scalar.encoded_length
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.bytes	6	field	bytes	0	
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.fromBytes	6	fn	fromBytes	0	1
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.toBytes	6	fn	toBytes	0	1
+std.crypto.sign.ecdsa.Ecdsa().PublicKey	5	struct	PublicKey	6	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.compressed_sec1_encoded_length	6	const	compressed_sec1_encoded_length	0	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.uncompressed_sec1_encoded_length	6	const	uncompressed_sec1_encoded_length	0	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.p	6	field	p	0	
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.fromSec1	6	fn	fromSec1	0	1
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toCompressedSec1	6	fn	toCompressedSec1	0	1
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toUncompressedSec1	6	fn	toUncompressedSec1	0	1
+std.crypto.sign.ecdsa.Ecdsa().Signature	5	struct	Signature	12	
+std.crypto.sign.ecdsa.Ecdsa().Signature.encoded_length	6	const	encoded_length	0	
+std.crypto.sign.ecdsa.Ecdsa().Signature.der_encoded_length_max	6	const	der_encoded_length_max	0	
+std.crypto.sign.ecdsa.Ecdsa().Signature.r	6	field	r	0	
+std.crypto.sign.ecdsa.Ecdsa().Signature.s	6	field	s	0	
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifier	6	fn	verifier	0	2
+std.crypto.sign.ecdsa.Ecdsa().Signature.VerifyError	6	const	VerifyError	0	
+std.crypto.sign.ecdsa.Ecdsa().Signature.verify	6	fn	verify	0	3
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifyPrehashed	6	fn	verifyPrehashed	0	3
+std.crypto.sign.ecdsa.Ecdsa().Signature.toBytes	6	fn	toBytes	0	1
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromBytes	6	fn	fromBytes	0	1
+std.crypto.sign.ecdsa.Ecdsa().Signature.toDer	6	fn	toDer	0	2
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromDer	6	fn	fromDer	0	1
+std.crypto.sign.ecdsa.Ecdsa().Signer	5	struct	Signer	5	
+std.crypto.sign.ecdsa.Ecdsa().Signer.h	6	field	h	0	
+std.crypto.sign.ecdsa.Ecdsa().Signer.secret_key	6	field	secret_key	0	
+std.crypto.sign.ecdsa.Ecdsa().Signer.noise	6	field	noise	0	
+std.crypto.sign.ecdsa.Ecdsa().Signer.update	6	fn	update	0	2
+std.crypto.sign.ecdsa.Ecdsa().Signer.finalize	6	fn	finalize	0	1
+std.crypto.sign.ecdsa.Ecdsa().Verifier	5	struct	Verifier	8	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.h	6	field	h	0	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.r	6	field	r	0	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.s	6	field	s	0	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.public_key	6	field	public_key	0	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.InitError	6	const	InitError	0	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.update	6	fn	update	0	2
+std.crypto.sign.ecdsa.Ecdsa().Verifier.VerifyError	6	const	VerifyError	0	
+std.crypto.sign.ecdsa.Ecdsa().Verifier.verify	6	fn	verify	0	1
+std.crypto.sign.ecdsa.Ecdsa().KeyPair	5	struct	KeyPair	9	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.seed_length	6	alias	seed_length	0	noise_length
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.public_key	6	field	public_key	0	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.secret_key	6	field	secret_key	0	
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generateDeterministic	6	fn	generateDeterministic	0	1
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generate	6	fn	generate	0	1
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.fromSecretKey	6	fn	fromSecretKey	0	1
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.sign	6	fn	sign	0	3
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signPrehashed	6	fn	signPrehashed	0	3
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signer	6	fn	signer	0	2
 std.crypto.sign.mldsa	3	ns	mldsa	3	crypto/ml_dsa.zig
 std.crypto.sign.mldsa.MLDSA44	4	const	MLDSA44	0	
 std.crypto.sign.mldsa.MLDSA65	4	const	MLDSA65	0	
@@ -10642,8 +11254,46 @@ std.crypto.ff.NullExponentError	3	const	NullExponentError	0
 std.crypto.ff.FieldElementError	3	const	FieldElementError	0	
 std.crypto.ff.RepresentationError	3	const	RepresentationError	0	
 std.crypto.ff.Error	3	const	Error	0	
-std.crypto.ff.Uint	3	fn	Uint	0	1
-std.crypto.ff.Modulus	3	fn	Modulus	0	1
+std.crypto.ff.Uint	3	fn	Uint	14	1
+std.crypto.ff.Uint().limbs_buffer	4	field	limbs_buffer	0	
+std.crypto.ff.Uint().limbs_len	4	field	limbs_len	0	
+std.crypto.ff.Uint().encoded_bytes	4	const	encoded_bytes	0	
+std.crypto.ff.Uint().zero	4	const	zero	0	
+std.crypto.ff.Uint().fromPrimitive	4	fn	fromPrimitive	0	2
+std.crypto.ff.Uint().toPrimitive	4	fn	toPrimitive	0	2
+std.crypto.ff.Uint().toBytes	4	fn	toBytes	0	3
+std.crypto.ff.Uint().fromBytes	4	fn	fromBytes	0	2
+std.crypto.ff.Uint().eql	4	fn	eql	0	2
+std.crypto.ff.Uint().compare	4	fn	compare	0	2
+std.crypto.ff.Uint().isZero	4	fn	isZero	0	1
+std.crypto.ff.Uint().isOdd	4	fn	isOdd	0	1
+std.crypto.ff.Uint().addWithOverflow	4	fn	addWithOverflow	0	2
+std.crypto.ff.Uint().subWithOverflow	4	fn	subWithOverflow	0	2
+std.crypto.ff.Modulus	3	fn	Modulus	24	1
+std.crypto.ff.Modulus().Fe	4	const	Fe	0	
+std.crypto.ff.Modulus().zero	4	field	zero	0	
+std.crypto.ff.Modulus().v	4	field	v	0	
+std.crypto.ff.Modulus().rr	4	field	rr	0	
+std.crypto.ff.Modulus().m0inv	4	field	m0inv	0	
+std.crypto.ff.Modulus().leading	4	field	leading	0	
+std.crypto.ff.Modulus().bits	4	fn	bits	0	1
+std.crypto.ff.Modulus().one	4	fn	one	0	1
+std.crypto.ff.Modulus().fromUint	4	fn	fromUint	0	1
+std.crypto.ff.Modulus().fromPrimitive	4	fn	fromPrimitive	0	2
+std.crypto.ff.Modulus().fromBytes	4	fn	fromBytes	0	2
+std.crypto.ff.Modulus().toBytes	4	fn	toBytes	0	3
+std.crypto.ff.Modulus().rejectNonCanonical	4	fn	rejectNonCanonical	0	2
+std.crypto.ff.Modulus().add	4	fn	add	0	3
+std.crypto.ff.Modulus().sub	4	fn	sub	0	3
+std.crypto.ff.Modulus().toMontgomery	4	fn	toMontgomery	0	2
+std.crypto.ff.Modulus().fromMontgomery	4	fn	fromMontgomery	0	2
+std.crypto.ff.Modulus().reduce	4	fn	reduce	0	2
+std.crypto.ff.Modulus().mul	4	fn	mul	0	3
+std.crypto.ff.Modulus().sq	4	fn	sq	0	2
+std.crypto.ff.Modulus().pow	4	fn	pow	0	3
+std.crypto.ff.Modulus().powPublic	4	fn	powPublic	0	3
+std.crypto.ff.Modulus().powWithEncodedExponent	4	fn	powWithEncodedExponent	0	4
+std.crypto.ff.Modulus().powWithEncodedPublicExponent	4	fn	powWithEncodedPublicExponent	0	4
 std.crypto.codecs	2	ns	codecs	3	crypto/codecs.zig
 std.crypto.codecs.asn1	3	ns	asn1	10	crypto/codecs/asn1.zig
 std.crypto.codecs.asn1.der	4	ns	der	4	crypto/codecs/asn1/der.zig
@@ -10676,7 +11326,8 @@ std.crypto.codecs.asn1.Oid.asn1_tag	5	const	asn1_tag	0
 std.crypto.codecs.asn1.Oid.decodeDer	5	fn	decodeDer	0	1
 std.crypto.codecs.asn1.Oid.encodeDer	5	fn	encodeDer	0	2
 std.crypto.codecs.asn1.Oid.fromDotComptime	5	fn	fromDotComptime	0	1
-std.crypto.codecs.asn1.Oid.StaticMap	5	fn	StaticMap	0	1
+std.crypto.codecs.asn1.Oid.StaticMap	5	fn	StaticMap	1	1
+std.crypto.codecs.asn1.Oid.StaticMap().initComptime	6	fn	initComptime	0	1
 std.crypto.codecs.asn1.Index	4	alias	Index	0	u32
 std.crypto.codecs.asn1.Tag	4	struct	Tag	11	
 std.crypto.codecs.asn1.Tag.number	5	field	number	0	
@@ -10760,7 +11411,10 @@ std.crypto.codecs.asn1.BitString.bytes	5	field	bytes	0
 std.crypto.codecs.asn1.BitString.bitLen	5	fn	bitLen	0	1
 std.crypto.codecs.asn1.BitString.decodeDer	5	fn	decodeDer	0	1
 std.crypto.codecs.asn1.BitString.encodeDer	5	fn	encodeDer	0	2
-std.crypto.codecs.asn1.Opaque	4	fn	Opaque	0	1
+std.crypto.codecs.asn1.Opaque	4	fn	Opaque	3	1
+std.crypto.codecs.asn1.Opaque().bytes	5	field	bytes	0	
+std.crypto.codecs.asn1.Opaque().decodeDer	5	fn	decodeDer	0	1
+std.crypto.codecs.asn1.Opaque().encodeDer	5	fn	encodeDer	0	2
 std.crypto.codecs.asn1.Any	4	struct	Any	4	
 std.crypto.codecs.asn1.Any.tag	5	field	tag	0	
 std.crypto.codecs.asn1.Any.bytes	5	field	bytes	0	
@@ -11054,14 +11708,44 @@ std.crypto.tls.KeyUpdateRequest._	4	tag	_	0
 std.crypto.tls.ChangeCipherSpecType	3	enum	ChangeCipherSpecType	2	
 std.crypto.tls.ChangeCipherSpecType.change_cipher_spec	4	tag	change_cipher_spec	0	
 std.crypto.tls.ChangeCipherSpecType._	4	tag	_	0	
-std.crypto.tls.HandshakeCipherT	3	fn	HandshakeCipherT	0	3
+std.crypto.tls.HandshakeCipherT	3	fn	HandshakeCipherT	3	3
+std.crypto.tls.HandshakeCipherT().A	4	const	A	0	
+std.crypto.tls.HandshakeCipherT().transcript_hash	4	field	transcript_hash	0	
+std.crypto.tls.HandshakeCipherT().version	4	field	version	0	
 std.crypto.tls.HandshakeCipher	3	union	HandshakeCipher	5	
 std.crypto.tls.HandshakeCipher.AES_128_GCM_SHA256	4	field	AES_128_GCM_SHA256	0	
 std.crypto.tls.HandshakeCipher.AES_256_GCM_SHA384	4	field	AES_256_GCM_SHA384	0	
 std.crypto.tls.HandshakeCipher.CHACHA20_POLY1305_SHA256	4	field	CHACHA20_POLY1305_SHA256	0	
 std.crypto.tls.HandshakeCipher.AEGIS_256_SHA512	4	field	AEGIS_256_SHA512	0	
 std.crypto.tls.HandshakeCipher.AEGIS_128L_SHA256	4	field	AEGIS_128L_SHA256	0	
-std.crypto.tls.ApplicationCipherT	3	fn	ApplicationCipherT	0	3
+std.crypto.tls.ApplicationCipherT	3	fn	ApplicationCipherT	14	3
+std.crypto.tls.ApplicationCipherT().AEAD	4	alias	AEAD	0	AeadType
+std.crypto.tls.ApplicationCipherT().Hash	4	alias	Hash	0	HashType
+std.crypto.tls.ApplicationCipherT().Hmac	4	const	Hmac	0	
+std.crypto.tls.ApplicationCipherT().Hkdf	4	const	Hkdf	0	
+std.crypto.tls.ApplicationCipherT().enc_key_length	4	alias	enc_key_length	0	AEAD.key_length
+std.crypto.tls.ApplicationCipherT().fixed_iv_length	4	const	fixed_iv_length	0	
+std.crypto.tls.ApplicationCipherT().record_iv_length	4	alias	record_iv_length	0	explicit_iv_length
+std.crypto.tls.ApplicationCipherT().mac_length	4	alias	mac_length	0	AEAD.tag_length
+std.crypto.tls.ApplicationCipherT().mac_key_length	4	alias	mac_key_length	0	Hmac.key_length_min
+std.crypto.tls.ApplicationCipherT().verify_data_length	4	const	verify_data_length	0	
+std.crypto.tls.ApplicationCipherT().tls_1_2	4	field	tls_1_2	0	
+std.crypto.tls.ApplicationCipherT().tls_1_3	4	field	tls_1_3	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2	4	struct	Tls_1_2	7	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_write_MAC_key	5	field	client_write_MAC_key	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.server_write_MAC_key	5	field	server_write_MAC_key	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_write_key	5	field	client_write_key	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.server_write_key	5	field	server_write_key	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_write_IV	5	field	client_write_IV	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.server_write_IV	5	field	server_write_IV	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_2.client_salt	5	field	client_salt	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_3	4	struct	Tls_1_3	6	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.client_secret	5	field	client_secret	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.server_secret	5	field	server_secret	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.client_key	5	field	client_key	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.server_key	5	field	server_key	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.client_iv	5	field	client_iv	0	
+std.crypto.tls.ApplicationCipherT().Tls_1_3.server_iv	5	field	server_iv	0	
 std.crypto.tls.ApplicationCipher	3	union	ApplicationCipher	5	
 std.crypto.tls.ApplicationCipher.AES_128_GCM_SHA256	4	field	AES_128_GCM_SHA256	0	
 std.crypto.tls.ApplicationCipher.AES_256_GCM_SHA384	4	field	AES_256_GCM_SHA384	0	
@@ -11323,8 +12007,41 @@ std.debug.Dwarf.expression.Options.addr_size	5	field	addr_size	0
 std.debug.Dwarf.expression.Options.endian	5	field	endian	0	
 std.debug.Dwarf.expression.Options.call_frame_context	5	field	call_frame_context	0	
 std.debug.Dwarf.expression.Error	4	const	Error	0	
-std.debug.Dwarf.expression.StackMachine	4	fn	StackMachine	0	1
-std.debug.Dwarf.expression.Builder	4	fn	Builder	0	1
+std.debug.Dwarf.expression.StackMachine	4	fn	StackMachine	6	1
+std.debug.Dwarf.expression.StackMachine().stack	5	field	stack	0	
+std.debug.Dwarf.expression.StackMachine().reset	5	fn	reset	0	1
+std.debug.Dwarf.expression.StackMachine().deinit	5	fn	deinit	0	2
+std.debug.Dwarf.expression.StackMachine().readOperand	5	fn	readOperand	0	3
+std.debug.Dwarf.expression.StackMachine().run	5	fn	run	0	5
+std.debug.Dwarf.expression.StackMachine().step	5	fn	step	0	4
+std.debug.Dwarf.expression.Builder	4	fn	Builder	27	1
+std.debug.Dwarf.expression.Builder().writeOpcode	5	fn	writeOpcode	0	2
+std.debug.Dwarf.expression.Builder().writeLiteral	5	fn	writeLiteral	0	2
+std.debug.Dwarf.expression.Builder().writeConst	5	fn	writeConst	0	3
+std.debug.Dwarf.expression.Builder().writeConstx	5	fn	writeConstx	0	2
+std.debug.Dwarf.expression.Builder().writeConstType	5	fn	writeConstType	0	3
+std.debug.Dwarf.expression.Builder().writeAddr	5	fn	writeAddr	0	2
+std.debug.Dwarf.expression.Builder().writeAddrx	5	fn	writeAddrx	0	2
+std.debug.Dwarf.expression.Builder().writeFbreg	5	fn	writeFbreg	0	2
+std.debug.Dwarf.expression.Builder().writeBreg	5	fn	writeBreg	0	3
+std.debug.Dwarf.expression.Builder().writeBregx	5	fn	writeBregx	0	3
+std.debug.Dwarf.expression.Builder().writeRegvalType	5	fn	writeRegvalType	0	3
+std.debug.Dwarf.expression.Builder().writePick	5	fn	writePick	0	2
+std.debug.Dwarf.expression.Builder().writeDerefSize	5	fn	writeDerefSize	0	2
+std.debug.Dwarf.expression.Builder().writeXDerefSize	5	fn	writeXDerefSize	0	2
+std.debug.Dwarf.expression.Builder().writeDerefType	5	fn	writeDerefType	0	3
+std.debug.Dwarf.expression.Builder().writeXDerefType	5	fn	writeXDerefType	0	3
+std.debug.Dwarf.expression.Builder().writePlusUconst	5	fn	writePlusUconst	0	2
+std.debug.Dwarf.expression.Builder().writeSkip	5	fn	writeSkip	0	2
+std.debug.Dwarf.expression.Builder().writeBra	5	fn	writeBra	0	2
+std.debug.Dwarf.expression.Builder().writeCall	5	fn	writeCall	0	3
+std.debug.Dwarf.expression.Builder().writeCallRef	5	fn	writeCallRef	0	3
+std.debug.Dwarf.expression.Builder().writeConvert	5	fn	writeConvert	0	2
+std.debug.Dwarf.expression.Builder().writeReinterpret	5	fn	writeReinterpret	0	2
+std.debug.Dwarf.expression.Builder().writeEntryValue	5	fn	writeEntryValue	0	2
+std.debug.Dwarf.expression.Builder().writeReg	5	fn	writeReg	0	2
+std.debug.Dwarf.expression.Builder().writeRegx	5	fn	writeRegx	0	2
+std.debug.Dwarf.expression.Builder().writeImplicitValue	5	fn	writeImplicitValue	0	2
 std.debug.Dwarf.Unwind	3	ns	Unwind	14	debug/Dwarf/Unwind.zig
 std.debug.Dwarf.Unwind.VirtualMachine	4	ns	VirtualMachine	14	debug/Dwarf/Unwind/VirtualMachine.zig
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule	5	union	RegisterRule	8	
@@ -11765,7 +12482,33 @@ std.debug.no_panic.forLenMismatch	3	fn	forLenMismatch	0	0
 std.debug.no_panic.copyLenMismatch	3	fn	copyLenMismatch	0	0
 std.debug.no_panic.memcpyAlias	3	fn	memcpyAlias	0	0
 std.debug.no_panic.noreturnReturned	3	fn	noreturnReturned	0	0
-std.debug.FullPanic	2	fn	FullPanic	0	1
+std.debug.FullPanic	2	fn	FullPanic	26	1
+std.debug.FullPanic().call	3	alias	call	0	panicFn
+std.debug.FullPanic().sentinelMismatch	3	fn	sentinelMismatch	0	2
+std.debug.FullPanic().unwrapError	3	fn	unwrapError	0	1
+std.debug.FullPanic().outOfBounds	3	fn	outOfBounds	0	2
+std.debug.FullPanic().startGreaterThanEnd	3	fn	startGreaterThanEnd	0	2
+std.debug.FullPanic().inactiveUnionField	3	fn	inactiveUnionField	0	2
+std.debug.FullPanic().sliceCastLenRemainder	3	fn	sliceCastLenRemainder	0	1
+std.debug.FullPanic().reachedUnreachable	3	fn	reachedUnreachable	0	0
+std.debug.FullPanic().unwrapNull	3	fn	unwrapNull	0	0
+std.debug.FullPanic().castToNull	3	fn	castToNull	0	0
+std.debug.FullPanic().incorrectAlignment	3	fn	incorrectAlignment	0	0
+std.debug.FullPanic().invalidErrorCode	3	fn	invalidErrorCode	0	0
+std.debug.FullPanic().integerOutOfBounds	3	fn	integerOutOfBounds	0	0
+std.debug.FullPanic().integerOverflow	3	fn	integerOverflow	0	0
+std.debug.FullPanic().shlOverflow	3	fn	shlOverflow	0	0
+std.debug.FullPanic().shrOverflow	3	fn	shrOverflow	0	0
+std.debug.FullPanic().divideByZero	3	fn	divideByZero	0	0
+std.debug.FullPanic().exactDivisionRemainder	3	fn	exactDivisionRemainder	0	0
+std.debug.FullPanic().integerPartOutOfBounds	3	fn	integerPartOutOfBounds	0	0
+std.debug.FullPanic().corruptSwitch	3	fn	corruptSwitch	0	0
+std.debug.FullPanic().shiftRhsTooBig	3	fn	shiftRhsTooBig	0	0
+std.debug.FullPanic().invalidEnumValue	3	fn	invalidEnumValue	0	0
+std.debug.FullPanic().forLenMismatch	3	fn	forLenMismatch	0	0
+std.debug.FullPanic().copyLenMismatch	3	fn	copyLenMismatch	0	0
+std.debug.FullPanic().memcpyAlias	3	fn	memcpyAlias	0	0
+std.debug.FullPanic().noreturnReturned	3	fn	noreturnReturned	0	0
 std.debug.SourceLocation	2	struct	SourceLocation	4	
 std.debug.SourceLocation.line	3	field	line	0	
 std.debug.SourceLocation.column	3	field	column	0	
@@ -11823,7 +12566,18 @@ std.debug.attachSegfaultHandler	2	fn	attachSegfaultHandler	0	0
 std.debug.defaultHandleSegfault	2	fn	defaultHandleSegfault	0	3
 std.debug.dumpStackPointerAddr	2	fn	dumpStackPointerAddr	0	1
 std.debug.Trace	2	const	Trace	0	
-std.debug.ConfigurableTrace	2	fn	ConfigurableTrace	0	3
+std.debug.ConfigurableTrace	2	fn	ConfigurableTrace	11	3
+std.debug.ConfigurableTrace().addrs	3	field	addrs	0	
+std.debug.ConfigurableTrace().notes	3	field	notes	0	
+std.debug.ConfigurableTrace().index	3	field	index	0	
+std.debug.ConfigurableTrace().init	3	const	init	0	
+std.debug.ConfigurableTrace().enabled	3	alias	enabled	0	is_enabled
+std.debug.ConfigurableTrace().add	3	const	add	0	
+std.debug.ConfigurableTrace().addNoInline	3	fn	addNoInline	0	2
+std.debug.ConfigurableTrace().addNoOp	3	fn	addNoOp	0	2
+std.debug.ConfigurableTrace().addAddr	3	fn	addAddr	0	3
+std.debug.ConfigurableTrace().dump	3	fn	dump	0	1
+std.debug.ConfigurableTrace().format	3	fn	format	0	4
 std.debug.SafetyLock	2	struct	SafetyLock	6	
 std.debug.SafetyLock.state	3	field	state	0	
 std.debug.SafetyLock.State	3	const	State	0	
@@ -14293,12 +15047,125 @@ std.enums.tagName	2	fn	tagName	0	2
 std.enums.directEnumArrayLen	2	fn	directEnumArrayLen	0	2
 std.enums.directEnumArray	2	fn	directEnumArray	0	4
 std.enums.directEnumArrayDefault	2	fn	directEnumArrayDefault	0	5
-std.enums.EnumSet	2	fn	EnumSet	0	1
-std.enums.EnumMap	2	fn	EnumMap	0	2
+std.enums.EnumSet	2	fn	EnumSet	31	1
+std.enums.EnumSet().Indexer	3	const	Indexer	0	
+std.enums.EnumSet().Key	3	alias	Key	0	Indexer.Key
+std.enums.EnumSet().len	3	alias	len	0	Indexer.count
+std.enums.EnumSet().bits	3	field	bits	0	
+std.enums.EnumSet().init	3	fn	init	0	1
+std.enums.EnumSet().empty	3	const	empty	0	
+std.enums.EnumSet().full	3	const	full	0	
+std.enums.EnumSet().initEmpty	3	fn	initEmpty	0	0
+std.enums.EnumSet().initFull	3	fn	initFull	0	0
+std.enums.EnumSet().initMany	3	fn	initMany	0	1
+std.enums.EnumSet().initOne	3	fn	initOne	0	1
+std.enums.EnumSet().count	3	fn	count	0	1
+std.enums.EnumSet().contains	3	fn	contains	0	2
+std.enums.EnumSet().insert	3	fn	insert	0	2
+std.enums.EnumSet().remove	3	fn	remove	0	2
+std.enums.EnumSet().setPresent	3	fn	setPresent	0	3
+std.enums.EnumSet().toggle	3	fn	toggle	0	2
+std.enums.EnumSet().toggleSet	3	fn	toggleSet	0	2
+std.enums.EnumSet().toggleAll	3	fn	toggleAll	0	1
+std.enums.EnumSet().setUnion	3	fn	setUnion	0	2
+std.enums.EnumSet().setIntersection	3	fn	setIntersection	0	2
+std.enums.EnumSet().eql	3	fn	eql	0	2
+std.enums.EnumSet().subsetOf	3	fn	subsetOf	0	2
+std.enums.EnumSet().supersetOf	3	fn	supersetOf	0	2
+std.enums.EnumSet().complement	3	fn	complement	0	1
+std.enums.EnumSet().unionWith	3	fn	unionWith	0	2
+std.enums.EnumSet().intersectWith	3	fn	intersectWith	0	2
+std.enums.EnumSet().xorWith	3	fn	xorWith	0	2
+std.enums.EnumSet().differenceWith	3	fn	differenceWith	0	2
+std.enums.EnumSet().iterator	3	fn	iterator	0	1
+std.enums.EnumSet().Iterator	3	struct	Iterator	2	
+std.enums.EnumSet().Iterator.inner	4	field	inner	0	
+std.enums.EnumSet().Iterator.next	4	fn	next	0	1
+std.enums.EnumMap	2	fn	EnumMap	26	2
+std.enums.EnumMap().Indexer	3	const	Indexer	0	
+std.enums.EnumMap().Key	3	alias	Key	0	Indexer.Key
+std.enums.EnumMap().Value	3	alias	Value	0	V
+std.enums.EnumMap().len	3	alias	len	0	Indexer.count
+std.enums.EnumMap().bits	3	field	bits	0	
+std.enums.EnumMap().values	3	field	values	0	
+std.enums.EnumMap().init	3	fn	init	0	1
+std.enums.EnumMap().initFull	3	fn	initFull	0	1
+std.enums.EnumMap().initFullWith	3	fn	initFullWith	0	1
+std.enums.EnumMap().initFullWithDefault	3	fn	initFullWithDefault	0	2
+std.enums.EnumMap().count	3	fn	count	0	1
+std.enums.EnumMap().contains	3	fn	contains	0	2
+std.enums.EnumMap().get	3	fn	get	0	2
+std.enums.EnumMap().getAssertContains	3	fn	getAssertContains	0	2
+std.enums.EnumMap().getPtr	3	fn	getPtr	0	2
+std.enums.EnumMap().getPtrConst	3	fn	getPtrConst	0	2
+std.enums.EnumMap().getPtrAssertContains	3	fn	getPtrAssertContains	0	2
+std.enums.EnumMap().getPtrConstAssertContains	3	fn	getPtrConstAssertContains	0	2
+std.enums.EnumMap().put	3	fn	put	0	3
+std.enums.EnumMap().putUninitialized	3	fn	putUninitialized	0	2
+std.enums.EnumMap().fetchPut	3	fn	fetchPut	0	3
+std.enums.EnumMap().remove	3	fn	remove	0	2
+std.enums.EnumMap().fetchRemove	3	fn	fetchRemove	0	2
+std.enums.EnumMap().iterator	3	fn	iterator	0	1
+std.enums.EnumMap().Entry	3	struct	Entry	2	
+std.enums.EnumMap().Entry.key	4	field	key	0	
+std.enums.EnumMap().Entry.value	4	field	value	0	
+std.enums.EnumMap().Iterator	3	struct	Iterator	3	
+std.enums.EnumMap().Iterator.inner	4	field	inner	0	
+std.enums.EnumMap().Iterator.values	4	field	values	0	
+std.enums.EnumMap().Iterator.next	4	fn	next	0	1
 std.enums.EnumMultiset	2	fn	EnumMultiset	0	1
-std.enums.BoundedEnumMultiset	2	fn	BoundedEnumMultiset	0	2
-std.enums.EnumArray	2	fn	EnumArray	0	2
-std.enums.EnumIndexer	2	fn	EnumIndexer	0	1
+std.enums.BoundedEnumMultiset	2	fn	BoundedEnumMultiset	24	2
+std.enums.BoundedEnumMultiset().counts	3	field	counts	0	
+std.enums.BoundedEnumMultiset().init	3	fn	init	0	1
+std.enums.BoundedEnumMultiset().empty	3	const	empty	0	
+std.enums.BoundedEnumMultiset().initWithCount	3	fn	initWithCount	0	1
+std.enums.BoundedEnumMultiset().count	3	fn	count	0	1
+std.enums.BoundedEnumMultiset().contains	3	fn	contains	0	2
+std.enums.BoundedEnumMultiset().removeAll	3	fn	removeAll	0	2
+std.enums.BoundedEnumMultiset().addAssertSafe	3	fn	addAssertSafe	0	3
+std.enums.BoundedEnumMultiset().add	3	fn	add	0	3
+std.enums.BoundedEnumMultiset().remove	3	fn	remove	0	3
+std.enums.BoundedEnumMultiset().getCount	3	fn	getCount	0	2
+std.enums.BoundedEnumMultiset().setCount	3	fn	setCount	0	3
+std.enums.BoundedEnumMultiset().addSetAssertSafe	3	fn	addSetAssertSafe	0	2
+std.enums.BoundedEnumMultiset().addSet	3	fn	addSet	0	2
+std.enums.BoundedEnumMultiset().removeSet	3	fn	removeSet	0	2
+std.enums.BoundedEnumMultiset().eql	3	fn	eql	0	2
+std.enums.BoundedEnumMultiset().subsetOf	3	fn	subsetOf	0	2
+std.enums.BoundedEnumMultiset().supersetOf	3	fn	supersetOf	0	2
+std.enums.BoundedEnumMultiset().plusAssertSafe	3	fn	plusAssertSafe	0	2
+std.enums.BoundedEnumMultiset().plus	3	fn	plus	0	2
+std.enums.BoundedEnumMultiset().minus	3	fn	minus	0	2
+std.enums.BoundedEnumMultiset().Entry	3	const	Entry	0	
+std.enums.BoundedEnumMultiset().Iterator	3	const	Iterator	0	
+std.enums.BoundedEnumMultiset().iterator	3	fn	iterator	0	1
+std.enums.EnumArray	2	fn	EnumArray	16	2
+std.enums.EnumArray().Indexer	3	const	Indexer	0	
+std.enums.EnumArray().Key	3	alias	Key	0	Indexer.Key
+std.enums.EnumArray().Value	3	alias	Value	0	V
+std.enums.EnumArray().len	3	alias	len	0	Indexer.count
+std.enums.EnumArray().values	3	field	values	0	
+std.enums.EnumArray().init	3	fn	init	0	1
+std.enums.EnumArray().initDefault	3	fn	initDefault	0	2
+std.enums.EnumArray().initUndefined	3	fn	initUndefined	0	0
+std.enums.EnumArray().initFill	3	fn	initFill	0	1
+std.enums.EnumArray().get	3	fn	get	0	2
+std.enums.EnumArray().getPtr	3	fn	getPtr	0	2
+std.enums.EnumArray().getPtrConst	3	fn	getPtrConst	0	2
+std.enums.EnumArray().set	3	fn	set	0	3
+std.enums.EnumArray().iterator	3	fn	iterator	0	1
+std.enums.EnumArray().Entry	3	struct	Entry	2	
+std.enums.EnumArray().Entry.key	4	field	key	0	
+std.enums.EnumArray().Entry.value	4	field	value	0	
+std.enums.EnumArray().Iterator	3	struct	Iterator	3	
+std.enums.EnumArray().Iterator.index	4	field	index	0	
+std.enums.EnumArray().Iterator.values	4	field	values	0	
+std.enums.EnumArray().Iterator.next	4	fn	next	0	1
+std.enums.EnumIndexer	2	fn	EnumIndexer	4	1
+std.enums.EnumIndexer().Key	3	alias	Key	0	E
+std.enums.EnumIndexer().count	3	alias	count	0	fields_len
+std.enums.EnumIndexer().indexOf	3	fn	indexOf	0	1
+std.enums.EnumIndexer().keyForIndex	3	fn	keyForIndex	0	1
 std.fmt	1	ns	fmt	36	fmt.zig
 std.fmt.float	2	ns	float	13	fmt/float.zig
 std.fmt.float.min_buffer_size	3	const	min_buffer_size	0	
@@ -14311,7 +15178,10 @@ std.fmt.float.Options	3	struct	Options	2
 std.fmt.float.Options.mode	4	field	mode	0	
 std.fmt.float.Options.precision	4	field	precision	0	
 std.fmt.float.render	3	fn	render	0	3
-std.fmt.float.FloatDecimal	3	fn	FloatDecimal	0	1
+std.fmt.float.FloatDecimal	3	fn	FloatDecimal	3	1
+std.fmt.float.FloatDecimal().mantissa	4	field	mantissa	0	
+std.fmt.float.FloatDecimal().exponent	4	field	exponent	0	
+std.fmt.float.FloatDecimal().sign	4	field	sign	0	
 std.fmt.float.formatScientific	3	fn	formatScientific	0	4
 std.fmt.float.formatDecimal	3	fn	formatDecimal	0	4
 std.fmt.float.binaryToDecimal	3	fn	binaryToDecimal	0	6
@@ -14376,7 +15246,9 @@ std.fmt.ArgState.hasUnusedArgs	3	fn	hasUnusedArgs	0	1
 std.fmt.ArgState.nextArg	3	fn	nextArg	0	2
 std.fmt.printInt	2	fn	printInt	0	5
 std.fmt.digits2	2	fn	digits2	0	1
-std.fmt.Alt	2	fn	Alt	0	2
+std.fmt.Alt	2	fn	Alt	2	2
+std.fmt.Alt().data	3	field	data	0	
+std.fmt.Alt().format	3	fn	format	0	2
 std.fmt.alt	2	fn	alt	0	2
 std.fmt.ParseIntError	2	const	ParseIntError	0	
 std.fmt.parseInt	2	fn	parseInt	0	3
@@ -14438,7 +15310,9 @@ std.fs.path.WindowsPath.Kind.NetworkShare	5	tag	NetworkShare	0
 std.fs.path.windowsParsePath	3	fn	windowsParsePath	0	1
 std.fs.path.parsePath	3	fn	parsePath	0	1
 std.fs.path.parsePathPosix	3	fn	parsePathPosix	0	1
-std.fs.path.WindowsPath2	3	fn	WindowsPath2	0	1
+std.fs.path.WindowsPath2	3	fn	WindowsPath2	2	1
+std.fs.path.WindowsPath2().kind	4	field	kind	0	
+std.fs.path.WindowsPath2().root	4	field	root	0	
 std.fs.path.parsePathWindows	3	fn	parsePathWindows	0	2
 std.fs.path.diskDesignator	3	fn	diskDesignator	0	1
 std.fs.path.diskDesignatorWindows	3	fn	diskDesignatorWindows	0	1
@@ -14456,7 +15330,23 @@ std.fs.path.relativeWindows	3	fn	relativeWindows	0	5
 std.fs.path.relativePosix	3	fn	relativePosix	0	4
 std.fs.path.extension	3	fn	extension	0	1
 std.fs.path.stem	3	fn	stem	0	1
-std.fs.path.ComponentIterator	3	fn	ComponentIterator	0	2
+std.fs.path.ComponentIterator	3	fn	ComponentIterator	14	2
+std.fs.path.ComponentIterator().path	4	field	path	0	
+std.fs.path.ComponentIterator().root_len	4	field	root_len	0	
+std.fs.path.ComponentIterator().root_end_index	4	field	root_end_index	0	
+std.fs.path.ComponentIterator().start_index	4	field	start_index	0	
+std.fs.path.ComponentIterator().end_index	4	field	end_index	0	
+std.fs.path.ComponentIterator().Component	4	struct	Component	2	
+std.fs.path.ComponentIterator().Component.name	5	field	name	0	
+std.fs.path.ComponentIterator().Component.path	5	field	path	0	
+std.fs.path.ComponentIterator().init	4	fn	init	0	1
+std.fs.path.ComponentIterator().root	4	fn	root	0	1
+std.fs.path.ComponentIterator().first	4	fn	first	0	1
+std.fs.path.ComponentIterator().last	4	fn	last	0	1
+std.fs.path.ComponentIterator().next	4	fn	next	0	1
+std.fs.path.ComponentIterator().peekNext	4	fn	peekNext	0	1
+std.fs.path.ComponentIterator().previous	4	fn	previous	0	1
+std.fs.path.ComponentIterator().peekPrevious	4	fn	peekPrevious	0	1
 std.fs.path.NativeComponentIterator	3	const	NativeComponentIterator	0	
 std.fs.path.componentIterator	3	fn	componentIterator	0	1
 std.fs.path.fmtAsUtf8Lossy	3	alias	fmtAsUtf8Lossy	0	std.unicode.fmtUtf8
@@ -14690,7 +15580,9 @@ std.hash_map.getAutoHashFn	2	fn	getAutoHashFn	0	2
 std.hash_map.getAutoEqlFn	2	fn	getAutoEqlFn	0	2
 std.hash_map.AutoHashMap	2	fn	AutoHashMap	0	2
 std.hash_map.AutoHashMapUnmanaged	2	fn	AutoHashMapUnmanaged	0	2
-std.hash_map.AutoContext	2	fn	AutoContext	0	1
+std.hash_map.AutoContext	2	fn	AutoContext	2	1
+std.hash_map.AutoContext().hash	3	const	hash	0	
+std.hash_map.AutoContext().eql	3	const	eql	0	
 std.hash_map.StringHashMap	2	fn	StringHashMap	0	1
 std.hash_map.StringHashMapUnmanaged	2	fn	StringHashMapUnmanaged	0	1
 std.hash_map.StringContext	2	struct	StringContext	2	
@@ -14707,8 +15599,158 @@ std.hash_map.StringIndexAdapter.bytes	3	field	bytes	0
 std.hash_map.StringIndexAdapter.eql	3	fn	eql	0	3
 std.hash_map.StringIndexAdapter.hash	3	fn	hash	0	2
 std.hash_map.default_max_load_percentage	2	const	default_max_load_percentage	0	
-std.hash_map.HashMap	2	fn	HashMap	0	4
-std.hash_map.HashMapUnmanaged	2	fn	HashMapUnmanaged	0	4
+std.hash_map.HashMap	2	fn	HashMap	60	4
+std.hash_map.HashMap().unmanaged	3	field	unmanaged	0	
+std.hash_map.HashMap().allocator	3	field	allocator	0	
+std.hash_map.HashMap().ctx	3	field	ctx	0	
+std.hash_map.HashMap().Unmanaged	3	const	Unmanaged	0	
+std.hash_map.HashMap().Entry	3	alias	Entry	0	Unmanaged.Entry
+std.hash_map.HashMap().KV	3	alias	KV	0	Unmanaged.KV
+std.hash_map.HashMap().Hash	3	alias	Hash	0	Unmanaged.Hash
+std.hash_map.HashMap().Iterator	3	alias	Iterator	0	Unmanaged.Iterator
+std.hash_map.HashMap().KeyIterator	3	alias	KeyIterator	0	Unmanaged.KeyIterator
+std.hash_map.HashMap().ValueIterator	3	alias	ValueIterator	0	Unmanaged.ValueIterator
+std.hash_map.HashMap().Size	3	alias	Size	0	Unmanaged.Size
+std.hash_map.HashMap().GetOrPutResult	3	alias	GetOrPutResult	0	Unmanaged.GetOrPutResult
+std.hash_map.HashMap().init	3	fn	init	0	1
+std.hash_map.HashMap().initContext	3	fn	initContext	0	2
+std.hash_map.HashMap().lockPointers	3	fn	lockPointers	0	1
+std.hash_map.HashMap().unlockPointers	3	fn	unlockPointers	0	1
+std.hash_map.HashMap().deinit	3	fn	deinit	0	1
+std.hash_map.HashMap().clearRetainingCapacity	3	fn	clearRetainingCapacity	0	1
+std.hash_map.HashMap().clearAndFree	3	fn	clearAndFree	0	1
+std.hash_map.HashMap().count	3	fn	count	0	1
+std.hash_map.HashMap().iterator	3	fn	iterator	0	1
+std.hash_map.HashMap().keyIterator	3	fn	keyIterator	0	1
+std.hash_map.HashMap().valueIterator	3	fn	valueIterator	0	1
+std.hash_map.HashMap().getOrPut	3	fn	getOrPut	0	2
+std.hash_map.HashMap().getOrPutAdapted	3	fn	getOrPutAdapted	0	3
+std.hash_map.HashMap().getOrPutAssumeCapacity	3	fn	getOrPutAssumeCapacity	0	2
+std.hash_map.HashMap().getOrPutAssumeCapacityAdapted	3	fn	getOrPutAssumeCapacityAdapted	0	3
+std.hash_map.HashMap().getOrPutValue	3	fn	getOrPutValue	0	3
+std.hash_map.HashMap().ensureTotalCapacity	3	fn	ensureTotalCapacity	0	2
+std.hash_map.HashMap().ensureUnusedCapacity	3	fn	ensureUnusedCapacity	0	2
+std.hash_map.HashMap().capacity	3	fn	capacity	0	1
+std.hash_map.HashMap().put	3	fn	put	0	3
+std.hash_map.HashMap().putNoClobber	3	fn	putNoClobber	0	3
+std.hash_map.HashMap().putAssumeCapacity	3	fn	putAssumeCapacity	0	3
+std.hash_map.HashMap().putAssumeCapacityNoClobber	3	fn	putAssumeCapacityNoClobber	0	3
+std.hash_map.HashMap().fetchPut	3	fn	fetchPut	0	3
+std.hash_map.HashMap().fetchPutAssumeCapacity	3	fn	fetchPutAssumeCapacity	0	3
+std.hash_map.HashMap().fetchRemove	3	fn	fetchRemove	0	2
+std.hash_map.HashMap().fetchRemoveAdapted	3	fn	fetchRemoveAdapted	0	3
+std.hash_map.HashMap().get	3	fn	get	0	2
+std.hash_map.HashMap().getAdapted	3	fn	getAdapted	0	3
+std.hash_map.HashMap().getPtr	3	fn	getPtr	0	2
+std.hash_map.HashMap().getPtrAdapted	3	fn	getPtrAdapted	0	3
+std.hash_map.HashMap().getKey	3	fn	getKey	0	2
+std.hash_map.HashMap().getKeyAdapted	3	fn	getKeyAdapted	0	3
+std.hash_map.HashMap().getKeyPtr	3	fn	getKeyPtr	0	2
+std.hash_map.HashMap().getKeyPtrAdapted	3	fn	getKeyPtrAdapted	0	3
+std.hash_map.HashMap().getEntry	3	fn	getEntry	0	2
+std.hash_map.HashMap().getEntryAdapted	3	fn	getEntryAdapted	0	3
+std.hash_map.HashMap().contains	3	fn	contains	0	2
+std.hash_map.HashMap().containsAdapted	3	fn	containsAdapted	0	3
+std.hash_map.HashMap().remove	3	fn	remove	0	2
+std.hash_map.HashMap().removeAdapted	3	fn	removeAdapted	0	3
+std.hash_map.HashMap().removeByPtr	3	fn	removeByPtr	0	2
+std.hash_map.HashMap().clone	3	fn	clone	0	1
+std.hash_map.HashMap().cloneWithAllocator	3	fn	cloneWithAllocator	0	2
+std.hash_map.HashMap().cloneWithContext	3	fn	cloneWithContext	0	2
+std.hash_map.HashMap().cloneWithAllocatorAndContext	3	fn	cloneWithAllocatorAndContext	0	3
+std.hash_map.HashMap().move	3	fn	move	0	1
+std.hash_map.HashMap().rehash	3	fn	rehash	0	1
+std.hash_map.HashMapUnmanaged	2	fn	HashMapUnmanaged	80	4
+std.hash_map.HashMapUnmanaged().metadata	3	field	metadata	0	
+std.hash_map.HashMapUnmanaged().size	3	field	size	0	
+std.hash_map.HashMapUnmanaged().available	3	field	available	0	
+std.hash_map.HashMapUnmanaged().pointer_stability	3	field	pointer_stability	0	
+std.hash_map.HashMapUnmanaged().empty	3	const	empty	0	
+std.hash_map.HashMapUnmanaged().Size	3	alias	Size	0	u32
+std.hash_map.HashMapUnmanaged().Hash	3	alias	Hash	0	u64
+std.hash_map.HashMapUnmanaged().Entry	3	struct	Entry	2	
+std.hash_map.HashMapUnmanaged().Entry.key_ptr	4	field	key_ptr	0	
+std.hash_map.HashMapUnmanaged().Entry.value_ptr	4	field	value_ptr	0	
+std.hash_map.HashMapUnmanaged().KV	3	struct	KV	2	
+std.hash_map.HashMapUnmanaged().KV.key	4	field	key	0	
+std.hash_map.HashMapUnmanaged().KV.value	4	field	value	0	
+std.hash_map.HashMapUnmanaged().Iterator	3	struct	Iterator	3	
+std.hash_map.HashMapUnmanaged().Iterator.hm	4	field	hm	0	
+std.hash_map.HashMapUnmanaged().Iterator.index	4	field	index	0	
+std.hash_map.HashMapUnmanaged().Iterator.next	4	fn	next	0	1
+std.hash_map.HashMapUnmanaged().KeyIterator	3	const	KeyIterator	0	
+std.hash_map.HashMapUnmanaged().ValueIterator	3	const	ValueIterator	0	
+std.hash_map.HashMapUnmanaged().GetOrPutResult	3	struct	GetOrPutResult	3	
+std.hash_map.HashMapUnmanaged().GetOrPutResult.key_ptr	4	field	key_ptr	0	
+std.hash_map.HashMapUnmanaged().GetOrPutResult.value_ptr	4	field	value_ptr	0	
+std.hash_map.HashMapUnmanaged().GetOrPutResult.found_existing	4	field	found_existing	0	
+std.hash_map.HashMapUnmanaged().Managed	3	const	Managed	0	
+std.hash_map.HashMapUnmanaged().promote	3	fn	promote	0	2
+std.hash_map.HashMapUnmanaged().promoteContext	3	fn	promoteContext	0	3
+std.hash_map.HashMapUnmanaged().lockPointers	3	fn	lockPointers	0	1
+std.hash_map.HashMapUnmanaged().unlockPointers	3	fn	unlockPointers	0	1
+std.hash_map.HashMapUnmanaged().deinit	3	fn	deinit	0	2
+std.hash_map.HashMapUnmanaged().ensureTotalCapacity	3	fn	ensureTotalCapacity	0	3
+std.hash_map.HashMapUnmanaged().ensureTotalCapacityContext	3	fn	ensureTotalCapacityContext	0	4
+std.hash_map.HashMapUnmanaged().ensureUnusedCapacity	3	fn	ensureUnusedCapacity	0	3
+std.hash_map.HashMapUnmanaged().ensureUnusedCapacityContext	3	fn	ensureUnusedCapacityContext	0	4
+std.hash_map.HashMapUnmanaged().clearRetainingCapacity	3	fn	clearRetainingCapacity	0	1
+std.hash_map.HashMapUnmanaged().clearAndFree	3	fn	clearAndFree	0	2
+std.hash_map.HashMapUnmanaged().count	3	fn	count	0	1
+std.hash_map.HashMapUnmanaged().capacity	3	fn	capacity	0	1
+std.hash_map.HashMapUnmanaged().iterator	3	fn	iterator	0	1
+std.hash_map.HashMapUnmanaged().keyIterator	3	fn	keyIterator	0	1
+std.hash_map.HashMapUnmanaged().valueIterator	3	fn	valueIterator	0	1
+std.hash_map.HashMapUnmanaged().putNoClobber	3	fn	putNoClobber	0	4
+std.hash_map.HashMapUnmanaged().putNoClobberContext	3	fn	putNoClobberContext	0	5
+std.hash_map.HashMapUnmanaged().putAssumeCapacity	3	fn	putAssumeCapacity	0	3
+std.hash_map.HashMapUnmanaged().putAssumeCapacityContext	3	fn	putAssumeCapacityContext	0	4
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobber	3	fn	putAssumeCapacityNoClobber	0	3
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobberContext	3	fn	putAssumeCapacityNoClobberContext	0	4
+std.hash_map.HashMapUnmanaged().fetchPut	3	fn	fetchPut	0	4
+std.hash_map.HashMapUnmanaged().fetchPutContext	3	fn	fetchPutContext	0	5
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacity	3	fn	fetchPutAssumeCapacity	0	3
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacityContext	3	fn	fetchPutAssumeCapacityContext	0	4
+std.hash_map.HashMapUnmanaged().fetchRemove	3	fn	fetchRemove	0	2
+std.hash_map.HashMapUnmanaged().fetchRemoveContext	3	fn	fetchRemoveContext	0	3
+std.hash_map.HashMapUnmanaged().fetchRemoveAdapted	3	fn	fetchRemoveAdapted	0	3
+std.hash_map.HashMapUnmanaged().getEntry	3	fn	getEntry	0	2
+std.hash_map.HashMapUnmanaged().getEntryContext	3	fn	getEntryContext	0	3
+std.hash_map.HashMapUnmanaged().getEntryAdapted	3	fn	getEntryAdapted	0	3
+std.hash_map.HashMapUnmanaged().put	3	fn	put	0	4
+std.hash_map.HashMapUnmanaged().putContext	3	fn	putContext	0	5
+std.hash_map.HashMapUnmanaged().getKeyPtr	3	fn	getKeyPtr	0	2
+std.hash_map.HashMapUnmanaged().getKeyPtrContext	3	fn	getKeyPtrContext	0	3
+std.hash_map.HashMapUnmanaged().getKeyPtrAdapted	3	fn	getKeyPtrAdapted	0	3
+std.hash_map.HashMapUnmanaged().getKey	3	fn	getKey	0	2
+std.hash_map.HashMapUnmanaged().getKeyContext	3	fn	getKeyContext	0	3
+std.hash_map.HashMapUnmanaged().getKeyAdapted	3	fn	getKeyAdapted	0	3
+std.hash_map.HashMapUnmanaged().getPtr	3	fn	getPtr	0	2
+std.hash_map.HashMapUnmanaged().getPtrContext	3	fn	getPtrContext	0	3
+std.hash_map.HashMapUnmanaged().getPtrAdapted	3	fn	getPtrAdapted	0	3
+std.hash_map.HashMapUnmanaged().get	3	fn	get	0	2
+std.hash_map.HashMapUnmanaged().getContext	3	fn	getContext	0	3
+std.hash_map.HashMapUnmanaged().getAdapted	3	fn	getAdapted	0	3
+std.hash_map.HashMapUnmanaged().getOrPut	3	fn	getOrPut	0	3
+std.hash_map.HashMapUnmanaged().getOrPutContext	3	fn	getOrPutContext	0	4
+std.hash_map.HashMapUnmanaged().getOrPutAdapted	3	fn	getOrPutAdapted	0	4
+std.hash_map.HashMapUnmanaged().getOrPutContextAdapted	3	fn	getOrPutContextAdapted	0	5
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacity	3	fn	getOrPutAssumeCapacity	0	2
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacityContext	3	fn	getOrPutAssumeCapacityContext	0	3
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacityAdapted	3	fn	getOrPutAssumeCapacityAdapted	0	3
+std.hash_map.HashMapUnmanaged().getOrPutValue	3	fn	getOrPutValue	0	4
+std.hash_map.HashMapUnmanaged().getOrPutValueContext	3	fn	getOrPutValueContext	0	5
+std.hash_map.HashMapUnmanaged().contains	3	fn	contains	0	2
+std.hash_map.HashMapUnmanaged().containsContext	3	fn	containsContext	0	3
+std.hash_map.HashMapUnmanaged().containsAdapted	3	fn	containsAdapted	0	3
+std.hash_map.HashMapUnmanaged().remove	3	fn	remove	0	2
+std.hash_map.HashMapUnmanaged().removeContext	3	fn	removeContext	0	3
+std.hash_map.HashMapUnmanaged().removeAdapted	3	fn	removeAdapted	0	3
+std.hash_map.HashMapUnmanaged().removeByPtr	3	fn	removeByPtr	0	2
+std.hash_map.HashMapUnmanaged().clone	3	fn	clone	0	2
+std.hash_map.HashMapUnmanaged().cloneContext	3	fn	cloneContext	0	3
+std.hash_map.HashMapUnmanaged().move	3	fn	move	0	1
+std.hash_map.HashMapUnmanaged().rehash	3	fn	rehash	0	2
 std.heap	1	ns	heap	29	heap.zig
 std.heap.ArenaAllocator	2	ns	ArenaAllocator	9	heap/ArenaAllocator.zig
 std.heap.ArenaAllocator.child_allocator	3	field	child_allocator	0	
@@ -14782,8 +15824,34 @@ std.heap.memory_pool.AlignedManaged	3	fn	AlignedManaged	0	2
 std.heap.memory_pool.Options	3	struct	Options	2	
 std.heap.memory_pool.Options.alignment	4	field	alignment	0	
 std.heap.memory_pool.Options.growable	4	field	growable	0	
-std.heap.memory_pool.Extra	3	fn	Extra	0	2
-std.heap.memory_pool.ExtraManaged	3	fn	ExtraManaged	0	2
+std.heap.memory_pool.Extra	3	fn	Extra	13	2
+std.heap.memory_pool.Extra().arena_state	4	field	arena_state	0	
+std.heap.memory_pool.Extra().free_list	4	field	free_list	0	
+std.heap.memory_pool.Extra().item_size	4	const	item_size	0	
+std.heap.memory_pool.Extra().item_alignment	4	const	item_alignment	0	
+std.heap.memory_pool.Extra().empty	4	const	empty	0	
+std.heap.memory_pool.Extra().initCapacity	4	fn	initCapacity	0	2
+std.heap.memory_pool.Extra().deinit	4	fn	deinit	0	2
+std.heap.memory_pool.Extra().toManaged	4	fn	toManaged	0	2
+std.heap.memory_pool.Extra().addCapacity	4	fn	addCapacity	0	3
+std.heap.memory_pool.Extra().ResetMode	4	alias	ResetMode	0	std.heap.ArenaAllocator.ResetMode
+std.heap.memory_pool.Extra().reset	4	fn	reset	0	3
+std.heap.memory_pool.Extra().create	4	fn	create	0	2
+std.heap.memory_pool.Extra().destroy	4	fn	destroy	0	2
+std.heap.memory_pool.ExtraManaged	3	fn	ExtraManaged	13	2
+std.heap.memory_pool.ExtraManaged().allocator	4	field	allocator	0	
+std.heap.memory_pool.ExtraManaged().unmanaged	4	field	unmanaged	0	
+std.heap.memory_pool.ExtraManaged().Unmanaged	4	const	Unmanaged	0	
+std.heap.memory_pool.ExtraManaged().item_size	4	alias	item_size	0	Unmanaged.item_size
+std.heap.memory_pool.ExtraManaged().item_alignment	4	alias	item_alignment	0	Unmanaged.item_alignment
+std.heap.memory_pool.ExtraManaged().init	4	fn	init	0	1
+std.heap.memory_pool.ExtraManaged().initCapacity	4	fn	initCapacity	0	2
+std.heap.memory_pool.ExtraManaged().deinit	4	fn	deinit	0	1
+std.heap.memory_pool.ExtraManaged().addCapacity	4	fn	addCapacity	0	2
+std.heap.memory_pool.ExtraManaged().ResetMode	4	alias	ResetMode	0	Unmanaged.ResetMode
+std.heap.memory_pool.ExtraManaged().reset	4	fn	reset	0	2
+std.heap.memory_pool.ExtraManaged().create	4	fn	create	0	1
+std.heap.memory_pool.ExtraManaged().destroy	4	fn	destroy	0	2
 std.heap.MemoryPoolAligned	2	alias	MemoryPoolAligned	0	memory_pool.Aligned
 std.heap.MemoryPoolExtra	2	alias	MemoryPoolExtra	0	memory_pool.Extra
 std.heap.MemoryPoolOptions	2	alias	MemoryPoolOptions	0	memory_pool.Options
@@ -14797,7 +15865,13 @@ std.heap.smp_allocator	2	const	smp_allocator	0
 std.heap.wasm_allocator	2	const	wasm_allocator	0	
 std.heap.brk_allocator	2	const	brk_allocator	0	
 std.heap.stackFallback	2	fn	stackFallback	0	2
-std.heap.StackFallbackAllocator	2	fn	StackFallbackAllocator	0	1
+std.heap.StackFallbackAllocator	2	fn	StackFallbackAllocator	6	1
+std.heap.StackFallbackAllocator().buffer	3	field	buffer	0	
+std.heap.StackFallbackAllocator().fallback_allocator	3	field	fallback_allocator	0	
+std.heap.StackFallbackAllocator().fixed_buffer_allocator	3	field	fixed_buffer_allocator	0	
+std.heap.StackFallbackAllocator().get_called	3	field	get_called	0	
+std.heap.StackFallbackAllocator().get	3	fn	get	0	1
+std.heap.StackFallbackAllocator().allocator	3	const	allocator	0	
 std.heap.testAllocator	2	fn	testAllocator	0	1
 std.heap.testAllocatorAligned	2	fn	testAllocatorAligned	0	1
 std.heap.testAllocatorLargeAlignment	2	fn	testAllocatorLargeAlignment	0	1
@@ -15439,7 +16513,10 @@ std.json.Stringify.valueAlloc	3	fn	valueAlloc	0	3
 std.json.Stringify.encodeJsonString	3	fn	encodeJsonString	0	3
 std.json.Stringify.encodeJsonStringChars	3	fn	encodeJsonStringChars	0	3
 std.json.fmt	2	fn	fmt	0	2
-std.json.Formatter	2	fn	Formatter	0	1
+std.json.Formatter	2	fn	Formatter	3	1
+std.json.Formatter().value	3	field	value	0	
+std.json.Formatter().options	3	field	options	0	
+std.json.Formatter().format	3	fn	format	0	2
 std.leb	1	ns	leb	3	leb128.zig
 std.leb.writeUnsignedFixed	2	fn	writeUnsignedFixed	0	3
 std.leb.writeUnsignedExtended	2	fn	writeUnsignedExtended	0	2
@@ -15460,7 +16537,11 @@ std.log.terminalMode	2	alias	terminalMode	0	std.Options.logTerminalMode
 std.log.defaultTerminalMode	2	fn	defaultTerminalMode	0	0
 std.log.defaultLog	2	fn	defaultLog	0	4
 std.log.defaultLogFileTerminal	2	fn	defaultLogFileTerminal	0	5
-std.log.scoped	2	fn	scoped	0	1
+std.log.scoped	2	fn	scoped	4	1
+std.log.scoped().err	3	fn	err	0	2
+std.log.scoped().warn	3	fn	warn	0	2
+std.log.scoped().info	3	fn	info	0	2
+std.log.scoped().debug	3	fn	debug	0	2
 std.log.default_log_scope	2	const	default_log_scope	0	
 std.log.default	2	const	default	0	
 std.log.err	2	alias	err	0	default.err
@@ -16271,7 +17352,20 @@ std.math.complex.sin	3	fn	sin	0	1
 std.math.complex.sqrt	3	fn	sqrt	0	1
 std.math.complex.tanh	3	fn	tanh	0	1
 std.math.complex.tan	3	fn	tan	0	1
-std.math.complex.Complex	3	fn	Complex	0	1
+std.math.complex.Complex	3	fn	Complex	13	1
+std.math.complex.Complex().re	4	field	re	0	
+std.math.complex.Complex().im	4	field	im	0	
+std.math.complex.Complex().init	4	fn	init	0	2
+std.math.complex.Complex().add	4	fn	add	0	2
+std.math.complex.Complex().sub	4	fn	sub	0	2
+std.math.complex.Complex().mul	4	fn	mul	0	2
+std.math.complex.Complex().div	4	fn	div	0	2
+std.math.complex.Complex().conjugate	4	fn	conjugate	0	1
+std.math.complex.Complex().neg	4	fn	neg	0	1
+std.math.complex.Complex().mulbyi	4	fn	mulbyi	0	1
+std.math.complex.Complex().reciprocal	4	fn	reciprocal	0	1
+std.math.complex.Complex().magnitude	4	fn	magnitude	0	1
+std.math.complex.Complex().squaredMagnitude	4	fn	squaredMagnitude	0	1
 std.math.Complex	2	alias	Complex	0	complex.Complex
 std.math.big	2	ns	big	7	math/big.zig
 std.math.big.int	3	ns	int	20	math/big/int.zig
@@ -16600,7 +17694,15 @@ std.mem.Alignment.min	3	fn	min	0	2
 std.mem.Alignment.forward	3	fn	forward	0	2
 std.mem.Alignment.backward	3	fn	backward	0	2
 std.mem.Alignment.check	3	fn	check	0	2
-std.mem.ValidationAllocator	2	fn	ValidationAllocator	0	1
+std.mem.ValidationAllocator	2	fn	ValidationAllocator	8	1
+std.mem.ValidationAllocator().underlying_allocator	3	field	underlying_allocator	0	
+std.mem.ValidationAllocator().init	3	fn	init	0	1
+std.mem.ValidationAllocator().allocator	3	fn	allocator	0	1
+std.mem.ValidationAllocator().alloc	3	fn	alloc	0	4
+std.mem.ValidationAllocator().resize	3	fn	resize	0	5
+std.mem.ValidationAllocator().remap	3	fn	remap	0	5
+std.mem.ValidationAllocator().free	3	fn	free	0	4
+std.mem.ValidationAllocator().reset	3	fn	reset	0	1
 std.mem.validationWrap	2	fn	validationWrap	0	1
 std.mem.copyForwards	2	fn	copyForwards	0	3
 std.mem.copyBackwards	2	fn	copyBackwards	0	3
@@ -16683,7 +17785,13 @@ std.mem.splitBackwardsSequence	2	fn	splitBackwardsSequence	0	3
 std.mem.splitBackwardsAny	2	fn	splitBackwardsAny	0	3
 std.mem.splitBackwardsScalar	2	fn	splitBackwardsScalar	0	3
 std.mem.window	2	fn	window	0	4
-std.mem.WindowIterator	2	fn	WindowIterator	0	1
+std.mem.WindowIterator	2	fn	WindowIterator	6	1
+std.mem.WindowIterator().buffer	3	field	buffer	0	
+std.mem.WindowIterator().index	3	field	index	0	
+std.mem.WindowIterator().size	3	field	size	0	
+std.mem.WindowIterator().advance	3	field	advance	0	
+std.mem.WindowIterator().next	3	fn	next	0	1
+std.mem.WindowIterator().reset	3	fn	reset	0	1
 std.mem.startsWith	2	fn	startsWith	0	3
 std.mem.endsWith	2	fn	endsWith	0	3
 std.mem.cutPrefix	2	fn	cutPrefix	0	3
@@ -16696,9 +17804,31 @@ std.mem.DelimiterType	2	enum	DelimiterType	3
 std.mem.DelimiterType.sequence	3	tag	sequence	0	
 std.mem.DelimiterType.any	3	tag	any	0	
 std.mem.DelimiterType.scalar	3	tag	scalar	0	
-std.mem.TokenIterator	2	fn	TokenIterator	0	2
-std.mem.SplitIterator	2	fn	SplitIterator	0	2
-std.mem.SplitBackwardsIterator	2	fn	SplitBackwardsIterator	0	2
+std.mem.TokenIterator	2	fn	TokenIterator	7	2
+std.mem.TokenIterator().buffer	3	field	buffer	0	
+std.mem.TokenIterator().delimiter	3	field	delimiter	0	
+std.mem.TokenIterator().index	3	field	index	0	
+std.mem.TokenIterator().next	3	fn	next	0	1
+std.mem.TokenIterator().peek	3	fn	peek	0	1
+std.mem.TokenIterator().rest	3	fn	rest	0	1
+std.mem.TokenIterator().reset	3	fn	reset	0	1
+std.mem.SplitIterator	2	fn	SplitIterator	8	2
+std.mem.SplitIterator().buffer	3	field	buffer	0	
+std.mem.SplitIterator().index	3	field	index	0	
+std.mem.SplitIterator().delimiter	3	field	delimiter	0	
+std.mem.SplitIterator().first	3	fn	first	0	1
+std.mem.SplitIterator().next	3	fn	next	0	1
+std.mem.SplitIterator().peek	3	fn	peek	0	1
+std.mem.SplitIterator().rest	3	fn	rest	0	1
+std.mem.SplitIterator().reset	3	fn	reset	0	1
+std.mem.SplitBackwardsIterator	2	fn	SplitBackwardsIterator	7	2
+std.mem.SplitBackwardsIterator().buffer	3	field	buffer	0	
+std.mem.SplitBackwardsIterator().index	3	field	index	0	
+std.mem.SplitBackwardsIterator().delimiter	3	field	delimiter	0	
+std.mem.SplitBackwardsIterator().first	3	fn	first	0	1
+std.mem.SplitBackwardsIterator().next	3	fn	next	0	1
+std.mem.SplitBackwardsIterator().rest	3	fn	rest	0	1
+std.mem.SplitBackwardsIterator().reset	3	fn	reset	0	1
 std.mem.join	2	fn	join	0	3
 std.mem.joinZ	2	fn	joinZ	0	3
 std.mem.concat	2	fn	concat	0	3
@@ -16715,7 +17845,11 @@ std.mem.indexOfMinMax	2	alias	indexOfMinMax	0	findMinMax
 std.mem.findMinMax	2	fn	findMinMax	0	2
 std.mem.swap	2	fn	swap	0	3
 std.mem.reverse	2	fn	reverse	0	2
-std.mem.ReverseIterator	2	fn	ReverseIterator	0	1
+std.mem.ReverseIterator	2	fn	ReverseIterator	4	1
+std.mem.ReverseIterator().ptr	3	field	ptr	0	
+std.mem.ReverseIterator().index	3	field	index	0	
+std.mem.ReverseIterator().next	3	fn	next	0	1
+std.mem.ReverseIterator().nextPtr	3	fn	nextPtr	0	1
 std.mem.reverseIterator	2	fn	reverseIterator	0	1
 std.mem.rotate	2	fn	rotate	0	3
 std.mem.replace	2	fn	replace	0	5
@@ -33911,11 +35045,22 @@ std.os.windows.CONSOLE.USER_IO.InputBuffer.Pointer	6	field	Pointer	0
 std.os.windows.CONSOLE.USER_IO.OutputBuffer	5	struct	OutputBuffer	2	
 std.os.windows.CONSOLE.USER_IO.OutputBuffer.Size	6	field	Size	0	
 std.os.windows.CONSOLE.USER_IO.OutputBuffer.Pointer	6	field	Pointer	0	
-std.os.windows.CONSOLE.USER_IO.Request	5	fn	Request	0	2
+std.os.windows.CONSOLE.USER_IO.Request	5	fn	Request	6	2
+std.os.windows.CONSOLE.USER_IO.Request().Handle	6	field	Handle	0	
+std.os.windows.CONSOLE.USER_IO.Request().InputBuffersLength	6	field	InputBuffersLength	0	
+std.os.windows.CONSOLE.USER_IO.Request().OutputBuffersLength	6	field	OutputBuffersLength	0	
+std.os.windows.CONSOLE.USER_IO.Request().InputBuffers	6	field	InputBuffers	0	
+std.os.windows.CONSOLE.USER_IO.Request().OutputBuffers	6	field	OutputBuffers	0	
+std.os.windows.CONSOLE.USER_IO.Request().init	6	fn	init	0	3
 std.os.windows.CONSOLE.USER_IO.Header	5	struct	Header	3	
 std.os.windows.CONSOLE.USER_IO.Header.Operation	6	field	Operation	0	
 std.os.windows.CONSOLE.USER_IO.Header.Size	6	field	Size	0	
-std.os.windows.CONSOLE.USER_IO.Header.With	6	fn	With	0	1
+std.os.windows.CONSOLE.USER_IO.Header.With	6	fn	With	5	1
+std.os.windows.CONSOLE.USER_IO.Header.With().Header	7	field	Header	0	
+std.os.windows.CONSOLE.USER_IO.Header.With().Data	7	field	Data	0	
+std.os.windows.CONSOLE.USER_IO.Header.With().init	7	fn	init	0	2
+std.os.windows.CONSOLE.USER_IO.Header.With().request	7	fn	request	0	6
+std.os.windows.CONSOLE.USER_IO.Header.With().operate	7	fn	operate	0	3
 std.os.windows.CONSOLE.USER_IO.Operation	5	enum	Operation	12	
 std.os.windows.CONSOLE.USER_IO.Operation.GetCP	6	tag	GetCP	0	
 std.os.windows.CONSOLE.USER_IO.Operation.GetMode	6	tag	GetMode	0	
@@ -33936,7 +35081,9 @@ std.os.windows.AFD.Reserved0	4	field	Reserved0	0
 std.os.windows.AFD.Mutability	4	enum	Mutability	2	
 std.os.windows.AFD.Mutability.@"const"	5	tag	@"const"	0	
 std.os.windows.AFD.Mutability.@"var"	5	tag	@"var"	0	
-std.os.windows.AFD.WSABUF	4	fn	WSABUF	0	1
+std.os.windows.AFD.WSABUF	4	fn	WSABUF	2	1
+std.os.windows.AFD.WSABUF().len	5	field	len	0	
+std.os.windows.AFD.WSABUF().buf	5	field	buf	0	
 std.os.windows.AFD.GUARANTEE	4	enum	GUARANTEE	6	
 std.os.windows.AFD.GUARANTEE.BestEffort	5	tag	BestEffort	0	
 std.os.windows.AFD.GUARANTEE.ControlledLoad	5	tag	ControlledLoad	0	
@@ -39581,7 +40728,10 @@ std.os.windows.FILE_BOTH_DIR_INFORMATION.ShortNameLength	4	field	ShortNameLength
 std.os.windows.FILE_BOTH_DIR_INFORMATION.ShortName	4	field	ShortName	0	
 std.os.windows.FILE_BOTH_DIR_INFORMATION.FileName	4	field	FileName	0	
 std.os.windows.FILE_BOTH_DIRECTORY_INFORMATION	3	alias	FILE_BOTH_DIRECTORY_INFORMATION	0	FILE_BOTH_DIR_INFORMATION
-std.os.windows.FileInformationIterator	3	fn	FileInformationIterator	0	1
+std.os.windows.FileInformationIterator	3	fn	FileInformationIterator	3	1
+std.os.windows.FileInformationIterator().byte_offset	4	field	byte_offset	0	
+std.os.windows.FileInformationIterator().buf	4	field	buf	0	
+std.os.windows.FileInformationIterator().next	4	fn	next	0	1
 std.os.windows.IO_APC_ROUTINE	3	const	IO_APC_ROUTINE	0	
 std.os.windows.CURDIR	3	struct	CURDIR	2	
 std.os.windows.CURDIR.DosPath	4	field	DosPath	0	
@@ -40600,7 +41750,21 @@ std.process.Args.toSlice	3	fn	toSlice	0	2
 std.process.Args.IteratorGeneralOptions	3	struct	IteratorGeneralOptions	2	
 std.process.Args.IteratorGeneralOptions.comments	4	field	comments	0	
 std.process.Args.IteratorGeneralOptions.single_quotes	4	field	single_quotes	0	
-std.process.Args.IteratorGeneral	3	fn	IteratorGeneral	0	1
+std.process.Args.IteratorGeneral	3	fn	IteratorGeneral	14	1
+std.process.Args.IteratorGeneral().allocator	4	field	allocator	0	
+std.process.Args.IteratorGeneral().index	4	field	index	0	
+std.process.Args.IteratorGeneral().cmd_line	4	field	cmd_line	0	
+std.process.Args.IteratorGeneral().free_cmd_line_on_deinit	4	field	free_cmd_line_on_deinit	0	
+std.process.Args.IteratorGeneral().buffer	4	field	buffer	0	
+std.process.Args.IteratorGeneral().start	4	field	start	0	
+std.process.Args.IteratorGeneral().end	4	field	end	0	
+std.process.Args.IteratorGeneral().Self	4	const	Self	0	
+std.process.Args.IteratorGeneral().InitError	4	const	InitError	0	
+std.process.Args.IteratorGeneral().init	4	fn	init	0	2
+std.process.Args.IteratorGeneral().initTakeOwnership	4	fn	initTakeOwnership	0	2
+std.process.Args.IteratorGeneral().skip	4	fn	skip	0	1
+std.process.Args.IteratorGeneral().next	4	fn	next	0	1
+std.process.Args.IteratorGeneral().deinit	4	fn	deinit	0	1
 std.process.Environ	2	ns	Environ	22	process/Environ.zig
 std.process.Environ.block	3	field	block	0	
 std.process.Environ.empty	3	const	empty	0	
@@ -44742,7 +45906,23 @@ std.zig.llvm.bitcode_writer.AbbrevOp.array_fixed_runtime	5	field	array_fixed_run
 std.zig.llvm.bitcode_writer.AbbrevOp.array_vbr	5	field	array_vbr	0	
 std.zig.llvm.bitcode_writer.AbbrevOp.array_char6	5	field	array_char6	0	
 std.zig.llvm.bitcode_writer.Error	4	const	Error	0	
-std.zig.llvm.bitcode_writer.BitcodeWriter	4	fn	BitcodeWriter	0	1
+std.zig.llvm.bitcode_writer.BitcodeWriter	4	fn	BitcodeWriter	16	1
+std.zig.llvm.bitcode_writer.BitcodeWriter().buffer	5	field	buffer	0	
+std.zig.llvm.bitcode_writer.BitcodeWriter().bit_buffer	5	field	bit_buffer	0	
+std.zig.llvm.bitcode_writer.BitcodeWriter().bit_count	5	field	bit_count	0	
+std.zig.llvm.bitcode_writer.BitcodeWriter().widths	5	field	widths	0	
+std.zig.llvm.bitcode_writer.BitcodeWriter().getTypeWidth	5	fn	getTypeWidth	0	2
+std.zig.llvm.bitcode_writer.BitcodeWriter().init	5	fn	init	0	2
+std.zig.llvm.bitcode_writer.BitcodeWriter().deinit	5	fn	deinit	0	1
+std.zig.llvm.bitcode_writer.BitcodeWriter().toOwnedSlice	5	fn	toOwnedSlice	0	1
+std.zig.llvm.bitcode_writer.BitcodeWriter().length	5	fn	length	0	1
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeBits	5	fn	writeBits	0	3
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeVbr	5	fn	writeVbr	0	3
+std.zig.llvm.bitcode_writer.BitcodeWriter().bitsVbr	5	fn	bitsVbr	0	2
+std.zig.llvm.bitcode_writer.BitcodeWriter().write6BitChar	5	fn	write6BitChar	0	2
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeBlob	5	fn	writeBlob	0	2
+std.zig.llvm.bitcode_writer.BitcodeWriter().alignTo32	5	fn	alignTo32	0	1
+std.zig.llvm.bitcode_writer.BitcodeWriter().enterTopBlock	5	fn	enterTopBlock	0	2
 std.zig.llvm.Builder	3	ns	Builder	230	zig/llvm/Builder.zig
 std.zig.llvm.Builder.gpa	4	field	gpa	0	
 std.zig.llvm.Builder.strip	4	field	strip	0	

@@ -600,6 +600,7 @@ std.Io.Reader.takeLeb128	fn takeLeb128(r: *Reader, comptime T: type) TakeLeb128E
 std.Io.Reader.rebase	fn rebase(r: *Reader, capacity: usize) Error!void
 std.Io.Reader.defaultRebase	fn defaultRebase(r: *Reader, capacity: usize) Error!void
 std.Io.Reader.Hashed	fn Hashed(comptime Hasher: type) type
+std.Io.Reader.Hashed().init	fn init(in: *Reader, hasher: Hasher, buffer: []u8) @This()
 std.Io.Reader.writableVectorPosix	fn writableVectorPosix(r: *Reader, buffer: []std.posix.iovec, data: []const []u8) Error!struct { usize, usize }
 std.Io.Reader.writableVectorWsa	fn writableVectorWsa( r: *Reader, buffer: []std.os.windows.AFD.WSABUF(.@"var"), data: []const []u8, ) Error!struct { usize, usize }
 std.Io.Reader.writableVector	fn writableVector(r: *Reader, buffer: [][]u8, data: []const []u8) Error!struct { usize, usize }
@@ -685,7 +686,11 @@ std.Io.Writer.unreachableRebase	fn unreachableRebase(w: *Writer, preserve: usize
 std.Io.Writer.fromArrayList	fn fromArrayList(array_list: *ArrayList(u8)) Writer
 std.Io.Writer.toArrayList	fn toArrayList(w: *Writer) ArrayList(u8)
 std.Io.Writer.Hashed	fn Hashed(comptime Hasher: type) type
+std.Io.Writer.Hashed().init	fn init(out: *Writer, buffer: []u8) @This()
+std.Io.Writer.Hashed().initHasher	fn initHasher(out: *Writer, hasher: Hasher, buffer: []u8) @This()
 std.Io.Writer.Hashing	fn Hashing(comptime Hasher: type) type
+std.Io.Writer.Hashing().init	fn init(buffer: []u8) @This()
+std.Io.Writer.Hashing().initHasher	fn initHasher(hasher: Hasher, buffer: []u8) @This()
 std.Io.Writer.Allocating.init	fn init(allocator: Allocator) Allocating
 std.Io.Writer.Allocating.initAligned	fn initAligned(allocator: Allocator, alignment: std.mem.Alignment) Allocating
 std.Io.Writer.Allocating.initCapacity	fn initCapacity(allocator: Allocator, capacity: usize) error{OutOfMemory}!Allocating
@@ -889,6 +894,7 @@ std.Io.File.MemoryMap.write	fn write(mm: *MemoryMap, io: Io) File.WritePositiona
 std.Io.File.MultiReader.Streams.contexts	fn contexts(s: *Streams) []Context
 std.Io.File.MultiReader.Streams.storage	fn storage(s: *Streams) []Io.Operation.Storage
 std.Io.File.MultiReader.Buffer	fn Buffer(comptime n: usize) type
+std.Io.File.MultiReader.Buffer().toStreams	fn toStreams(b: *@This()) *Streams
 std.Io.File.MultiReader.init	fn init(mr: *MultiReader, gpa: Allocator, io: Io, streams: *Streams, files: []const File) void
 std.Io.File.MultiReader.deinit	fn deinit(mr: *MultiReader) void
 std.Io.File.MultiReader.fileReader	fn fileReader(mr: *MultiReader, index: usize) *File.Reader
@@ -1008,6 +1014,8 @@ std.Io.Timeout.toDeadline	fn toDeadline(t: Timeout, io: Io) Timeout
 std.Io.Timeout.toDurationFromNow	fn toDurationFromNow(t: Timeout, io: Io) ?Clock.Duration
 std.Io.Timeout.sleep	fn sleep(timeout: Timeout, io: Io) Cancelable!void
 std.Io.Future	fn Future(Result: type) type
+std.Io.Future().cancel	fn cancel(f: *@This(), io: Io) Result
+std.Io.Future().await	fn await(f: *@This(), io: Io) Result
 std.Io.Group.async	fn async(g: *Group, io: Io, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function))) void
 std.Io.Group.concurrent	fn concurrent(g: *Group, io: Io, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function))) ConcurrentError!void
 std.Io.Group.await	fn await(g: *Group, io: Io) Cancelable!void
@@ -1016,6 +1024,13 @@ std.Io.recancel	fn recancel(io: Io) void
 std.Io.swapCancelProtection	fn swapCancelProtection(io: Io, new: CancelProtection) CancelProtection
 std.Io.checkCancel	fn checkCancel(io: Io) Cancelable!void
 std.Io.Select	fn Select(comptime U: type) type
+std.Io.Select().init	fn init(io: Io, buffer: []U) S
+std.Io.Select().async	fn async( s: *S, comptime field: Field, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function)), ) void
+std.Io.Select().concurrent	fn concurrent( s: *S, comptime field: Field, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function)), ) ConcurrentError!void
+std.Io.Select().await	fn await(s: *S) Cancelable!U
+std.Io.Select().awaitMany	fn awaitMany(s: *S, buffer: []U, min: usize) Cancelable!usize
+std.Io.Select().cancel	fn cancel(s: *S) ?U
+std.Io.Select().cancelDiscard	fn cancelDiscard(s: *S) void
 std.Io.futexWait	fn futexWait(io: Io, comptime T: type, ptr: *align(@alignOf(u32)) const T, expected: T) Cancelable!void
 std.Io.futexWaitTimeout	fn futexWaitTimeout(io: Io, comptime T: type, ptr: *align(@alignOf(u32)) const T, expected: T, timeout: Timeout) Cancelable!void
 std.Io.futexWaitUncancelable	fn futexWaitUncancelable(io: Io, comptime T: type, ptr: *align(@alignOf(u32)) const T, expected: T) void
@@ -1041,6 +1056,18 @@ std.Io.TypeErasedQueue.putUncancelable	fn putUncancelable(q: *TypeErasedQueue, i
 std.Io.TypeErasedQueue.get	fn get(q: *TypeErasedQueue, io: Io, buffer: []u8, min: usize) (QueueClosedError || Cancelable)!usize
 std.Io.TypeErasedQueue.getUncancelable	fn getUncancelable(q: *TypeErasedQueue, io: Io, buffer: []u8, min: usize) QueueClosedError!usize
 std.Io.Queue	fn Queue(Elem: type) type
+std.Io.Queue().init	fn init(buffer: []Elem) @This()
+std.Io.Queue().close	fn close(q: *@This(), io: Io) void
+std.Io.Queue().put	fn put(q: *@This(), io: Io, elements: []const Elem, min: usize) (QueueClosedError || Cancelable)!usize
+std.Io.Queue().putAll	fn putAll(q: *@This(), io: Io, elements: []const Elem) (QueueClosedError || Cancelable)!void
+std.Io.Queue().putUncancelable	fn putUncancelable(q: *@This(), io: Io, elements: []const Elem, min: usize) QueueClosedError!usize
+std.Io.Queue().putOne	fn putOne(q: *@This(), io: Io, item: Elem) (QueueClosedError || Cancelable)!void
+std.Io.Queue().putOneUncancelable	fn putOneUncancelable(q: *@This(), io: Io, item: Elem) QueueClosedError!void
+std.Io.Queue().get	fn get(q: *@This(), io: Io, buffer: []Elem, min: usize) (QueueClosedError || Cancelable)!usize
+std.Io.Queue().getUncancelable	fn getUncancelable(q: *@This(), io: Io, buffer: []Elem, min: usize) QueueClosedError!usize
+std.Io.Queue().getOne	fn getOne(q: *@This(), io: Io) (QueueClosedError || Cancelable)!Elem
+std.Io.Queue().getOneUncancelable	fn getOneUncancelable(q: *@This(), io: Io) QueueClosedError!Elem
+std.Io.Queue().capacity	fn capacity(q: *const @This()) usize
 std.Io.async	fn async( io: Io, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function)), ) Future(@typeInfo(@TypeOf(function)).@"fn".return_type.?)
 std.Io.concurrent	fn concurrent( io: Io, function: anytype, args: std.meta.ArgsTuple(@TypeOf(function)), ) ConcurrentError!Future(@typeInfo(@TypeOf(function)).@"fn".return_type.?)
 std.Io.sleep	fn sleep(io: Io, duration: Duration, clock: Clock) Cancelable!void
@@ -1225,6 +1252,8 @@ std.Random.ziggurat.exp_f	fn exp_f(x: f64) f64
 std.Random.ziggurat.exp_f_inv	fn exp_f_inv(y: f64) f64
 std.Random.ziggurat.exp_zero_case	fn exp_zero_case(random: Random, _: f64) f64
 std.Random.lcg.Wrapping	fn Wrapping(comptime T: type) type
+std.Random.lcg.Wrapping().init	fn init(xi: T, a: T, c: T) LcgSelf
+std.Random.lcg.Wrapping().next	fn next(lcg: *LcgSelf) T
 std.Random.IoSource.interface	fn interface(this: *const @This()) std.Random
 std.Random.init	fn init(pointer: anytype, comptime fillFn: fn (ptr: @TypeOf(pointer), buf: []u8) void) Random
 std.Random.bytes	fn bytes(r: Random, buf: []u8) void
@@ -1324,6 +1353,10 @@ std.Target.Cpu.Feature.Set.asBytes	fn asBytes(set: *const Set) *const [byte_coun
 std.Target.Cpu.Feature.Set.eql	fn eql(set: Set, other_set: Set) bool
 std.Target.Cpu.Feature.Set.isSuperSetOf	fn isSuperSetOf(set: Set, other_set: Set) bool
 std.Target.Cpu.Feature.FeatureSetFns	fn FeatureSetFns(comptime F: type) type
+std.Target.Cpu.Feature.FeatureSetFns().featureSet	fn featureSet(features: []const F) Set
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHas	fn featureSetHas(set: Set, feature: F) bool
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAny	fn featureSetHasAny(set: Set, features: anytype) bool
+std.Target.Cpu.Feature.FeatureSetFns().featureSetHasAll	fn featureSetHasAll(set: Set, features: anytype) bool
 std.Target.Cpu.Arch.family	fn family(arch: Arch) Family
 std.Target.Cpu.Arch.isX86	fn isX86(arch: Arch) bool
 std.Target.Cpu.Arch.isArm	fn isArm(arch: Arch) bool
@@ -1440,7 +1473,124 @@ std.Uri.resolveInPlace	fn resolveInPlace(base: Uri, new_len: usize, aux_buf: *[]
 std.ArrayList	fn ArrayList(comptime T: type) type
 std.array_list.Managed	fn Managed(comptime T: type) type
 std.array_list.AlignedManaged	fn AlignedManaged(comptime T: type, comptime alignment: ?mem.Alignment) type
+std.array_list.AlignedManaged().SentinelSlice	fn SentinelSlice(comptime s: T) type
+std.array_list.AlignedManaged().init	fn init(gpa: Allocator) Self
+std.array_list.AlignedManaged().initCapacity	fn initCapacity(gpa: Allocator, num: usize) Allocator.Error!Self
+std.array_list.AlignedManaged().deinit	fn deinit(self: Self) void
+std.array_list.AlignedManaged().fromOwnedSlice	fn fromOwnedSlice(gpa: Allocator, slice: Slice) Self
+std.array_list.AlignedManaged().fromOwnedSliceSentinel	fn fromOwnedSliceSentinel(gpa: Allocator, comptime sentinel: T, slice: [:sentinel]T) Self
+std.array_list.AlignedManaged().moveToUnmanaged	fn moveToUnmanaged(self: *Self) Aligned(T, alignment)
+std.array_list.AlignedManaged().toOwnedSlice	fn toOwnedSlice(self: *Self) Allocator.Error!Slice
+std.array_list.AlignedManaged().toOwnedSliceSentinel	fn toOwnedSliceSentinel(self: *Self, comptime sentinel: T) Allocator.Error!SentinelSlice(sentinel)
+std.array_list.AlignedManaged().clone	fn clone(self: Self) Allocator.Error!Self
+std.array_list.AlignedManaged().insert	fn insert(self: *Self, i: usize, item: T) Allocator.Error!void
+std.array_list.AlignedManaged().insertAssumeCapacity	fn insertAssumeCapacity(self: *Self, i: usize, item: T) void
+std.array_list.AlignedManaged().addManyAt	fn addManyAt(self: *Self, index: usize, count: usize) Allocator.Error![]T
+std.array_list.AlignedManaged().addManyAtAssumeCapacity	fn addManyAtAssumeCapacity(self: *Self, index: usize, count: usize) []T
+std.array_list.AlignedManaged().insertSlice	fn insertSlice( self: *Self, index: usize, items: []const T, ) Allocator.Error!void
+std.array_list.AlignedManaged().replaceRange	fn replaceRange(self: *Self, start: usize, len: usize, new_items: []const T) Allocator.Error!void
+std.array_list.AlignedManaged().replaceRangeAssumeCapacity	fn replaceRangeAssumeCapacity(self: *Self, start: usize, len: usize, new_items: []const T) void
+std.array_list.AlignedManaged().append	fn append(self: *Self, item: T) Allocator.Error!void
+std.array_list.AlignedManaged().appendAssumeCapacity	fn appendAssumeCapacity(self: *Self, item: T) void
+std.array_list.AlignedManaged().orderedRemove	fn orderedRemove(self: *Self, i: usize) T
+std.array_list.AlignedManaged().swapRemove	fn swapRemove(self: *Self, i: usize) T
+std.array_list.AlignedManaged().appendSlice	fn appendSlice(self: *Self, items: []const T) Allocator.Error!void
+std.array_list.AlignedManaged().appendSliceAssumeCapacity	fn appendSliceAssumeCapacity(self: *Self, items: []const T) void
+std.array_list.AlignedManaged().appendUnalignedSlice	fn appendUnalignedSlice(self: *Self, items: []align(1) const T) Allocator.Error!void
+std.array_list.AlignedManaged().appendUnalignedSliceAssumeCapacity	fn appendUnalignedSliceAssumeCapacity(self: *Self, items: []align(1) const T) void
+std.array_list.AlignedManaged().print	fn print(self: *Self, comptime fmt: []const u8, args: anytype) error{OutOfMemory}!void
+std.array_list.AlignedManaged().appendNTimes	fn appendNTimes(self: *Self, value: T, n: usize) Allocator.Error!void
+std.array_list.AlignedManaged().appendNTimesAssumeCapacity	fn appendNTimesAssumeCapacity(self: *Self, value: T, n: usize) void
+std.array_list.AlignedManaged().resize	fn resize(self: *Self, new_len: usize) Allocator.Error!void
+std.array_list.AlignedManaged().shrinkAndFree	fn shrinkAndFree(self: *Self, new_len: usize) void
+std.array_list.AlignedManaged().shrinkRetainingCapacity	fn shrinkRetainingCapacity(self: *Self, new_len: usize) void
+std.array_list.AlignedManaged().clearRetainingCapacity	fn clearRetainingCapacity(self: *Self) void
+std.array_list.AlignedManaged().clearAndFree	fn clearAndFree(self: *Self) void
+std.array_list.AlignedManaged().ensureTotalCapacity	fn ensureTotalCapacity(self: *Self, new_capacity: usize) Allocator.Error!void
+std.array_list.AlignedManaged().ensureTotalCapacityPrecise	fn ensureTotalCapacityPrecise(self: *Self, new_capacity: usize) Allocator.Error!void
+std.array_list.AlignedManaged().ensureUnusedCapacity	fn ensureUnusedCapacity(self: *Self, additional_count: usize) Allocator.Error!void
+std.array_list.AlignedManaged().expandToCapacity	fn expandToCapacity(self: *Self) void
+std.array_list.AlignedManaged().addOne	fn addOne(self: *Self) Allocator.Error!*T
+std.array_list.AlignedManaged().addOneAssumeCapacity	fn addOneAssumeCapacity(self: *Self) *T
+std.array_list.AlignedManaged().addManyAsArray	fn addManyAsArray(self: *Self, comptime n: usize) Allocator.Error!*[n]T
+std.array_list.AlignedManaged().addManyAsArrayAssumeCapacity	fn addManyAsArrayAssumeCapacity(self: *Self, comptime n: usize) *[n]T
+std.array_list.AlignedManaged().addManyAsSlice	fn addManyAsSlice(self: *Self, n: usize) Allocator.Error![]T
+std.array_list.AlignedManaged().addManyAsSliceAssumeCapacity	fn addManyAsSliceAssumeCapacity(self: *Self, n: usize) []T
+std.array_list.AlignedManaged().pop	fn pop(self: *Self) ?T
+std.array_list.AlignedManaged().allocatedSlice	fn allocatedSlice(self: Self) Slice
+std.array_list.AlignedManaged().unusedCapacitySlice	fn unusedCapacitySlice(self: Self) []T
+std.array_list.AlignedManaged().getLast	fn getLast(self: Self) T
+std.array_list.AlignedManaged().getLastOrNull	fn getLastOrNull(self: Self) ?T
 std.array_list.Aligned	fn Aligned(comptime T: type, comptime alignment: ?mem.Alignment) type
+std.array_list.Aligned().SentinelSlice	fn SentinelSlice(comptime s: T) type
+std.array_list.Aligned().initCapacity	fn initCapacity(gpa: Allocator, num: usize) Allocator.Error!Self
+std.array_list.Aligned().initBuffer	fn initBuffer(buffer: Slice) Self
+std.array_list.Aligned().deinit	fn deinit(self: *Self, gpa: Allocator) void
+std.array_list.Aligned().toManaged	fn toManaged(self: *Self, gpa: Allocator) AlignedManaged(T, alignment)
+std.array_list.Aligned().fromOwnedSlice	fn fromOwnedSlice(slice: Slice) Self
+std.array_list.Aligned().fromOwnedSliceSentinel	fn fromOwnedSliceSentinel(comptime sentinel: T, slice: [:sentinel]T) Self
+std.array_list.Aligned().toOwnedSlice	fn toOwnedSlice(self: *Self, gpa: Allocator) Allocator.Error!Slice
+std.array_list.Aligned().toOwnedSliceSentinel	fn toOwnedSliceSentinel(self: *Self, gpa: Allocator, comptime sentinel: T) Allocator.Error!SentinelSlice(sentinel)
+std.array_list.Aligned().toOwnedSliceAssert	fn toOwnedSliceAssert(self: *Self) Slice
+std.array_list.Aligned().toOwnedSliceSentinelAssert	fn toOwnedSliceSentinelAssert(self: *Self, comptime sentinel: T) SentinelSlice(sentinel)
+std.array_list.Aligned().clone	fn clone(self: Self, gpa: Allocator) Allocator.Error!Self
+std.array_list.Aligned().insert	fn insert(self: *Self, gpa: Allocator, i: usize, item: T) Allocator.Error!void
+std.array_list.Aligned().insertAssumeCapacity	fn insertAssumeCapacity(self: *Self, i: usize, item: T) void
+std.array_list.Aligned().insertBounded	fn insertBounded(self: *Self, i: usize, item: T) error{OutOfMemory}!void
+std.array_list.Aligned().addManyAt	fn addManyAt( self: *Self, gpa: Allocator, index: usize, count: usize, ) Allocator.Error![]T
+std.array_list.Aligned().addManyAtAssumeCapacity	fn addManyAtAssumeCapacity(self: *Self, index: usize, count: usize) []T
+std.array_list.Aligned().addManyAtBounded	fn addManyAtBounded(self: *Self, index: usize, count: usize) error{OutOfMemory}![]T
+std.array_list.Aligned().insertSlice	fn insertSlice( self: *Self, gpa: Allocator, index: usize, items: []const T, ) Allocator.Error!void
+std.array_list.Aligned().insertSliceAssumeCapacity	fn insertSliceAssumeCapacity( self: *Self, index: usize, items: []const T, ) void
+std.array_list.Aligned().insertSliceBounded	fn insertSliceBounded( self: *Self, index: usize, items: []const T, ) error{OutOfMemory}!void
+std.array_list.Aligned().replaceRange	fn replaceRange( self: *Self, gpa: Allocator, start: usize, len: usize, new_items: []const T, ) Allocator.Error!void
+std.array_list.Aligned().replaceRangeAssumeCapacity	fn replaceRangeAssumeCapacity( self: *Self, start: usize, len: usize, new_items: []const T, ) void
+std.array_list.Aligned().replaceRangeBounded	fn replaceRangeBounded( self: *Self, start: usize, len: usize, new_items: []const T, ) error{OutOfMemory}!void
+std.array_list.Aligned().append	fn append(self: *Self, gpa: Allocator, item: T) Allocator.Error!void
+std.array_list.Aligned().appendAssumeCapacity	fn appendAssumeCapacity(self: *Self, item: T) void
+std.array_list.Aligned().appendBounded	fn appendBounded(self: *Self, item: T) error{OutOfMemory}!void
+std.array_list.Aligned().orderedRemove	fn orderedRemove(self: *Self, i: usize) T
+std.array_list.Aligned().orderedRemoveMany	fn orderedRemoveMany(self: *Self, sorted_indexes: []const usize) void
+std.array_list.Aligned().swapRemove	fn swapRemove(self: *Self, i: usize) T
+std.array_list.Aligned().appendSlice	fn appendSlice(self: *Self, gpa: Allocator, items: []const T) Allocator.Error!void
+std.array_list.Aligned().appendSliceAssumeCapacity	fn appendSliceAssumeCapacity(self: *Self, items: []const T) void
+std.array_list.Aligned().appendSliceBounded	fn appendSliceBounded(self: *Self, items: []const T) error{OutOfMemory}!void
+std.array_list.Aligned().appendUnalignedSlice	fn appendUnalignedSlice(self: *Self, gpa: Allocator, items: []align(1) const T) Allocator.Error!void
+std.array_list.Aligned().appendUnalignedSliceAssumeCapacity	fn appendUnalignedSliceAssumeCapacity(self: *Self, items: []align(1) const T) void
+std.array_list.Aligned().appendUnalignedSliceBounded	fn appendUnalignedSliceBounded(self: *Self, items: []align(1) const T) error{OutOfMemory}!void
+std.array_list.Aligned().print	fn print(self: *Self, gpa: Allocator, comptime fmt: []const u8, args: anytype) error{OutOfMemory}!void
+std.array_list.Aligned().printAssumeCapacity	fn printAssumeCapacity(self: *Self, comptime fmt: []const u8, args: anytype) void
+std.array_list.Aligned().printBounded	fn printBounded(self: *Self, comptime fmt: []const u8, args: anytype) error{OutOfMemory}!void
+std.array_list.Aligned().appendNTimes	fn appendNTimes(self: *Self, gpa: Allocator, value: T, n: usize) Allocator.Error!void
+std.array_list.Aligned().appendNTimesAssumeCapacity	fn appendNTimesAssumeCapacity(self: *Self, value: T, n: usize) void
+std.array_list.Aligned().appendNTimesBounded	fn appendNTimesBounded(self: *Self, value: T, n: usize) error{OutOfMemory}!void
+std.array_list.Aligned().resize	fn resize(self: *Self, gpa: Allocator, new_len: usize) Allocator.Error!void
+std.array_list.Aligned().shrinkAndFree	fn shrinkAndFree(self: *Self, gpa: Allocator, new_len: usize) void
+std.array_list.Aligned().shrinkAndFreePrecise	fn shrinkAndFreePrecise(self: *Self, gpa: Allocator, new_len: usize) Allocator.Error!void
+std.array_list.Aligned().shrinkToLen	fn shrinkToLen(self: *Self, gpa: Allocator) Allocator.Error!void
+std.array_list.Aligned().shrinkToLenSentinel	fn shrinkToLenSentinel(self: *Self, gpa: Allocator) Allocator.Error!void
+std.array_list.Aligned().shrinkRetainingCapacity	fn shrinkRetainingCapacity(self: *Self, new_len: usize) void
+std.array_list.Aligned().clearRetainingCapacity	fn clearRetainingCapacity(self: *Self) void
+std.array_list.Aligned().clearAndFree	fn clearAndFree(self: *Self, gpa: Allocator) void
+std.array_list.Aligned().ensureTotalCapacity	fn ensureTotalCapacity(self: *Self, gpa: Allocator, new_capacity: usize) Allocator.Error!void
+std.array_list.Aligned().ensureTotalCapacityPrecise	fn ensureTotalCapacityPrecise(self: *Self, gpa: Allocator, new_capacity: usize) Allocator.Error!void
+std.array_list.Aligned().ensureUnusedCapacity	fn ensureUnusedCapacity( self: *Self, gpa: Allocator, additional_count: usize, ) Allocator.Error!void
+std.array_list.Aligned().expandToCapacity	fn expandToCapacity(self: *Self) void
+std.array_list.Aligned().addOne	fn addOne(self: *Self, gpa: Allocator) Allocator.Error!*T
+std.array_list.Aligned().addOneAssumeCapacity	fn addOneAssumeCapacity(self: *Self) *T
+std.array_list.Aligned().addOneBounded	fn addOneBounded(self: *Self) error{OutOfMemory}!*T
+std.array_list.Aligned().addManyAsArray	fn addManyAsArray(self: *Self, gpa: Allocator, comptime n: usize) Allocator.Error!*[n]T
+std.array_list.Aligned().addManyAsArrayAssumeCapacity	fn addManyAsArrayAssumeCapacity(self: *Self, comptime n: usize) *[n]T
+std.array_list.Aligned().addManyAsArrayBounded	fn addManyAsArrayBounded(self: *Self, comptime n: usize) error{OutOfMemory}!*[n]T
+std.array_list.Aligned().addManyAsSlice	fn addManyAsSlice(self: *Self, gpa: Allocator, n: usize) Allocator.Error![]T
+std.array_list.Aligned().addManyAsSliceAssumeCapacity	fn addManyAsSliceAssumeCapacity(self: *Self, n: usize) []T
+std.array_list.Aligned().addManyAsSliceBounded	fn addManyAsSliceBounded(self: *Self, n: usize) error{OutOfMemory}![]T
+std.array_list.Aligned().pop	fn pop(self: *Self) ?T
+std.array_list.Aligned().allocatedSlice	fn allocatedSlice(self: Self) Slice
+std.array_list.Aligned().unusedCapacitySlice	fn unusedCapacitySlice(self: Self) []T
+std.array_list.Aligned().getLast	fn getLast(self: Self) T
+std.array_list.Aligned().getLastOrNull	fn getLastOrNull(self: Self) ?T
+std.array_list.Aligned().growCapacity	fn growCapacity(minimum: usize) usize
 std.array_hash_map.Auto	fn Auto(comptime K: type, comptime V: type) type
 std.array_hash_map.String	fn String(comptime V: type) type
 std.array_hash_map.StringContext.hash	fn hash(self: @This(), s: []const u8) u32
@@ -1448,6 +1598,105 @@ std.array_hash_map.StringContext.eql	fn eql(self: @This(), a: []const u8, b: []c
 std.array_hash_map.eqlString	fn eqlString(a: []const u8, b: []const u8) bool
 std.array_hash_map.hashString	fn hashString(s: []const u8) u32
 std.array_hash_map.Custom	fn Custom( comptime K: type, comptime V: type, /// A namespace that provides these two functions: /// * `pub fn hash(self, K) u32` /// * `pub fn eql(self, K, K, usize) bool` /// /// The final `usize` in the `eql` function represents the index of the key /// that's already inside the map. comptime Context: type, /// When `false`, this data structure is biased towards cheap `eql` /// functions and avoids storing each key's hash in the table. Setting /// `store_hash` to `true` incurs more memory cost but limits `eql` to /// being called only once per insertion/deletion (provided there are no /// hash collisions). comptime store_hash: bool, ) type
+std.array_hash_map.Custom().init	fn init(gpa: Allocator, key_list: []const K, value_list: []const V) Oom!Self
+std.array_hash_map.Custom().reinit	fn reinit(self: *Self, gpa: Allocator, key_list: []const K, value_list: []const V) Oom!void
+std.array_hash_map.Custom().deinit	fn deinit(self: *Self, gpa: Allocator) void
+std.array_hash_map.Custom().lockPointers	fn lockPointers(self: *Self) void
+std.array_hash_map.Custom().unlockPointers	fn unlockPointers(self: *Self) void
+std.array_hash_map.Custom().clearRetainingCapacity	fn clearRetainingCapacity(self: *Self) void
+std.array_hash_map.Custom().clearAndFree	fn clearAndFree(self: *Self, gpa: Allocator) void
+std.array_hash_map.Custom().count	fn count(self: Self) usize
+std.array_hash_map.Custom().keys	fn keys(self: Self) []K
+std.array_hash_map.Custom().values	fn values(self: Self) []V
+std.array_hash_map.Custom().iterator	fn iterator(self: Self) Iterator
+std.array_hash_map.Custom().Iterator.next	fn next(it: *Iterator) ?Entry
+std.array_hash_map.Custom().Iterator.reset	fn reset(it: *Iterator) void
+std.array_hash_map.Custom().getOrPut	fn getOrPut(self: *Self, gpa: Allocator, key: K) Oom!GetOrPutResult
+std.array_hash_map.Custom().getOrPutContext	fn getOrPutContext(self: *Self, gpa: Allocator, key: K, ctx: Context) Oom!GetOrPutResult
+std.array_hash_map.Custom().getOrPutAdapted	fn getOrPutAdapted(self: *Self, gpa: Allocator, key: anytype, key_ctx: anytype) Oom!GetOrPutResult
+std.array_hash_map.Custom().getOrPutContextAdapted	fn getOrPutContextAdapted(self: *Self, gpa: Allocator, key: anytype, key_ctx: anytype, ctx: Context) Oom!GetOrPutResult
+std.array_hash_map.Custom().getOrPutAssumeCapacity	fn getOrPutAssumeCapacity(self: *Self, key: K) GetOrPutResult
+std.array_hash_map.Custom().getOrPutAssumeCapacityContext	fn getOrPutAssumeCapacityContext(self: *Self, key: K, ctx: Context) GetOrPutResult
+std.array_hash_map.Custom().getOrPutAssumeCapacityAdapted	fn getOrPutAssumeCapacityAdapted(self: *Self, key: anytype, ctx: anytype) GetOrPutResult
+std.array_hash_map.Custom().getOrPutValue	fn getOrPutValue(self: *Self, gpa: Allocator, key: K, value: V) Oom!GetOrPutResult
+std.array_hash_map.Custom().getOrPutValueContext	fn getOrPutValueContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!GetOrPutResult
+std.array_hash_map.Custom().ensureTotalCapacity	fn ensureTotalCapacity(self: *Self, gpa: Allocator, new_capacity: usize) Oom!void
+std.array_hash_map.Custom().ensureTotalCapacityContext	fn ensureTotalCapacityContext(self: *Self, gpa: Allocator, new_capacity: usize, ctx: Context) Oom!void
+std.array_hash_map.Custom().ensureUnusedCapacity	fn ensureUnusedCapacity( self: *Self, gpa: Allocator, additional_capacity: usize, ) Oom!void
+std.array_hash_map.Custom().ensureUnusedCapacityContext	fn ensureUnusedCapacityContext( self: *Self, gpa: Allocator, additional_capacity: usize, ctx: Context, ) Oom!void
+std.array_hash_map.Custom().capacity	fn capacity(self: Self) usize
+std.array_hash_map.Custom().put	fn put(self: *Self, gpa: Allocator, key: K, value: V) Oom!void
+std.array_hash_map.Custom().putContext	fn putContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!void
+std.array_hash_map.Custom().putNoClobber	fn putNoClobber(self: *Self, gpa: Allocator, key: K, value: V) Oom!void
+std.array_hash_map.Custom().putNoClobberContext	fn putNoClobberContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!void
+std.array_hash_map.Custom().putAssumeCapacity	fn putAssumeCapacity(self: *Self, key: K, value: V) void
+std.array_hash_map.Custom().putAssumeCapacityContext	fn putAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) void
+std.array_hash_map.Custom().putAssumeCapacityNoClobber	fn putAssumeCapacityNoClobber(self: *Self, key: K, value: V) void
+std.array_hash_map.Custom().putAssumeCapacityNoClobberContext	fn putAssumeCapacityNoClobberContext(self: *Self, key: K, value: V, ctx: Context) void
+std.array_hash_map.Custom().fetchPut	fn fetchPut(self: *Self, gpa: Allocator, key: K, value: V) Oom!?KV
+std.array_hash_map.Custom().fetchPutContext	fn fetchPutContext(self: *Self, gpa: Allocator, key: K, value: V, ctx: Context) Oom!?KV
+std.array_hash_map.Custom().fetchPutAssumeCapacity	fn fetchPutAssumeCapacity(self: *Self, key: K, value: V) ?KV
+std.array_hash_map.Custom().fetchPutAssumeCapacityContext	fn fetchPutAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) ?KV
+std.array_hash_map.Custom().getEntry	fn getEntry(self: Self, key: K) ?Entry
+std.array_hash_map.Custom().getEntryContext	fn getEntryContext(self: Self, key: K, ctx: Context) ?Entry
+std.array_hash_map.Custom().getEntryAdapted	fn getEntryAdapted(self: Self, key: anytype, ctx: anytype) ?Entry
+std.array_hash_map.Custom().getIndex	fn getIndex(self: Self, key: K) ?usize
+std.array_hash_map.Custom().getIndexContext	fn getIndexContext(self: Self, key: K, ctx: Context) ?usize
+std.array_hash_map.Custom().getIndexAdapted	fn getIndexAdapted(self: Self, key: anytype, ctx: anytype) ?usize
+std.array_hash_map.Custom().get	fn get(self: Self, key: K) ?V
+std.array_hash_map.Custom().getContext	fn getContext(self: Self, key: K, ctx: Context) ?V
+std.array_hash_map.Custom().getAdapted	fn getAdapted(self: Self, key: anytype, ctx: anytype) ?V
+std.array_hash_map.Custom().getPtr	fn getPtr(self: Self, key: K) ?*V
+std.array_hash_map.Custom().getPtrContext	fn getPtrContext(self: Self, key: K, ctx: Context) ?*V
+std.array_hash_map.Custom().getPtrAdapted	fn getPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*V
+std.array_hash_map.Custom().getKey	fn getKey(self: Self, key: K) ?K
+std.array_hash_map.Custom().getKeyContext	fn getKeyContext(self: Self, key: K, ctx: Context) ?K
+std.array_hash_map.Custom().getKeyAdapted	fn getKeyAdapted(self: Self, key: anytype, ctx: anytype) ?K
+std.array_hash_map.Custom().getKeyPtr	fn getKeyPtr(self: Self, key: K) ?*K
+std.array_hash_map.Custom().getKeyPtrContext	fn getKeyPtrContext(self: Self, key: K, ctx: Context) ?*K
+std.array_hash_map.Custom().getKeyPtrAdapted	fn getKeyPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*K
+std.array_hash_map.Custom().contains	fn contains(self: Self, key: K) bool
+std.array_hash_map.Custom().containsContext	fn containsContext(self: Self, key: K, ctx: Context) bool
+std.array_hash_map.Custom().containsAdapted	fn containsAdapted(self: Self, key: anytype, ctx: anytype) bool
+std.array_hash_map.Custom().fetchSwapRemove	fn fetchSwapRemove(self: *Self, key: K) ?KV
+std.array_hash_map.Custom().fetchSwapRemoveContext	fn fetchSwapRemoveContext(self: *Self, key: K, ctx: Context) ?KV
+std.array_hash_map.Custom().fetchSwapRemoveAdapted	fn fetchSwapRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV
+std.array_hash_map.Custom().fetchSwapRemoveContextAdapted	fn fetchSwapRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) ?KV
+std.array_hash_map.Custom().fetchOrderedRemove	fn fetchOrderedRemove(self: *Self, key: K) ?KV
+std.array_hash_map.Custom().fetchOrderedRemoveContext	fn fetchOrderedRemoveContext(self: *Self, key: K, ctx: Context) ?KV
+std.array_hash_map.Custom().fetchOrderedRemoveAdapted	fn fetchOrderedRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV
+std.array_hash_map.Custom().fetchOrderedRemoveContextAdapted	fn fetchOrderedRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) ?KV
+std.array_hash_map.Custom().swapRemove	fn swapRemove(self: *Self, key: K) bool
+std.array_hash_map.Custom().swapRemoveContext	fn swapRemoveContext(self: *Self, key: K, ctx: Context) bool
+std.array_hash_map.Custom().swapRemoveAdapted	fn swapRemoveAdapted(self: *Self, key: anytype, ctx: anytype) bool
+std.array_hash_map.Custom().swapRemoveContextAdapted	fn swapRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) bool
+std.array_hash_map.Custom().orderedRemove	fn orderedRemove(self: *Self, key: K) bool
+std.array_hash_map.Custom().orderedRemoveContext	fn orderedRemoveContext(self: *Self, key: K, ctx: Context) bool
+std.array_hash_map.Custom().orderedRemoveAdapted	fn orderedRemoveAdapted(self: *Self, key: anytype, ctx: anytype) bool
+std.array_hash_map.Custom().orderedRemoveContextAdapted	fn orderedRemoveContextAdapted(self: *Self, key: anytype, key_ctx: anytype, ctx: Context) bool
+std.array_hash_map.Custom().swapRemoveAt	fn swapRemoveAt(self: *Self, index: usize) void
+std.array_hash_map.Custom().swapRemoveAtContext	fn swapRemoveAtContext(self: *Self, index: usize, ctx: Context) void
+std.array_hash_map.Custom().orderedRemoveAt	fn orderedRemoveAt(self: *Self, index: usize) void
+std.array_hash_map.Custom().orderedRemoveAtContext	fn orderedRemoveAtContext(self: *Self, index: usize, ctx: Context) void
+std.array_hash_map.Custom().orderedRemoveAtMany	fn orderedRemoveAtMany(self: *Self, gpa: Allocator, sorted_indexes: []const usize) Oom!void
+std.array_hash_map.Custom().orderedRemoveAtManyContext	fn orderedRemoveAtManyContext( self: *Self, gpa: Allocator, sorted_indexes: []const usize, ctx: Context, ) Oom!void
+std.array_hash_map.Custom().clone	fn clone(self: Self, gpa: Allocator) Oom!Self
+std.array_hash_map.Custom().cloneContext	fn cloneContext(self: Self, gpa: Allocator, ctx: Context) Oom!Self
+std.array_hash_map.Custom().move	fn move(self: *Self) Self
+std.array_hash_map.Custom().reIndex	fn reIndex(self: *Self, gpa: Allocator) Oom!void
+std.array_hash_map.Custom().reIndexContext	fn reIndexContext(self: *Self, gpa: Allocator, ctx: Context) Oom!void
+std.array_hash_map.Custom().setKey	fn setKey(self: *Self, gpa: Allocator, index: usize, new_key: K) Oom!void
+std.array_hash_map.Custom().setKeyContext	fn setKeyContext(self: *Self, gpa: Allocator, index: usize, new_key: K, ctx: Context) Oom!void
+std.array_hash_map.Custom().sort	fn sort(self: *Self, sort_ctx: anytype) void
+std.array_hash_map.Custom().sortUnstable	fn sortUnstable(self: *Self, sort_ctx: anytype) void
+std.array_hash_map.Custom().sortContext	fn sortContext(self: *Self, sort_ctx: anytype, ctx: Context) void
+std.array_hash_map.Custom().sortUnstableContext	fn sortUnstableContext(self: *Self, sort_ctx: anytype, ctx: Context) void
+std.array_hash_map.Custom().shrinkRetainingCapacity	fn shrinkRetainingCapacity(self: *Self, new_len: usize) void
+std.array_hash_map.Custom().shrinkRetainingCapacityContext	fn shrinkRetainingCapacityContext(self: *Self, new_len: usize, ctx: Context) void
+std.array_hash_map.Custom().shrinkAndFree	fn shrinkAndFree(self: *Self, gpa: Allocator, new_len: usize) void
+std.array_hash_map.Custom().shrinkAndFreeContext	fn shrinkAndFreeContext(self: *Self, gpa: Allocator, new_len: usize, ctx: Context) void
+std.array_hash_map.Custom().pop	fn pop(self: *Self) ?KV
+std.array_hash_map.Custom().popContext	fn popContext(self: *Self, ctx: Context) ?KV
 std.array_hash_map.getHashPtrAddrFn	fn getHashPtrAddrFn(comptime K: type, comptime Context: type) (fn (Context, K) u32)
 std.array_hash_map.getTrivialEqlFn	fn getTrivialEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool)
 std.array_hash_map.AutoContext	fn AutoContext(comptime K: type) type
@@ -1456,6 +1705,24 @@ std.array_hash_map.getAutoEqlFn	fn getAutoEqlFn(comptime K: type, comptime Conte
 std.array_hash_map.autoEqlIsCheap	fn autoEqlIsCheap(comptime K: type) bool
 std.array_hash_map.getAutoHashStratFn	fn getAutoHashStratFn(comptime K: type, comptime Context: type, comptime strategy: std.hash.Strategy) (fn (Context, K) u32)
 std.atomic.Value	fn Value(comptime T: type) type
+std.atomic.Value().init	fn init(value: T) Self
+std.atomic.Value().load	fn load(self: *const Self, comptime order: AtomicOrder) T
+std.atomic.Value().store	fn store(self: *Self, value: T, comptime order: AtomicOrder) void
+std.atomic.Value().swap	fn swap(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().cmpxchgWeak	fn cmpxchgWeak( self: *Self, expected_value: T, new_value: T, comptime success_order: AtomicOrder, comptime fail_order: AtomicOrder, ) ?T
+std.atomic.Value().cmpxchgStrong	fn cmpxchgStrong( self: *Self, expected_value: T, new_value: T, comptime success_order: AtomicOrder, comptime fail_order: AtomicOrder, ) ?T
+std.atomic.Value().fetchAdd	fn fetchAdd(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchSub	fn fetchSub(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchMin	fn fetchMin(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchMax	fn fetchMax(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchAnd	fn fetchAnd(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchNand	fn fetchNand(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchXor	fn fetchXor(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().fetchOr	fn fetchOr(self: *Self, operand: T, comptime order: AtomicOrder) T
+std.atomic.Value().rmw	fn rmw( self: *Self, comptime op: std.builtin.AtomicRmwOp, operand: T, comptime order: AtomicOrder, ) T
+std.atomic.Value().bitSet	fn bitSet(self: *Self, bit: Bit, comptime order: AtomicOrder) u1
+std.atomic.Value().bitReset	fn bitReset(self: *Self, bit: Bit, comptime order: AtomicOrder) u1
+std.atomic.Value().bitToggle	fn bitToggle(self: *Self, bit: Bit, comptime order: AtomicOrder) u1
 std.atomic.spinLoopHint	fn spinLoopHint() void
 std.atomic.cacheLineForCpu	fn cacheLineForCpu(cpu: std.Target.Cpu) u16
 std.atomic.Mutex.tryLock	fn tryLock(m: *Mutex) bool
@@ -1473,7 +1740,61 @@ std.base64.Base64DecoderWithIgnore.calcSizeUpperBound	fn calcSizeUpperBound(deco
 std.base64.Base64DecoderWithIgnore.decode	fn decode(decoder_with_ignore: *const Base64DecoderWithIgnore, dest: []u8, source: []const u8) Error!usize
 std.bit_set.StaticBitSet	fn StaticBitSet(comptime size: usize) type
 std.bit_set.IntegerBitSet	fn IntegerBitSet(comptime size: u16) type
+std.bit_set.IntegerBitSet().initEmpty	fn initEmpty() Self
+std.bit_set.IntegerBitSet().initFull	fn initFull() Self
+std.bit_set.IntegerBitSet().capacity	fn capacity(self: Self) usize
+std.bit_set.IntegerBitSet().isSet	fn isSet(self: Self, index: usize) bool
+std.bit_set.IntegerBitSet().count	fn count(self: Self) usize
+std.bit_set.IntegerBitSet().setValue	fn setValue(self: *Self, index: usize, value: bool) void
+std.bit_set.IntegerBitSet().set	fn set(self: *Self, index: usize) void
+std.bit_set.IntegerBitSet().setRangeValue	fn setRangeValue(self: *Self, range: Range, value: bool) void
+std.bit_set.IntegerBitSet().unset	fn unset(self: *Self, index: usize) void
+std.bit_set.IntegerBitSet().toggle	fn toggle(self: *Self, index: usize) void
+std.bit_set.IntegerBitSet().toggleSet	fn toggleSet(self: *Self, toggles: Self) void
+std.bit_set.IntegerBitSet().toggleAll	fn toggleAll(self: *Self) void
+std.bit_set.IntegerBitSet().setUnion	fn setUnion(self: *Self, other: Self) void
+std.bit_set.IntegerBitSet().setIntersection	fn setIntersection(self: *Self, other: Self) void
+std.bit_set.IntegerBitSet().findFirstSet	fn findFirstSet(self: Self) ?usize
+std.bit_set.IntegerBitSet().findLastSet	fn findLastSet(self: Self) ?usize
+std.bit_set.IntegerBitSet().toggleFirstSet	fn toggleFirstSet(self: *Self) ?usize
+std.bit_set.IntegerBitSet().eql	fn eql(self: Self, other: Self) bool
+std.bit_set.IntegerBitSet().subsetOf	fn subsetOf(self: Self, other: Self) bool
+std.bit_set.IntegerBitSet().supersetOf	fn supersetOf(self: Self, other: Self) bool
+std.bit_set.IntegerBitSet().complement	fn complement(self: Self) Self
+std.bit_set.IntegerBitSet().unionWith	fn unionWith(self: Self, other: Self) Self
+std.bit_set.IntegerBitSet().intersectWith	fn intersectWith(self: Self, other: Self) Self
+std.bit_set.IntegerBitSet().xorWith	fn xorWith(self: Self, other: Self) Self
+std.bit_set.IntegerBitSet().differenceWith	fn differenceWith(self: Self, other: Self) Self
+std.bit_set.IntegerBitSet().iterator	fn iterator(self: *const Self, comptime options: IteratorOptions) Iterator(options)
+std.bit_set.IntegerBitSet().Iterator	fn Iterator(comptime options: IteratorOptions) type
 std.bit_set.ArrayBitSet	fn ArrayBitSet(comptime MaskIntType: type, comptime size: usize) type
+std.bit_set.ArrayBitSet().initEmpty	fn initEmpty() Self
+std.bit_set.ArrayBitSet().initFull	fn initFull() Self
+std.bit_set.ArrayBitSet().capacity	fn capacity(self: Self) usize
+std.bit_set.ArrayBitSet().isSet	fn isSet(self: Self, index: usize) bool
+std.bit_set.ArrayBitSet().count	fn count(self: Self) usize
+std.bit_set.ArrayBitSet().setValue	fn setValue(self: *Self, index: usize, value: bool) void
+std.bit_set.ArrayBitSet().set	fn set(self: *Self, index: usize) void
+std.bit_set.ArrayBitSet().setRangeValue	fn setRangeValue(self: *Self, range: Range, value: bool) void
+std.bit_set.ArrayBitSet().unset	fn unset(self: *Self, index: usize) void
+std.bit_set.ArrayBitSet().toggle	fn toggle(self: *Self, index: usize) void
+std.bit_set.ArrayBitSet().toggleSet	fn toggleSet(self: *Self, toggles: Self) void
+std.bit_set.ArrayBitSet().toggleAll	fn toggleAll(self: *Self) void
+std.bit_set.ArrayBitSet().setUnion	fn setUnion(self: *Self, other: Self) void
+std.bit_set.ArrayBitSet().setIntersection	fn setIntersection(self: *Self, other: Self) void
+std.bit_set.ArrayBitSet().findFirstSet	fn findFirstSet(self: Self) ?usize
+std.bit_set.ArrayBitSet().findLastSet	fn findLastSet(self: Self) ?usize
+std.bit_set.ArrayBitSet().toggleFirstSet	fn toggleFirstSet(self: *Self) ?usize
+std.bit_set.ArrayBitSet().eql	fn eql(self: Self, other: Self) bool
+std.bit_set.ArrayBitSet().subsetOf	fn subsetOf(self: Self, other: Self) bool
+std.bit_set.ArrayBitSet().supersetOf	fn supersetOf(self: Self, other: Self) bool
+std.bit_set.ArrayBitSet().complement	fn complement(self: Self) Self
+std.bit_set.ArrayBitSet().unionWith	fn unionWith(self: Self, other: Self) Self
+std.bit_set.ArrayBitSet().intersectWith	fn intersectWith(self: Self, other: Self) Self
+std.bit_set.ArrayBitSet().xorWith	fn xorWith(self: Self, other: Self) Self
+std.bit_set.ArrayBitSet().differenceWith	fn differenceWith(self: Self, other: Self) Self
+std.bit_set.ArrayBitSet().iterator	fn iterator(self: *const Self, comptime options: IteratorOptions) Iterator(options)
+std.bit_set.ArrayBitSet().Iterator	fn Iterator(comptime options: IteratorOptions) type
 std.bit_set.DynamicBitSetUnmanaged.initEmpty	fn initEmpty(allocator: Allocator, bit_length: usize) !Self
 std.bit_set.DynamicBitSetUnmanaged.initFull	fn initFull(allocator: Allocator, bit_length: usize) !Self
 std.bit_set.DynamicBitSetUnmanaged.resize	fn resize(self: *@This(), allocator: Allocator, new_len: usize, fill: bool) !void
@@ -1607,6 +1928,9 @@ std.compress.lzma.Decode.CircularBuffer.appendLz	fn appendLz( self: *CircularBuf
 std.compress.lzma.Decode.CircularBuffer.finish	fn finish(self: *CircularBuffer, writer: *Writer) !void
 std.compress.lzma.Decode.CircularBuffer.deinit	fn deinit(self: *CircularBuffer, gpa: Allocator) void
 std.compress.lzma.Decode.BitTree	fn BitTree(comptime num_bits: usize) type
+std.compress.lzma.Decode.BitTree().parse	fn parse(self: *@This(), reader: *Reader, decoder: *RangeDecoder, n_read: *u64) !u32
+std.compress.lzma.Decode.BitTree().parseReverse	fn parseReverse( self: *@This(), reader: *Reader, decoder: *RangeDecoder, n_read: *u64, ) !u32
+std.compress.lzma.Decode.BitTree().reset	fn reset(self: *@This()) void
 std.compress.lzma.Decode.LenDecoder.decode	fn decode( self: *LenDecoder, reader: *Reader, decoder: *RangeDecoder, pos_state: usize, n_read: *u64, ) !usize
 std.compress.lzma.Decode.LenDecoder.reset	fn reset(self: *LenDecoder) void
 std.compress.lzma.Decode.Vec2d.init	fn init(gpa: Allocator, value: u16, w: usize, h: usize) !Vec2d
@@ -1653,6 +1977,16 @@ std.static_string_map.StaticStringMap	fn StaticStringMap(comptime V: type) type
 std.static_string_map.defaultEql	fn defaultEql(a: []const u8, b: []const u8) bool
 std.static_string_map.eqlAsciiIgnoreCase	fn eqlAsciiIgnoreCase(a: []const u8, b: []const u8) bool
 std.static_string_map.StaticStringMapWithEql	fn StaticStringMapWithEql( comptime V: type, comptime eql: fn (a: []const u8, b: []const u8) bool, ) type
+std.static_string_map.StaticStringMapWithEql().initComptime	fn initComptime(comptime kvs_list: anytype) Self
+std.static_string_map.StaticStringMapWithEql().init	fn init(kvs_list: anytype, allocator: mem.Allocator) !Self
+std.static_string_map.StaticStringMapWithEql().deinit	fn deinit(self: Self, allocator: mem.Allocator) void
+std.static_string_map.StaticStringMapWithEql().has	fn has(self: Self, str: []const u8) bool
+std.static_string_map.StaticStringMapWithEql().get	fn get(self: Self, str: []const u8) ?V
+std.static_string_map.StaticStringMapWithEql().getIndex	fn getIndex(self: Self, str: []const u8) ?usize
+std.static_string_map.StaticStringMapWithEql().getLongestPrefix	fn getLongestPrefix(self: Self, str: []const u8) ?KV
+std.static_string_map.StaticStringMapWithEql().getLongestPrefixIndex	fn getLongestPrefixIndex(self: Self, str: []const u8) ?usize
+std.static_string_map.StaticStringMapWithEql().keys	fn keys(self: Self) []const []const u8
+std.static_string_map.StaticStringMapWithEql().values	fn values(self: Self) []const V
 std.crypto.timing_safe.eql	fn eql(comptime T: type, a: T, b: T) bool
 std.crypto.timing_safe.compare	fn compare(comptime T: type, a: []const T, b: []const T, endian: Endian) Order
 std.crypto.timing_safe.add	fn add(comptime T: type, a: []const T, b: []const T, result: []T, endian: Endian) bool
@@ -1666,12 +2000,42 @@ std.crypto.aead.isap.IsapA128A.decrypt	fn decrypt(m: []u8, c: []const u8, tag: [
 std.crypto.aead.salsa_poly.XSalsa20Poly1305.encrypt	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void
 std.crypto.aead.salsa_poly.XSalsa20Poly1305.decrypt	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void
 std.crypto.auth.hmac.Hmac	fn Hmac(comptime Hash: type) type
+std.crypto.auth.hmac.Hmac().create	fn create(out: *[mac_length]u8, msg: []const u8, key: []const u8) void
+std.crypto.auth.hmac.Hmac().init	fn init(key: []const u8) Self
+std.crypto.auth.hmac.Hmac().update	fn update(ctx: *Self, msg: []const u8) void
+std.crypto.auth.hmac.Hmac().final	fn final(ctx: *Self, out: *[mac_length]u8) void
 std.crypto.auth.siphash.SipHash64	fn SipHash64(comptime c_rounds: usize, comptime d_rounds: usize) type
 std.crypto.auth.siphash.SipHash128	fn SipHash128(comptime c_rounds: usize, comptime d_rounds: usize) type
 std.crypto.auth.cmac.Cmac	fn Cmac(comptime BlockCipher: type) type
+std.crypto.auth.cmac.Cmac().create	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void
+std.crypto.auth.cmac.Cmac().init	fn init(key: *const [key_length]u8) Self
+std.crypto.auth.cmac.Cmac().update	fn update(self: *Self, msg: []const u8) void
+std.crypto.auth.cmac.Cmac().final	fn final(self: *Self, out: *[mac_length]u8) void
 std.crypto.auth.cbc_mac.CbcMac	fn CbcMac(comptime BlockCipher: type) type
+std.crypto.auth.cbc_mac.CbcMac().create	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void
+std.crypto.auth.cbc_mac.CbcMac().init	fn init(key: *const [key_length]u8) Self
+std.crypto.auth.cbc_mac.CbcMac().update	fn update(self: *Self, msg: []const u8) void
+std.crypto.auth.cbc_mac.CbcMac().final	fn final(self: *Self, out: *[mac_length]u8) void
 std.crypto.core.keccak.KeccakF	fn KeccakF(comptime f: u11) type
+std.crypto.core.keccak.KeccakF().init	fn init(bytes: [block_bytes]u8) Self
+std.crypto.core.keccak.KeccakF().asBytes	fn asBytes(self: *Self) *[block_bytes]u8
+std.crypto.core.keccak.KeccakF().endianSwap	fn endianSwap(self: *Self) void
+std.crypto.core.keccak.KeccakF().setBytes	fn setBytes(self: *Self, bytes: []const u8) void
+std.crypto.core.keccak.KeccakF().addByte	fn addByte(self: *Self, byte: u8, offset: usize) void
+std.crypto.core.keccak.KeccakF().addBytes	fn addBytes(self: *Self, bytes: []const u8) void
+std.crypto.core.keccak.KeccakF().extractBytes	fn extractBytes(self: *Self, out: []u8) void
+std.crypto.core.keccak.KeccakF().xorBytes	fn xorBytes(self: *Self, out: []u8, in: []const u8) void
+std.crypto.core.keccak.KeccakF().clear	fn clear(self: *Self, from: usize, to: usize) void
+std.crypto.core.keccak.KeccakF().secureZero	fn secureZero(self: *Self) void
+std.crypto.core.keccak.KeccakF().permuteR	fn permuteR(self: *Self, comptime rounds: u5) void
+std.crypto.core.keccak.KeccakF().permute	fn permute(self: *Self) void
 std.crypto.core.keccak.State	fn State(comptime f: u11, comptime capacity: u11, comptime rounds: u5) type
+std.crypto.core.keccak.State().absorb	fn absorb(self: *Self, bytes: []const u8) void
+std.crypto.core.keccak.State().init	fn init(bytes: [f / 8]u8, delim: u8) Self
+std.crypto.core.keccak.State().permute	fn permute(self: *Self) void
+std.crypto.core.keccak.State().fillBlock	fn fillBlock(self: *Self) void
+std.crypto.core.keccak.State().pad	fn pad(self: *Self) void
+std.crypto.core.keccak.State().squeeze	fn squeeze(self: *Self, out: []u8) void
 std.crypto.core.Ascon	fn State(comptime endian: std.builtin.Endian) type
 std.crypto.core.modes.ctr	fn ctr(comptime BlockCipher: anytype, block_cipher: BlockCipher, dst: []u8, src: []const u8, iv: [BlockCipher.block_length]u8, endian: std.builtin.Endian) void
 std.crypto.core.modes.ctrSlice	fn ctrSlice( comptime BlockCipher: anytype, block_cipher: BlockCipher, dst: []u8, src: []const u8, iv: [BlockCipher.block_length]u8, endian: std.builtin.Endian, comptime counter_offset: usize, comptime counter_size: usize, ) void
@@ -1732,6 +2096,15 @@ std.crypto.dh.X25519.recoverPublicKey	fn recoverPublicKey(secret_key: [secret_le
 std.crypto.dh.X25519.publicKeyFromEd25519	fn publicKeyFromEd25519(ed25519_public_key: crypto.sign.Ed25519.PublicKey) (IdentityElementError || EncodingError)![public_length]u8
 std.crypto.dh.X25519.scalarmult	fn scalarmult(secret_key: [secret_length]u8, public_key: [public_length]u8) IdentityElementError![shared_length]u8
 std.crypto.kem.hybrid.HybridKem	fn HybridKem(comptime params: Params) type
+std.crypto.kem.hybrid.HybridKem().PublicKey.toBytes	fn toBytes(self: PublicKey) [encoded_length]u8
+std.crypto.kem.hybrid.HybridKem().PublicKey.fromBytes	fn fromBytes(buf: *const [encoded_length]u8) PublicKey
+std.crypto.kem.hybrid.HybridKem().PublicKey.encaps	fn encaps(pk: PublicKey, io: std.Io) !EncapsulatedSecret
+std.crypto.kem.hybrid.HybridKem().PublicKey.encapsDeterministic	fn encapsDeterministic(pk: PublicKey, seed: []const u8) !EncapsulatedSecret
+std.crypto.kem.hybrid.HybridKem().SecretKey.toBytes	fn toBytes(self: SecretKey) [encoded_length]u8
+std.crypto.kem.hybrid.HybridKem().SecretKey.fromBytes	fn fromBytes(buf: *const [encoded_length]u8) SecretKey
+std.crypto.kem.hybrid.HybridKem().SecretKey.decaps	fn decaps(self: SecretKey, ct: *const [params.Nct]u8) ![params.Nss]u8
+std.crypto.kem.hybrid.HybridKem().KeyPair.generateDeterministic	fn generateDeterministic(seed: [params.Nseed]u8) !KeyPair
+std.crypto.kem.hybrid.HybridKem().KeyPair.generate	fn generate(io: std.Io) !KeyPair
 std.crypto.ecc.Curve25519.Fe.isZero	fn isZero(fe: Fe) bool
 std.crypto.ecc.Curve25519.Fe.equivalent	fn equivalent(a: Fe, b: Fe) bool
 std.crypto.ecc.Curve25519.Fe.fromBytes	fn fromBytes(s: [32]u8) Fe
@@ -1991,7 +2364,15 @@ std.crypto.ecc.Secp256k1.mul	fn mul(p: Secp256k1, s_: [32]u8, endian: std.builti
 std.crypto.ecc.Secp256k1.mulPublic	fn mulPublic(p: Secp256k1, s_: [32]u8, endian: std.builtin.Endian) (IdentityElementError || NonCanonicalError)!Secp256k1
 std.crypto.ecc.Secp256k1.mulDoubleBasePublic	fn mulDoubleBasePublic(p1: Secp256k1, s1_: [32]u8, p2: Secp256k1, s2_: [32]u8, endian: std.builtin.Endian) IdentityElementError!Secp256k1
 std.crypto.hash.blake2.Blake2s	fn Blake2s(comptime out_bits: usize) type
+std.crypto.hash.blake2.Blake2s().init	fn init(options: Options) Self
+std.crypto.hash.blake2.Blake2s().hash	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void
+std.crypto.hash.blake2.Blake2s().update	fn update(d: *Self, b: []const u8) void
+std.crypto.hash.blake2.Blake2s().final	fn final(d: *Self, out: *[digest_length]u8) void
 std.crypto.hash.blake2.Blake2b	fn Blake2b(comptime out_bits: usize) type
+std.crypto.hash.blake2.Blake2b().init	fn init(options: Options) Self
+std.crypto.hash.blake2.Blake2b().hash	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void
+std.crypto.hash.blake2.Blake2b().update	fn update(d: *Self, b: []const u8) void
+std.crypto.hash.blake2.Blake2b().final	fn final(d: *Self, out: *[digest_length]u8) void
 std.crypto.hash.Blake3.init	fn init(options: Options) Blake3
 std.crypto.hash.Blake3.initKdf	fn initKdf(context: []const u8, options: KdfOptions) Blake3
 std.crypto.hash.Blake3.hash	fn hash(b: []const u8, out: []u8, options: Options) void
@@ -2014,6 +2395,10 @@ std.crypto.hash.Sha1.finalResult	fn finalResult(d: *Sha1) [digest_length]u8
 std.crypto.hash.sha3.TurboShake128	fn TurboShake128(delim: ?u7) type
 std.crypto.hash.sha3.TurboShake256	fn TurboShake256(comptime delim: ?u7) type
 std.crypto.hash.sha3.Keccak	fn Keccak(comptime f: u11, comptime output_bits: u11, comptime default_delim: u8, comptime rounds: u5) type
+std.crypto.hash.sha3.Keccak().init	fn init(options: Options) Self
+std.crypto.hash.sha3.Keccak().hash	fn hash(bytes: []const u8, out: *[digest_length]u8, options: Options) void
+std.crypto.hash.sha3.Keccak().update	fn update(self: *Self, bytes: []const u8) void
+std.crypto.hash.sha3.Keccak().final	fn final(self: *Self, out: *[digest_length]u8) void
 std.crypto.hash.sha3.Shake	fn Shake(comptime security_level: u11) type
 std.crypto.hash.sha3.TurboShake	fn TurboShake(comptime security_level: u11, comptime delim: ?u7) type
 std.crypto.hash.sha3.CShake	fn CShake(comptime security_level: u11, comptime fname: ?[]const u8) type
@@ -2022,7 +2407,14 @@ std.crypto.hash.sha3.TupleHash	fn TupleHash(comptime security_level: u11) type
 std.crypto.hash.sha3.NistLengthEncoding.Length.slice	fn slice(self: *const Length) []const u8
 std.crypto.hash.sha3.NistLengthEncoding.encode	fn encode(comptime encoding: NistLengthEncoding, len: usize) Length
 std.crypto.hash.composition.Composition	fn Composition(comptime H1: type, comptime H2: type) type
+std.crypto.hash.composition.Composition().init	fn init(options: Options) Self
+std.crypto.hash.composition.Composition().hash	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void
+std.crypto.hash.composition.Composition().update	fn update(d: *Self, b: []const u8) void
+std.crypto.hash.composition.Composition().final	fn final(d: *Self, out: *[digest_length]u8) void
 std.crypto.kdf.hkdf.Hkdf	fn Hkdf(comptime Hmac: type) type
+std.crypto.kdf.hkdf.Hkdf().extract	fn extract(salt: []const u8, ikm: []const u8) [prk_length]u8
+std.crypto.kdf.hkdf.Hkdf().extractInit	fn extractInit(salt: []const u8) Hmac
+std.crypto.kdf.hkdf.Hkdf().expand	fn expand(out: []u8, ctx: []const u8, prk: [prk_length]u8) void
 std.crypto.onetimeauth.Poly1305.init	fn init(key: *const [key_length]u8) Poly1305
 std.crypto.onetimeauth.Poly1305.update	fn update(st: *Poly1305, m: []const u8) void
 std.crypto.onetimeauth.Poly1305.pad	fn pad(st: *Poly1305) void
@@ -2045,6 +2437,8 @@ std.crypto.pwhash.scrypt.strHashWithSalt	fn strHashWithSalt( password: []const u
 std.crypto.pwhash.scrypt.strVerify	fn strVerify( str: []const u8, password: []const u8, options: VerifyOptions, ) Error!void
 std.crypto.pwhash.pbkdf2	fn pbkdf2(dk: []u8, password: []const u8, salt: []const u8, rounds: u32, comptime Prf: type) (WeakParametersError || OutputTooLongError)!void
 std.crypto.pwhash.phc_format.BinValue	fn BinValue(comptime max_len: usize) type
+std.crypto.pwhash.phc_format.BinValue().fromSlice	fn fromSlice(slice: []const u8) Error!Self
+std.crypto.pwhash.phc_format.BinValue().constSlice	fn constSlice(self: *const Self) []const u8
 std.crypto.pwhash.phc_format.deserialize	fn deserialize(comptime HashResult: type, str: []const u8) Error!HashResult
 std.crypto.pwhash.phc_format.serialize	fn serialize(params: anytype, str: []u8) Error![]const u8
 std.crypto.pwhash.phc_format.calcSize	fn calcSize(params: anytype) usize
@@ -2075,10 +2469,60 @@ std.crypto.sign.Ed25519.key_blinding.BlindPublicKey.unblind	fn unblind(blind_pub
 std.crypto.sign.Ed25519.key_blinding.BlindKeyPair.init	fn init(key_pair: Ed25519.KeyPair, blind_seed: [blind_seed_length]u8, ctx: []const u8) (NonCanonicalError || IdentityElementError)!BlindKeyPair
 std.crypto.sign.Ed25519.key_blinding.BlindKeyPair.sign	fn sign(key_pair: BlindKeyPair, msg: []const u8, noise: ?[noise_length]u8) (IdentityElementError || KeyMismatchError || NonCanonicalError || WeakPublicKeyError)!Signature
 std.crypto.sign.ecdsa.Ecdsa	fn Ecdsa(comptime Curve: type, comptime Hash: type) type
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.fromBytes	fn fromBytes(bytes: [encoded_length]u8) !SecretKey
+std.crypto.sign.ecdsa.Ecdsa().SecretKey.toBytes	fn toBytes(sk: SecretKey) [encoded_length]u8
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.fromSec1	fn fromSec1(sec1: []const u8) !PublicKey
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toCompressedSec1	fn toCompressedSec1(pk: PublicKey) [compressed_sec1_encoded_length]u8
+std.crypto.sign.ecdsa.Ecdsa().PublicKey.toUncompressedSec1	fn toUncompressedSec1(pk: PublicKey) [uncompressed_sec1_encoded_length]u8
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifier	fn verifier(sig: Signature, public_key: PublicKey) Verifier.InitError!Verifier
+std.crypto.sign.ecdsa.Ecdsa().Signature.verify	fn verify(sig: Signature, msg: []const u8, public_key: PublicKey) VerifyError!void
+std.crypto.sign.ecdsa.Ecdsa().Signature.verifyPrehashed	fn verifyPrehashed(sig: Signature, msg_hash: [Hash.digest_length]u8, public_key: PublicKey) VerifyError!void
+std.crypto.sign.ecdsa.Ecdsa().Signature.toBytes	fn toBytes(sig: Signature) [encoded_length]u8
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromBytes	fn fromBytes(bytes: [encoded_length]u8) Signature
+std.crypto.sign.ecdsa.Ecdsa().Signature.toDer	fn toDer(sig: Signature, buf: *[der_encoded_length_max]u8) []u8
+std.crypto.sign.ecdsa.Ecdsa().Signature.fromDer	fn fromDer(der: []const u8) EncodingError!Signature
+std.crypto.sign.ecdsa.Ecdsa().Signer.update	fn update(self: *Signer, data: []const u8) void
+std.crypto.sign.ecdsa.Ecdsa().Signer.finalize	fn finalize(self: *Signer) (IdentityElementError || NonCanonicalError)!Signature
+std.crypto.sign.ecdsa.Ecdsa().Verifier.update	fn update(self: *Verifier, data: []const u8) void
+std.crypto.sign.ecdsa.Ecdsa().Verifier.verify	fn verify(self: *Verifier) VerifyError!void
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generateDeterministic	fn generateDeterministic(seed: [seed_length]u8) IdentityElementError!KeyPair
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.generate	fn generate(io: std.Io) KeyPair
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.fromSecretKey	fn fromSecretKey(secret_key: SecretKey) IdentityElementError!KeyPair
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.sign	fn sign(key_pair: KeyPair, msg: []const u8, noise: ?[noise_length]u8) (IdentityElementError || NonCanonicalError)!Signature
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signPrehashed	fn signPrehashed(key_pair: KeyPair, msg_hash: [Hash.digest_length]u8, noise: ?[noise_length]u8) (IdentityElementError || NonCanonicalError)!Signature
+std.crypto.sign.ecdsa.Ecdsa().KeyPair.signer	fn signer(key_pair: KeyPair, noise: ?[noise_length]u8) !Signer
 std.crypto.stream.salsa.Salsa	fn Salsa(comptime rounds: comptime_int) type
 std.crypto.stream.salsa.XSalsa	fn XSalsa(comptime rounds: comptime_int) type
 std.crypto.ff.Uint	fn Uint(comptime max_bits: comptime_int) type
+std.crypto.ff.Uint().fromPrimitive	fn fromPrimitive(comptime T: type, init_value: T) OverflowError!Self
+std.crypto.ff.Uint().toPrimitive	fn toPrimitive(self: Self, comptime T: type) OverflowError!T
+std.crypto.ff.Uint().toBytes	fn toBytes(self: Self, bytes: []u8, comptime endian: Endian) OverflowError!void
+std.crypto.ff.Uint().fromBytes	fn fromBytes(bytes: []const u8, comptime endian: Endian) OverflowError!Self
+std.crypto.ff.Uint().eql	fn eql(x: Self, y: Self) bool
+std.crypto.ff.Uint().compare	fn compare(x: Self, y: Self) math.Order
+std.crypto.ff.Uint().isZero	fn isZero(x: Self) bool
+std.crypto.ff.Uint().isOdd	fn isOdd(x: Self) bool
+std.crypto.ff.Uint().addWithOverflow	fn addWithOverflow(x: *Self, y: Self) u1
+std.crypto.ff.Uint().subWithOverflow	fn subWithOverflow(x: *Self, y: Self) u1
 std.crypto.ff.Modulus	fn Modulus(comptime max_bits: comptime_int) type
+std.crypto.ff.Modulus().bits	fn bits(self: Self) usize
+std.crypto.ff.Modulus().one	fn one(self: Self) Fe
+std.crypto.ff.Modulus().fromUint	fn fromUint(v_: FeUint) InvalidModulusError!Self
+std.crypto.ff.Modulus().fromPrimitive	fn fromPrimitive(comptime T: type, x: T) (InvalidModulusError || OverflowError)!Self
+std.crypto.ff.Modulus().fromBytes	fn fromBytes(bytes: []const u8, comptime endian: Endian) (InvalidModulusError || OverflowError)!Self
+std.crypto.ff.Modulus().toBytes	fn toBytes(self: Self, bytes: []u8, comptime endian: Endian) OverflowError!void
+std.crypto.ff.Modulus().rejectNonCanonical	fn rejectNonCanonical(self: Self, fe: Fe) error{NonCanonical}!void
+std.crypto.ff.Modulus().add	fn add(self: Self, x: Fe, y: Fe) Fe
+std.crypto.ff.Modulus().sub	fn sub(self: Self, x: Fe, y: Fe) Fe
+std.crypto.ff.Modulus().toMontgomery	fn toMontgomery(self: Self, x: *Fe) RepresentationError!void
+std.crypto.ff.Modulus().fromMontgomery	fn fromMontgomery(self: Self, x: *Fe) RepresentationError!void
+std.crypto.ff.Modulus().reduce	fn reduce(self: Self, x: anytype) Fe
+std.crypto.ff.Modulus().mul	fn mul(self: Self, x: Fe, y: Fe) Fe
+std.crypto.ff.Modulus().sq	fn sq(self: Self, x: Fe) Fe
+std.crypto.ff.Modulus().pow	fn pow(self: Self, x: Fe, e: Fe) (NullExponentError || RepresentationError)!Fe
+std.crypto.ff.Modulus().powPublic	fn powPublic(self: Self, x: Fe, e: Fe) (NullExponentError || RepresentationError)!Fe
+std.crypto.ff.Modulus().powWithEncodedExponent	fn powWithEncodedExponent(self: Self, x: Fe, e: []const u8, endian: Endian) NullExponentError!Fe
+std.crypto.ff.Modulus().powWithEncodedPublicExponent	fn powWithEncodedPublicExponent(self: Self, x: Fe, e: []const u8, endian: Endian) NullExponentError!Fe
 std.crypto.codecs.asn1.der.Decoder.any	fn any(self: *Decoder, comptime T: type) !T
 std.crypto.codecs.asn1.der.Decoder.sequence	fn sequence(self: *Decoder) !Element
 std.crypto.codecs.asn1.der.Decoder.element	fn element( self: *Decoder, expected: ExpectedTag, ) (error{ EndOfStream, UnexpectedElement } || Element.DecodeError)!Element
@@ -2098,6 +2542,7 @@ std.crypto.codecs.asn1.Oid.decodeDer	fn decodeDer(decoder: *der.Decoder) !Oid
 std.crypto.codecs.asn1.Oid.encodeDer	fn encodeDer(self: Oid, encoder: *der.Encoder) !void
 std.crypto.codecs.asn1.Oid.fromDotComptime	fn fromDotComptime(comptime dot_notation: []const u8) Oid
 std.crypto.codecs.asn1.Oid.StaticMap	fn StaticMap(comptime Enum: type) type
+std.crypto.codecs.asn1.Oid.StaticMap().initComptime	fn initComptime(comptime key_pairs: anytype) ReturnType
 std.crypto.codecs.asn1.Tag.init	fn init(number: Tag.Number, constructed: bool, class: Tag.Class) Tag
 std.crypto.codecs.asn1.Tag.universal	fn universal(number: Tag.Number, constructed: bool) Tag
 std.crypto.codecs.asn1.Tag.decode	fn decode(reader: *std.Io.Reader) !Tag
@@ -2118,6 +2563,8 @@ std.crypto.codecs.asn1.BitString.bitLen	fn bitLen(self: BitString) usize
 std.crypto.codecs.asn1.BitString.decodeDer	fn decodeDer(decoder: *der.Decoder) !BitString
 std.crypto.codecs.asn1.BitString.encodeDer	fn encodeDer(self: BitString, encoder: *der.Encoder) !void
 std.crypto.codecs.asn1.Opaque	fn Opaque(comptime tag: Tag) type
+std.crypto.codecs.asn1.Opaque().decodeDer	fn decodeDer(decoder: *der.Decoder) !@This()
+std.crypto.codecs.asn1.Opaque().encodeDer	fn encodeDer(self: @This(), encoder: *der.Encoder) !void
 std.crypto.codecs.asn1.Any.decodeDer	fn decodeDer(decoder: *der.Decoder) !@This()
 std.crypto.codecs.asn1.Any.encodeDer	fn encodeDer(self: @This(), encoder: *der.Encoder) !void
 std.crypto.codecs.base64.encodedLen	fn encodedLen(bin_len: usize, variant: Variant) usize
@@ -2206,7 +2653,39 @@ std.crypto.Certificate.rsa.PublicKey.fromBytes	fn fromBytes(pub_bytes: []const u
 std.crypto.Certificate.rsa.PublicKey.parseDer	fn parseDer(pub_key: []const u8) ParseDerError!struct { modulus: []const u8, exponent: []const u8 }
 std.crypto.secureZero	fn secureZero(comptime T: type, s: []volatile T) void
 std.debug.Dwarf.expression.StackMachine	fn StackMachine(comptime options: Options) type
+std.debug.Dwarf.expression.StackMachine().reset	fn reset(self: *Self) void
+std.debug.Dwarf.expression.StackMachine().deinit	fn deinit(self: *Self, allocator: std.mem.Allocator) void
+std.debug.Dwarf.expression.StackMachine().readOperand	fn readOperand(reader: *std.Io.Reader, opcode: u8, context: Context) !?Operand
+std.debug.Dwarf.expression.StackMachine().run	fn run( self: *Self, expression: []const u8, allocator: std.mem.Allocator, context: Context, initial_value: ?usize, ) Error!?Value
+std.debug.Dwarf.expression.StackMachine().step	fn step( self: *Self, stream: *std.Io.Reader, allocator: std.mem.Allocator, context: Context, ) Error!bool
 std.debug.Dwarf.expression.Builder	fn Builder(comptime options: Options) type
+std.debug.Dwarf.expression.Builder().writeOpcode	fn writeOpcode(writer: *Writer, comptime opcode: u8) !void
+std.debug.Dwarf.expression.Builder().writeLiteral	fn writeLiteral(writer: *Writer, literal: u8) !void
+std.debug.Dwarf.expression.Builder().writeConst	fn writeConst(writer: *Writer, comptime T: type, value: T) !void
+std.debug.Dwarf.expression.Builder().writeConstx	fn writeConstx(writer: *Writer, debug_addr_offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeConstType	fn writeConstType(writer: *Writer, die_offset: anytype, value_bytes: []const u8) !void
+std.debug.Dwarf.expression.Builder().writeAddr	fn writeAddr(writer: *Writer, value: addr_type) !void
+std.debug.Dwarf.expression.Builder().writeAddrx	fn writeAddrx(writer: *Writer, debug_addr_offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeFbreg	fn writeFbreg(writer: *Writer, offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeBreg	fn writeBreg(writer: *Writer, register: u8, offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeBregx	fn writeBregx(writer: *Writer, register: anytype, offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeRegvalType	fn writeRegvalType(writer: *Writer, register: anytype, offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writePick	fn writePick(writer: *Writer, index: u8) !void
+std.debug.Dwarf.expression.Builder().writeDerefSize	fn writeDerefSize(writer: *Writer, size: u8) !void
+std.debug.Dwarf.expression.Builder().writeXDerefSize	fn writeXDerefSize(writer: *Writer, size: u8) !void
+std.debug.Dwarf.expression.Builder().writeDerefType	fn writeDerefType(writer: *Writer, size: u8, die_offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeXDerefType	fn writeXDerefType(writer: *Writer, size: u8, die_offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writePlusUconst	fn writePlusUconst(writer: *Writer, uint_value: anytype) !void
+std.debug.Dwarf.expression.Builder().writeSkip	fn writeSkip(writer: *Writer, offset: i16) !void
+std.debug.Dwarf.expression.Builder().writeBra	fn writeBra(writer: *Writer, offset: i16) !void
+std.debug.Dwarf.expression.Builder().writeCall	fn writeCall(writer: *Writer, comptime T: type, offset: T) !void
+std.debug.Dwarf.expression.Builder().writeCallRef	fn writeCallRef(writer: *Writer, comptime is_64: bool, value: if (is_64) u64 else u32) !void
+std.debug.Dwarf.expression.Builder().writeConvert	fn writeConvert(writer: *Writer, die_offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeReinterpret	fn writeReinterpret(writer: *Writer, die_offset: anytype) !void
+std.debug.Dwarf.expression.Builder().writeEntryValue	fn writeEntryValue(writer: *Writer, expression: []const u8) !void
+std.debug.Dwarf.expression.Builder().writeReg	fn writeReg(writer: *Writer, register: u8) !void
+std.debug.Dwarf.expression.Builder().writeRegx	fn writeRegx(writer: *Writer, register: anytype) !void
+std.debug.Dwarf.expression.Builder().writeImplicitValue	fn writeImplicitValue(writer: *Writer, value_bytes: []const u8) !void
 std.debug.Dwarf.Unwind.VirtualMachine.deinit	fn deinit(self: *VirtualMachine, gpa: Allocator) void
 std.debug.Dwarf.Unwind.VirtualMachine.reset	fn reset(self: *VirtualMachine) void
 std.debug.Dwarf.Unwind.VirtualMachine.rowColumns	fn rowColumns(self: *const VirtualMachine, row: *const Row) []Column
@@ -2355,6 +2834,31 @@ std.debug.no_panic.copyLenMismatch	fn copyLenMismatch() noreturn
 std.debug.no_panic.memcpyAlias	fn memcpyAlias() noreturn
 std.debug.no_panic.noreturnReturned	fn noreturnReturned() noreturn
 std.debug.FullPanic	fn FullPanic(comptime panicFn: fn ([]const u8, ?usize) noreturn) type
+std.debug.FullPanic().sentinelMismatch	fn sentinelMismatch(expected: anytype, found: @TypeOf(expected)) noreturn
+std.debug.FullPanic().unwrapError	fn unwrapError(err: anyerror) noreturn
+std.debug.FullPanic().outOfBounds	fn outOfBounds(index: usize, len: usize) noreturn
+std.debug.FullPanic().startGreaterThanEnd	fn startGreaterThanEnd(start: usize, end: usize) noreturn
+std.debug.FullPanic().inactiveUnionField	fn inactiveUnionField(active: anytype, accessed: @TypeOf(active)) noreturn
+std.debug.FullPanic().sliceCastLenRemainder	fn sliceCastLenRemainder(src_len: usize) noreturn
+std.debug.FullPanic().reachedUnreachable	fn reachedUnreachable() noreturn
+std.debug.FullPanic().unwrapNull	fn unwrapNull() noreturn
+std.debug.FullPanic().castToNull	fn castToNull() noreturn
+std.debug.FullPanic().incorrectAlignment	fn incorrectAlignment() noreturn
+std.debug.FullPanic().invalidErrorCode	fn invalidErrorCode() noreturn
+std.debug.FullPanic().integerOutOfBounds	fn integerOutOfBounds() noreturn
+std.debug.FullPanic().integerOverflow	fn integerOverflow() noreturn
+std.debug.FullPanic().shlOverflow	fn shlOverflow() noreturn
+std.debug.FullPanic().shrOverflow	fn shrOverflow() noreturn
+std.debug.FullPanic().divideByZero	fn divideByZero() noreturn
+std.debug.FullPanic().exactDivisionRemainder	fn exactDivisionRemainder() noreturn
+std.debug.FullPanic().integerPartOutOfBounds	fn integerPartOutOfBounds() noreturn
+std.debug.FullPanic().corruptSwitch	fn corruptSwitch() noreturn
+std.debug.FullPanic().shiftRhsTooBig	fn shiftRhsTooBig() noreturn
+std.debug.FullPanic().invalidEnumValue	fn invalidEnumValue() noreturn
+std.debug.FullPanic().forLenMismatch	fn forLenMismatch() noreturn
+std.debug.FullPanic().copyLenMismatch	fn copyLenMismatch() noreturn
+std.debug.FullPanic().memcpyAlias	fn memcpyAlias() noreturn
+std.debug.FullPanic().noreturnReturned	fn noreturnReturned() noreturn
 std.debug.lockStderr	fn lockStderr(buffer: []u8) Io.LockedStderr
 std.debug.unlockStderr	fn unlockStderr() void
 std.debug.print	fn print(comptime fmt: []const u8, args: anytype) void
@@ -2383,6 +2887,11 @@ std.debug.attachSegfaultHandler	fn attachSegfaultHandler() void
 std.debug.defaultHandleSegfault	fn defaultHandleSegfault(addr: ?usize, name: []const u8, opt_ctx: ?CpuContextPtr) noreturn
 std.debug.dumpStackPointerAddr	fn dumpStackPointerAddr(prefix: []const u8) void
 std.debug.ConfigurableTrace	fn ConfigurableTrace(comptime size: usize, comptime stack_frame_count: usize, comptime is_enabled: bool) type
+std.debug.ConfigurableTrace().addNoInline	fn addNoInline(t: *@This(), note: []const u8) void
+std.debug.ConfigurableTrace().addNoOp	fn addNoOp(t: *@This(), note: []const u8) void
+std.debug.ConfigurableTrace().addAddr	fn addAddr(t: *@This(), addr: usize, note: []const u8) void
+std.debug.ConfigurableTrace().dump	fn dump(t: @This()) void
+std.debug.ConfigurableTrace().format	fn format( t: @This(), comptime fmt: []const u8, options: std.fmt.Options, writer: *Writer, ) !void
 std.debug.SafetyLock.lock	fn lock(l: *SafetyLock) void
 std.debug.SafetyLock.unlock	fn unlock(l: *SafetyLock) void
 std.debug.SafetyLock.assertUnlocked	fn assertUnlocked(l: SafetyLock) void
@@ -2437,11 +2946,87 @@ std.enums.directEnumArrayLen	fn directEnumArrayLen(comptime E: type, comptime ma
 std.enums.directEnumArray	fn directEnumArray( comptime E: type, comptime Data: type, comptime max_unused_slots: comptime_int, init_values: EnumFieldStruct(E, Data, null), ) [directEnumArrayLen(E, max_unused_slots)]Data
 std.enums.directEnumArrayDefault	fn directEnumArrayDefault( comptime E: type, comptime Data: type, comptime default: ?Data, comptime max_unused_slots: comptime_int, init_values: EnumFieldStruct(E, Data, default), ) [directEnumArrayLen(E, max_unused_slots)]Data
 std.enums.EnumSet	fn EnumSet(comptime E: type) type
+std.enums.EnumSet().init	fn init(init_values: EnumFieldStruct(E, bool, false)) Self
+std.enums.EnumSet().initEmpty	fn initEmpty() Self
+std.enums.EnumSet().initFull	fn initFull() Self
+std.enums.EnumSet().initMany	fn initMany(keys: []const Key) Self
+std.enums.EnumSet().initOne	fn initOne(key: Key) Self
+std.enums.EnumSet().count	fn count(self: Self) usize
+std.enums.EnumSet().contains	fn contains(self: Self, key: Key) bool
+std.enums.EnumSet().insert	fn insert(self: *Self, key: Key) void
+std.enums.EnumSet().remove	fn remove(self: *Self, key: Key) void
+std.enums.EnumSet().setPresent	fn setPresent(self: *Self, key: Key, present: bool) void
+std.enums.EnumSet().toggle	fn toggle(self: *Self, key: Key) void
+std.enums.EnumSet().toggleSet	fn toggleSet(self: *Self, other: Self) void
+std.enums.EnumSet().toggleAll	fn toggleAll(self: *Self) void
+std.enums.EnumSet().setUnion	fn setUnion(self: *Self, other: Self) void
+std.enums.EnumSet().setIntersection	fn setIntersection(self: *Self, other: Self) void
+std.enums.EnumSet().eql	fn eql(self: Self, other: Self) bool
+std.enums.EnumSet().subsetOf	fn subsetOf(self: Self, other: Self) bool
+std.enums.EnumSet().supersetOf	fn supersetOf(self: Self, other: Self) bool
+std.enums.EnumSet().complement	fn complement(self: Self) Self
+std.enums.EnumSet().unionWith	fn unionWith(self: Self, other: Self) Self
+std.enums.EnumSet().intersectWith	fn intersectWith(self: Self, other: Self) Self
+std.enums.EnumSet().xorWith	fn xorWith(self: Self, other: Self) Self
+std.enums.EnumSet().differenceWith	fn differenceWith(self: Self, other: Self) Self
+std.enums.EnumSet().iterator	fn iterator(self: *const Self) Iterator
+std.enums.EnumSet().Iterator.next	fn next(self: *Iterator) ?Key
 std.enums.EnumMap	fn EnumMap(comptime E: type, comptime V: type) type
+std.enums.EnumMap().init	fn init(init_values: EnumFieldStruct(E, ?Value, @as(?Value, null))) Self
+std.enums.EnumMap().initFull	fn initFull(value: Value) Self
+std.enums.EnumMap().initFullWith	fn initFullWith(init_values: EnumFieldStruct(E, Value, null)) Self
+std.enums.EnumMap().initFullWithDefault	fn initFullWithDefault(comptime default: ?Value, init_values: EnumFieldStruct(E, Value, default)) Self
+std.enums.EnumMap().count	fn count(self: *const Self) usize
+std.enums.EnumMap().contains	fn contains(self: *const Self, key: Key) bool
+std.enums.EnumMap().get	fn get(self: *const Self, key: Key) ?Value
+std.enums.EnumMap().getAssertContains	fn getAssertContains(self: *const Self, key: Key) Value
+std.enums.EnumMap().getPtr	fn getPtr(self: *Self, key: Key) ?*Value
+std.enums.EnumMap().getPtrConst	fn getPtrConst(self: *const Self, key: Key) ?*const Value
+std.enums.EnumMap().getPtrAssertContains	fn getPtrAssertContains(self: *Self, key: Key) *Value
+std.enums.EnumMap().getPtrConstAssertContains	fn getPtrConstAssertContains(self: *const Self, key: Key) *const Value
+std.enums.EnumMap().put	fn put(self: *Self, key: Key, value: Value) void
+std.enums.EnumMap().putUninitialized	fn putUninitialized(self: *Self, key: Key) *Value
+std.enums.EnumMap().fetchPut	fn fetchPut(self: *Self, key: Key, value: Value) ?Value
+std.enums.EnumMap().remove	fn remove(self: *Self, key: Key) void
+std.enums.EnumMap().fetchRemove	fn fetchRemove(self: *Self, key: Key) ?Value
+std.enums.EnumMap().iterator	fn iterator(self: *Self) Iterator
+std.enums.EnumMap().Iterator.next	fn next(self: *Iterator) ?Entry
 std.enums.EnumMultiset	fn EnumMultiset(comptime E: type) type
 std.enums.BoundedEnumMultiset	fn BoundedEnumMultiset(comptime E: type, comptime CountSize: type) type
+std.enums.BoundedEnumMultiset().init	fn init(init_counts: EnumFieldStruct(E, CountSize, 0)) Self
+std.enums.BoundedEnumMultiset().initWithCount	fn initWithCount(comptime c: CountSize) Self
+std.enums.BoundedEnumMultiset().count	fn count(self: Self) usize
+std.enums.BoundedEnumMultiset().contains	fn contains(self: Self, key: E) bool
+std.enums.BoundedEnumMultiset().removeAll	fn removeAll(self: *Self, key: E) void
+std.enums.BoundedEnumMultiset().addAssertSafe	fn addAssertSafe(self: *Self, key: E, c: CountSize) void
+std.enums.BoundedEnumMultiset().add	fn add(self: *Self, key: E, c: CountSize) error{Overflow}!void
+std.enums.BoundedEnumMultiset().remove	fn remove(self: *Self, key: E, c: CountSize) void
+std.enums.BoundedEnumMultiset().getCount	fn getCount(self: Self, key: E) CountSize
+std.enums.BoundedEnumMultiset().setCount	fn setCount(self: *Self, key: E, c: CountSize) void
+std.enums.BoundedEnumMultiset().addSetAssertSafe	fn addSetAssertSafe(self: *Self, other: Self) void
+std.enums.BoundedEnumMultiset().addSet	fn addSet(self: *Self, other: Self) error{Overflow}!void
+std.enums.BoundedEnumMultiset().removeSet	fn removeSet(self: *Self, other: Self) void
+std.enums.BoundedEnumMultiset().eql	fn eql(self: Self, other: Self) bool
+std.enums.BoundedEnumMultiset().subsetOf	fn subsetOf(self: Self, other: Self) bool
+std.enums.BoundedEnumMultiset().supersetOf	fn supersetOf(self: Self, other: Self) bool
+std.enums.BoundedEnumMultiset().plusAssertSafe	fn plusAssertSafe(self: Self, other: Self) Self
+std.enums.BoundedEnumMultiset().plus	fn plus(self: Self, other: Self) error{Overflow}!Self
+std.enums.BoundedEnumMultiset().minus	fn minus(self: Self, other: Self) Self
+std.enums.BoundedEnumMultiset().iterator	fn iterator(self: *Self) Iterator
 std.enums.EnumArray	fn EnumArray(comptime E: type, comptime V: type) type
+std.enums.EnumArray().init	fn init(init_values: EnumFieldStruct(E, Value, null)) Self
+std.enums.EnumArray().initDefault	fn initDefault(comptime default: ?Value, init_values: EnumFieldStruct(E, Value, default)) Self
+std.enums.EnumArray().initUndefined	fn initUndefined() Self
+std.enums.EnumArray().initFill	fn initFill(v: Value) Self
+std.enums.EnumArray().get	fn get(self: Self, key: Key) Value
+std.enums.EnumArray().getPtr	fn getPtr(self: *Self, key: Key) *Value
+std.enums.EnumArray().getPtrConst	fn getPtrConst(self: *const Self, key: Key) *const Value
+std.enums.EnumArray().set	fn set(self: *Self, key: Key, value: Value) void
+std.enums.EnumArray().iterator	fn iterator(self: *Self) Iterator
+std.enums.EnumArray().Iterator.next	fn next(self: *Iterator) ?Entry
 std.enums.EnumIndexer	fn EnumIndexer(comptime E: type) type
+std.enums.EnumIndexer().indexOf	fn indexOf(e: E) usize
+std.enums.EnumIndexer().keyForIndex	fn keyForIndex(i: usize) E
 std.fmt.float.bufferSize	fn bufferSize(comptime mode: Mode, comptime T: type) comptime_int
 std.fmt.float.render	fn render(buf: []u8, value: anytype, options: Options) Error![]const u8
 std.fmt.float.FloatDecimal	fn FloatDecimal(comptime T: type) type
@@ -2462,6 +3047,7 @@ std.fmt.ArgState.nextArg	fn nextArg(self: *@This(), arg_index: ?usize) ?usize
 std.fmt.printInt	fn printInt(buffer: []u8, value: anytype, base: u8, case: Case, options: Options) usize
 std.fmt.digits2	fn digits2(value: u8) [2]u8
 std.fmt.Alt	fn Alt( comptime Data: type, comptime formatFn: fn (data: Data, writer: *Writer) Writer.Error!void, ) type
+std.fmt.Alt().format	fn format(self: @This(), writer: *Writer) Writer.Error!void
 std.fmt.alt	fn alt( context: anytype, comptime func_name: @EnumLiteral(), ) Alt(@TypeOf(context), @field(@TypeOf(context), @tagName(func_name)))
 std.fmt.parseInt	fn parseInt(comptime T: type, buf: []const u8, base: u8) ParseIntError!T
 std.fmt.parseIntWithGenericCharacter	fn parseIntWithGenericCharacter( comptime Result: type, comptime Character: type, buf: []const Character, base: u8, ) ParseIntError!Result
@@ -2515,6 +3101,14 @@ std.fs.path.relativePosix	fn relativePosix(allocator: Allocator, cwd: []const u8
 std.fs.path.extension	fn extension(path: []const u8) []const u8
 std.fs.path.stem	fn stem(path: []const u8) []const u8
 std.fs.path.ComponentIterator	fn ComponentIterator(comptime path_type: PathType, comptime T: type) type
+std.fs.path.ComponentIterator().init	fn init(path: []const T) Self
+std.fs.path.ComponentIterator().root	fn root(self: Self) ?[]const T
+std.fs.path.ComponentIterator().first	fn first(self: *Self) ?Component
+std.fs.path.ComponentIterator().last	fn last(self: *Self) ?Component
+std.fs.path.ComponentIterator().next	fn next(self: *Self) ?Component
+std.fs.path.ComponentIterator().peekNext	fn peekNext(self: Self) ?Component
+std.fs.path.ComponentIterator().previous	fn previous(self: *Self) ?Component
+std.fs.path.ComponentIterator().peekPrevious	fn peekPrevious(self: Self) ?Component
 std.fs.path.componentIterator	fn componentIterator(path: []const u8) NativeComponentIterator
 std.fs.path.getWin32PathType	fn getWin32PathType(comptime T: type, path: []const T) Win32PathType
 std.gpu.executionMode	fn executionMode(comptime entry_point: anytype, comptime mode: ExecutionMode) void
@@ -2560,7 +3154,122 @@ std.hash_map.StringIndexContext.hash	fn hash(ctx: @This(), key: u32) u64
 std.hash_map.StringIndexAdapter.eql	fn eql(ctx: @This(), a: []const u8, b: u32) bool
 std.hash_map.StringIndexAdapter.hash	fn hash(_: @This(), adapted_key: []const u8) u64
 std.hash_map.HashMap	fn HashMap( comptime K: type, comptime V: type, comptime Context: type, comptime max_load_percentage: u64, ) type
+std.hash_map.HashMap().init	fn init(allocator: Allocator) Self
+std.hash_map.HashMap().initContext	fn initContext(allocator: Allocator, ctx: Context) Self
+std.hash_map.HashMap().lockPointers	fn lockPointers(self: *Self) void
+std.hash_map.HashMap().unlockPointers	fn unlockPointers(self: *Self) void
+std.hash_map.HashMap().deinit	fn deinit(self: *Self) void
+std.hash_map.HashMap().clearRetainingCapacity	fn clearRetainingCapacity(self: *Self) void
+std.hash_map.HashMap().clearAndFree	fn clearAndFree(self: *Self) void
+std.hash_map.HashMap().count	fn count(self: Self) Size
+std.hash_map.HashMap().iterator	fn iterator(self: *const Self) Iterator
+std.hash_map.HashMap().keyIterator	fn keyIterator(self: Self) KeyIterator
+std.hash_map.HashMap().valueIterator	fn valueIterator(self: Self) ValueIterator
+std.hash_map.HashMap().getOrPut	fn getOrPut(self: *Self, key: K) Allocator.Error!GetOrPutResult
+std.hash_map.HashMap().getOrPutAdapted	fn getOrPutAdapted(self: *Self, key: anytype, ctx: anytype) Allocator.Error!GetOrPutResult
+std.hash_map.HashMap().getOrPutAssumeCapacity	fn getOrPutAssumeCapacity(self: *Self, key: K) GetOrPutResult
+std.hash_map.HashMap().getOrPutAssumeCapacityAdapted	fn getOrPutAssumeCapacityAdapted(self: *Self, key: anytype, ctx: anytype) GetOrPutResult
+std.hash_map.HashMap().getOrPutValue	fn getOrPutValue(self: *Self, key: K, value: V) Allocator.Error!Entry
+std.hash_map.HashMap().ensureTotalCapacity	fn ensureTotalCapacity(self: *Self, expected_count: Size) Allocator.Error!void
+std.hash_map.HashMap().ensureUnusedCapacity	fn ensureUnusedCapacity(self: *Self, additional_count: Size) Allocator.Error!void
+std.hash_map.HashMap().capacity	fn capacity(self: Self) Size
+std.hash_map.HashMap().put	fn put(self: *Self, key: K, value: V) Allocator.Error!void
+std.hash_map.HashMap().putNoClobber	fn putNoClobber(self: *Self, key: K, value: V) Allocator.Error!void
+std.hash_map.HashMap().putAssumeCapacity	fn putAssumeCapacity(self: *Self, key: K, value: V) void
+std.hash_map.HashMap().putAssumeCapacityNoClobber	fn putAssumeCapacityNoClobber(self: *Self, key: K, value: V) void
+std.hash_map.HashMap().fetchPut	fn fetchPut(self: *Self, key: K, value: V) Allocator.Error!?KV
+std.hash_map.HashMap().fetchPutAssumeCapacity	fn fetchPutAssumeCapacity(self: *Self, key: K, value: V) ?KV
+std.hash_map.HashMap().fetchRemove	fn fetchRemove(self: *Self, key: K) ?KV
+std.hash_map.HashMap().fetchRemoveAdapted	fn fetchRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV
+std.hash_map.HashMap().get	fn get(self: Self, key: K) ?V
+std.hash_map.HashMap().getAdapted	fn getAdapted(self: Self, key: anytype, ctx: anytype) ?V
+std.hash_map.HashMap().getPtr	fn getPtr(self: Self, key: K) ?*V
+std.hash_map.HashMap().getPtrAdapted	fn getPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*V
+std.hash_map.HashMap().getKey	fn getKey(self: Self, key: K) ?K
+std.hash_map.HashMap().getKeyAdapted	fn getKeyAdapted(self: Self, key: anytype, ctx: anytype) ?K
+std.hash_map.HashMap().getKeyPtr	fn getKeyPtr(self: Self, key: K) ?*K
+std.hash_map.HashMap().getKeyPtrAdapted	fn getKeyPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*K
+std.hash_map.HashMap().getEntry	fn getEntry(self: Self, key: K) ?Entry
+std.hash_map.HashMap().getEntryAdapted	fn getEntryAdapted(self: Self, key: anytype, ctx: anytype) ?Entry
+std.hash_map.HashMap().contains	fn contains(self: Self, key: K) bool
+std.hash_map.HashMap().containsAdapted	fn containsAdapted(self: Self, key: anytype, ctx: anytype) bool
+std.hash_map.HashMap().remove	fn remove(self: *Self, key: K) bool
+std.hash_map.HashMap().removeAdapted	fn removeAdapted(self: *Self, key: anytype, ctx: anytype) bool
+std.hash_map.HashMap().removeByPtr	fn removeByPtr(self: *Self, key_ptr: *K) void
+std.hash_map.HashMap().clone	fn clone(self: Self) Allocator.Error!Self
+std.hash_map.HashMap().cloneWithAllocator	fn cloneWithAllocator(self: Self, new_allocator: Allocator) Allocator.Error!Self
+std.hash_map.HashMap().cloneWithContext	fn cloneWithContext(self: Self, new_ctx: anytype) Allocator.Error!HashMap(K, V, @TypeOf(new_ctx), max_load_percentage)
+std.hash_map.HashMap().cloneWithAllocatorAndContext	fn cloneWithAllocatorAndContext( self: Self, new_allocator: Allocator, new_ctx: anytype, ) Allocator.Error!HashMap(K, V, @TypeOf(new_ctx), max_load_percentage)
+std.hash_map.HashMap().move	fn move(self: *Self) Self
+std.hash_map.HashMap().rehash	fn rehash(self: *Self) void
 std.hash_map.HashMapUnmanaged	fn HashMapUnmanaged( comptime K: type, comptime V: type, comptime Context: type, comptime max_load_percentage: u64, ) type
+std.hash_map.HashMapUnmanaged().Iterator.next	fn next(it: *Iterator) ?Entry
+std.hash_map.HashMapUnmanaged().promote	fn promote(self: Self, allocator: Allocator) Managed
+std.hash_map.HashMapUnmanaged().promoteContext	fn promoteContext(self: Self, allocator: Allocator, ctx: Context) Managed
+std.hash_map.HashMapUnmanaged().lockPointers	fn lockPointers(self: *Self) void
+std.hash_map.HashMapUnmanaged().unlockPointers	fn unlockPointers(self: *Self) void
+std.hash_map.HashMapUnmanaged().deinit	fn deinit(self: *Self, allocator: Allocator) void
+std.hash_map.HashMapUnmanaged().ensureTotalCapacity	fn ensureTotalCapacity(self: *Self, allocator: Allocator, new_size: Size) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().ensureTotalCapacityContext	fn ensureTotalCapacityContext(self: *Self, allocator: Allocator, new_size: Size, ctx: Context) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().ensureUnusedCapacity	fn ensureUnusedCapacity(self: *Self, allocator: Allocator, additional_size: Size) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().ensureUnusedCapacityContext	fn ensureUnusedCapacityContext(self: *Self, allocator: Allocator, additional_size: Size, ctx: Context) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().clearRetainingCapacity	fn clearRetainingCapacity(self: *Self) void
+std.hash_map.HashMapUnmanaged().clearAndFree	fn clearAndFree(self: *Self, allocator: Allocator) void
+std.hash_map.HashMapUnmanaged().count	fn count(self: Self) Size
+std.hash_map.HashMapUnmanaged().capacity	fn capacity(self: Self) Size
+std.hash_map.HashMapUnmanaged().iterator	fn iterator(self: *const Self) Iterator
+std.hash_map.HashMapUnmanaged().keyIterator	fn keyIterator(self: Self) KeyIterator
+std.hash_map.HashMapUnmanaged().valueIterator	fn valueIterator(self: Self) ValueIterator
+std.hash_map.HashMapUnmanaged().putNoClobber	fn putNoClobber(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().putNoClobberContext	fn putNoClobberContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().putAssumeCapacity	fn putAssumeCapacity(self: *Self, key: K, value: V) void
+std.hash_map.HashMapUnmanaged().putAssumeCapacityContext	fn putAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) void
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobber	fn putAssumeCapacityNoClobber(self: *Self, key: K, value: V) void
+std.hash_map.HashMapUnmanaged().putAssumeCapacityNoClobberContext	fn putAssumeCapacityNoClobberContext(self: *Self, key: K, value: V, ctx: Context) void
+std.hash_map.HashMapUnmanaged().fetchPut	fn fetchPut(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!?KV
+std.hash_map.HashMapUnmanaged().fetchPutContext	fn fetchPutContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!?KV
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacity	fn fetchPutAssumeCapacity(self: *Self, key: K, value: V) ?KV
+std.hash_map.HashMapUnmanaged().fetchPutAssumeCapacityContext	fn fetchPutAssumeCapacityContext(self: *Self, key: K, value: V, ctx: Context) ?KV
+std.hash_map.HashMapUnmanaged().fetchRemove	fn fetchRemove(self: *Self, key: K) ?KV
+std.hash_map.HashMapUnmanaged().fetchRemoveContext	fn fetchRemoveContext(self: *Self, key: K, ctx: Context) ?KV
+std.hash_map.HashMapUnmanaged().fetchRemoveAdapted	fn fetchRemoveAdapted(self: *Self, key: anytype, ctx: anytype) ?KV
+std.hash_map.HashMapUnmanaged().getEntry	fn getEntry(self: Self, key: K) ?Entry
+std.hash_map.HashMapUnmanaged().getEntryContext	fn getEntryContext(self: Self, key: K, ctx: Context) ?Entry
+std.hash_map.HashMapUnmanaged().getEntryAdapted	fn getEntryAdapted(self: Self, key: anytype, ctx: anytype) ?Entry
+std.hash_map.HashMapUnmanaged().put	fn put(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().putContext	fn putContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!void
+std.hash_map.HashMapUnmanaged().getKeyPtr	fn getKeyPtr(self: Self, key: K) ?*K
+std.hash_map.HashMapUnmanaged().getKeyPtrContext	fn getKeyPtrContext(self: Self, key: K, ctx: Context) ?*K
+std.hash_map.HashMapUnmanaged().getKeyPtrAdapted	fn getKeyPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*K
+std.hash_map.HashMapUnmanaged().getKey	fn getKey(self: Self, key: K) ?K
+std.hash_map.HashMapUnmanaged().getKeyContext	fn getKeyContext(self: Self, key: K, ctx: Context) ?K
+std.hash_map.HashMapUnmanaged().getKeyAdapted	fn getKeyAdapted(self: Self, key: anytype, ctx: anytype) ?K
+std.hash_map.HashMapUnmanaged().getPtr	fn getPtr(self: Self, key: K) ?*V
+std.hash_map.HashMapUnmanaged().getPtrContext	fn getPtrContext(self: Self, key: K, ctx: Context) ?*V
+std.hash_map.HashMapUnmanaged().getPtrAdapted	fn getPtrAdapted(self: Self, key: anytype, ctx: anytype) ?*V
+std.hash_map.HashMapUnmanaged().get	fn get(self: Self, key: K) ?V
+std.hash_map.HashMapUnmanaged().getContext	fn getContext(self: Self, key: K, ctx: Context) ?V
+std.hash_map.HashMapUnmanaged().getAdapted	fn getAdapted(self: Self, key: anytype, ctx: anytype) ?V
+std.hash_map.HashMapUnmanaged().getOrPut	fn getOrPut(self: *Self, allocator: Allocator, key: K) Allocator.Error!GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutContext	fn getOrPutContext(self: *Self, allocator: Allocator, key: K, ctx: Context) Allocator.Error!GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutAdapted	fn getOrPutAdapted(self: *Self, allocator: Allocator, key: anytype, key_ctx: anytype) Allocator.Error!GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutContextAdapted	fn getOrPutContextAdapted(self: *Self, allocator: Allocator, key: anytype, key_ctx: anytype, ctx: Context) Allocator.Error!GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacity	fn getOrPutAssumeCapacity(self: *Self, key: K) GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacityContext	fn getOrPutAssumeCapacityContext(self: *Self, key: K, ctx: Context) GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutAssumeCapacityAdapted	fn getOrPutAssumeCapacityAdapted(self: *Self, key: anytype, ctx: anytype) GetOrPutResult
+std.hash_map.HashMapUnmanaged().getOrPutValue	fn getOrPutValue(self: *Self, allocator: Allocator, key: K, value: V) Allocator.Error!Entry
+std.hash_map.HashMapUnmanaged().getOrPutValueContext	fn getOrPutValueContext(self: *Self, allocator: Allocator, key: K, value: V, ctx: Context) Allocator.Error!Entry
+std.hash_map.HashMapUnmanaged().contains	fn contains(self: Self, key: K) bool
+std.hash_map.HashMapUnmanaged().containsContext	fn containsContext(self: Self, key: K, ctx: Context) bool
+std.hash_map.HashMapUnmanaged().containsAdapted	fn containsAdapted(self: Self, key: anytype, ctx: anytype) bool
+std.hash_map.HashMapUnmanaged().remove	fn remove(self: *Self, key: K) bool
+std.hash_map.HashMapUnmanaged().removeContext	fn removeContext(self: *Self, key: K, ctx: Context) bool
+std.hash_map.HashMapUnmanaged().removeAdapted	fn removeAdapted(self: *Self, key: anytype, ctx: anytype) bool
+std.hash_map.HashMapUnmanaged().removeByPtr	fn removeByPtr(self: *Self, key_ptr: *K) void
+std.hash_map.HashMapUnmanaged().clone	fn clone(self: Self, allocator: Allocator) Allocator.Error!Self
+std.hash_map.HashMapUnmanaged().cloneContext	fn cloneContext(self: Self, allocator: Allocator, new_ctx: anytype) Allocator.Error!HashMapUnmanaged(K, V, @TypeOf(new_ctx), max_load_percentage)
+std.hash_map.HashMapUnmanaged().move	fn move(self: *Self) Self
+std.hash_map.HashMapUnmanaged().rehash	fn rehash(self: *Self, ctx: anytype) void
 std.heap.ArenaAllocator.State.promote	fn promote(state: State, child_allocator: Allocator) ArenaAllocator
 std.heap.ArenaAllocator.allocator	fn allocator(arena: *ArenaAllocator) Allocator
 std.heap.ArenaAllocator.init	fn init(child_allocator: Allocator) ArenaAllocator
@@ -2587,11 +3296,26 @@ std.heap.memory_pool.Managed	fn Managed(comptime Item: type) type
 std.heap.memory_pool.Aligned	fn Aligned(comptime Item: type, comptime alignment: Alignment) type
 std.heap.memory_pool.AlignedManaged	fn AlignedManaged(comptime Item: type, comptime alignment: Alignment) type
 std.heap.memory_pool.Extra	fn Extra(comptime Item: type, comptime pool_options: Options) type
+std.heap.memory_pool.Extra().initCapacity	fn initCapacity(allocator: Allocator, num: usize) Allocator.Error!Pool
+std.heap.memory_pool.Extra().deinit	fn deinit(pool: *Pool, allocator: Allocator) void
+std.heap.memory_pool.Extra().toManaged	fn toManaged(pool: Pool, allocator: Allocator) ExtraManaged(Item, pool_options)
+std.heap.memory_pool.Extra().addCapacity	fn addCapacity(pool: *Pool, allocator: Allocator, num: usize) Allocator.Error!void
+std.heap.memory_pool.Extra().reset	fn reset(pool: *Pool, allocator: Allocator, mode: ResetMode) bool
+std.heap.memory_pool.Extra().create	fn create(pool: *Pool, allocator: Allocator) Allocator.Error!ItemPtr
+std.heap.memory_pool.Extra().destroy	fn destroy(pool: *Pool, ptr: ItemPtr) void
 std.heap.memory_pool.ExtraManaged	fn ExtraManaged(comptime Item: type, comptime pool_options: Options) type
+std.heap.memory_pool.ExtraManaged().init	fn init(allocator: Allocator) Pool
+std.heap.memory_pool.ExtraManaged().initCapacity	fn initCapacity(allocator: Allocator, num: usize) Allocator.Error!Pool
+std.heap.memory_pool.ExtraManaged().deinit	fn deinit(pool: *Pool) void
+std.heap.memory_pool.ExtraManaged().addCapacity	fn addCapacity(pool: *Pool, num: usize) Allocator.Error!void
+std.heap.memory_pool.ExtraManaged().reset	fn reset(pool: *Pool, mode: ResetMode) bool
+std.heap.memory_pool.ExtraManaged().create	fn create(pool: *Pool) Allocator.Error!ItemPtr
+std.heap.memory_pool.ExtraManaged().destroy	fn destroy(pool: *Pool, ptr: ItemPtr) void
 std.heap.pageSize	fn pageSize() usize
 std.heap.defaultQueryPageSize	fn defaultQueryPageSize() usize
 std.heap.stackFallback	fn stackFallback(comptime size: usize, fallback_allocator: Allocator) StackFallbackAllocator(size)
 std.heap.StackFallbackAllocator	fn StackFallbackAllocator(comptime size: usize) type
+std.heap.StackFallbackAllocator().get	fn get(self: *Self) Allocator
 std.heap.testAllocator	fn testAllocator(base_allocator: mem.Allocator) !void
 std.heap.testAllocatorAligned	fn testAllocatorAligned(base_allocator: mem.Allocator) !void
 std.heap.testAllocatorLargeAlignment	fn testAllocatorLargeAlignment(base_allocator: mem.Allocator) !void
@@ -2760,6 +3484,7 @@ std.json.Stringify.encodeJsonString	fn encodeJsonString(string: []const u8, opti
 std.json.Stringify.encodeJsonStringChars	fn encodeJsonStringChars(chars: []const u8, options: Options, writer: *Writer) Error!void
 std.json.fmt	fn fmt(value: anytype, options: Stringify.Options) Formatter(@TypeOf(value))
 std.json.Formatter	fn Formatter(comptime T: type) type
+std.json.Formatter().format	fn format(self: @This(), writer: *std.Io.Writer) std.Io.Writer.Error!void
 std.leb.writeUnsignedFixed	fn writeUnsignedFixed(comptime l: usize, ptr: *[l]u8, int: std.meta.Int(.unsigned, l * 7)) void
 std.leb.writeUnsignedExtended	fn writeUnsignedExtended(slice: []u8, arg: anytype) void
 std.leb.writeSignedFixed	fn writeSignedFixed(comptime l: usize, ptr: *[l]u8, int: std.meta.Int(.signed, l * 7)) void
@@ -2769,6 +3494,10 @@ std.log.defaultTerminalMode	fn defaultTerminalMode() std.Io.Terminal.Mode
 std.log.defaultLog	fn defaultLog( comptime level: Level, comptime scope: @EnumLiteral(), comptime format: []const u8, args: anytype, ) void
 std.log.defaultLogFileTerminal	fn defaultLogFileTerminal( comptime level: Level, comptime scope: @EnumLiteral(), comptime format: []const u8, args: anytype, t: std.Io.Terminal, ) std.Io.Writer.Error!void
 std.log.scoped	fn scoped(comptime scope: @EnumLiteral()) type
+std.log.scoped().err	fn err( comptime format: []const u8, args: anytype, ) void
+std.log.scoped().warn	fn warn( comptime format: []const u8, args: anytype, ) void
+std.log.scoped().info	fn info( comptime format: []const u8, args: anytype, ) void
+std.log.scoped().debug	fn debug( comptime format: []const u8, args: anytype, ) void
 std.macho.segment_command_64.segName	fn segName(seg: *const segment_command_64) []const u8
 std.macho.segment_command_64.isWriteable	fn isWriteable(seg: segment_command_64) bool
 std.macho.section_64.sectName	fn sectName(sect: *const section_64) []const u8
@@ -2869,6 +3598,17 @@ std.math.complex.sqrt	fn sqrt(z: anytype) Complex(@TypeOf(z.re, z.im))
 std.math.complex.tanh	fn tanh(z: anytype) Complex(@TypeOf(z.re, z.im))
 std.math.complex.tan	fn tan(z: anytype) Complex(@TypeOf(z.re, z.im))
 std.math.complex.Complex	fn Complex(comptime T: type) type
+std.math.complex.Complex().init	fn init(re: T, im: T) Self
+std.math.complex.Complex().add	fn add(self: Self, other: Self) Self
+std.math.complex.Complex().sub	fn sub(self: Self, other: Self) Self
+std.math.complex.Complex().mul	fn mul(self: Self, other: Self) Self
+std.math.complex.Complex().div	fn div(self: Self, other: Self) Self
+std.math.complex.Complex().conjugate	fn conjugate(self: Self) Self
+std.math.complex.Complex().neg	fn neg(self: Self) Self
+std.math.complex.Complex().mulbyi	fn mulbyi(self: Self) Self
+std.math.complex.Complex().reciprocal	fn reciprocal(self: Self) Self
+std.math.complex.Complex().magnitude	fn magnitude(self: Self) T
+std.math.complex.Complex().squaredMagnitude	fn squaredMagnitude(self: Self) T
 std.math.big.int.calcLimbLen	fn calcLimbLen(scalar: anytype) usize
 std.math.big.int.calcLog10LimbsBufferLen	fn calcLog10LimbsBufferLen(a_len: usize) usize
 std.math.big.int.calcToStringLimbsBufferLen	fn calcToStringLimbsBufferLen(a_len: usize, base: u8) usize
@@ -3124,6 +3864,13 @@ std.mem.Alignment.forward	fn forward(a: Alignment, address: usize) usize
 std.mem.Alignment.backward	fn backward(a: Alignment, address: usize) usize
 std.mem.Alignment.check	fn check(a: Alignment, address: usize) bool
 std.mem.ValidationAllocator	fn ValidationAllocator(comptime T: type) type
+std.mem.ValidationAllocator().init	fn init(underlying_allocator: T) @This()
+std.mem.ValidationAllocator().allocator	fn allocator(self: *Self) Allocator
+std.mem.ValidationAllocator().alloc	fn alloc( ctx: *anyopaque, n: usize, alignment: mem.Alignment, ret_addr: usize, ) ?[*]u8
+std.mem.ValidationAllocator().resize	fn resize( ctx: *anyopaque, buf: []u8, alignment: Alignment, new_len: usize, ret_addr: usize, ) bool
+std.mem.ValidationAllocator().remap	fn remap( ctx: *anyopaque, buf: []u8, alignment: Alignment, new_len: usize, ret_addr: usize, ) ?[*]u8
+std.mem.ValidationAllocator().free	fn free( ctx: *anyopaque, buf: []u8, alignment: Alignment, ret_addr: usize, ) void
+std.mem.ValidationAllocator().reset	fn reset(self: *Self) void
 std.mem.validationWrap	fn validationWrap(allocator: anytype) ValidationAllocator(@TypeOf(allocator))
 std.mem.copyForwards	fn copyForwards(comptime T: type, dest: []T, source: []const T) void
 std.mem.copyBackwards	fn copyBackwards(comptime T: type, dest: []T, source: []const T) void
@@ -3187,6 +3934,8 @@ std.mem.splitBackwardsAny	fn splitBackwardsAny(comptime T: type, buffer: []const
 std.mem.splitBackwardsScalar	fn splitBackwardsScalar(comptime T: type, buffer: []const T, delimiter: T) SplitBackwardsIterator(T, .scalar)
 std.mem.window	fn window(comptime T: type, buffer: []const T, size: usize, advance: usize) WindowIterator(T)
 std.mem.WindowIterator	fn WindowIterator(comptime T: type) type
+std.mem.WindowIterator().next	fn next(self: *Self) ?[]const T
+std.mem.WindowIterator().reset	fn reset(self: *Self) void
 std.mem.startsWith	fn startsWith(comptime T: type, haystack: []const T, needle: []const T) bool
 std.mem.endsWith	fn endsWith(comptime T: type, haystack: []const T, needle: []const T) bool
 std.mem.cutPrefix	fn cutPrefix(comptime T: type, slice: []const T, prefix: []const T) ?[]const T
@@ -3196,8 +3945,21 @@ std.mem.cutLast	fn cutLast(comptime T: type, haystack: []const T, needle: []cons
 std.mem.cutScalar	fn cutScalar(comptime T: type, haystack: []const T, needle: T) ?struct { []const T, []const T }
 std.mem.cutScalarLast	fn cutScalarLast(comptime T: type, haystack: []const T, needle: T) ?struct { []const T, []const T }
 std.mem.TokenIterator	fn TokenIterator(comptime T: type, comptime delimiter_type: DelimiterType) type
+std.mem.TokenIterator().next	fn next(self: *Self) ?[]const T
+std.mem.TokenIterator().peek	fn peek(self: *Self) ?[]const T
+std.mem.TokenIterator().rest	fn rest(self: Self) []const T
+std.mem.TokenIterator().reset	fn reset(self: *Self) void
 std.mem.SplitIterator	fn SplitIterator(comptime T: type, comptime delimiter_type: DelimiterType) type
+std.mem.SplitIterator().first	fn first(self: *Self) []const T
+std.mem.SplitIterator().next	fn next(self: *Self) ?[]const T
+std.mem.SplitIterator().peek	fn peek(self: *const Self) ?[]const T
+std.mem.SplitIterator().rest	fn rest(self: Self) []const T
+std.mem.SplitIterator().reset	fn reset(self: *Self) void
 std.mem.SplitBackwardsIterator	fn SplitBackwardsIterator(comptime T: type, comptime delimiter_type: DelimiterType) type
+std.mem.SplitBackwardsIterator().first	fn first(self: *Self) []const T
+std.mem.SplitBackwardsIterator().next	fn next(self: *Self) ?[]const T
+std.mem.SplitBackwardsIterator().rest	fn rest(self: Self) []const T
+std.mem.SplitBackwardsIterator().reset	fn reset(self: *Self) void
 std.mem.join	fn join(allocator: Allocator, separator: []const u8, slices: []const []const u8) Allocator.Error![]u8
 std.mem.joinZ	fn joinZ(allocator: Allocator, separator: []const u8, slices: []const []const u8) Allocator.Error![:0]u8
 std.mem.concat	fn concat(allocator: Allocator, comptime T: type, slices: []const []const T) Allocator.Error![]T
@@ -3212,6 +3974,8 @@ std.mem.findMinMax	fn findMinMax(comptime T: type, slice: []const T) struct { us
 std.mem.swap	fn swap(comptime T: type, noalias a: *T, noalias b: *T) void
 std.mem.reverse	fn reverse(comptime T: type, items: []T) void
 std.mem.ReverseIterator	fn ReverseIterator(comptime T: type) type
+std.mem.ReverseIterator().next	fn next(self: *@This()) ?Element
+std.mem.ReverseIterator().nextPtr	fn nextPtr(self: *@This()) ?ElementPointer
 std.mem.reverseIterator	fn reverseIterator(slice: anytype) ReverseIterator(@TypeOf(slice))
 std.mem.rotate	fn rotate(comptime T: type, items: []T, amount: usize) void
 std.mem.replace	fn replace(comptime T: type, input: []const T, needle: []const T, replacement: []const T, output: []T) usize
@@ -4021,7 +4785,11 @@ std.os.windows.CONSOLE.USER_IO.SET_CURSOR_POSITION	fn SET_CURSOR_POSITION(coord:
 std.os.windows.CONSOLE.USER_IO.SET_TEXT_ATTRIBUTE	fn SET_TEXT_ATTRIBUTE(attribute: WORD) Header.With(WORD)
 std.os.windows.CONSOLE.USER_IO.READ_OUTPUT_CHARACTER	fn READ_OUTPUT_CHARACTER( coord: COORD, mode: INFO.READ_OUTPUT_CHARACTER.MODE, ) Header.With(INFO.READ_OUTPUT_CHARACTER)
 std.os.windows.CONSOLE.USER_IO.Request	fn Request(comptime in_len: u32, comptime out_len: u32) type
+std.os.windows.CONSOLE.USER_IO.Request().init	fn init( handle: ?HANDLE, in: [in_len]InputBuffer, out: [out_len]OutputBuffer, ) @This()
 std.os.windows.CONSOLE.USER_IO.Header.With	fn With(comptime Data: type) type
+std.os.windows.CONSOLE.USER_IO.Header.With().init	fn init(operation: Operation, data: Data) @This()
+std.os.windows.CONSOLE.USER_IO.Header.With().request	fn request( with: *@This(), file: ?Io.File, comptime in_len: u32, in: [in_len]InputBuffer, comptime out_len: u32, out: [out_len]OutputBuffer, ) Request(1 + in_len, 1 + out_len)
+std.os.windows.CONSOLE.USER_IO.Header.With().operate	fn operate(with: *@This(), io: Io, file: ?Io.File) Io.Cancelable!NTSTATUS
 std.os.windows.AFD.WSABUF	fn WSABUF(comptime mutability: Mutability) type
 std.os.windows.IO_REPARSE_TAG.WCI	fn WCI(index: u1) IO_REPARSE_TAG
 std.os.windows.IO_REPARSE_TAG.CLOUD	fn CLOUD(index: u4) IO_REPARSE_TAG
@@ -4054,6 +4822,7 @@ std.os.windows.GUID.parseNoBraces	fn parseNoBraces(s: []const u8) !GUID
 std.os.windows.GUID.format	fn format(self: GUID, w: *std.Io.Writer) std.Io.Writer.Error!void
 std.os.windows.KEY.VALUE.PARTIAL_INFORMATION.data	fn data(info: *const PARTIAL_INFORMATION) []const UCHAR
 std.os.windows.FileInformationIterator	fn FileInformationIterator(comptime FileInformationType: type) type
+std.os.windows.FileInformationIterator().next	fn next(self: *@This()) ?*FileInformationType
 std.os.windows.IsProcessorFeaturePresent	fn IsProcessorFeaturePresent(feature: PF) bool
 std.os.windows.wtf8ToWtf16Le	fn wtf8ToWtf16Le(wtf16le: []u16, wtf8: []const u8) error{ BadPathName, NameTooLong }!usize
 std.os.windows.getSystemDirectoryWtf16Le	fn getSystemDirectoryWtf16Le() [:0]const u16
@@ -4135,6 +4904,11 @@ std.process.Args.iterate	fn iterate(a: Args) Iterator
 std.process.Args.iterateAllocator	fn iterateAllocator(a: Args, gpa: Allocator) Iterator.InitError!Iterator
 std.process.Args.toSlice	fn toSlice(a: Args, arena: Allocator) ToSliceError![]const [:0]const u8
 std.process.Args.IteratorGeneral	fn IteratorGeneral(comptime options: IteratorGeneralOptions) type
+std.process.Args.IteratorGeneral().init	fn init(allocator: Allocator, cmd_line_utf8: []const u8) InitError!Self
+std.process.Args.IteratorGeneral().initTakeOwnership	fn initTakeOwnership(allocator: Allocator, cmd_line_utf8: []const u8) InitError!Self
+std.process.Args.IteratorGeneral().skip	fn skip(self: *Self) bool
+std.process.Args.IteratorGeneral().next	fn next(self: *Self) ?[:0]const u8
+std.process.Args.IteratorGeneral().deinit	fn deinit(self: *Self) void
 std.process.Environ.GlobalBlock.deinit	fn deinit(_: GlobalBlock, _: Allocator) void
 std.process.Environ.GlobalBlock.isEmpty	fn isEmpty(block: GlobalBlock) bool
 std.process.Environ.PosixBlock.deinit	fn deinit(block: PosixBlock, gpa: Allocator) void
@@ -4803,6 +5577,18 @@ std.zig.llvm.BitcodeReader.checkMagic	fn checkMagic(bc: *BitcodeReader, magic: *
 std.zig.llvm.BitcodeReader.next	fn next(bc: *BitcodeReader) !?Item
 std.zig.llvm.BitcodeReader.skipBlock	fn skipBlock(bc: *BitcodeReader, block: Block) !void
 std.zig.llvm.bitcode_writer.BitcodeWriter	fn BitcodeWriter(comptime types: []const type) type
+std.zig.llvm.bitcode_writer.BitcodeWriter().getTypeWidth	fn getTypeWidth(self: BcWriter, comptime Type: type) u16
+std.zig.llvm.bitcode_writer.BitcodeWriter().init	fn init(allocator: std.mem.Allocator, widths: [types.len]u16) BcWriter
+std.zig.llvm.bitcode_writer.BitcodeWriter().deinit	fn deinit(self: BcWriter) void
+std.zig.llvm.bitcode_writer.BitcodeWriter().toOwnedSlice	fn toOwnedSlice(self: *BcWriter) Error![]const u32
+std.zig.llvm.bitcode_writer.BitcodeWriter().length	fn length(self: BcWriter) usize
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeBits	fn writeBits(self: *BcWriter, value: anytype, bits: u16) Error!void
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeVbr	fn writeVbr(self: *BcWriter, value: anytype, comptime vbr_bits: usize) Error!void
+std.zig.llvm.bitcode_writer.BitcodeWriter().bitsVbr	fn bitsVbr(value: anytype, comptime vbr_bits: usize) u16
+std.zig.llvm.bitcode_writer.BitcodeWriter().write6BitChar	fn write6BitChar(self: *BcWriter, c: u8) Error!void
+std.zig.llvm.bitcode_writer.BitcodeWriter().writeBlob	fn writeBlob(self: *BcWriter, blob: []const u8) Error!void
+std.zig.llvm.bitcode_writer.BitcodeWriter().alignTo32	fn alignTo32(self: *BcWriter) Error!void
+std.zig.llvm.bitcode_writer.BitcodeWriter().enterTopBlock	fn enterTopBlock(self: *BcWriter, comptime SubBlock: type) Error!BlockWriter(SubBlock)
 std.zig.llvm.Builder.String.isAnon	fn isAnon(self: String) bool
 std.zig.llvm.Builder.String.slice	fn slice(self: String, builder: *const Builder) ?[]const u8
 std.zig.llvm.Builder.String.fmt	fn fmt(self: String, builder: *const Builder) std.fmt.Alt(FormatData, format)

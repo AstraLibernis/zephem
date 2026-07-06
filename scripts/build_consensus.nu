@@ -32,10 +32,13 @@ def derive [dir: string] {
     for f in ["nodes.tsv" "resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    # field/tag rows are structural members (struct/union slots, enum tags) that the reflect
-    # layer never resolves as their own paths — they'd all land in "read-only" and drown the
-    # real signal. The two engines only both speak about DECLS/CONTAINERS, so compare on those.
-    let nodes = (open $"($dir)/nodes.tsv" | where kind not-in ["field" "tag"] | select path | insert np {|r| norm-path $r.path} | rename --column {path: ppath})
+    # Two universes are out of the compare's scope, because the reflect layer never resolves them
+    # as their own paths (they'd all land in "read-only" and drown the real signal):
+    #   • field/tag rows — struct/union slots, enum tags (structural members);
+    #   • factory members — `…()` paths (a generic's members are uninstantiated here; resolving
+    #     them is Phase D). A `(` in a path marks one.
+    # The two engines only both speak about DECLS/CONTAINERS, so compare on those.
+    let nodes = (open $"($dir)/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path} | rename --column {path: ppath})
     let res = (open $"($dir)/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path} | rename --column {path: cpath})
     $nodes | join --outer $res np | each {|r|
         let path = (if $r.ppath != null { $r.ppath } else { $r.cpath })

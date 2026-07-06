@@ -45,11 +45,14 @@ reproduces it, not the bytes.
 
 | dataset | what it is | built by |
 |---|---|---|
-| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, field, or enum tag, source order | `build.zig` → `walk.zig` |
+| `nodes.tsv` | **the map** — `path · depth · kind · name · n_children · detail`, one row per public decl, field, enum tag, or **type-factory member** (pathed `<fn>()`), source order | `build.zig` → `walk.zig` |
 
-One engine, one file. The parser also emits three raw-source-fact side outputs keyed by the same
-`path` — `sigs.tsv` (@@N_SIGS@@ as-written fn signatures), `docs.tsv` (@@N_DOCS@@ `///` docs), and
-`fields.tsv` (@@N_FIELDS@@ struct/union fields + enum tags, as `path · type · value`).
+One engine, one file. The walk also **descends type factories**: a `fn(…) type` whose body has one
+top-level `return struct {…}` gets its produced type's members mapped under `<fn>()` (so
+`std.HashMap().get` exists, not just `std.HashMap`). The parser also emits four raw-source-fact side
+outputs keyed by the same `path` — `sigs.tsv` (@@N_SIGS@@ as-written fn signatures), `docs.tsv`
+(@@N_DOCS@@ `///` docs), `fields.tsv` (@@N_FIELDS@@ struct/union fields + enum tags, as
+`path · type · value`), and `delegates.tsv` (@@N_DELEGATES@@ delegating factories → their raw target).
 (The `index.tsv` table of contents is built *from* this map by the [`../derive/`](../derive/)
 engine, not by the parser.)
 

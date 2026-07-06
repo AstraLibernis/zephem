@@ -9,10 +9,12 @@ queries them natively.
 ### `std/nodes.tsv` — the full std map (the headline dataset)
 `parse/build.zig` + `parse/walk.zig` (driven by `scripts/build_std.nu`): the whole `std`
 namespace tree, built by **parsing source** (`std.zig.Ast`), not reflection — so it never
-dies on platform-gated / poison decls and maps *all* of std. One row per public decl.
-**47,319 rows / 310 files / max depth 9** on zig 0.16.0 (version pinned in `std/PINNED`).
+dies on platform-gated / poison decls and maps *all* of std. One row per public decl, struct/
+union **field**, enum **tag**, or **type-factory member** (a member of the type a `fn(…) type`
+returns, pathed under `<fn>()` — e.g. `std.ArrayList().append`; the `()` marks "instantiate first").
+**48,499 rows / 310 files / max depth 9** on zig 0.16.0 (version pinned in `std/PINNED`).
 Columns: `path · depth · kind · name · n_children · detail`.
-`kind ∈ ns · nsref · nserr · struct · enum · union · opaque · fn · const · alias · modref`.
+`kind ∈ ns · nsref · nserr · struct · enum · union · opaque · fn · const · alias · modref · field · tag`.
 
 Self-verifying: `build_std.nu` runs a **forward** pass (parse) and a **backward** pass
 (`scripts/verify_std.nu`, which re-reads the rows grouped by parent) that must agree. The
@@ -25,7 +27,7 @@ nothing claimed.
 block lives in `nodes.tsv`. Columns: `path · line · span · depth · kind · n_children`.
 Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
 `line` (1-based file line, header-aware) + `span` (subtree size) pin the exact block.
-Read a whole module in one ranged read instead of scanning 47319 rows:
+Read a whole module in one ranged read instead of scanning 48499 rows:
 
 ```nu
 let b = (open data/std/index.tsv | where path == 'std.crypto.aead' | first)
@@ -45,9 +47,16 @@ them.
 
 - **`sigs.tsv`** — `path · sig`. `sig` is a function's as-written signature, from the `fn`
   keyword through the return type (body excluded), whitespace-collapsed to one line. One row
-  per public `fn` (including re-exported fns). On zig 0.16.0: **5,377 signatures**.
+  per public `fn` (including re-exported fns). On zig 0.16.0: **6,163 signatures**.
 - **`docs.tsv`** — `path · doc`. `doc` is the decl's `///` doc-comment text, whitespace-collapsed
-  to one line. A row exists only for documented decls (any kind). On zig 0.16.0: **10,972 docs**.
+  to one line. A row exists only for documented decls (any kind). On zig 0.16.0: **11,610 docs**.
+- **`fields.tsv`** — `path · type · value`. The payload of every `field`/`tag` node: a struct/union
+  field's written type (and default), or an enum tag's value. 1:1 with the `field`/`tag` rows in
+  the map. On zig 0.16.0: **31,048 fields/tags**.
+- **`delegates.tsv`** — `path · target`. A *delegating* factory (`fn X(…) type { return Y(args); }`)
+  and the raw call it forwards to — so a factory we don't descend (its members live on the target)
+  isn't a dead end. The target is source text, **unresolved** (turning it into a path is a later
+  reference-layer job). On zig 0.16.0: **32 delegators** (e.g. `std.ArrayList → array_list.Aligned(T, null)`).
 
 Join either to `nodes.tsv` by `path` to "read down" the stack — every fn under a module with
 its signature:
@@ -62,6 +71,27 @@ $nodes | where kind == 'fn' and ($it.path | str starts-with 'std.BitStack.')
 `verify_std.nu` proves the overlays *register* on the map: every `sigs` path is a real `fn`
 node and every `docs` path is a real node, paths are unique in each, and the set of signatures
 equals exactly the map's set of functions.
+
+## Kind policy — who owns what, and which overlay counts it
+
+Clean lines of separation: **every fact has exactly one producer** (the parser owns *as-written*
+source facts; reflect owns *resolved* facts; derive overlays only *join/compare*, never invent a
+new fact). And each overlay treats the map's kinds by one documented rule below — so a kind is
+never double-counted or silently dropped.
+
+| kind / thing | owned by | in `index` | in `doccov` | in `consensus` | in `sigshape`/`callcard` |
+|---|---|---|---|---|---|
+| decl (`fn`/`const`/`struct`/`enum`/`union`/`opaque`/`alias`/`ns`) | parser | if `n_children>0` | ✅ all | ✅ (vs reflect) | fns only |
+| **`field` / `tag`** | parser (`fields.tsv`) | no (leaves) | ✅ all | **excluded** — reflect never resolves a field as its own path | no (not callables) |
+| **factory member** (`…()` path) | parser (as-written) · reflect owns *resolved* (Phase D) | if `n_children>0` | ✅ all | **excluded** — uninstantiated; nothing to resolve yet | ✅ as *parser-only* (written sig, no resolved type) |
+| **delegator** (`fn` with a `delegates.tsv` row) | parser (`delegates.tsv`) | no (leaf) | ✅ all | ✅ (it's a normal `fn`) | fns only |
+
+Rules of thumb behind the table: **`doccov`** is 1:1 with the whole map (every node, documented or
+not). **`consensus`** compares only what *both* engines can name — so parser-only structural members
+(fields, tags, uninstantiated factory members) are out of scope. **`callcard`/`sigshape`** are about
+signatures, so factory-member fns join in (as parser-only until Phase D resolves them). **Nothing
+here is computed twice**: a factory member's *as-written* form is the parser's; its *resolved* form
+will be reflect's; `callcard` merely joins the two by the shared `…()` path.
 
 ## Regenerate
 

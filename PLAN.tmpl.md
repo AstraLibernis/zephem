@@ -52,6 +52,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **L0 structure map** — `nodes.tsv` | `parse/build.zig` | ✅ the parser's spine: full std, @@N_NODES@@ nodes / @@N_FILES@@ files, depth @@MAXDEPTH@@; conservation-checked |
 | **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ @@N_SIGS@@ as-written fn signatures + @@N_DOCS@@ `///` docs, keyed by `path`; integrity-checked vs the map |
 | **fields + tags** — `fields.tsv` | `parse/walk.zig` | ✅ @@N_FIELDS@@ struct/union fields + enum tags (`path·type·value`), 1:1 with the `field`/`tag` nodes; integrity-checked vs the map |
+| **factory descent + delegates** — `nodes.tsv` · `delegates.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); @@N_DELEGATES@@ delegators record their raw target; conservation-checked |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |
@@ -84,22 +85,26 @@ a later overlay. What stays *out* of the parser is genuinely editorial: resolved
 purpose-groupings.
 
 **In the parser now:** structure (`nodes.tsv`), as-written fn signatures (`sigs.tsv`), `///` docs
-(`docs.tsv`), struct/union fields + enum tags (`fields.tsv`) — all keyed by `path`, all
+(`docs.tsv`), struct/union fields + enum tags (`fields.tsv`), type-factory members (descended
+under `<fn>()`) and delegating-factory targets (`delegates.tsv`) — all keyed by `path`, all
 integrity-checked.
 
 **Still to add to the parser (raw source facts):**
-1. **Fields — done for structs/unions/enums** ✅ (`fields.tsv`: name·type·value, `field`/`tag`
-   nodes). *Still open:* **error-set members** — `error{…}` parses as a distinct node, not a
-   container field, so its members aren't descended yet.
-2. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
+1. **Fields — done for structs/unions/enums** ✅ (`fields.tsv`). *Still open:* **error-set
+   members** — `error{…}` parses as a distinct node, not a container field, so its members aren't
+   descended yet.
+2. **Generic type factories — done for single-return + delegators** ✅ (Phase B): a `fn(…) type`
+   with one top-level `return struct {…}` is descended (`std.HashMap().get`); a delegator
+   (`return Other(args)`) records its raw target in `delegates.tsv`. *Still open:* **opaque**
+   (`@Type`/comptime-built) and **multi-branch** factories — invisible to text; need instantiated
+   reflection (Phase D).
+3. **Location + modifiers** — per-decl source `file`·`line`, and `extern`/`export`/`inline`/
    `threadlocal`/`var`-vs-`const` flags. Columns on `nodes.tsv`. *(next — easy)*
-3. **Generic type factories** — `fn(...) type` returns a struct whose members (a container's real
-   API, e.g. `ArrayList.append`) live in the fn body. Descending into `return struct {…}` is the
-   next big depth win. *(Phase B)*
 
 **True organize-later (derive — never in the parser):**
-- **References / links** (was `tunnels`) — the resolved reference graph (what name resolves to
-   what). A relationship layer a "direction" the parser must not bake in. *(still to do)*
+- **References / links** (was `tunnels`) — the *resolved* reference graph (what name resolves to
+   what). A relationship layer a "direction" the parser must not bake in. *(still to do — will
+   read the parser's raw `delegates.tsv` targets and resolve them to canonical paths.)*
 - **Grouping by purpose** (clustering) — bucket the map into themes. The most editorial; last.
 - **Call-card** — ✅ **built** (`callcard.tsv`): joins the as-written signatures with the
    resolved view into one per-callable row.
@@ -108,6 +113,11 @@ integrity-checked.
 
 - [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
+- [ ] **Before the next reflect sweep**: descended factory `fn`s now carry children, so they show
+  up as containers in `index.tsv` (which `build_depth.nu` reads for targets). Reflecting a *fn*
+  (rather than a type) yields no members, so the sweep should **skip factory-`fn` targets** — real
+  factory-member resolution is Phase D (instantiate the generic, then reflect). Not urgent (the
+  reflect sweep is not rerun on a parse-only change), but must be handled before it runs again.
 
 ## Known hardening (from the 2026-06-19 adversarial audit)
 

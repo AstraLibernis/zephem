@@ -14,9 +14,11 @@
 # Usage:  nu scripts/verify_std.nu            # checks data/std/nodes.tsv
 #         nu scripts/verify_std.nu other.tsv
 
-# The parent path — everything but the last segment. Segments are dot-joined, but a segment
-# can be a quoted identifier `@"a.b.c"` that legally contains dots (e.g. LLVM intrinsic enum
-# tags), so we split on top-level dots only, treating `@"..."` as atomic.
+# The parent path — everything but the last segment. Two segment quirks are handled:
+#   • a quoted identifier `@"a.b.c"` legally contains dots (e.g. LLVM intrinsic enum tags),
+#     so we split on top-level dots only, treating `@"..."` as atomic.
+#   • a type factory's members hang under `<fn>()` (`std.ArrayList().append`), so the parent
+#     of a member is the factory node `<fn>` — strip a trailing `()` off the computed parent.
 def parent [path: string] {
     mut segs = []
     mut cur = ""
@@ -34,7 +36,7 @@ def parent [path: string] {
         }
     }
     $segs = ($segs | append $cur)
-    if ($segs | length) <= 1 { "" } else { $segs | drop 1 | str join "." }
+    if ($segs | length) <= 1 { "" } else { ($segs | drop 1 | str join ".") | str replace --regex '\(\)$' "" }
 }
 
 def main [file: string = "data/std/nodes.tsv"] {
@@ -135,6 +137,19 @@ def main [file: string = "data/std/nodes.tsv"] {
         if ($field_orphan | length) > 0 { print $"  ✗ ($field_orphan | length) payload\(s\) key onto a non-field/tag or missing node"; $ok = false } else { print "  ✓ every payload keys onto a real field/tag node" }
         if ($field_dup | length) > 0 { print $"  ✗ ($field_dup | length) duplicate field key\(s\)"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
         if ($fields | length) != ($fieldnodes | length) { print $"  ✗ fields.tsv is not 1:1 with the field/tag nodes"; $ok = false } else { print "  ✓ 1:1 — every field/tag node has exactly one payload row" }
+    }
+
+    # 8. DELEGATE OVERLAY — delegates.tsv (path·target) records a delegating factory and the raw
+    #    call it forwards to. Each must key onto a `fn` node that is a LEAF (n_children == 0) — a
+    #    factory we did NOT descend (its members live on the target). No dups.
+    if ($"($dir)/delegates.tsv" | path exists) {
+        let leaf_fns = ($t | where kind == "fn" | where n_children == 0 | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+        let dels = (open $"($dir)/delegates.tsv")
+        let del_orphan = ($dels | where {|r| ($leaf_fns | get -o $r.path) != true})
+        let del_dup = ($dels | get path | uniq -d)
+        print $"delegate overlay: ($dels | length) delegating factories"
+        if ($del_orphan | length) > 0 { print $"  ✗ ($del_orphan | length) delegate\(s\) key onto a non-leaf-fn or missing node"; $ok = false } else { print "  ✓ every delegate keys onto a leaf fn node (an undescended factory)" }
+        if ($del_dup | length) > 0 { print $"  ✗ ($del_dup | length) duplicate delegate key\(s\)"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
     }
 
     print ""

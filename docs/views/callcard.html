@@ -21,9 +21,9 @@
     one full card per function — the semantic depth comes from combining, not from guessing.</p>
 
   <div class="statrow">
-    <div class="statbox"><div class="sv">7,099</div><div class="sl">callables</div></div>
+    <div class="statbox"><div class="sv">7,885</div><div class="sl">callables</div></div>
     <div class="statbox both"><div class="sv">4,823</div><div class="sl">both views</div></div>
-    <div class="statbox ro"><div class="sv">554</div><div class="sl">parser-only</div></div>
+    <div class="statbox ro"><div class="sv">1,340</div><div class="sl">parser-only</div></div>
     <div class="statbox run"><div class="sv">1,722</div><div class="sl">reflect-only</div></div>
   </div>
 
@@ -32,7 +32,7 @@
     <p class="ph">the parser writes a <em>name</em>, the compiler resolves <em>types</em>; only where
       both land on the same path do you get a complete card — the wings are half-cards</p>
     <div class="diverge">
-      <div class="dcell ro"><div class="dn">554</div><div class="dl">parser-only</div>
+      <div class="dcell ro"><div class="dn">1,340</div><div class="dl">parser-only</div>
         <div class="dx">named · not resolvable here</div></div>
       <div class="dcell both"><div class="dn">4,823</div><div class="dl">both — full card</div>
         <div class="dx">name + resolved types</div></div>
@@ -40,9 +40,9 @@
         <div class="dx">compiler-made · unnamed</div></div>
     </div>
     <div class="divbar">
-      <span class="seg ro" style="width:8%"></span>
-      <span class="seg both" style="width:68%"></span>
-      <span class="seg run" style="width:24%"></span>
+      <span class="seg ro" style="width:17%"></span>
+      <span class="seg both" style="width:61%"></span>
+      <span class="seg run" style="width:22%"></span>
     </div>
   </div>
 
@@ -78,20 +78,20 @@
     <table class="ftab">
       <thead><tr><th>module</th><th>callables</th><th>both</th><th>reflect-only</th></tr></thead>
       <tbody>
-      <tr><td class="mono">std.crypto</td><td class="num">1,133</td><td class="dim">545</td><td class="dim">581</td></tr>
-      <tr><td class="mono">std.zig</td><td class="num">982</td><td class="dim">824</td><td class="dim">158</td></tr>
-      <tr><td class="mono">std.os</td><td class="num">790</td><td class="dim">495</td><td class="dim">10</td></tr>
-      <tr><td class="mono">std.Io</td><td class="num">738</td><td class="dim">549</td><td class="dim">51</td></tr>
+      <tr><td class="mono">std.crypto</td><td class="num">1,246</td><td class="dim">545</td><td class="dim">581</td></tr>
+      <tr><td class="mono">std.zig</td><td class="num">994</td><td class="dim">824</td><td class="dim">158</td></tr>
+      <tr><td class="mono">std.os</td><td class="num">795</td><td class="dim">495</td><td class="dim">10</td></tr>
+      <tr><td class="mono">std.Io</td><td class="num">765</td><td class="dim">549</td><td class="dim">51</td></tr>
       <tr><td class="mono">std.Build</td><td class="num">707</td><td class="dim">406</td><td class="dim">275</td></tr>
-      <tr><td class="mono">std.math</td><td class="num">314</td><td class="dim">299</td><td class="dim">15</td></tr>
-      <tr><td class="mono">std.debug</td><td class="num">295</td><td class="dim">183</td><td class="dim">112</td></tr>
-      <tr><td class="mono">std.Target</td><td class="num">272</td><td class="dim">141</td><td class="dim">131</td></tr>
-      <tr><td class="mono">std.json</td><td class="num">231</td><td class="dim">68</td><td class="dim">163</td></tr>
-      <tr><td class="mono">std.mem</td><td class="num">184</td><td class="dim">161</td><td class="dim">23</td></tr>
-      <tr><td class="mono">std.process</td><td class="num">98</td><td class="dim">95</td><td class="dim">3</td></tr>
-      <tr><td class="mono">std.http</td><td class="num">96</td><td class="dim">87</td><td class="dim">0</td></tr>
-      <tr><td class="mono">std.hash</td><td class="num">84</td><td class="dim">26</td><td class="dim">58</td></tr>
-      <tr><td class="mono">std.compress</td><td class="num">83</td><td class="dim">77</td><td class="dim">6</td></tr>
+      <tr><td class="mono">std.debug</td><td class="num">357</td><td class="dim">183</td><td class="dim">112</td></tr>
+      <tr><td class="mono">std.math</td><td class="num">325</td><td class="dim">299</td><td class="dim">15</td></tr>
+      <tr><td class="mono">std.Target</td><td class="num">276</td><td class="dim">141</td><td class="dim">131</td></tr>
+      <tr><td class="mono">std.json</td><td class="num">232</td><td class="dim">68</td><td class="dim">163</td></tr>
+      <tr><td class="mono">std.mem</td><td class="num">208</td><td class="dim">161</td><td class="dim">23</td></tr>
+      <tr><td class="mono">std.hash_map</td><td class="num">132</td><td class="dim">17</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.array_list</td><td class="num">120</td><td class="dim">3</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.array_hash_map</td><td class="num">114</td><td class="dim">14</td><td class="dim">1</td></tr>
+      <tr><td class="mono">std.bit_set</td><td class="num">107</td><td class="dim">52</td><td class="dim">1</td></tr>
       </tbody>
     </table>
   </div>

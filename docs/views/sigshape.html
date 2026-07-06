@@ -20,33 +20,33 @@
     <code>Io</code>, whether it's generic — so std's API ergonomics become groupable.</p>
 
   <div class="statrow">
-    <div class="statbox"><div class="sv">5,377</div><div class="sl">functions</div></div>
-    <div class="statbox both"><div class="sv">1,172</div><div class="sl">methods (self)</div></div>
-    <div class="statbox run"><div class="sv">502</div><div class="sl">Io-threading</div></div>
-    <div class="statbox ro"><div class="sv">823</div><div class="sl">generic</div></div>
+    <div class="statbox"><div class="sv">6,163</div><div class="sl">functions</div></div>
+    <div class="statbox both"><div class="sv">1,726</div><div class="sl">methods (self)</div></div>
+    <div class="statbox run"><div class="sv">523</div><div class="sl">Io-threading</div></div>
+    <div class="statbox ro"><div class="sv">956</div><div class="sl">generic</div></div>
   </div>
 
   <h2>By first parameter</h2>
   <div class="panelcard">
     <p class="ph">the receiver shape — <b>self</b> (a method), <b>allocator</b> (allocating),
       <b>none</b> (niladic), or <b>other</b> (a free function over its args)</p>
-    <div class="lbar "><div class="lt"><span class="lk">other (free fn)</span><span class="lv">3,947</span></div><div class="ltrack"><span class="lfill" style="width:100%"></span></div></div>
-    <div class="lbar "><div class="lt"><span class="lk">self (method)</span><span class="lv">1,172</span></div><div class="ltrack"><span class="lfill" style="width:30%"></span></div></div>
-    <div class="lbar "><div class="lt"><span class="lk">none (niladic)</span><span class="lv">139</span></div><div class="ltrack"><span class="lfill" style="width:4%"></span></div></div>
-    <div class="lbar "><div class="lt"><span class="lk">allocator</span><span class="lv">119</span></div><div class="ltrack"><span class="lfill" style="width:3%"></span></div></div>
+    <div class="lbar "><div class="lt"><span class="lk">other (free fn)</span><span class="lv">4,139</span></div><div class="ltrack"><span class="lfill" style="width:100%"></span></div></div>
+    <div class="lbar "><div class="lt"><span class="lk">self (method)</span><span class="lv">1,726</span></div><div class="ltrack"><span class="lfill" style="width:42%"></span></div></div>
+    <div class="lbar "><div class="lt"><span class="lk">none (niladic)</span><span class="lv">165</span></div><div class="ltrack"><span class="lfill" style="width:4%"></span></div></div>
+    <div class="lbar "><div class="lt"><span class="lk">allocator</span><span class="lv">133</span></div><div class="ltrack"><span class="lfill" style="width:3%"></span></div></div>
   </div>
 
   <h2>Signature traits</h2>
   <div class="panelcard">
-    <p class="ph">cross-cutting facts, each a share of all <b>5,377</b> functions — a signature
+    <p class="ph">cross-cutting facts, each a share of all <b>6,163</b> functions — a signature
       can carry several at once</p>
     <table class="ftab">
       <thead><tr><th>trait</th><th>functions</th><th>share</th></tr></thead>
       <tbody>
-      <tr><td class="mono">method (self-first)</td><td class="num">1,172</td><td class="num">22%</td></tr>
-      <tr><td class="mono">Io-threading</td><td class="num">502</td><td class="num">9%</td></tr>
-      <tr><td class="mono">generic (comptime/anytype)</td><td class="num">823</td><td class="num">15%</td></tr>
-      <tr><td class="mono">niladic (no params)</td><td class="num">139</td><td class="num">3%</td></tr>
+      <tr><td class="mono">method (self-first)</td><td class="num">1,726</td><td class="num">28%</td></tr>
+      <tr><td class="mono">Io-threading</td><td class="num">523</td><td class="num">8%</td></tr>
+      <tr><td class="mono">generic (comptime/anytype)</td><td class="num">956</td><td class="num">16%</td></tr>
+      <tr><td class="mono">niladic (no params)</td><td class="num">165</td><td class="num">3%</td></tr>
       </tbody>
     </table>
   </div>
@@ -58,20 +58,20 @@
     <table class="ftab">
       <thead><tr><th>module</th><th>fns</th><th>generic</th><th>Io</th></tr></thead>
       <tbody>
-      <tr><td class="mono">std.zig</td><td class="num">824</td><td class="dim">46</td><td class="dim">21</td></tr>
-      <tr><td class="mono">std.os</td><td class="num">780</td><td class="dim">51</td><td class="dim">92</td></tr>
-      <tr><td class="mono">std.Io</td><td class="num">687</td><td class="dim">57</td><td class="dim">237</td></tr>
-      <tr><td class="mono">std.crypto</td><td class="num">552</td><td class="dim">89</td><td class="dim">32</td></tr>
+      <tr><td class="mono">std.zig</td><td class="num">836</td><td class="dim">51</td><td class="dim">21</td></tr>
+      <tr><td class="mono">std.os</td><td class="num">785</td><td class="dim">52</td><td class="dim">94</td></tr>
+      <tr><td class="mono">std.Io</td><td class="num">714</td><td class="dim">59</td><td class="dim">250</td></tr>
+      <tr><td class="mono">std.crypto</td><td class="num">665</td><td class="dim">99</td><td class="dim">35</td></tr>
       <tr><td class="mono">std.Build</td><td class="num">432</td><td class="dim">17</td><td class="dim">35</td></tr>
-      <tr><td class="mono">std.math</td><td class="num">299</td><td class="dim">139</td><td class="dim">6</td></tr>
-      <tr><td class="mono">std.debug</td><td class="num">183</td><td class="dim">12</td><td class="dim">15</td></tr>
-      <tr><td class="mono">std.mem</td><td class="num">161</td><td class="dim">136</td><td class="dim">0</td></tr>
-      <tr><td class="mono">std.Target</td><td class="num">141</td><td class="dim">7</td><td class="dim">1</td></tr>
-      <tr><td class="mono">std.http</td><td class="num">96</td><td class="dim">0</td><td class="dim">14</td></tr>
-      <tr><td class="mono">std.process</td><td class="num">95</td><td class="dim">4</td><td class="dim">18</td></tr>
-      <tr><td class="mono">std.compress</td><td class="num">77</td><td class="dim">2</td><td class="dim">1</td></tr>
-      <tr><td class="mono">std.unicode</td><td class="num">68</td><td class="dim">7</td><td class="dim">0</td></tr>
-      <tr><td class="mono">std.json</td><td class="num">68</td><td class="dim">19</td><td class="dim">1</td></tr>
+      <tr><td class="mono">std.math</td><td class="num">310</td><td class="dim">139</td><td class="dim">6</td></tr>
+      <tr><td class="mono">std.debug</td><td class="num">245</td><td class="dim">32</td><td class="dim">17</td></tr>
+      <tr><td class="mono">std.mem</td><td class="num">185</td><td class="dim">136</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.Target</td><td class="num">145</td><td class="dim">9</td><td class="dim">1</td></tr>
+      <tr><td class="mono">std.hash_map</td><td class="num">132</td><td class="dim">34</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.array_list</td><td class="num">120</td><td class="dim">19</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.array_hash_map</td><td class="num">113</td><td class="dim">32</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.bit_set</td><td class="num">106</td><td class="dim">10</td><td class="dim">0</td></tr>
+      <tr><td class="mono">std.process</td><td class="num">100</td><td class="dim">4</td><td class="dim">18</td></tr>
       </tbody>
     </table>
   </div>
