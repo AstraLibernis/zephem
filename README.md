@@ -75,6 +75,14 @@ build_std: ✓ true (forward == backward) and recorded.
 `data/std/PINNED` records the exact Zig version the snapshot is from. Reruns on the same
 Zig are byte-identical (`git diff --exit-code` clean).
 
+The dataset proves itself without any external oracle (above). Separately — as a coverage
+sanity-check, not a correctness proof — [`docs/comparison/autodoc-vs-zephem.md`](docs/comparison/autodoc-vs-zephem.md)
+lines this snapshot up against Zig's own autodoc extraction (autodoc's `Walk.zig` driven
+natively): on the shared public-declaration surface the two reach a near-identical set, and
+zephem additionally carries fields, enum tags, and the resolved layer autodoc does not emit.
+That note is a *dated* comparison, not a regenerated artifact — it pins its inputs and ships
+the commands to re-derive every figure; autodoc's side is not rebuilt as part of zephem.
+
 ### Reading it efficiently: the table of contents
 
 The whole file is ~221k tokens — too big to read linearly to answer a narrow question. But

@@ -127,4 +127,18 @@ integrity-checked.
   compile-error poison.
 - **Snapshot target triple is implicit** — *still open.* `PINNED` records only the Zig version,
   but some poison and resolved rows are x86_64-linux-specific. Fix: record the host triple in
-  `PINNED`; have `--check` warn if the host differs.
+  `PINNED`; have `--check` warn if the host differs. Corroborated externally by the
+  [autodoc coverage comparison](docs/comparison/autodoc-vs-zephem.md): the decls autodoc reaches
+  but this snapshot omits are dominated by target-conditional `std.os`/`std.c` bindings for
+  non-native platforms (uefi/windows/darwin/bsd) — the same target scoping, seen from coverage.
+
+## External validation
+
+- **vs. Zig autodoc** — [`docs/comparison/autodoc-vs-zephem.md`](docs/comparison/autodoc-vs-zephem.md)
+  compares this snapshot to Zig's own autodoc extraction, obtained by driving autodoc's own
+  `Walk.zig`/`Decl.zig` natively (only the allocator patched). On the shared public-declaration
+  surface the two reach a near-identical set; on top of that zephem adds fields and enum tags as
+  first-class rows plus the resolved/callcard layer autodoc has no analogue for. The note is a
+  **dated** snapshot, not regenerated with the data: it records its inputs and ships the commands
+  to re-derive every figure, so drift is detectable by re-running — but, per scope, autodoc's own
+  numbers are not rebuilt as part of zephem.
