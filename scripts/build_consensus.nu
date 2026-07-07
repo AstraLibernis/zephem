@@ -15,7 +15,7 @@
 #
 # read-only and run-only ARE the differences; read+run is the agreement. A pure JOIN of the two
 # committed outputs — nodes + resolved — and nothing else: poison.tsv isn't needed, since read-only
-# is simply "in nodes, not in resolved". Self-checking. Writes data/std/consensus.tsv +
+# is simply "in nodes, not in resolved". Self-checking. Writes data/std/derived/consensus.tsv +
 # SHA256SUMS.consensus; --check rebuilds.
 #
 # Usage:  nu scripts/build_consensus.nu [--dir data/std]
@@ -29,7 +29,7 @@ def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 def parent-of [p: string] { $p | split row "." | drop 1 | str join "." }
 
 def derive [dir: string] {
-    for f in ["nodes.tsv" "resolved.tsv"] {
+    for f in ["extracted/nodes.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     # Two universes are out of the compare's scope, because the reflect layer never resolves them
@@ -38,8 +38,8 @@ def derive [dir: string] {
     #   • factory members — `…()` paths (a generic's members are uninstantiated here; resolving
     #     them is Phase D). A `(` in a path marks one.
     # The two engines only both speak about DECLS/CONTAINERS, so compare on those.
-    let nodes = (open $"($dir)/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path} | rename --column {path: ppath})
-    let res = (open $"($dir)/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path} | rename --column {path: cpath})
+    let nodes = (open $"($dir)/extracted/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path} | rename --column {path: ppath})
+    let res = (open $"($dir)/extracted/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path} | rename --column {path: cpath})
     $nodes | join --outer $res np | each {|r|
         let path = (if $r.ppath != null { $r.ppath } else { $r.cpath })
         let origin = (if ($r.ppath != null and $r.cpath != null) { "read+run" } else if ($r.cpath != null) { "run-only" } else { "read-only" })
@@ -59,14 +59,14 @@ def main [--dir: string = "data/std", --check] {
         return
     }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/consensus.tsv"
+    $rows | to tsv | save -f $"($dir)/derived/consensus.tsv"
     let n = ($rows | length)
     let agree = ($rows | where origin == "read+run" | length)
-    print $"[consensus] ($n) paths → ($dir)/consensus.tsv"
+    print $"[consensus] ($n) paths → ($dir)/derived/consensus.tsv"
     print $"  AGREEMENT  read+run: ($agree)"
     print $"  DIFFERENCES: (($n) - ($agree)) ="
     $rows | where origin != "read+run" | group-by origin | items {|k, v| {origin: $k, n: ($v | length)}} | sort-by n --reverse | print
     let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/consensus.tsv\n" | save -f $MANIFEST
+    $"($h)  data/std/derived/consensus.tsv\n" | save -f $MANIFEST
     print $"[consensus] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

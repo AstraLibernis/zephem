@@ -14,7 +14,7 @@
 #   generic      yes if it has a comptime/anytype parameter
 #
 # Reads sigs.tsv alone, one row per signature, every field a closed set. Self-checking. Writes
-# data/std/sigshape.tsv + SHA256SUMS.sigshape; --check rebuilds byte-identical.
+# data/std/derived/sigshape.tsv + SHA256SUMS.sigshape; --check rebuilds byte-identical.
 #
 # Usage:  nu scripts/build_sigshape.nu [--dir data/std]
 #         nu scripts/build_sigshape.nu --check
@@ -69,8 +69,8 @@ def classify [sig: string] {
 }
 
 def derive [dir: string] {
-    if not ($"($dir)/sigs.tsv" | path exists) { print $"missing ($dir)/sigs.tsv"; exit 1 }
-    open $"($dir)/sigs.tsv" | each {|r|
+    if not ($"($dir)/extracted/sigs.tsv" | path exists) { print $"missing ($dir)/extracted/sigs.tsv"; exit 1 }
+    open $"($dir)/extracted/sigs.tsv" | each {|r|
         let c = (classify $r.sig)
         {path: $r.path, first_param: $c.first_param, io: $c.io, generic: $c.generic}
     } | sort-by path
@@ -88,13 +88,13 @@ def main [--dir: string = "data/std", --check] {
         return
     }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/sigshape.tsv"
+    $rows | to tsv | save -f $"($dir)/derived/sigshape.tsv"
     let n = ($rows | length)
-    print $"[sigshape] ($n) fns → ($dir)/sigshape.tsv"
+    print $"[sigshape] ($n) fns → ($dir)/derived/sigshape.tsv"
     print "  first parameter:"
     $rows | group-by first_param | items {|k, v| {first_param: $k, n: ($v | length)}} | sort-by n --reverse | print
     print $"  Io-threading: ($rows | where io == 'yes' | length)   generic \(comptime/anytype\): ($rows | where generic == 'yes' | length)"
     let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/sigshape.tsv\n" | save -f $MANIFEST
+    $"($h)  data/std/derived/sigshape.tsv\n" | save -f $MANIFEST
     print $"[sigshape] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

@@ -23,13 +23,13 @@ def col [t: list, name: string] {
 }
 
 def main [outdir: string, --full] {
-    for f in ["status.tsv" "resolved.tsv" "poison.tsv"] {
+    for f in ["extracted/status.tsv" "extracted/resolved.tsv" "extracted/poison.tsv"] {
         if not ($"($outdir)/($f)" | path exists) { print $"missing ($outdir)/($f)"; exit 1 }
     }
-    let status = (open $"($outdir)/status.tsv")
-    let resolved = (open $"($outdir)/resolved.tsv")
-    let poison = (open $"($outdir)/poison.tsv")
-    let idxpaths = (open data/std/index.tsv | get path)
+    let status = (open $"($outdir)/extracted/status.tsv")
+    let resolved = (open $"($outdir)/extracted/resolved.tsv")
+    let poison = (open $"($outdir)/extracted/poison.tsv")
+    let idxpaths = (open data/std/derived/index.tsv | get path)
     mut ok = true
 
     let spaths = (col $status "path")

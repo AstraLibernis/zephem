@@ -19,7 +19,7 @@
 # (doc coverage is doccov's job; join it on path if you want it — kept out to avoid duplication.)
 #
 # A pure JOIN of committed outputs — sigs + resolved — keyed by `path` (keyword-quoting
-# normalised, the trick consensus uses). Self-checking. Writes data/std/callcard.tsv +
+# normalised, the trick consensus uses). Self-checking. Writes data/std/derived/callcard.tsv +
 # SHA256SUMS.callcard; --check rebuilds byte-identical.
 #
 # Usage:  nu scripts/build_callcard.nu [--dir data/std]
@@ -31,11 +31,11 @@ const MANIFEST = "data/std/SHA256SUMS.callcard"
 def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 
 def derive [dir: string] {
-    for f in ["sigs.tsv" "resolved.tsv"] {
+    for f in ["extracted/sigs.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    let sigs = (open $"($dir)/sigs.tsv" | select path sig | rename --column {path: spath} | insert np {|r| norm-path $r.spath})
-    let res = (open $"($dir)/resolved.tsv" | where kind == "fn" | select path detail | uniq-by path | rename --column {path: rpath, detail: resolved} | insert np {|r| norm-path $r.rpath})
+    let sigs = (open $"($dir)/extracted/sigs.tsv" | select path sig | rename --column {path: spath} | insert np {|r| norm-path $r.spath})
+    let res = (open $"($dir)/extracted/resolved.tsv" | where kind == "fn" | select path detail | uniq-by path | rename --column {path: rpath, detail: resolved} | insert np {|r| norm-path $r.rpath})
     $sigs | join --outer $res np | each {|r|
         let path = (if $r.spath != null { $r.spath } else { $r.rpath })
         let witness = (if (($r.spath != null) and ($r.rpath != null)) { "both" } else if ($r.spath != null) { "parser-only" } else { "reflect-only" })
@@ -60,11 +60,11 @@ def main [--dir: string = "data/std", --check] {
         return
     }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/callcard.tsv"
+    $rows | to tsv | save -f $"($dir)/derived/callcard.tsv"
     let n = ($rows | length)
-    print $"[callcard] ($n) callables → ($dir)/callcard.tsv"
+    print $"[callcard] ($n) callables → ($dir)/derived/callcard.tsv"
     $rows | group-by witness | items {|k, v| {witness: $k, n: ($v | length)}} | sort-by n --reverse | print
     let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/callcard.tsv\n" | save -f $MANIFEST
+    $"($h)  data/std/derived/callcard.tsv\n" | save -f $MANIFEST
     print $"[callcard] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

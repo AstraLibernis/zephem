@@ -8,8 +8,8 @@
 # This script is different on purpose. It joins TWO views of the same symbols that were produced
 # by SEPARATE machinery and asks whether they agree:
 #
-#   PARSER view    L0  data/std/nodes.tsv     ← parse/build.zig, walking the AST (syntax)
-#   COMPILER view  L5  data/std/resolved.tsv  ← reflection, semantic analysis (what it *is*)
+#   PARSER view    L0  data/std/extracted/nodes.tsv     ← parse/build.zig, walking the AST (syntax)
+#   COMPILER view  L5  data/std/extracted/resolved.tsv  ← reflection, semantic analysis (what it *is*)
 #
 # build.zig and the compiler share no code path, so when they agree on a symbol's kind that
 # agreement is *evidence*. (Contrast the old decls⇔map "bijection": build.zig and enrich.zig
@@ -65,12 +65,12 @@ def nearest-ancestor [p: string, kindOf: record] {
 }
 
 def main [--dir: string = "data/std", --anchor] {
-    for f in ["nodes.tsv" "resolved.tsv"] {
+    for f in ["extracted/nodes.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    let nodes = (open $"($dir)/nodes.tsv" | select path kind
+    let nodes = (open $"($dir)/extracted/nodes.tsv" | select path kind
         | insert npath {|r| norm-path $r.path} | insert pk {|r| parser-kind $r.kind} | rename --column {kind: nraw})
-    let res = (open $"($dir)/resolved.tsv" | select path kind | uniq-by path
+    let res = (open $"($dir)/extracted/resolved.tsv" | select path kind | uniq-by path
         | insert npath {|r| norm-path $r.path} | insert ck {|r| compiler-kind $r.kind} | rename --column {kind: rraw, path: cpath})
 
     let j = ($nodes | join $res npath)
@@ -136,7 +136,7 @@ def main [--dir: string = "data/std", --anchor] {
     print $"  compiler-fn the parser emitted as non-fn:      ($reclassed | length)   \(const/alias bound to a fn — benign\)"
 
     # (c) parser-fns the compiler never resolved → container didn't reflect (poison). Cross-check.
-    let poison_paths = if ($"($dir)/poison.tsv" | path exists) { (open $"($dir)/poison.tsv" | get -o path | default []) } else { [] }
+    let poison_paths = if ($"($dir)/extracted/poison.tsv" | path exists) { (open $"($dir)/extracted/poison.tsv" | get -o path | default []) } else { [] }
     let poiset = ($poison_paths | each {|p| norm-path $p} | reduce --fold {} {|p, acc| $acc | upsert $p true })
     let parser_only = ($nodes | where pk == "fn" | where {|r| ($comp_fnset | get -o $r.npath) != true})
     let parser_only_unexplained = ($parser_only | where {|r| ($poiset | get -o ($r.npath | split row "." | drop 1 | str join ".")) != true})
@@ -162,10 +162,10 @@ def main [--dir: string = "data/std", --anchor] {
         print ""
         print "── source anchor: grep `pub fn` vs parser fn count, leaf namespaces (approx) ──"
         let std_dir = (^zig env | lines | parse -r '\.std_dir = "(?<p>[^"]+)"' | get p.0)
-        let ns = (open $"($dir)/nodes.tsv" | where kind == "ns" | select path detail)
+        let ns = (open $"($dir)/extracted/nodes.tsv" | where kind == "ns" | select path detail)
         let nspaths = ($ns | get path)
         let leaves = ($ns | where {|r| ($nspaths | where ($it | str starts-with $"($r.path).") | is-empty) })
-        let allfns = (open $"($dir)/nodes.tsv" | where kind == "fn" | get path)
+        let allfns = (open $"($dir)/extracted/nodes.tsv" | where kind == "fn" | get path)
         for r in ($leaves | first 6) {
             let file = $"($std_dir)/($r.detail)"
             if not ($file | path exists) { continue }

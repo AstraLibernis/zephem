@@ -32,7 +32,7 @@ tree exactly as the UI does (`namespace_members` with `include_private = false`,
 descending through aliases and type-functions), emitting one fully-qualified name
 per decl.
 
-**zephem.** The `path` column of the committed `data/std/nodes.tsv`.
+**zephem.** The `path` column of the committed `data/std/extracted/nodes.tsv`.
 
 Both sets are compared as sorted, de-duplicated FQN lists. See
 [Reproduction](#reproduction) for the exact commands.
@@ -161,7 +161,7 @@ Stated so the numbers are not over-read in either direction:
 
 ## Reproduction
 
-From a checkout with `data/std/nodes.tsv` present and Zig 0.16.0 installed:
+From a checkout with `data/std/extracted/nodes.tsv` present and Zig 0.16.0 installed:
 
 ```sh
 cd docs/comparison
@@ -175,7 +175,7 @@ sed -i 's/const gpa = std.heap.wasm_allocator;/const gpa = std.heap.page_allocat
 zig run autodoc_dump.zig 2>/dev/null | sort -u > autodoc.txt
 
 # zephem's node paths, and a copy with generic () notation normalized
-cut -f1 ../../data/std/nodes.tsv | tail -n +2 | sort -u > zephem.txt
+cut -f1 ../../data/std/extracted/nodes.tsv | tail -n +2 | sort -u > zephem.txt
 sed 's/()//g' zephem.txt | sort -u > zephem_norm.txt
 
 # the three set sizes

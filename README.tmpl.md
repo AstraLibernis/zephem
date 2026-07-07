@@ -35,14 +35,14 @@ the first un-evaluatable decl.
 ## The headline dataset: the full std map
 
 `nu scripts/build_std.nu` scans the active toolchain's `std` and writes
-`data/std/nodes.tsv`. On @@ZIG@@ that is **@@N_NODES@@ public nodes across @@N_FILES@@ files**
+`data/std/extracted/nodes.tsv`. On @@ZIG@@ that is **@@N_NODES@@ public nodes across @@N_FILES@@ files**
 (decls plus @@N_FIELDS@@ struct/union fields and enum tags), max nesting depth @@MAXDEPTH@@.
 
 ```nu
-open data/std/nodes.tsv | where kind == 'ns'                  # every std source file
-open data/std/nodes.tsv | where path =~ '^std\.crypto\.'      # the crypto subtree
-open data/std/nodes.tsv | where kind == 'fn' | length         # public fn count (@@N_FN@@)
-open data/std/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}}
+open data/std/extracted/nodes.tsv | where kind == 'ns'                  # every std source file
+open data/std/extracted/nodes.tsv | where path =~ '^std\.crypto\.'      # the crypto subtree
+open data/std/extracted/nodes.tsv | where kind == 'fn' | length         # public fn count (@@N_FN@@)
+open data/std/extracted/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}}
 ```
 
 ### It proves itself — no external oracle
@@ -87,12 +87,12 @@ the commands to re-derive every figure; autodoc's side is not rebuilt as part of
 
 The whole file is ~221k tokens — too big to read linearly to answer a narrow question. But
 because rows are emitted pre-order, **every subtree is a contiguous block**, so you never
-have to. `data/std/index.tsv` is a tiny map (@@N_INDEX@@ containers) of `path · line · span`: look
+have to. `data/std/derived/index.tsv` is a tiny map (@@N_INDEX@@ containers) of `path · line · span`: look
 up a module, then read exactly its block.
 
 ```nu
-let b = (open data/std/index.tsv | where path == 'std.crypto' | first)  # line @@CRYPTO_LINE@@, span @@CRYPTO_SPAN@@
-open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span            # just the crypto subtree
+let b = (open data/std/derived/index.tsv | where path == 'std.crypto' | first)  # line @@CRYPTO_LINE@@, span @@CRYPTO_SPAN@@
+open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span            # just the crypto subtree
 ```
 
 The index self-checks: the root's span equals the whole file (conservation again), and
@@ -107,16 +107,16 @@ The map is the skeleton — and the *only* thing the parser emits. Deeper facts 
 **separate engines** and join back at the same `path`, so every row anchors to a node that
 exists. Three ship today, all self-verifying and byte-identical on rerun:
 
-- **`data/std/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
+- **`data/std/extracted/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On @@ZIG@@: @@N_INDEX@@ containers swept → **@@N_RES_CONT@@ resolved (@@N_RESOLVED@@
-  rows) / @@N_POISON@@ genuine poison** (each recorded in `data/std/poison.tsv` with the compiler's exact
-  reason); `data/std/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
+  rows) / @@N_POISON@@ genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
+  reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
   *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
   strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
   reproducibility harness is a deliberately separate task (see PLAN.md).
 
-- **`data/std/consensus.tsv`** (the consensus census) — `path · origin · owner` from
+- **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from
   `scripts/build_consensus.nu`. Rather than force the text view (`nodes.tsv`) and the reflected view
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
   **every** path by which witness can see it: `read+run` (both independently agree — @@CON_RR@@),
@@ -126,7 +126,7 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
   per path in `nodes ∪ resolved` (@@N_CONSENSUS@@), **zero blanks**, enforced by `scripts/verify_consensus.nu`
   and deterministic (`--check`).
 
-- **`data/std/canon.tsv`** (dedup / dealias) — `path · canon` from `scripts/build_canon.nu`. The
+- **`data/std/derived/canon.tsv`** (dedup / dealias) — `path · canon` from `scripts/build_canon.nu`. The
   compiler resolves every type to a canonical `@typeName`, so two paths that name the *same*
   underlying type collide on it. This overlay surfaces exactly those collisions — **@@N_CANON@@ paths in @@CANON_FAMILIES@@
   alias/dup families** (e.g. `std.BufMap` and `std.buf_map.BufMap` → `buf_map.BufMap`) — while

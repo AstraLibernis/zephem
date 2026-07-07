@@ -1,4 +1,4 @@
-//! index.zig — the "table of contents" for data/std/nodes.tsv.
+//! index.zig — the "table of contents" for data/std/extracted/nodes.tsv.
 //!
 //! nodes.tsv is emitted in pre-order DFS, so EVERY node's subtree is a single
 //! contiguous run of rows. This reads nodes.tsv and, for each container (a row
@@ -20,7 +20,7 @@
 //! children's spans. Both are asserted here before a single row is written, so a
 //! bad index never reaches disk.
 //!
-//! Run: zig run derive/index.zig -- [nodes.tsv]   (default data/std/nodes.tsv)
+//! Run: zig run derive/index.zig -- [nodes.tsv]   (default data/std/extracted/nodes.tsv)
 
 const std = @import("std");
 
@@ -30,7 +30,7 @@ pub fn main(init: std.process.Init) !void {
     const arena = arena_state.allocator();
 
     const args = try init.minimal.args.toSlice(arena);
-    const in_path: []const u8 = if (args.len > 1) args[1] else "data/std/nodes.tsv";
+    const in_path: []const u8 = if (args.len > 1) args[1] else "data/std/extracted/nodes.tsv";
 
     const content = try std.Io.Dir.cwd().readFileAllocOptions(init.io, in_path, arena, .unlimited, .of(u8), 0);
 

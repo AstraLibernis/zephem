@@ -30,6 +30,8 @@ const MD_PAGES = [
   ["PLAN.tmpl.md",          "PLAN.md"]
   ["parse/README.tmpl.md",  "parse/README.md"]
   ["data/README.tmpl.md",   "data/README.md"]
+  ["data/std/extracted/README.tmpl.md", "data/std/extracted/README.md"]
+  ["data/std/derived/README.tmpl.md",   "data/std/derived/README.md"]
 ]
 
 # 12345 -> "12,345" (no lookahead in the regex engine, so group from the right by hand).
@@ -71,15 +73,15 @@ def fill [tmpl: string, subs: record] {
 
 # Compute every page's filled HTML from the live project state. Returns [{out, html}].
 def render [] {
-    let nodes = (open data/std/nodes.tsv)
-    let index = (open data/std/index.tsv)
-    let canon = (open data/std/canon.tsv)
-    let consensus = (open data/std/consensus.tsv)
-    let status = (open data/std/status.tsv)
-    let poison = (open data/std/poison.tsv)
-    let doccov = (open data/std/doccov.tsv)
-    let sigshape = (open data/std/sigshape.tsv)
-    let callcard = (open data/std/callcard.tsv)
+    let nodes = (open data/std/extracted/nodes.tsv)
+    let index = (open data/std/derived/index.tsv)
+    let canon = (open data/std/derived/canon.tsv)
+    let consensus = (open data/std/derived/consensus.tsv)
+    let status = (open data/std/extracted/status.tsv)
+    let poison = (open data/std/extracted/poison.tsv)
+    let doccov = (open data/std/derived/doccov.tsv)
+    let sigshape = (open data/std/derived/sigshape.tsv)
+    let callcard = (open data/std/derived/callcard.tsv)
 
     let n     = ($nodes | length)
     let files = ($nodes | where kind == "ns" | length)
@@ -131,14 +133,14 @@ def render [] {
         "@@N_NODES@@":        (commafy $n)
         "@@N_FILES@@":        (commafy $files)
         "@@MAXDEPTH@@":       ($depth | into string)
-        "@@N_RESOLVED@@":     (commafy (open data/std/resolved.tsv | length))
+        "@@N_RESOLVED@@":     (commafy (open data/std/extracted/resolved.tsv | length))
         "@@N_RES_CONT@@":     (commafy ($status | where status == "resolved" | length))
         "@@N_POISON@@":       (commafy ($poison | length))
         "@@N_INDEX@@":        (commafy ($index | length))
-        "@@N_SIGS@@":         (commafy (open data/std/sigs.tsv | length))
-        "@@N_DOCS@@":         (commafy (open data/std/docs.tsv | length))
-        "@@N_FIELDS@@":       (commafy (open data/std/fields.tsv | length))
-        "@@N_DELEGATES@@":    (commafy (open data/std/delegates.tsv | length))
+        "@@N_SIGS@@":         (commafy (open data/std/extracted/sigs.tsv | length))
+        "@@N_DOCS@@":         (commafy (open data/std/extracted/docs.tsv | length))
+        "@@N_FIELDS@@":       (commafy (open data/std/extracted/fields.tsv | length))
+        "@@N_DELEGATES@@":    (commafy (open data/std/extracted/delegates.tsv | length))
         "@@N_FN@@":           (commafy ($nodes | where kind == "fn" | length))
         "@@N_NSREF@@":        (commafy ($nodes | where kind == "nsref" | length))
         "@@N_EDGES@@":        (commafy ($n - 1))

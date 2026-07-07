@@ -21,7 +21,7 @@
 #   • anonymous types (`__struct/__enum/…`)    — the reproducibility-normalized marker would merge
 #                                                unrelated anon types into one bogus family
 #
-# Pure, deterministic, self-checking. Writes data/std/canon.tsv + SHA256SUMS.canon; --check rebuilds.
+# Pure, deterministic, self-checking. Writes data/std/derived/canon.tsv + SHA256SUMS.canon; --check rebuilds.
 #
 # Usage:  nu scripts/build_canon.nu [--dir data/std]
 #         nu scripts/build_canon.nu --check
@@ -37,8 +37,8 @@ def nominal [id: string] {
 
 # Derive the dedup/dealias families from resolved.tsv alone.
 def derive [dir: string] {
-    if not ($"($dir)/resolved.tsv" | path exists) { print $"missing ($dir)/resolved.tsv"; exit 1 }
-    let types = (open $"($dir)/resolved.tsv" | where kind == "type" | where {|r| nominal $r.detail})
+    if not ($"($dir)/extracted/resolved.tsv" | path exists) { print $"missing ($dir)/extracted/resolved.tsv"; exit 1 }
+    let types = (open $"($dir)/extracted/resolved.tsv" | where kind == "type" | where {|r| nominal $r.detail})
     # keep only identities shared by >= 2 paths — those, and only those, are the families.
     let shared = ($types | group-by detail | items {|id, rows| if ($rows | length) > 1 { $id } else { null } } | compact)
     let sset = ($shared | reduce --fold {} {|s, acc| $acc | upsert $s true })
@@ -59,12 +59,12 @@ def main [--dir: string = "data/std", --check] {
         return
     }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/canon.tsv"
+    $rows | to tsv | save -f $"($dir)/derived/canon.tsv"
     let families = ($rows | get canon | uniq | length)
-    print $"[canon] ($rows | length) aliased/duplicated paths in ($families) families → ($dir)/canon.tsv"
+    print $"[canon] ($rows | length) aliased/duplicated paths in ($families) families → ($dir)/derived/canon.tsv"
     print "── largest families ──"
     $rows | group-by canon | items {|k, v| {canon: $k, n: ($v | length)}} | sort-by n --reverse | first 5 | print
     let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/canon.tsv\n" | save -f $MANIFEST
+    $"($h)  data/std/derived/canon.tsv\n" | save -f $MANIFEST
     print $"[canon] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

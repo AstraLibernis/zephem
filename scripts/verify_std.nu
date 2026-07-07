@@ -11,7 +11,7 @@
 #   PARTITION      Σ rows-per-kind == total rows     # no unclassified leftovers
 #   @ref INTEGRITY every @ref path is expanded somewhere else (no dangling refs)
 #
-# Usage:  nu scripts/verify_std.nu            # checks data/std/nodes.tsv
+# Usage:  nu scripts/verify_std.nu            # checks data/std/extracted/nodes.tsv
 #         nu scripts/verify_std.nu other.tsv
 
 # The parent path — everything but the last segment. Two segment quirks are handled:
@@ -39,7 +39,7 @@ def parent [path: string] {
     if ($segs | length) <= 1 { "" } else { ($segs | drop 1 | str join ".") | str replace --regex '\(\)$' "" }
 }
 
-def main [file: string = "data/std/nodes.tsv"] {
+def main [file: string = "data/std/extracted/nodes.tsv"] {
     let t = (open $file)
     let n = ($t | length)
     mut ok = true
@@ -85,9 +85,9 @@ def main [file: string = "data/std/nodes.tsv"] {
     #    its numbers: we look up the depths at L+S-1 (last claimed row) and L+S
     #    (row after) directly in nodes.tsv. A correct span ends exactly where the
     #    subtree does — the last row is deeper than the node, the next is not.
-    if ("data/std/index.tsv" | path exists) {
+    if ("data/std/derived/index.tsv" | path exists) {
         let nl = ($t | enumerate | each {|r| {line: ($r.index + 2), depth: ($r.item.depth | into int), path: $r.item.path, kind: $r.item.kind} })
-        let ix = (open data/std/index.tsv | each {|r| {path: $r.path, line: ($r.line | into int), span: ($r.span | into int), depth: ($r.depth | into int), kind: $r.kind} })
+        let ix = (open data/std/derived/index.tsv | each {|r| {path: $r.path, line: ($r.line | into int), span: ($r.span | into int), depth: ($r.depth | into int), kind: $r.kind} })
         print $"index toc:      ($ix | length) containers"
         mut iok = true
         # root must own the whole file
@@ -109,11 +109,11 @@ def main [file: string = "data/std/nodes.tsv"] {
     # 6. DETAIL OVERLAYS — the parser's sigs/docs must key onto real nodes (sigs onto fns),
     #    one row per path. Same self-check spirit: the overlays can't drift from the map.
     let dir = ($file | path dirname)
-    if ($"($dir)/sigs.tsv" | path exists) {
+    if ($"($dir)/extracted/sigs.tsv" | path exists) {
         let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
         let fnset = ($t | where kind == "fn" | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let sigs = (open $"($dir)/sigs.tsv")
-        let docs = (open $"($dir)/docs.tsv")
+        let sigs = (open $"($dir)/extracted/sigs.tsv")
+        let docs = (open $"($dir)/extracted/docs.tsv")
         let sig_orphan = ($sigs | where {|r| ($fnset | get -o $r.path) != true})
         let doc_orphan = ($docs | where {|r| ($nodeset | get -o $r.path) != true})
         let sig_dup = ($sigs | get path | uniq -d)
@@ -127,10 +127,10 @@ def main [file: string = "data/std/nodes.tsv"] {
     # 7. FIELD OVERLAY — fields.tsv (path·type·value) must be 1:1 with the field/tag nodes:
     #    every payload row keys onto a real field/tag node, no dups, and every field/tag node
     #    has exactly one payload row. Same self-check spirit as the sig/doc overlays.
-    if ($"($dir)/fields.tsv" | path exists) {
+    if ($"($dir)/extracted/fields.tsv" | path exists) {
         let fieldnodes = ($t | where kind in ["field" "tag"])
         let fieldset = ($fieldnodes | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let fields = (open $"($dir)/fields.tsv")
+        let fields = (open $"($dir)/extracted/fields.tsv")
         let field_orphan = ($fields | where {|r| ($fieldset | get -o $r.path) != true})
         let field_dup = ($fields | get path | uniq -d)
         print $"field overlay:  ($fields | length) field/tag payloads for ($fieldnodes | length) field/tag nodes"
@@ -142,9 +142,9 @@ def main [file: string = "data/std/nodes.tsv"] {
     # 8. DELEGATE OVERLAY — delegates.tsv (path·target) records a delegating factory and the raw
     #    call it forwards to. Each must key onto a `fn` node that is a LEAF (n_children == 0) — a
     #    factory we did NOT descend (its members live on the target). No dups.
-    if ($"($dir)/delegates.tsv" | path exists) {
+    if ($"($dir)/extracted/delegates.tsv" | path exists) {
         let leaf_fns = ($t | where kind == "fn" | where n_children == 0 | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let dels = (open $"($dir)/delegates.tsv")
+        let dels = (open $"($dir)/extracted/delegates.tsv")
         let del_orphan = ($dels | where {|r| ($leaf_fns | get -o $r.path) != true})
         let del_dup = ($dels | get path | uniq -d)
         print $"delegate overlay: ($dels | length) delegating factories"

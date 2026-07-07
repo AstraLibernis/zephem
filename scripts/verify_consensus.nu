@@ -14,15 +14,15 @@
 def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 
 def main [dir: string = "data/std"] {
-    for f in ["consensus.tsv" "nodes.tsv" "resolved.tsv"] {
+    for f in ["derived/consensus.tsv" "extracted/nodes.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    let con = (open $"($dir)/consensus.tsv")
+    let con = (open $"($dir)/derived/consensus.tsv")
     # match build_consensus: field/tag rows AND factory members (`…()` paths) are out of the
     # compare's scope (reflect never resolves them as paths), so the census universe is
     # decls/containers only.
-    let nodes = (open $"($dir)/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path})
-    let res = (open $"($dir)/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path})
+    let nodes = (open $"($dir)/extracted/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path})
+    let res = (open $"($dir)/extracted/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path})
     let nodeset = ($nodes | get np | reduce --fold {} {|p, acc| $acc | upsert $p true})
     let resset = ($res | get np | reduce --fold {} {|p, acc| $acc | upsert $p true})
     mut ok = true

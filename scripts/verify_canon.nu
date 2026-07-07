@@ -18,11 +18,11 @@ def nominal [id: string] {
 }
 
 def main [dir: string = "data/std"] {
-    for f in ["canon.tsv" "resolved.tsv"] {
+    for f in ["derived/canon.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    let canon = (open $"($dir)/canon.tsv")
-    let types = (open $"($dir)/resolved.tsv" | where kind == "type")
+    let canon = (open $"($dir)/derived/canon.tsv")
+    let types = (open $"($dir)/extracted/resolved.tsv" | where kind == "type")
     let pathId = ($types | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.detail })
     mut ok = true
     print $"canon: ($canon | length) aliased/duplicated paths"

@@ -22,7 +22,7 @@
 #         nu scripts/build_std.nu --depth 24
 #         nu scripts/build_std.nu --check       # prove the committed snapshot rebuilds
 
-const NAMES = ["nodes.tsv" "index.tsv" "sigs.tsv" "docs.tsv" "fields.tsv" "delegates.tsv"]
+const NAMES = ["extracted/nodes.tsv" "derived/index.tsv" "extracted/sigs.tsv" "extracted/docs.tsv" "extracted/fields.tsv" "extracted/delegates.tsv"]
 
 # The active toolchain's std root. `zig env` emits ZON, not JSON — pull the path out.
 def std-root [] {
@@ -34,11 +34,11 @@ def std-root [] {
 # hashes are comparable). The single source of build truth, shared by the normal build and
 # --check, so they cannot diverge.
 def regen [root: string, depth: int, outdir: string] {
-    mkdir $outdir
+    mkdir $"($outdir)/extracted" $"($outdir)/derived"
     # the parser reads std once → the structural map + as-written signatures + `///` docs.
     # derive builds its TOC.
-    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/nodes.tsv" $"($outdir)/sigs.tsv" $"($outdir)/docs.tsv" $"($outdir)/fields.tsv" $"($outdir)/delegates.tsv"
-    (^zig run derive/index.zig -- $"($outdir)/nodes.tsv" | into string) | save -f $"($outdir)/index.tsv"
+    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/sigs.tsv" $"($outdir)/extracted/docs.tsv" $"($outdir)/extracted/fields.tsv" $"($outdir)/extracted/delegates.tsv"
+    (^zig run derive/index.zig -- $"($outdir)/extracted/nodes.tsv" | into string) | save -f $"($outdir)/derived/index.tsv"
 }
 
 # sha256 of each dataset in `dir`, as a {name: hash} record (raw bytes — no parsing).
@@ -87,15 +87,15 @@ def main [--depth: int = 24, --check] {
     regen $root $depth "data/std"
     $"zig ($zver)\n" | save -f data/std/PINNED   # pin the exact version this snapshot is from
 
-    let t = (open data/std/nodes.tsv)
+    let t = (open data/std/extracted/nodes.tsv)
     print $"           rows: (($t | length))   files: (($t | where kind == 'ns' | length))   max depth: (($t | get depth | math max))"
-    let it = (open data/std/index.tsv)
+    let it = (open data/std/derived/index.tsv)
     print $"[index]    containers: (($it | length))   root span: (($it | get span | math max))"
-    print $"[detail]   signatures: (open data/std/sigs.tsv | length)   documented decls: (open data/std/docs.tsv | length)   fields/tags: (open data/std/fields.tsv | length)   delegators: (open data/std/delegates.tsv | length)"
+    print $"[detail]   signatures: (open data/std/extracted/sigs.tsv | length)   documented decls: (open data/std/extracted/docs.tsv | length)   fields/tags: (open data/std/extracted/fields.tsv | length)   delegators: (open data/std/extracted/delegates.tsv | length)"
 
     # ---- TRUE (backward): read the data the other way; it must agree ---------
     print "[backward] re-reading the datasets — must reconcile..."
-    let v = (^nu scripts/verify_std.nu data/std/nodes.tsv | complete)
+    let v = (^nu scripts/verify_std.nu data/std/extracted/nodes.tsv | complete)
     print $v.stdout
     if $v.exit_code != 0 {
         print "build_std: ✗ forward and backward DISAGREE — snapshot rejected."

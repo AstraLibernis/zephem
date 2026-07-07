@@ -52,7 +52,7 @@
 
 const TEMPLATE = "reflect/resolve.zig"
 const SCRATCH = "/tmp/zephem-depth"
-const NAMES = ["status.tsv" "resolved.tsv" "poison.tsv"]
+const NAMES = ["extracted/status.tsv" "extracted/resolved.tsv" "extracted/poison.tsv"]
 const MANIFEST = "data/std/SHA256SUMS.depth"
 
 # turn a list of container paths into {parent, child} rows (child = last segment).
@@ -140,7 +140,7 @@ def reflect-one [i: int, path: string, skip: list<string>, timeout: int, std_dir
 # Determinism is preserved by sorting results back to input order before assembly — so the bytes
 # match the old serial sweep exactly, only faster. Returns the counts.
 def sweep [targets: list<string>, outdir: string, timeout: int, idx: any, std_dir: string, jobs: int] {
-    mkdir $outdir
+    mkdir $"($outdir)/extracted"
     mkdir $SCRATCH
     # direct child containers per parent — the SKIP set each container hands to resolve.zig.
     let kids = ($idx | get path | insert-parent | group-by parent)
@@ -154,14 +154,14 @@ def sweep [targets: list<string>, outdir: string, timeout: int, idx: any, std_di
     let resolved = ($results | get rows | flatten)
     let poison = ($results | where prow != null | get prow)
 
-    (["path\tstatus\tn_rows"] | append $status | str join "\n") + "\n" | save -f $"($outdir)/status.tsv"
-    (["path\tkind\tdetail"] | append $resolved | str join "\n") + "\n" | save -f $"($outdir)/resolved.tsv"
-    (["path\treason"] | append $poison | str join "\n") + "\n" | save -f $"($outdir)/poison.tsv"
+    (["path\tstatus\tn_rows"] | append $status | str join "\n") + "\n" | save -f $"($outdir)/extracted/status.tsv"
+    (["path\tkind\tdetail"] | append $resolved | str join "\n") + "\n" | save -f $"($outdir)/extracted/resolved.tsv"
+    (["path\treason"] | append $poison | str join "\n") + "\n" | save -f $"($outdir)/extracted/poison.tsv"
     {resolved: ($resolved | length), poison: ($poison | length), attempted: ($targets | length)}
 }
 
 def main [--only: string, --filter: string, --list: string, --limit: int = 0, --timeout: int = 90, --jobs: int = 0, --out: string = "/tmp/zephem-depth/out", --commit, --check] {
-    let idx = (open data/std/index.tsv)
+    let idx = (open data/std/derived/index.tsv)
     let std_dir = (std-dir)
     let jobs = (if $jobs > 0 { $jobs } else { (ncpu) })   # adaptive: one lane per available CPU
 
@@ -218,7 +218,7 @@ def main [--only: string, --filter: string, --list: string, --limit: int = 0, --
     print $"[L5] → ($outdir)/{status,resolved,poison}.tsv"
     if $c.poison > 0 and $c.poison <= 20 {
         print "[L5] poison (path · reason):"
-        open $"($outdir)/poison.tsv" | each {|p| print $"   ($p.path)\t($p.reason)" } | ignore
+        open $"($outdir)/extracted/poison.tsv" | each {|p| print $"   ($p.path)\t($p.reason)" } | ignore
     }
 
     # ---- verification: re-read the buckets a SECOND way and reconcile with the map ----

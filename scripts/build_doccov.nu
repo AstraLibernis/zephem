@@ -13,7 +13,7 @@
 #   kind        carried from the map, so coverage groups by struct/fn/const/… without a re-join.
 #
 # A pure JOIN of two committed outputs — nodes + docs — one row per map node, nothing invented.
-# Self-checking. Writes data/std/doccov.tsv + SHA256SUMS.doccov; --check rebuilds byte-identical.
+# Self-checking. Writes data/std/derived/doccov.tsv + SHA256SUMS.doccov; --check rebuilds byte-identical.
 #
 # Usage:  nu scripts/build_doccov.nu [--dir data/std]
 #         nu scripts/build_doccov.nu --check
@@ -21,12 +21,12 @@
 const MANIFEST = "data/std/SHA256SUMS.doccov"
 
 def derive [dir: string] {
-    for f in ["nodes.tsv" "docs.tsv"] {
+    for f in ["extracted/nodes.tsv" "extracted/docs.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     # left-join the map to docs (version-agnostic — no optional `get`); unmatched nodes default to no.
-    let docs = (open $"($dir)/docs.tsv" | select path | uniq-by path | insert documented "yes")
-    open $"($dir)/nodes.tsv" | select path kind | join --left $docs path | each {|r|
+    let docs = (open $"($dir)/extracted/docs.tsv" | select path | uniq-by path | insert documented "yes")
+    open $"($dir)/extracted/nodes.tsv" | select path kind | join --left $docs path | each {|r|
         {path: $r.path, kind: $r.kind, documented: ($r.documented | default "no")}
     } | sort-by path
 }
@@ -43,14 +43,14 @@ def main [--dir: string = "data/std", --check] {
         return
     }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/doccov.tsv"
+    $rows | to tsv | save -f $"($dir)/derived/doccov.tsv"
     let n = ($rows | length)
     let doc = ($rows | where documented == "yes" | length)
     let pct = (($doc * 100) / $n | math round | into int)
-    print $"[doccov] ($n) nodes → ($dir)/doccov.tsv"
+    print $"[doccov] ($n) nodes → ($dir)/derived/doccov.tsv"
     print $"  documented: ($doc)   undocumented: (($n) - ($doc))   \(($pct)% covered\)"
     $rows | group-by kind | items {|k, v| {kind: $k, total: ($v | length), documented: ($v | where documented == "yes" | length)}} | sort-by total --reverse | print
     let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/doccov.tsv\n" | save -f $MANIFEST
+    $"($h)  data/std/derived/doccov.tsv\n" | save -f $MANIFEST
     print $"[doccov] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

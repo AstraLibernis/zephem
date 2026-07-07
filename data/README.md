@@ -1,83 +1,32 @@
-# data/ — the extraction & map layer
+# data/ — the dataset layer
 
-Toolchain: **Zig** does the extraction (parsing std source), **Nushell** does the glue and
-the querying. No Python, no duckdb — the TSV files are the source of truth, and Nushell
-queries them natively.
+Toolchain: **Zig** does the extraction (parsing std source, reflecting it through the
+compiler), **Nushell** does the glue and the querying. No Python, no duckdb — the TSV
+files are the source of truth, and Nushell queries them natively.
 
-## Datasets
+The snapshot lives in `std/`, pinned to **zig 0.16.0** (`std/PINNED`), split into two groups
+by *where each fact comes from*:
 
-### `std/nodes.tsv` — the full std map (the headline dataset)
-`parse/build.zig` + `parse/walk.zig` (driven by `scripts/build_std.nu`): the whole `std`
-namespace tree, built by **parsing source** (`std.zig.Ast`), not reflection — so it never
-dies on platform-gated / poison decls and maps *all* of std. One row per public decl, struct/
-union **field**, enum **tag**, or **type-factory member** (a member of the type a `fn(…) type`
-returns, pathed under `<fn>()` — e.g. `std.ArrayList().append`; the `()` marks "instantiate first").
-**48,499 rows / 310 files / max depth 9** on zig 0.16.0 (version pinned in `std/PINNED`).
-Columns: `path · depth · kind · name · n_children · detail`.
-`kind ∈ ns · nsref · nserr · struct · enum · union · opaque · fn · const · alias · modref · field · tag`.
+| folder | what it holds | producer | trust |
+|---|---|---|---|
+| **[`std/extracted/`](std/extracted/)** | literal facts read straight from Zig — the map, signatures, docs, fields/tags, and the compiler's resolved view | `parse/` + `reflect/` | if a row is wrong, **Zig** said so |
+| **[`std/derived/`](std/derived/)** | joins, comparisons, and reshapes over the extracted files — TOC, consensus, canon, doc-coverage, signature shapes, call-card | `derive/` + `scripts/` | every row **traces back** to extracted rows; nothing invented |
 
-Self-verifying: `build_std.nu` runs a **forward** pass (parse) and a **backward** pass
-(`scripts/verify_std.nu`, which re-reads the rows grouped by parent) that must agree. The
-core invariant is the conservation law `Σ n_children == rows − 1`; the verifier also checks
-per-node child counts, kind partition, and `nsref` integrity. Disagreement → non-zero exit,
-nothing claimed.
+Each folder has its own README documenting every dataset it contains (columns, counts,
+and the self-check that guards it). The clean line: **extracted/ is what Zig says;
+derived/ is what zephem computes from it, and can be deleted and rebuilt from extracted/
+alone.**
 
-### `std/index.tsv` — the table of contents (where to look)
-`derive/index.zig` (run inside `build_std.nu`): one row per container, recording where its
-block lives in `nodes.tsv`. Columns: `path · line · span · depth · kind · n_children`.
-Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
-`line` (1-based file line, header-aware) + `span` (subtree size) pin the exact block.
-Read a whole module in one ranged read instead of scanning 48499 rows:
-
-```nu
-let b = (open data/std/index.tsv | where path == 'std.crypto.aead' | first)
-open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span   # exactly that subtree
-```
-
-Self-checked both ways: `index.zig` asserts root span == total rows and every span ==
-1 + Σ child spans before writing; `verify_std.nu` then re-derives each block's boundary
-straight from `nodes.tsv` depths and confirms `line`+`span` land exactly on each subtree.
-
-Full recipes: **[../docs/archive/USAGE.md](../docs/archive/USAGE.md)**.
-
-### `std/sigs.tsv` + `std/docs.tsv` — signatures & doc-comments (parser side outputs)
-`parse/walk.zig` (run inside `build_std.nu`): two sparse overlays keyed by `path`, adding the
-raw source facts the bare map omits — both emitted by the parser, since only a parser can see
-them.
-
-- **`sigs.tsv`** — `path · sig`. `sig` is a function's as-written signature, from the `fn`
-  keyword through the return type (body excluded), whitespace-collapsed to one line. One row
-  per public `fn` (including re-exported fns). On zig 0.16.0: **6,163 signatures**.
-- **`docs.tsv`** — `path · doc`. `doc` is the decl's `///` doc-comment text, whitespace-collapsed
-  to one line. A row exists only for documented decls (any kind). On zig 0.16.0: **11,610 docs**.
-- **`fields.tsv`** — `path · type · value`. The payload of every `field`/`tag` node: a struct/union
-  field's written type (and default), or an enum tag's value. 1:1 with the `field`/`tag` rows in
-  the map. On zig 0.16.0: **31,048 fields/tags**.
-- **`delegates.tsv`** — `path · target`. A *delegating* factory (`fn X(…) type { return Y(args); }`)
-  and the raw call it forwards to — so a factory we don't descend (its members live on the target)
-  isn't a dead end. The target is source text, **unresolved** (turning it into a path is a later
-  reference-layer job). On zig 0.16.0: **32 delegators** (e.g. `std.ArrayList → array_list.Aligned(T, null)`).
-
-Join either to `nodes.tsv` by `path` to "read down" the stack — every fn under a module with
-its signature:
-
-```nu
-let nodes = (open data/std/nodes.tsv)
-let sigs = (open data/std/sigs.tsv)
-$nodes | where kind == 'fn' and ($it.path | str starts-with 'std.BitStack.')
-  | select path | join $sigs path | select path sig
-```
-
-`verify_std.nu` proves the overlays *register* on the map: every `sigs` path is a real `fn`
-node and every `docs` path is a real node, paths are unique in each, and the set of signatures
-equals exactly the map's set of functions.
+At a glance — **48,499 nodes across 310 files** (map), 6,163 signatures,
+11,610 docs, 31,048 fields/tags, 1,324 containers resolved, and six
+derivatives keyed back to the map at the same `path`.
 
 ## Kind policy — who owns what, and which overlay counts it
 
-Clean lines of separation: **every fact has exactly one producer** (the parser owns *as-written*
-source facts; reflect owns *resolved* facts; derive overlays only *join/compare*, never invent a
-new fact). And each overlay treats the map's kinds by one documented rule below — so a kind is
-never double-counted or silently dropped.
+Clean lines of separation: **every fact has exactly one producer** (the parser owns
+*as-written* source facts; reflect owns *resolved* facts; derive overlays only
+*join/compare*, never invent a new fact). Each overlay treats the map's kinds by one
+documented rule below — so a kind is never double-counted or silently dropped.
 
 | kind / thing | owned by | in `index` | in `doccov` | in `consensus` | in `sigshape`/`callcard` |
 |---|---|---|---|---|---|
@@ -86,33 +35,38 @@ never double-counted or silently dropped.
 | **factory member** (`…()` path) | parser (as-written) · reflect owns *resolved* (Phase D) | if `n_children>0` | ✅ all | **excluded** — uninstantiated; nothing to resolve yet | ✅ as *parser-only* (written sig, no resolved type) |
 | **delegator** (`fn` with a `delegates.tsv` row) | parser (`delegates.tsv`) | no (leaf) | ✅ all | ✅ (it's a normal `fn`) | fns only |
 
-Rules of thumb behind the table: **`doccov`** is 1:1 with the whole map (every node, documented or
-not). **`consensus`** compares only what *both* engines can name — so parser-only structural members
-(fields, tags, uninstantiated factory members) are out of scope. **`callcard`/`sigshape`** are about
-signatures, so factory-member fns join in (as parser-only until Phase D resolves them). **Nothing
-here is computed twice**: a factory member's *as-written* form is the parser's; its *resolved* form
-will be reflect's; `callcard` merely joins the two by the shared `…()` path.
+Rules of thumb: **`doccov`** is 1:1 with the whole map. **`consensus`** compares only
+what *both* engines can name — so parser-only structural members (fields, tags,
+uninstantiated factory members) are out of scope. **`callcard`/`sigshape`** are about
+signatures, so factory-member fns join in (as parser-only until Phase D resolves them).
+**Nothing is computed twice.**
 
 ## Regenerate
 
 ```nu
-nu scripts/build_std.nu          # parse → index → verify; refuses to ship if they disagree
+nu scripts/build_std.nu          # parse → index → verify (extracted/nodes+sigs+docs+fields+delegates, derived/index)
+nu scripts/build_depth.nu --commit   # reflect sweep → extracted/{resolved,poison,status} (slow; separate)
+nu scripts/build_consensus.nu    # and build_canon / build_doccov / build_sigshape / build_callcard → derived/
 ```
 
-Deterministic (same Zig → byte-identical) and idempotent (`git diff --exit-code` clean).
+Every step is deterministic (same Zig → byte-identical) and idempotent
+(`git diff --exit-code` clean), guarded by a `SHA256SUMS` manifest (main + per-slice
+sidecars) and a matching `verify_*.nu`.
 
 ## Query examples (Nushell)
 
 ```nu
-# every source file, one subtree, or the kind breakdown
-open data/std/nodes.tsv | where kind == 'ns'
-open data/std/nodes.tsv | where path =~ '^std\.crypto\.'
-open data/std/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}} | sort-by n -r
+# every source file, one subtree, or the kind breakdown (the map is in extracted/)
+open data/std/extracted/nodes.tsv | where kind == 'ns'
+open data/std/extracted/nodes.tsv | where path =~ '^std\.crypto\.'
+open data/std/extracted/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}} | sort-by n -r
 
-# jump straight to one module via the table of contents
-let b = (open data/std/index.tsv | where path == 'std.mem' | first)
-open data/std/nodes.tsv | skip ($b.line - 2) | first $b.span
+# jump straight to one module via the table of contents (derived/)
+let b = (open data/std/derived/index.tsv | where path == 'std.mem' | first)
+open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span
 ```
+
+Full recipes: **[../docs/archive/USAGE.md](../docs/archive/USAGE.md)** pending a rewrite.
 
 ## Archived
 

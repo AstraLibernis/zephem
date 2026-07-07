@@ -2,7 +2,7 @@
 
 **`parse/` reads Zig as *text* and outputs ONE file: the structural map, in Zig's own source
 order.** Parse all → output all. It is one of three engines; the other two are at the bottom.
-The map it produces is the product and lives one level up in [`../data/std/`](../data/std/).
+The map it produces is the product and lives one level up in [`../data/std/extracted/`](../data/std/extracted/).
 
 This is the **read-it** engine: it parses `std.zig.Ast` and **never runs the compiler**, so
 platform-gated and "poison" decls are just harmless text. That is what lets it map **all** of
@@ -41,7 +41,7 @@ reproduces it, not the bytes.
 > The moment the map sorts, groups, or resolves a link, it stops being Zig and starts being
 > our reading of Zig. The base map is the one artifact that must stay a pure mirror.
 
-## 2. What it produces (`../data/std/`)
+## 2. What it produces (`../data/std/extracted/`)
 
 | dataset | what it is | built by |
 |---|---|---|
