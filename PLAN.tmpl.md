@@ -53,6 +53,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ @@N_SIGS@@ as-written fn signatures + @@N_DOCS@@ `///` docs, keyed by `path`; integrity-checked vs the map |
 | **fields + tags** — `fields.tsv` | `parse/walk.zig` | ✅ @@N_FIELDS@@ struct/union fields + enum tags (`path·type·value`), 1:1 with the `field`/`tag` nodes; integrity-checked vs the map |
 | **factory descent + delegates** — `nodes.tsv` · `delegates.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); @@N_DELEGATES@@ delegators record their raw target; conservation-checked |
+| **examples** — `examples.tsv` | `parse/walk.zig` | ✅ @@N_EXAMPLES@@ `test`/doctest usage snippets (`path·kind·name·code`); @@N_DOCTESTS@@ doctests bind by name to a decl; anchored to the map, self-checked |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |

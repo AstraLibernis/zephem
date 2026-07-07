@@ -80,8 +80,8 @@ dropped, doubled, or truncated decl breaks it and the build claims nothing.
 
 ```
 parse/
-  build.zig    # 104  ENTRY: parse a root ONCE, run the walk → nodes.tsv
-  walk.zig     # 497  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
+  build.zig    # 113  ENTRY: parse a root ONCE, run the walk → nodes.tsv
+  walk.zig     # 567  the parse-walk + the row writer (Node, Kind, walkMembers, emitReexport)
   ast.zig      # 140  read primitives: dirname/relPath/parseFile + parseImport/isAliasChain/
                #      findDecl/countPub/containerKindOf
 ```

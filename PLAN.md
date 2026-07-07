@@ -53,6 +53,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **signatures + docs** — `sigs.tsv` · `docs.tsv` | `parse/walk.zig` | ✅ 6,163 as-written fn signatures + 11,610 `///` docs, keyed by `path`; integrity-checked vs the map |
 | **fields + tags** — `fields.tsv` | `parse/walk.zig` | ✅ 31,048 struct/union fields + enum tags (`path·type·value`), 1:1 with the `field`/`tag` nodes; integrity-checked vs the map |
 | **factory descent + delegates** — `nodes.tsv` · `delegates.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); 32 delegators record their raw target; conservation-checked |
+| **examples** — `examples.tsv` | `parse/walk.zig` | ✅ 1,284 `test`/doctest usage snippets (`path·kind·name·code`); 411 doctests bind by name to a decl; anchored to the map, self-checked |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 2,966 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 1,324 resolved / 31 genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run 13,424 / run-only 2,296 / read-only 3,082; 0 blanks |

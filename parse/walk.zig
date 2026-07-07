@@ -79,6 +79,8 @@ pub const Walker = struct {
     fields: *std.Io.Writer,
     /// Side sink: `path · target` — a delegating factory and the raw call it forwards to.
     delegates: *std.Io.Writer,
+    /// Side sink: `path · kind · name · code` — a `test`/doctest and its source (an example).
+    examples: *std.Io.Writer,
 
     /// Write one node as a map row. The single point of output.
     pub fn emit(w: *Walker, n: Node) !void {
@@ -109,7 +111,45 @@ pub const Walker = struct {
     pub fn emitDelegate(w: *Walker, path: []const u8, target: []const u8) !void {
         try w.delegates.print("{s}\t{s}\n", .{ path, target });
     }
+
+    /// Record a usage example. `path` is the decl a doctest documents (`test <ident>`) or the
+    /// enclosing namespace for a free-standing `test`. `code` is the whole `test … {}` source,
+    /// TSV-escaped so the multi-line snippet stays on one row.
+    pub fn emitExample(w: *Walker, path: []const u8, kind: []const u8, name: []const u8, code: []const u8) !void {
+        try w.examples.print("{s}\t{s}\t{s}\t{s}\n", .{ path, kind, name, code });
+    }
 };
+
+/// Escape a snippet for a single TSV field: `\` `\t` `\r` `\n` → `\\` `\t` `\r` `\n` (two chars
+/// each), so code with tabs and newlines round-trips through one TSV cell. The inverse is a
+/// plain unescape on the consumer side.
+fn escapeTsv(arena: std.mem.Allocator, s: []const u8) ![]const u8 {
+    var n: usize = 0;
+    for (s) |c| n += switch (c) {
+        '\\', '\t', '\r', '\n' => @as(usize, 2),
+        else => 1,
+    };
+    const buf = try arena.alloc(u8, n);
+    var i: usize = 0;
+    for (s) |c| {
+        const esc: ?u8 = switch (c) {
+            '\\' => '\\',
+            '\t' => 't',
+            '\r' => 'r',
+            '\n' => 'n',
+            else => null,
+        };
+        if (esc) |e| {
+            buf[i] = '\\';
+            buf[i + 1] = e;
+            i += 2;
+        } else {
+            buf[i] = c;
+            i += 1;
+        }
+    }
+    return buf[0..i];
+}
 
 fn ckToKind(ck: az.ContainerKind) Kind {
     return switch (ck) {
@@ -299,6 +339,36 @@ pub fn walkMembers(
     var tuple_idx: usize = 0; // names unnamed (tuple) fields by ordinal, per container
     for (members) |m| {
         const tag = ast.nodeTag(m);
+
+        // test declarations → usage examples. `test <identifier>` is a *doctest* bound to the
+        // decl of that name (owner = `logical_path.name`, which joins straight onto that node);
+        // `test "…"` / `test {…}` is a free-standing test (owner = the enclosing namespace).
+        // Tests are never public, so this is handled before the pub gates below.
+        if (tag == .test_decl) {
+            const name_tok = ast.nodeData(m).opt_token_and_node[0];
+            var kind: []const u8 = "test";
+            var name: []const u8 = "";
+            var owner = logical_path;
+            if (name_tok.unwrap()) |tok| {
+                if (ast.tokenTag(tok) == .identifier) {
+                    kind = "doctest";
+                    name = ast.tokenSlice(tok);
+                    // `test <Name>` where Name is the container's OWN name documents the container
+                    // itself (`test BitStack` at the root of BitStack.zig → `std.BitStack`, not the
+                    // non-existent `std.BitStack.BitStack`).
+                    const base = if (std.mem.lastIndexOfScalar(u8, logical_path, '.')) |i| logical_path[i + 1 ..] else logical_path;
+                    owner = if (std.mem.eql(u8, name, base))
+                        logical_path
+                    else
+                        try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ logical_path, name });
+                } else {
+                    // string-literal name → drop the surrounding quotes for a clean field.
+                    name = try escapeTsv(w.arena, std.mem.trim(u8, ast.tokenSlice(tok), "\""));
+                }
+            }
+            try w.emitExample(owner, kind, name, try escapeTsv(w.arena, ast.getNodeSource(m)));
+            continue;
+        }
 
         // functions. A plain fn is a leaf (detail = param count). A *type factory* whose body
         // has a single top-level `return <container literal>` is descended: its produced type's

@@ -39,7 +39,7 @@ def parent [path: string] {
     if ($segs | length) <= 1 { "" } else { ($segs | drop 1 | str join ".") | str replace --regex '\(\)$' "" }
 }
 
-def main [file: string = "data/std/extracted/nodes.tsv"] {
+def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     let t = (open $file)
     let n = ($t | length)
     mut ok = true
@@ -104,16 +104,34 @@ def main [file: string = "data/std/extracted/nodes.tsv"] {
         let badafter = ($ix | insert atline {|r| $r.line + $r.span} | join $datl atline | where {|r| $r.atdepth > $r.depth})
         if (($badlast | length) > 0) or (($badafter | length) > 0) { print $"  ✗ (($badlast | length) + ($badafter | length)) blocks over/under-shoot their subtree"; $iok = false }
         if $iok { print "  ✓ every block re-derived from nodes.tsv — line+span land exactly on each subtree" } else { $ok = false }
-    }
+    } else { print "index toc:      ⚠ derived/index.tsv not found — table-of-contents check skipped" }
 
     # 6. DETAIL OVERLAYS — the parser's sigs/docs must key onto real nodes (sigs onto fns),
     #    one row per path. Same self-check spirit: the overlays can't drift from the map.
     let dir = ($file | path dirname)
-    if ($"($dir)/extracted/sigs.tsv" | path exists) {
+
+    # HARDENING (overlay completeness). The parser always emits these overlays beside the map, so a
+    # MISSING one means a wrong/renamed path — not "legitimately absent". A `if (path exists)` guard
+    # alone would silently skip the check and still print ✓ (this exact bug once disabled the
+    # sigs/docs/fields/delegates checks). So gate on completeness up front and ALWAYS print a line:
+    # by default a missing overlay FAILS; `--partial` downgrades it to a visible skip, for the rare
+    # case of verifying a bare nodes.tsv with no siblings.
+    let expected_overlays = ["sigs.tsv" "docs.tsv" "fields.tsv" "delegates.tsv" "examples.tsv"]
+    let missing_overlays = ($expected_overlays | where {|f| not ($"($dir)/($f)" | path exists)})
+    if ($missing_overlays | is-empty) {
+        print $"overlays:       ✓ all present \(($expected_overlays | length)\)"
+    } else if $partial {
+        print $"overlays:       ⚠ SKIPPED — not beside the map: ($missing_overlays | str join ', ')"
+    } else {
+        print $"overlays:       ✗ MISSING beside the map: ($missing_overlays | str join ', ') — run build_std, or pass --partial to verify the map alone"
+        $ok = false
+    }
+
+    if ($"($dir)/sigs.tsv" | path exists) {
         let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
         let fnset = ($t | where kind == "fn" | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let sigs = (open $"($dir)/extracted/sigs.tsv")
-        let docs = (open $"($dir)/extracted/docs.tsv")
+        let sigs = (open $"($dir)/sigs.tsv")
+        let docs = (open $"($dir)/docs.tsv")
         let sig_orphan = ($sigs | where {|r| ($fnset | get -o $r.path) != true})
         let doc_orphan = ($docs | where {|r| ($nodeset | get -o $r.path) != true})
         let sig_dup = ($sigs | get path | uniq -d)
@@ -127,10 +145,10 @@ def main [file: string = "data/std/extracted/nodes.tsv"] {
     # 7. FIELD OVERLAY — fields.tsv (path·type·value) must be 1:1 with the field/tag nodes:
     #    every payload row keys onto a real field/tag node, no dups, and every field/tag node
     #    has exactly one payload row. Same self-check spirit as the sig/doc overlays.
-    if ($"($dir)/extracted/fields.tsv" | path exists) {
+    if ($"($dir)/fields.tsv" | path exists) {
         let fieldnodes = ($t | where kind in ["field" "tag"])
         let fieldset = ($fieldnodes | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let fields = (open $"($dir)/extracted/fields.tsv")
+        let fields = (open $"($dir)/fields.tsv")
         let field_orphan = ($fields | where {|r| ($fieldset | get -o $r.path) != true})
         let field_dup = ($fields | get path | uniq -d)
         print $"field overlay:  ($fields | length) field/tag payloads for ($fieldnodes | length) field/tag nodes"
@@ -142,14 +160,37 @@ def main [file: string = "data/std/extracted/nodes.tsv"] {
     # 8. DELEGATE OVERLAY — delegates.tsv (path·target) records a delegating factory and the raw
     #    call it forwards to. Each must key onto a `fn` node that is a LEAF (n_children == 0) — a
     #    factory we did NOT descend (its members live on the target). No dups.
-    if ($"($dir)/extracted/delegates.tsv" | path exists) {
+    if ($"($dir)/delegates.tsv" | path exists) {
         let leaf_fns = ($t | where kind == "fn" | where n_children == 0 | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let dels = (open $"($dir)/extracted/delegates.tsv")
+        let dels = (open $"($dir)/delegates.tsv")
         let del_orphan = ($dels | where {|r| ($leaf_fns | get -o $r.path) != true})
         let del_dup = ($dels | get path | uniq -d)
         print $"delegate overlay: ($dels | length) delegating factories"
         if ($del_orphan | length) > 0 { print $"  ✗ ($del_orphan | length) delegate\(s\) key onto a non-leaf-fn or missing node"; $ok = false } else { print "  ✓ every delegate keys onto a leaf fn node (an undescended factory)" }
         if ($del_dup | length) > 0 { print $"  ✗ ($del_dup | length) duplicate delegate key\(s\)"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
+    }
+
+    # 9. EXAMPLE OVERLAY — examples.tsv (path·kind·name·code) captures test/doctest usage. A
+    #    `doctest` (`test <ident>`) is bound by name to a decl; a `test` lives in a namespace. The
+    #    invariant we can always hold: every example ANCHORS to the map — its owner, or its owner's
+    #    parent namespace, is a real node. (A doctest may name a private, non-pub decl, so the
+    #    direct pub-bind rate is reported, not required.)
+    if ($"($dir)/examples.tsv" | path exists) {
+        let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+        let ex = (open $"($dir)/examples.tsv")
+        let bad_kind = ($ex | where kind not-in ["doctest" "test"])
+        let empty_code = ($ex | where {|r| ($r.code | into string | is-empty)})
+        let unanchored = ($ex | where {|r|
+            let owner_ok = (($nodeset | get -o $r.path) == true)
+            let parent = ($r.path | split row "." | drop 1 | str join ".")
+            not ($owner_ok or (($nodeset | get -o $parent) == true))
+        })
+        let doctests = ($ex | where kind == "doctest")
+        let bound = ($doctests | where {|r| ($nodeset | get -o $r.path) == true})
+        print $"example overlay: ($ex | length) examples \(($doctests | length) doctest / (($ex | where kind == 'test') | length) test\) — ($bound | length)/($doctests | length) doctests bind to a pub decl"
+        if ($bad_kind | length) > 0 { print $"  ✗ ($bad_kind | length) example\(s\) with an unknown kind"; $ok = false } else { print "  ✓ every example is a doctest or a test" }
+        if ($empty_code | length) > 0 { print $"  ✗ ($empty_code | length) example\(s\) with empty code"; $ok = false } else { print "  ✓ every example carries its code" }
+        if ($unanchored | length) > 0 { print $"  ✗ ($unanchored | length) example\(s\) anchor onto no real namespace"; $ok = false } else { print "  ✓ every example anchors to the map \(owner or its parent is a node\)" }
     }
 
     print ""

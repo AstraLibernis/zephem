@@ -33,6 +33,7 @@ pub fn main(init: std.process.Init) !void {
     const docs_out: []const u8 = if (args.len > 5) args[5] else "docs.tsv";
     const fields_out: []const u8 = if (args.len > 6) args[6] else "fields.tsv";
     const delegates_out: []const u8 = if (args.len > 7) args[7] else "delegates.tsv";
+    const examples_out: []const u8 = if (args.len > 8) args[8] else "examples.tsv";
 
     const nodes_file = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nodes_file.close(io);
@@ -44,6 +45,8 @@ pub fn main(init: std.process.Init) !void {
     defer fields_file.close(io);
     const delegates_file = try std.Io.Dir.cwd().createFile(io, delegates_out, .{});
     defer delegates_file.close(io);
+    const examples_file = try std.Io.Dir.cwd().createFile(io, examples_out, .{});
+    defer examples_file.close(io);
 
     var nbuf: [1 << 16]u8 = undefined;
     var nfw = nodes_file.writer(io, &nbuf);
@@ -60,6 +63,9 @@ pub fn main(init: std.process.Init) !void {
     var gbuf: [1 << 16]u8 = undefined;
     var gfw = delegates_file.writer(io, &gbuf);
     const gw = &gfw.interface;
+    var xbuf: [1 << 16]u8 = undefined;
+    var xfw = examples_file.writer(io, &xbuf);
+    const xw = &xfw.interface;
 
     var visited = std.StringHashMap(void).init(arena);
     try visited.put(root_path, {});
@@ -76,6 +82,7 @@ pub fn main(init: std.process.Init) !void {
         .docs = dw,
         .fields = fw,
         .delegates = gw,
+        .examples = xw,
     };
 
     try nw.print("path\tdepth\tkind\tname\tn_children\tdetail\n", .{});
@@ -83,6 +90,7 @@ pub fn main(init: std.process.Init) !void {
     try dw.print("path\tdoc\n", .{});
     try fw.print("path\ttype\tvalue\n", .{});
     try gw.print("path\ttarget\n", .{});
+    try xw.print("path\tkind\tname\tcode\n", .{});
 
     const root_logical = std.fs.path.stem(root_path); // "std"
     if (try az.parseFile(io, arena, root_path)) |root_ast_v| {
@@ -101,4 +109,5 @@ pub fn main(init: std.process.Init) !void {
     try dw.flush();
     try fw.flush();
     try gw.flush();
+    try xw.flush();
 }

@@ -51,8 +51,19 @@ call it forwards to, so a factory we don't descend isn't a dead end. The target 
 source text, **unresolved** (resolving it to a path is a derived-layer job).
 **32 delegators** (e.g. `std.ArrayList → array_list.Aligned(T, null)`).
 
+### `examples.tsv` — usage from tests & doctests
+`path · kind · name · code`. Every `test` declaration in std, as a real, compilable usage
+example. `kind = doctest` for a `test <identifier>` — bound by name to the decl it documents,
+so `path` joins straight onto that node (`test parseInt` in `fmt.zig` → `std.fmt.parseInt`);
+`kind = test` for a `test "…"` / anonymous test, whose `path` is the enclosing namespace.
+`code` is the whole `test … {}` source with tabs/newlines escaped (`\t`/`\n`) so a multi-line
+snippet stays on one row. On zig 0.16.0: **1,284 examples** (411 doctests bound
+to a decl). A doctest may name a *private* decl, so its `path` won't always be in the pub map —
+but its parent namespace always is.
+
 `verify_std.nu` proves these overlays *register* on the map: every `sigs`/`docs` path is
-a real node, paths are unique, and the signature set equals the map's function set.
+a real node, paths are unique, the signature set equals the map's function set, and every
+example anchors to the map (its owner or the owner's parent is a real node).
 
 ---
 

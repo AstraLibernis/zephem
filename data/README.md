@@ -18,7 +18,7 @@ derived/ is what zephem computes from it, and can be deleted and rebuilt from ex
 alone.**
 
 At a glance — **48,499 nodes across 310 files** (map), 6,163 signatures,
-11,610 docs, 31,048 fields/tags, 1,324 containers resolved, and six
+11,610 docs, 31,048 fields/tags, 1,284 test/doctest examples, 1,324 containers resolved, and six
 derivatives keyed back to the map at the same `path`.
 
 ## Kind policy — who owns what, and which overlay counts it

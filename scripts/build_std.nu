@@ -22,7 +22,7 @@
 #         nu scripts/build_std.nu --depth 24
 #         nu scripts/build_std.nu --check       # prove the committed snapshot rebuilds
 
-const NAMES = ["extracted/nodes.tsv" "derived/index.tsv" "extracted/sigs.tsv" "extracted/docs.tsv" "extracted/fields.tsv" "extracted/delegates.tsv"]
+const NAMES = ["extracted/nodes.tsv" "derived/index.tsv" "extracted/sigs.tsv" "extracted/docs.tsv" "extracted/fields.tsv" "extracted/delegates.tsv" "extracted/examples.tsv"]
 
 # The active toolchain's std root. `zig env` emits ZON, not JSON — pull the path out.
 def std-root [] {
@@ -37,7 +37,7 @@ def regen [root: string, depth: int, outdir: string] {
     mkdir $"($outdir)/extracted" $"($outdir)/derived"
     # the parser reads std once → the structural map + as-written signatures + `///` docs.
     # derive builds its TOC.
-    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/sigs.tsv" $"($outdir)/extracted/docs.tsv" $"($outdir)/extracted/fields.tsv" $"($outdir)/extracted/delegates.tsv"
+    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/sigs.tsv" $"($outdir)/extracted/docs.tsv" $"($outdir)/extracted/fields.tsv" $"($outdir)/extracted/delegates.tsv" $"($outdir)/extracted/examples.tsv"
     (^zig run derive/index.zig -- $"($outdir)/extracted/nodes.tsv" | into string) | save -f $"($outdir)/derived/index.tsv"
 }
 
@@ -91,7 +91,7 @@ def main [--depth: int = 24, --check] {
     print $"           rows: (($t | length))   files: (($t | where kind == 'ns' | length))   max depth: (($t | get depth | math max))"
     let it = (open data/std/derived/index.tsv)
     print $"[index]    containers: (($it | length))   root span: (($it | get span | math max))"
-    print $"[detail]   signatures: (open data/std/extracted/sigs.tsv | length)   documented decls: (open data/std/extracted/docs.tsv | length)   fields/tags: (open data/std/extracted/fields.tsv | length)   delegators: (open data/std/extracted/delegates.tsv | length)"
+    print $"[detail]   signatures: (open data/std/extracted/sigs.tsv | length)   documented decls: (open data/std/extracted/docs.tsv | length)   fields/tags: (open data/std/extracted/fields.tsv | length)   delegators: (open data/std/extracted/delegates.tsv | length)   examples: (open data/std/extracted/examples.tsv | length)"
 
     # ---- TRUE (backward): read the data the other way; it must agree ---------
     print "[backward] re-reading the datasets — must reconcile..."

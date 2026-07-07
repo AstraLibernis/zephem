@@ -141,6 +141,8 @@ def render [] {
         "@@N_DOCS@@":         (commafy (open data/std/extracted/docs.tsv | length))
         "@@N_FIELDS@@":       (commafy (open data/std/extracted/fields.tsv | length))
         "@@N_DELEGATES@@":    (commafy (open data/std/extracted/delegates.tsv | length))
+        "@@N_EXAMPLES@@":     (commafy (open data/std/extracted/examples.tsv | length))
+        "@@N_DOCTESTS@@":     (commafy (open data/std/extracted/examples.tsv | where kind == "doctest" | length))
         "@@N_FN@@":           (commafy ($nodes | where kind == "fn" | length))
         "@@N_NSREF@@":        (commafy ($nodes | where kind == "nsref" | length))
         "@@N_EDGES@@":        (commafy ($n - 1))

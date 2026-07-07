@@ -18,7 +18,7 @@ derived/ is what zephem computes from it, and can be deleted and rebuilt from ex
 alone.**
 
 At a glance — **@@N_NODES@@ nodes across @@N_FILES@@ files** (map), @@N_SIGS@@ signatures,
-@@N_DOCS@@ docs, @@N_FIELDS@@ fields/tags, @@N_RES_CONT@@ containers resolved, and six
+@@N_DOCS@@ docs, @@N_FIELDS@@ fields/tags, @@N_EXAMPLES@@ test/doctest examples, @@N_RES_CONT@@ containers resolved, and six
 derivatives keyed back to the map at the same `path`.
 
 ## Kind policy — who owns what, and which overlay counts it
