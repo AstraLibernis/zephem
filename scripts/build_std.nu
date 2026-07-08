@@ -35,9 +35,9 @@ def std-root [] {
 # --check, so they cannot diverge.
 def regen [root: string, outdir: string] {
     mkdir $"($outdir)/extracted" $"($outdir)/derived"
-    # parse2 walks std once → the tree (nodes), the node's own facts (attrs), and its typed,
+    # the parser walks std once → the tree (nodes), the node's own facts (attrs), and its typed,
     # resolved edges (edges). derive builds the table of contents from the tree.
-    ^zig run parse2/build.zig -- $root $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/edges.tsv" $"($outdir)/extracted/attrs.tsv"
+    ^zig run parse/build.zig -- $root $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/edges.tsv" $"($outdir)/extracted/attrs.tsv"
     (^zig run derive/index.zig -- $"($outdir)/extracted/nodes.tsv" | into string) | save -f $"($outdir)/derived/index.tsv"
 }
 

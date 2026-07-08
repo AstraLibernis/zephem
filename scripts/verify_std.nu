@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
-# verify_std.nu — prove the parse2 map's integrity by reading it a SECOND way.
+# verify_std.nu — prove the parser map's integrity by reading it a SECOND way.
 #
-# The forward pass (parse2/build.zig) emits three streams; this re-reads them and checks they
+# The forward pass (parse/build.zig) emits three streams; this re-reads them and checks they
 # reconcile — no external oracle, the data checks itself. A regeneration this rejects is rejected.
 #
 #   CONNECTED    every non-root node hangs off a real parent (the tree has no orphans)

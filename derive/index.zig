@@ -74,7 +74,7 @@ pub fn main(init: std.process.Init) !void {
         if (ln.len == 0) continue;
         var f = std.mem.splitScalar(u8, ln, '\t');
         const path = f.next() orelse continue;
-        const kind = f.next() orelse continue; // parse2 column order: path · kind · name · vis
+        const kind = f.next() orelse continue; // parser column order: path · kind · name · vis
         paths[idx] = path;
         depths[idx] = depthOf(path);
         kinds[idx] = kind;
