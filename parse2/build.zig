@@ -88,6 +88,36 @@ fn typeText(w: *W, ast: *const Ast, n: Ast.Node.Index) ![]const u8 {
     return collapse(w.arena, ast.getNodeSource(n));
 }
 
+/// Escape a code snippet for one TSV cell — `\` `\t` `\r` `\n` → two chars — so a multi-line test
+/// body survives as a single row (collapse would destroy its formatting).
+fn escapeTsv(arena: std.mem.Allocator, s: []const u8) ![]const u8 {
+    var n: usize = 0;
+    for (s) |c| n += switch (c) {
+        '\\', '\t', '\r', '\n' => @as(usize, 2),
+        else => 1,
+    };
+    const buf = try arena.alloc(u8, n);
+    var i: usize = 0;
+    for (s) |c| {
+        const e: ?u8 = switch (c) {
+            '\\' => '\\',
+            '\t' => 't',
+            '\r' => 'r',
+            '\n' => 'n',
+            else => null,
+        };
+        if (e) |x| {
+            buf[i] = '\\';
+            buf[i + 1] = x;
+            i += 2;
+        } else {
+            buf[i] = c;
+            i += 1;
+        }
+    }
+    return buf[0..i];
+}
+
 /// A decl's `///` doc-comment run, whitespace-collapsed; "" when undocumented.
 fn docComment(w: *W, ast: *const Ast, node: Ast.Node.Index) ![]const u8 {
     const first = ast.firstToken(node);
@@ -301,6 +331,19 @@ fn fnEdges(w: *W, ast: *const Ast, cp: []const u8, m: Ast.Node.Index, proto: *co
 fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u8, parent_kind: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) !void {
     var tuple_idx: usize = 0; // names unnamed (positional) tuple fields per container
     for (members) |m| {
+        // test / doctest → an `example` fact on the decl it documents (`test <ident>`) or on the
+        // enclosing namespace (`test "…"`). Attached by owner path, in the shape's attrs stream.
+        if (ast.nodeTag(m) == .test_decl) {
+            var owner = path;
+            const nt = ast.nodeData(m).opt_token_and_node[0];
+            if (nt.unwrap()) |tok| if (ast.tokenTag(tok) == .identifier) {
+                const nm = ast.tokenSlice(tok);
+                const base = if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[k + 1 ..] else path;
+                owner = if (std.mem.eql(u8, nm, base)) path else try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, nm });
+            };
+            try w.attr(owner, "example", try escapeTsv(w.arena, ast.getNodeSource(m)));
+            continue;
+        }
         // functions (incl. type factories)
         var fbuf: [1]Ast.Node.Index = undefined;
         if (ast.fullFnProto(&fbuf, m)) |proto| {
