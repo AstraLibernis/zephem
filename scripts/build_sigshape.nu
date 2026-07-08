@@ -69,9 +69,9 @@ def classify [sig: string] {
 }
 
 def derive [dir: string] {
-    if not ($"($dir)/extracted/sigs.tsv" | path exists) { print $"missing ($dir)/extracted/sigs.tsv"; exit 1 }
-    open $"($dir)/extracted/sigs.tsv" | each {|r|
-        let c = (classify $r.sig)
+    if not ($"($dir)/extracted/attrs.tsv" | path exists) { print $"missing ($dir)/extracted/attrs.tsv"; exit 1 }
+    open $"($dir)/extracted/attrs.tsv" | where attr == "sig" | each {|r|
+        let c = (classify $r.value)
         {path: $r.path, first_param: $c.first_param, io: $c.io, generic: $c.generic}
     } | sort-by path
 }

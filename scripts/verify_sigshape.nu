@@ -12,12 +12,12 @@
 # Usage:  nu scripts/verify_sigshape.nu [data/std]
 
 def main [dir: string = "data/std"] {
-    for f in ["derived/sigshape.tsv" "extracted/sigs.tsv" "extracted/nodes.tsv"] {
+    for f in ["derived/sigshape.tsv" "extracted/attrs.tsv" "extracted/nodes.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     let ss = (open $"($dir)/derived/sigshape.tsv")
-    let sigs = (open $"($dir)/extracted/sigs.tsv")
-    let sigmap = ($sigs | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.sig})
+    let sigs = (open $"($dir)/extracted/attrs.tsv" | where attr == "sig")
+    let sigmap = ($sigs | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.value})
     let sigset = ($sigs | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
     let fns = (open $"($dir)/extracted/nodes.tsv" | where kind == "fn" | length)
     mut ok = true

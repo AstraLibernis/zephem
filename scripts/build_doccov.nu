@@ -21,11 +21,11 @@
 const MANIFEST = "data/std/SHA256SUMS.doccov"
 
 def derive [dir: string] {
-    for f in ["extracted/nodes.tsv" "extracted/docs.tsv"] {
+    for f in ["extracted/nodes.tsv" "extracted/attrs.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    # left-join the map to docs (version-agnostic — no optional `get`); unmatched nodes default to no.
-    let docs = (open $"($dir)/extracted/docs.tsv" | select path | uniq-by path | insert documented "yes")
+    # left-join the map to the `doc` attrs (version-agnostic — no optional `get`); unmatched → no.
+    let docs = (open $"($dir)/extracted/attrs.tsv" | where attr == "doc" | select path | uniq-by path | insert documented "yes")
     open $"($dir)/extracted/nodes.tsv" | select path kind | join --left $docs path | each {|r|
         {path: $r.path, kind: $r.kind, documented: ($r.documented | default "no")}
     } | sort-by path

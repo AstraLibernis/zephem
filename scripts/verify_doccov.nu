@@ -11,14 +11,14 @@
 # Usage:  nu scripts/verify_doccov.nu [data/std]
 
 def main [dir: string = "data/std"] {
-    for f in ["derived/doccov.tsv" "extracted/nodes.tsv" "extracted/docs.tsv"] {
+    for f in ["derived/doccov.tsv" "extracted/nodes.tsv" "extracted/attrs.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     let dc = (open $"($dir)/derived/doccov.tsv")
     let nodes = (open $"($dir)/extracted/nodes.tsv" | select path kind)
     let kindmap = ($nodes | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.kind})
     let nodeset = ($nodes | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-    let docpaths = (open $"($dir)/extracted/docs.tsv" | get path | uniq)
+    let docpaths = (open $"($dir)/extracted/attrs.tsv" | where attr == "doc" | get path | uniq)
     let docset = ($docpaths | reduce --fold {} {|p, acc| $acc | upsert $p true})
     mut ok = true
     print $"doccov: ($dc | length) nodes"
