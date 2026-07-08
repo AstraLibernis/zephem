@@ -14,11 +14,11 @@
 def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 
 def main [dir: string = "data/std"] {
-    for f in ["derived/callcard.tsv" "extracted/sigs.tsv" "extracted/resolved.tsv"] {
+    for f in ["derived/callcard.tsv" "extracted/attrs.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
     let cc = (open $"($dir)/derived/callcard.tsv")
-    let sigs = (open $"($dir)/extracted/sigs.tsv" | select path sig | insert np {|r| norm-path $r.path})
+    let sigs = (open $"($dir)/extracted/attrs.tsv" | where attr == "sig" | select path value | rename --column {value: sig} | insert np {|r| norm-path $r.path})
     let res = (open $"($dir)/extracted/resolved.tsv" | where kind == "fn" | select path detail | insert np {|r| norm-path $r.path} | uniq-by np)
     let sigByNp = ($sigs | reduce --fold {} {|r, acc| $acc | upsert $r.np $r.sig})
     let resByNp = ($res | reduce --fold {} {|r, acc| $acc | upsert $r.np $r.detail})

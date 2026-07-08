@@ -18,7 +18,7 @@
 #
 # (doc coverage is doccov's job; join it on path if you want it — kept out to avoid duplication.)
 #
-# A pure JOIN of committed outputs — sigs + resolved — keyed by `path` (keyword-quoting
+# A pure JOIN of committed outputs — attrs[sig] + resolved — keyed by `path` (keyword-quoting
 # normalised, the trick consensus uses). Self-checking. Writes data/std/derived/callcard.tsv +
 # SHA256SUMS.callcard; --check rebuilds byte-identical.
 #
@@ -31,10 +31,10 @@ const MANIFEST = "data/std/SHA256SUMS.callcard"
 def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 
 def derive [dir: string] {
-    for f in ["extracted/sigs.tsv" "extracted/resolved.tsv"] {
+    for f in ["extracted/attrs.tsv" "extracted/resolved.tsv"] {
         if not ($"($dir)/($f)" | path exists) { print $"missing ($dir)/($f)"; exit 1 }
     }
-    let sigs = (open $"($dir)/extracted/sigs.tsv" | select path sig | rename --column {path: spath} | insert np {|r| norm-path $r.spath})
+    let sigs = (open $"($dir)/extracted/attrs.tsv" | where attr == "sig" | select path value | rename --column {path: spath, value: sig} | insert np {|r| norm-path $r.spath})
     let res = (open $"($dir)/extracted/resolved.tsv" | where kind == "fn" | select path detail | uniq-by path | rename --column {path: rpath, detail: resolved} | insert np {|r| norm-path $r.rpath})
     $sigs | join --outer $res np | each {|r|
         let path = (if $r.spath != null { $r.spath } else { $r.rpath })
