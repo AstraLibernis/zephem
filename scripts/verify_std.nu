@@ -1,25 +1,23 @@
 #!/usr/bin/env nu
-# verify_std.nu — prove the std map's integrity by reading it a SECOND way.
+# verify_std.nu — prove the parse2 map's integrity by reading it a SECOND way.
 #
-# The extractor (parse/build.zig) records, per container, how many public children
-# it declares (`n_children`). This script never trusts that number on its own —
-# it re-derives the truth by grouping every row under its parent path, then
-# checks the two agree. No external tools, no oracle: the data checks itself.
+# The forward pass (parse2/build.zig) emits three streams; this re-reads them and checks they
+# reconcile — no external oracle, the data checks itself. A regeneration this rejects is rejected.
 #
-#   CONSERVATION   Σ n_children  ==  (rows − 1)      # every non-root node is one child
-#   PER-NODE       for each expanded container, observed children == n_children
-#   PARTITION      Σ rows-per-kind == total rows     # no unclassified leftovers
-#   @ref INTEGRITY every @ref path is expanded somewhere else (no dangling refs)
+#   CONNECTED    every non-root node hangs off a real parent (the tree has no orphans)
+#   PARTITION    every row is a known kind
+#   INDEX        derived/index.tsv points only at real nodes, root span == total rows
+#   ATTRS        every attr (doc/sig/value/loc/example) keys onto a real node
+#   EDGES        every edge starts at a real node, and every RESOLVED edge (local/cross) points at
+#                a real node — i.e. the link has a valid target found in the data (the B invariant)
 #
 # Usage:  nu scripts/verify_std.nu            # checks data/std/extracted/nodes.tsv
-#         nu scripts/verify_std.nu other.tsv
+#         nu scripts/verify_std.nu other.tsv --partial
 
-# The parent path — everything but the last segment. Two segment quirks are handled:
-#   • a quoted identifier `@"a.b.c"` legally contains dots (e.g. LLVM intrinsic enum tags),
-#     so we split on top-level dots only, treating `@"..."` as atomic.
-#   • a type factory's members hang under `<fn>()` (`std.ArrayList().append`), so the parent
-#     of a member is the factory node `<fn>` — strip a trailing `()` off the computed parent.
+# Parent path. A `<fn>()` factory node's parent is the fn (drop the `()`); otherwise drop the last
+# top-level segment (a `.` inside `@"…"` is part of a name, not a separator).
 def parent [path: string] {
+    if ($path | str ends-with "()") { return ($path | str replace --regex '\(\)$' "") }
     mut segs = []
     mut cur = ""
     mut inq = false
@@ -36,162 +34,63 @@ def parent [path: string] {
         }
     }
     $segs = ($segs | append $cur)
-    if ($segs | length) <= 1 { "" } else { ($segs | drop 1 | str join ".") | str replace --regex '\(\)$' "" }
+    if ($segs | length) <= 1 { "" } else { $segs | drop 1 | str join "." }
 }
 
 def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     let t = (open $file)
     let n = ($t | length)
     mut ok = true
+    let root = ($t | first | get path)
+    let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
 
-    # 1. CONSERVATION — the one-number checksum.
-    let declared = ($t | get n_children | math sum)
-    let expect = ($n - 1)
-    print $"conservation:  Σ n_children = ($declared)   rows − 1 = ($expect)"
-    if $declared != $expect {
-        print $"  ✗ MISMATCH — tree is not fully connected \(orphans or double-counts\)"
-        $ok = false
-    } else { print "  ✓ tree is fully connected — no orphans, no double-counts" }
+    # 1. CONNECTED — every non-root node's parent is a real node.
+    let orphans = ($t | where path != $root | where {|r|
+        let p = (parent $r.path)
+        $p != "" and ($nodeset | get -o $p) != true
+    })
+    print $"connected:  ($n) nodes"
+    if ($orphans | length) > 0 { print $"  ✗ ($orphans | length) orphan\(s\) — parent path missing"; $orphans | first 5 | print; $ok = false } else { print "  ✓ every node hangs off a real parent" }
 
-    # 2. PER-NODE — observed children vs recorded, for every expanded container.
-    let observed = ($t | each {|r| {parent: (parent $r.path)} } | group-by parent
-        | items {|k, v| {path: $k, observed: ($v | length)} })
-    let expanded = ($t | where n_children > 0 | select path n_children | update n_children {|r| $r.n_children | into int})
-    let joined = ($expanded | join $observed path)
-    let bad = ($joined | where {|r| ($r.n_children | into int) != ($r.observed | into int)})
-    print $"per-node:       ($expanded | length) expanded containers checked"
-    if ($bad | length) > 0 {
-        print $"  ✗ ($bad | length) containers disagree:"
-        $bad | first 10 | print
-        $ok = false
-    } else { print "  ✓ every container's recorded child count matches what's in the tree" }
-
-    # 3. PARTITION — kinds must sum to the whole.
+    # 2. PARTITION — every row a known kind.
+    let known = ["ns" "nsref" "nserr" "modref" "struct" "enum" "union" "opaque" "fn" "const" "alias" "field" "tag"]
+    let bad = ($t | where kind not-in $known)
     let by_kind = ($t | group-by kind | items {|k, v| {kind: $k, n: ($v | length)} } | sort-by n --reverse)
-    let kind_sum = ($by_kind | get n | math sum)
-    print $"partition:      Σ kinds = ($kind_sum)   rows = ($n)"
-    if $kind_sum != $n { print "  ✗ unclassified rows exist"; $ok = false } else { print "  ✓ every row classified exactly once" }
+    print $"partition:  ($by_kind | length) distinct kinds"
+    if ($bad | length) > 0 { print $"  ✗ ($bad | length) row\(s\) with an unknown kind"; $ok = false } else { print "  ✓ every row a known kind" }
     $by_kind | print
 
-    # 4. nsref INTEGRITY — every reference's target file is expanded somewhere.
-    let expanded_files = ($t | where kind == "ns" | get detail | uniq)
-    let refs = ($t | where kind == "nsref")
-    let dangling = ($refs | where {|r| $r.detail not-in $expanded_files })
-    print $"nsref integrity: ($refs | length) refs"
-    if ($dangling | length) > 0 { print $"  ✗ ($dangling | length) dangling"; $dangling | first 10 | print; $ok = false } else { print "  ✓ every reference's target file is expanded somewhere" }
-
-    # 5. INDEX (table of contents) — re-derive each block from nodes.tsv depths.
-    #    The index claims "node X lives at line L for span S rows". We DON'T trust
-    #    its numbers: we look up the depths at L+S-1 (last claimed row) and L+S
-    #    (row after) directly in nodes.tsv. A correct span ends exactly where the
-    #    subtree does — the last row is deeper than the node, the next is not.
+    # 3. INDEX — the table of contents registers on the map, root owns everything.
     if ("data/std/derived/index.tsv" | path exists) {
-        let nl = ($t | enumerate | each {|r| {line: ($r.index + 2), depth: ($r.item.depth | into int), path: $r.item.path, kind: $r.item.kind} })
-        let ix = (open data/std/derived/index.tsv | each {|r| {path: $r.path, line: ($r.line | into int), span: ($r.span | into int), depth: ($r.depth | into int), kind: $r.kind} })
-        print $"index toc:      ($ix | length) containers"
-        mut iok = true
-        # root must own the whole file
-        let rootspan = ($ix | get span | math max)
-        if $rootspan != $n { print $"  ✗ root span ($rootspan) != rows ($n)"; $iok = false }
-        # every index line must point at the named container in nodes.tsv
-        let nlk = ($nl | select line path kind | rename --column {path: npath, kind: nkind})
-        let jb = ($ix | join $nlk line)
-        let badB = ($jb | where {|r| $r.path != $r.npath or $r.kind != $r.nkind})
-        if (($jb | length) != ($ix | length)) or (($badB | length) > 0) { print "  ✗ some index lines don't point at the right node"; $iok = false }
-        # re-derive the span boundary straight from nodes.tsv depths
-        let datl = ($nl | select line depth | rename --column {line: atline, depth: atdepth})
-        let badlast = ($ix | insert atline {|r| $r.line + $r.span - 1} | join $datl atline | where {|r| $r.atdepth <= $r.depth})
-        let badafter = ($ix | insert atline {|r| $r.line + $r.span} | join $datl atline | where {|r| $r.atdepth > $r.depth})
-        if (($badlast | length) > 0) or (($badafter | length) > 0) { print $"  ✗ (($badlast | length) + ($badafter | length)) blocks over/under-shoot their subtree"; $iok = false }
-        if $iok { print "  ✓ every block re-derived from nodes.tsv — line+span land exactly on each subtree" } else { $ok = false }
-    } else { print "index toc:      ⚠ derived/index.tsv not found — table-of-contents check skipped" }
+        let ix = (open data/std/derived/index.tsv)
+        let notreal = ($ix | where {|r| ($nodeset | get -o $r.path) != true})
+        print $"index:      ($ix | length) containers"
+        if ($notreal | length) > 0 { print $"  ✗ ($notreal | length) index row\(s\) point at a non-node"; $ok = false } else { print "  ✓ every index entry is a real node" }
+        if (($ix | get span | into int | math max) != $n) { print $"  ✗ root span != ($n) rows"; $ok = false } else { print "  ✓ root span == total rows" }
+    }
 
-    # 6. DETAIL OVERLAYS — the parser's sigs/docs must key onto real nodes (sigs onto fns),
-    #    one row per path. Same self-check spirit: the overlays can't drift from the map.
     let dir = ($file | path dirname)
 
-    # HARDENING (overlay completeness). The parser always emits these overlays beside the map, so a
-    # MISSING one means a wrong/renamed path — not "legitimately absent". A `if (path exists)` guard
-    # alone would silently skip the check and still print ✓ (this exact bug once disabled the
-    # sigs/docs/fields/delegates checks). So gate on completeness up front and ALWAYS print a line:
-    # by default a missing overlay FAILS; `--partial` downgrades it to a visible skip, for the rare
-    # case of verifying a bare nodes.tsv with no siblings.
-    let expected_overlays = ["sigs.tsv" "docs.tsv" "fields.tsv" "delegates.tsv" "examples.tsv"]
-    let missing_overlays = ($expected_overlays | where {|f| not ($"($dir)/($f)" | path exists)})
-    if ($missing_overlays | is-empty) {
-        print $"overlays:       ✓ all present \(($expected_overlays | length)\)"
-    } else if $partial {
-        print $"overlays:       ⚠ SKIPPED — not beside the map: ($missing_overlays | str join ', ')"
-    } else {
-        print $"overlays:       ✗ MISSING beside the map: ($missing_overlays | str join ', ') — run build_std, or pass --partial to verify the map alone"
-        $ok = false
-    }
+    # 4. ATTRS — every attr keys onto a real node; known kinds only.
+    if ($"($dir)/attrs.tsv" | path exists) {
+        let a = (open $"($dir)/attrs.tsv")
+        let known_attr = ["doc" "sig" "value" "loc" "example"]
+        let a_orphan = ($a | where {|r| ($nodeset | get -o $r.path) != true})
+        let a_bad = ($a | where attr not-in $known_attr)
+        print $"attrs:      ($a | length) rows"
+        if ($a_orphan | length) > 0 { print $"  ✗ ($a_orphan | length) attr\(s\) key onto a missing node"; $ok = false } else { print "  ✓ every attr keys onto a real node" }
+        if ($a_bad | length) > 0 { print $"  ✗ ($a_bad | length) attr\(s\) of an unknown kind"; $ok = false } else { print "  ✓ every attr a known kind (doc/sig/value/loc/example)" }
+    } else if (not $partial) { print "  ✗ attrs.tsv missing beside the map"; $ok = false }
 
-    if ($"($dir)/sigs.tsv" | path exists) {
-        let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let fnset = ($t | where kind == "fn" | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let sigs = (open $"($dir)/sigs.tsv")
-        let docs = (open $"($dir)/docs.tsv")
-        let sig_orphan = ($sigs | where {|r| ($fnset | get -o $r.path) != true})
-        let doc_orphan = ($docs | where {|r| ($nodeset | get -o $r.path) != true})
-        let sig_dup = ($sigs | get path | uniq -d)
-        let doc_dup = ($docs | get path | uniq -d)
-        print $"detail overlays: ($sigs | length) sigs / ($docs | length) docs"
-        if ($sig_orphan | length) > 0 { print $"  ✗ ($sig_orphan | length) signature\(s\) key onto a non-fn / missing node"; $ok = false } else { print "  ✓ every signature keys onto a real fn node" }
-        if ($doc_orphan | length) > 0 { print $"  ✗ ($doc_orphan | length) doc\(s\) key onto a missing node"; $ok = false } else { print "  ✓ every doc keys onto a real node" }
-        if (($sig_dup | length) > 0) or (($doc_dup | length) > 0) { print $"  ✗ duplicate keys: ($sig_dup | length) sig / ($doc_dup | length) doc"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
-    }
-
-    # 7. FIELD OVERLAY — fields.tsv (path·type·value) must be 1:1 with the field/tag nodes:
-    #    every payload row keys onto a real field/tag node, no dups, and every field/tag node
-    #    has exactly one payload row. Same self-check spirit as the sig/doc overlays.
-    if ($"($dir)/fields.tsv" | path exists) {
-        let fieldnodes = ($t | where kind in ["field" "tag"])
-        let fieldset = ($fieldnodes | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let fields = (open $"($dir)/fields.tsv")
-        let field_orphan = ($fields | where {|r| ($fieldset | get -o $r.path) != true})
-        let field_dup = ($fields | get path | uniq -d)
-        print $"field overlay:  ($fields | length) field/tag payloads for ($fieldnodes | length) field/tag nodes"
-        if ($field_orphan | length) > 0 { print $"  ✗ ($field_orphan | length) payload\(s\) key onto a non-field/tag or missing node"; $ok = false } else { print "  ✓ every payload keys onto a real field/tag node" }
-        if ($field_dup | length) > 0 { print $"  ✗ ($field_dup | length) duplicate field key\(s\)"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
-        if ($fields | length) != ($fieldnodes | length) { print $"  ✗ fields.tsv is not 1:1 with the field/tag nodes"; $ok = false } else { print "  ✓ 1:1 — every field/tag node has exactly one payload row" }
-    }
-
-    # 8. DELEGATE OVERLAY — delegates.tsv (path·target) records a delegating factory and the raw
-    #    call it forwards to. Each must key onto a `fn` node that is a LEAF (n_children == 0) — a
-    #    factory we did NOT descend (its members live on the target). No dups.
-    if ($"($dir)/delegates.tsv" | path exists) {
-        let leaf_fns = ($t | where kind == "fn" | where n_children == 0 | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let dels = (open $"($dir)/delegates.tsv")
-        let del_orphan = ($dels | where {|r| ($leaf_fns | get -o $r.path) != true})
-        let del_dup = ($dels | get path | uniq -d)
-        print $"delegate overlay: ($dels | length) delegating factories"
-        if ($del_orphan | length) > 0 { print $"  ✗ ($del_orphan | length) delegate\(s\) key onto a non-leaf-fn or missing node"; $ok = false } else { print "  ✓ every delegate keys onto a leaf fn node (an undescended factory)" }
-        if ($del_dup | length) > 0 { print $"  ✗ ($del_dup | length) duplicate delegate key\(s\)"; $ok = false } else { print "  ✓ one row per path — no duplicate keys" }
-    }
-
-    # 9. EXAMPLE OVERLAY — examples.tsv (path·kind·name·code) captures test/doctest usage. A
-    #    `doctest` (`test <ident>`) is bound by name to a decl; a `test` lives in a namespace. The
-    #    invariant we can always hold: every example ANCHORS to the map — its owner, or its owner's
-    #    parent namespace, is a real node. (A doctest may name a private, non-pub decl, so the
-    #    direct pub-bind rate is reported, not required.)
-    if ($"($dir)/examples.tsv" | path exists) {
-        let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
-        let ex = (open $"($dir)/examples.tsv")
-        let bad_kind = ($ex | where kind not-in ["doctest" "test"])
-        let empty_code = ($ex | where {|r| ($r.code | into string | is-empty)})
-        let unanchored = ($ex | where {|r|
-            let owner_ok = (($nodeset | get -o $r.path) == true)
-            let parent = ($r.path | split row "." | drop 1 | str join ".")
-            not ($owner_ok or (($nodeset | get -o $parent) == true))
-        })
-        let doctests = ($ex | where kind == "doctest")
-        let bound = ($doctests | where {|r| ($nodeset | get -o $r.path) == true})
-        print $"example overlay: ($ex | length) examples \(($doctests | length) doctest / (($ex | where kind == 'test') | length) test\) — ($bound | length)/($doctests | length) doctests bind to a pub decl"
-        if ($bad_kind | length) > 0 { print $"  ✗ ($bad_kind | length) example\(s\) with an unknown kind"; $ok = false } else { print "  ✓ every example is a doctest or a test" }
-        if ($empty_code | length) > 0 { print $"  ✗ ($empty_code | length) example\(s\) with empty code"; $ok = false } else { print "  ✓ every example carries its code" }
-        if ($unanchored | length) > 0 { print $"  ✗ ($unanchored | length) example\(s\) anchor onto no real namespace"; $ok = false } else { print "  ✓ every example anchors to the map \(owner or its parent is a node\)" }
-    }
+    # 5. EDGES — start at a real node; every RESOLVED edge points at a real node (the B invariant).
+    if ($"($dir)/edges.tsv" | path exists) {
+        let e = (open $"($dir)/edges.tsv")
+        let e_orphan = ($e | where {|r| ($nodeset | get -o $r.src) != true})
+        let bad_link = ($e | where scope in ["local" "cross"] | where {|r| ($nodeset | get -o $r.target) != true})
+        print $"edges:      ($e | length) rows"
+        if ($e_orphan | length) > 0 { print $"  ✗ ($e_orphan | length) edge\(s\) start at a missing node"; $ok = false } else { print "  ✓ every edge starts at a real node" }
+        if ($bad_link | length) > 0 { print $"  ✗ ($bad_link | length) resolved edge\(s\) point at a MISSING node — a link lies"; $bad_link | first 5 | print; $ok = false } else { print "  ✓ every local/cross edge resolves to a real node — links are valid" }
+    } else if (not $partial) { print "  ✗ edges.tsv missing beside the map"; $ok = false }
 
     print ""
     if $ok { print "VERDICT: ✓ all integrity checks pass" } else { print "VERDICT: ✗ integrity FAILED"; exit 1 }

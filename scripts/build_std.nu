@@ -22,7 +22,7 @@
 #         nu scripts/build_std.nu --depth 24
 #         nu scripts/build_std.nu --check       # prove the committed snapshot rebuilds
 
-const NAMES = ["extracted/nodes.tsv" "derived/index.tsv" "extracted/sigs.tsv" "extracted/docs.tsv" "extracted/fields.tsv" "extracted/delegates.tsv" "extracted/examples.tsv"]
+const NAMES = ["extracted/nodes.tsv" "extracted/attrs.tsv" "extracted/edges.tsv" "derived/index.tsv"]
 
 # The active toolchain's std root. `zig env` emits ZON, not JSON — pull the path out.
 def std-root [] {
@@ -33,11 +33,11 @@ def std-root [] {
 # Regenerate the datasets into `outdir`, saved identically to the committed snapshot (so
 # hashes are comparable). The single source of build truth, shared by the normal build and
 # --check, so they cannot diverge.
-def regen [root: string, depth: int, outdir: string] {
+def regen [root: string, outdir: string] {
     mkdir $"($outdir)/extracted" $"($outdir)/derived"
-    # the parser reads std once → the structural map + as-written signatures + `///` docs.
-    # derive builds its TOC.
-    ^zig run parse/build.zig -- $root ($depth | into string) $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/sigs.tsv" $"($outdir)/extracted/docs.tsv" $"($outdir)/extracted/fields.tsv" $"($outdir)/extracted/delegates.tsv" $"($outdir)/extracted/examples.tsv"
+    # parse2 walks std once → the tree (nodes), the node's own facts (attrs), and its typed,
+    # resolved edges (edges). derive builds the table of contents from the tree.
+    ^zig run parse2/build.zig -- $root $"($outdir)/extracted/nodes.tsv" $"($outdir)/extracted/edges.tsv" $"($outdir)/extracted/attrs.tsv"
     (^zig run derive/index.zig -- $"($outdir)/extracted/nodes.tsv" | into string) | save -f $"($outdir)/derived/index.tsv"
 }
 
@@ -57,8 +57,8 @@ def main [--depth: int = 24, --check] {
         let manifest = (open data/std/SHA256SUMS | lines
             | parse -r '(?<hash>\S+)\s+data/std/(?<name>\S+)'
             | reduce --fold {} {|r, acc| $acc | insert $r.name $r.hash })
-        regen $root $depth "/tmp/zephem-check/a"     # two independent fresh rebuilds
-        regen $root $depth "/tmp/zephem-check/b"
+        regen $root "/tmp/zephem-check/a"     # two independent fresh rebuilds
+        regen $root "/tmp/zephem-check/b"
         let a = (hashes "/tmp/zephem-check/a")
         let b = (hashes "/tmp/zephem-check/b")
         mut ok = true
@@ -84,14 +84,17 @@ def main [--depth: int = 24, --check] {
 
     # ---- TRUE (forward): regenerate the datasets -----------------------------
     print $"[forward]  scanning ($root)  \(zig ($zver), depth ($depth)\)"
-    regen $root $depth "data/std"
+    regen $root "data/std"
     $"zig ($zver)\n" | save -f data/std/PINNED   # pin the exact version this snapshot is from
 
     let t = (open data/std/extracted/nodes.tsv)
-    print $"           rows: (($t | length))   files: (($t | where kind == 'ns' | length))   max depth: (($t | get depth | math max))"
+    print $"           rows: (($t | length))   files: (($t | where kind == 'ns' | length))   private: (($t | where vis == 'priv' | length))"
     let it = (open data/std/derived/index.tsv)
-    print $"[index]    containers: (($it | length))   root span: (($it | get span | math max))"
-    print $"[detail]   signatures: (open data/std/extracted/sigs.tsv | length)   documented decls: (open data/std/extracted/docs.tsv | length)   fields/tags: (open data/std/extracted/fields.tsv | length)   delegators: (open data/std/extracted/delegates.tsv | length)   examples: (open data/std/extracted/examples.tsv | length)"
+    print $"[index]    containers: (($it | length))   root span: (($it | get span | math max))   max depth: (($it | get depth | math max))"
+    let attrs = (open data/std/extracted/attrs.tsv)
+    let edges = (open data/std/extracted/edges.tsv)
+    print $"[attrs]    (($attrs | length)) rows — doc (($attrs | where attr == 'doc' | length)) · sig (($attrs | where attr == 'sig' | length)) · value (($attrs | where attr == 'value' | length)) · example (($attrs | where attr == 'example' | length))"
+    print $"[edges]    (($edges | length)) rows — resolved (($edges | where scope in ['local' 'cross' 'primitive' 'generic'] | length)) / unresolved (($edges | where scope == 'unresolved' | length))"
 
     # ---- TRUE (backward): read the data the other way; it must agree ---------
     print "[backward] re-reading the datasets — must reconcile..."

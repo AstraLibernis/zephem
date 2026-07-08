@@ -21,12 +21,25 @@
 
 const std = @import("std");
 
-/// Logical depth = number of top-level `.` separators (a `.` inside `@"…"` is part of a name).
+/// Logical depth from the path: each top-level `.` is one level, and each `()` factory marker is
+/// ALSO one level — `std.ArrayList()` is a child of the fn `std.ArrayList`, not its sibling. A `.`
+/// or `(` inside `@"…"` is part of a name and doesn't count.
 fn depthOf(path: []const u8) u32 {
     var d: u32 = 0;
     var in_quote = false;
-    for (path) |c| {
-        if (c == '"') in_quote = !in_quote else if (c == '.' and !in_quote) d += 1;
+    var i: usize = 0;
+    while (i < path.len) : (i += 1) {
+        const c = path[i];
+        if (c == '"') {
+            in_quote = !in_quote;
+        } else if (in_quote) {
+            continue;
+        } else if (c == '.') {
+            d += 1;
+        } else if (c == '(' and i + 1 < path.len and path[i + 1] == ')') {
+            d += 1;
+            i += 1;
+        }
     }
     return d;
 }
