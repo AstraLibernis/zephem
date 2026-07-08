@@ -40,6 +40,7 @@ const W = struct {
     visited: std.StringHashMap(void), // abs file paths already expanded (walk each file once)
     aliases: std.StringHashMap([]const u8), // alias-node path → its RHS target text (for chasing)
     generics: std.StringHashMap(void), // "<factory()path>#<paramname>" — comptime type params in scope
+    root_dir: []const u8, // std root dir, for machine-independent relative loc paths
     edges: std.ArrayList(Edge), // raw edges, resolved in phase 2
 
     fn node(w: *W, path: []const u8, kind: []const u8, name: []const u8, vis: []const u8) !void {
@@ -293,7 +294,8 @@ fn fnEdges(w: *W, ast: *const Ast, cp: []const u8, m: Ast.Node.Index, proto: *co
     };
 }
 
-fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u8, parent_kind: []const u8, base_dir: []const u8, depth: u32) !void {
+fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u8, parent_kind: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) !void {
+    var tuple_idx: usize = 0; // names unnamed (positional) tuple fields per container
     for (members) |m| {
         // functions (incl. type factories)
         var fbuf: [1]Ast.Node.Index = undefined;
@@ -302,6 +304,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             const vis = if (proto.visib_token != null) "pub" else "priv";
             const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
             try w.node(cp, "fn", name, vis);
+            try w.attr(cp, "loc", try locOf(w, ast, m, rel));
             try w.attr(cp, "doc", try docComment(w, ast, m));
             if (try fnSig(w, ast, &proto)) |sg| try w.attr(cp, "sig", sg);
             try fnEdges(w, ast, cp, m, &proto);
@@ -323,7 +326,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                             try w.generics.put(key, {});
                         };
                     }
-                    try walk(w, ast, cd.ast.members, child, ast.tokenSlice(cd.ast.main_token), base_dir, depth + 1);
+                    try walk(w, ast, cd.ast.members, child, ast.tokenSlice(cd.ast.main_token), base_dir, depth + 1, rel);
                 },
                 else => {},
             };
@@ -333,10 +336,16 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         if (ast.fullContainerField(m)) |cf| {
             var field = cf;
             if (std.mem.eql(u8, parent_kind, "enum") or std.mem.eql(u8, parent_kind, "union")) field.convertToNonTupleLike(ast);
-            if (field.ast.tuple_like) continue;
-            const name = ast.tokenSlice(field.ast.main_token);
+            // positional (tuple) fields have no source name — name them `[N]` so they never collide
+            // with a real named field and read as an index, not data.
+            const name = if (field.ast.tuple_like) blk: {
+                const s = try std.fmt.allocPrint(w.arena, "[{d}]", .{tuple_idx});
+                tuple_idx += 1;
+                break :blk s;
+            } else ast.tokenSlice(field.ast.main_token);
             const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
             try w.node(cp, if (std.mem.eql(u8, parent_kind, "enum")) "tag" else "field", name, "pub");
+            try w.attr(cp, "loc", try locOf(w, ast, m, rel));
             try w.attr(cp, "doc", try docComment(w, ast, m));
             if (field.ast.type_expr.unwrap()) |te| try w.edge(cp, "has_type", try typeText(w, ast, te));
             if (field.ast.value_expr.unwrap()) |ve| try w.attr(cp, "value", try typeText(w, ast, ve));
@@ -347,6 +356,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         const name = ast.tokenSlice(vd.ast.mut_token + 1);
         const vis = if (vd.visib_token != null) "pub" else "priv";
         const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
+        try w.attr(cp, "loc", try locOf(w, ast, m, rel));
         try w.attr(cp, "doc", try docComment(w, ast, m));
         const init = vd.ast.init_node.unwrap() orelse {
             try w.node(cp, "const", name, vis);
@@ -363,10 +373,14 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                 try w.edge(cp, "imports", tgt);
                 continue;
             }
-            if (!bare) { // `@import("x").Sel` — selective re-export; leave as an alias leaf.
-                try w.node(cp, "alias", name, vis);
-                try w.edge(cp, "alias", tgt);
-                try w.aliases.put(cp, tgt);
+            if (!bare) { // `@import("x").Sel` — FOLLOW it, place Sel under cp (its single home).
+                const rabs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
+                    try w.node(cp, "alias", name, vis);
+                    try w.edge(cp, "alias", tgt);
+                    try w.aliases.put(cp, tgt);
+                    continue;
+                };
+                try emitReexport(w, rabs, selectorOf(init_src), cp, name, vis, depth + 1);
                 continue;
             }
             // an OWNED .zig file — FOLLOW it, once, building the full tree.
@@ -383,7 +397,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             if (parseChild(w, abs)) |child| {
                 try w.node(cp, "ns", name, vis);
                 const child_dir = std.fs.path.dirname(abs) orelse ".";
-                try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1);
+                try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
             } else try w.node(cp, "nserr", name, vis);
             continue;
         }
@@ -391,7 +405,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             try w.node(cp, ck, name, vis);
             var cbuf: [2]Ast.Node.Index = undefined;
             const cd = ast.fullContainerDecl(&cbuf, init).?;
-            try walk(w, ast, cd.ast.members, cp, ck, base_dir, depth + 1);
+            try walk(w, ast, cd.ast.members, cp, ck, base_dir, depth + 1, rel);
             continue;
         }
         const trimmed = std.mem.trim(u8, init_src, " \t\r\n");
@@ -401,6 +415,110 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             try w.aliases.put(cp, trimmed);
         } else try w.node(cp, "const", name, vis);
     }
+}
+
+/// `<relfile>:<line>` for a node's first token.
+fn locOf(w: *W, ast: *const Ast, node: Ast.Node.Index, rel: []const u8) ![]const u8 {
+    const off = ast.tokens.items(.start)[ast.firstToken(node)];
+    const line = std.zig.findLineColumn(ast.source, off).line + 1;
+    return std.fmt.allocPrint(w.arena, "{s}:{d}", .{ rel, line });
+}
+fn relOf(w: *W, abs: []const u8) []const u8 {
+    if (std.mem.startsWith(u8, abs, w.root_dir) and abs.len > w.root_dir.len) {
+        const r = abs[w.root_dir.len..];
+        return if (r.len > 0 and r[0] == '/') r[1..] else r;
+    }
+    return abs;
+}
+/// The selector after `@import("f").` — e.g. `@import("x.zig").Foo` → `Foo`.
+fn selectorOf(src: []const u8) []const u8 {
+    const t = std.mem.trim(u8, src, " \t\r\n");
+    const close = std.mem.indexOfScalar(u8, t, ')') orelse return "";
+    var s = std.mem.trim(u8, t[close + 1 ..], " \t\r\n");
+    if (s.len > 0 and s[0] == '.') s = s[1..];
+    return s;
+}
+/// Find a pub `const`/`fn` named `sel` among a file's root decls.
+fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, sel: []const u8) ?Ast.Node.Index {
+    for (members) |m| {
+        if (ast.fullVarDecl(m)) |vd| {
+            if (std.mem.eql(u8, ast.tokenSlice(vd.ast.mut_token + 1), sel)) return m;
+        } else {
+            var fb: [1]Ast.Node.Index = undefined;
+            if (ast.fullFnProto(&fb, m)) |proto| {
+                if (proto.name_token) |nt| if (std.mem.eql(u8, ast.tokenSlice(nt), sel)) return m;
+            }
+        }
+    }
+    return null;
+}
+
+/// A selective re-export `pub const X = @import("f").Sel` — follow into `f`, find `Sel`, and place
+/// IT (its members, if a container) under `cp`. Selective-only files have no other home, so this is
+/// option B's single canonical home, not duplication. Falls back to an alias leaf when it can't.
+fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: []const u8, vis: []const u8, depth: u32) anyerror!void {
+    const leaf = struct {
+        fn f(ww: *W, c: []const u8, n: []const u8, v: []const u8, t: []const u8) !void {
+            try ww.node(c, "alias", n, v);
+            try ww.edge(c, "alias", t);
+            try ww.aliases.put(c, t);
+        }
+    }.f;
+    if (std.mem.indexOfScalar(u8, sel, '.') != null or depth >= MAX_DEPTH) return leaf(w, cp, name, vis, sel);
+    const ast = parseChild(w, abs) orelse return w.node(cp, "nserr", name, vis);
+    const found = findDecl(ast, ast.rootDecls(), sel) orelse return leaf(w, cp, name, vis, sel);
+    const dir = std.fs.path.dirname(abs) orelse ".";
+    const rel = relOf(w, abs);
+
+    var fb: [1]Ast.Node.Index = undefined;
+    if (ast.fullFnProto(&fb, found)) |proto| {
+        try w.node(cp, "fn", name, vis);
+        try w.attr(cp, "loc", try locOf(w, ast, found, rel));
+        try w.attr(cp, "doc", try docComment(w, ast, found));
+        if (try fnSig(w, ast, &proto)) |sg| try w.attr(cp, "sig", sg);
+        try fnEdges(w, ast, cp, found, &proto);
+        if (ast.nodeTag(found) == .fn_decl) switch (classifyFactory(ast, found, &proto)) {
+            .descend => |d| {
+                const child = try std.fmt.allocPrint(w.arena, "{s}()", .{cp});
+                var cb: [2]Ast.Node.Index = undefined;
+                const cd = ast.fullContainerDecl(&cb, d).?;
+                try w.node(child, ast.tokenSlice(cd.ast.main_token), name, vis);
+                try walk(w, ast, cd.ast.members, child, ast.tokenSlice(cd.ast.main_token), dir, depth + 1, rel);
+            },
+            else => {},
+        };
+        return;
+    }
+    const vd = ast.fullVarDecl(found).?;
+    try w.attr(cp, "doc", try docComment(w, ast, found));
+    const init = vd.ast.init_node.unwrap() orelse return w.node(cp, "const", name, vis);
+    const isrc = ast.getNodeSource(init);
+    if (importTarget(isrc)) |t2| {
+        if (std.mem.endsWith(u8, t2, ".zig")) {
+            const abs2 = std.fs.path.resolve(w.arena, &.{ dir, t2 }) catch return w.node(cp, "nserr", name, vis);
+            const bare2 = std.mem.endsWith(u8, std.mem.trim(u8, isrc, " \t\r\n"), ")");
+            if (!bare2) return emitReexport(w, abs2, selectorOf(isrc), cp, name, vis, depth + 1);
+            try w.edge(cp, "imports", t2);
+            if (w.visited.contains(abs2) or depth >= MAX_DEPTH) return w.node(cp, "nsref", name, vis);
+            try w.visited.put(abs2, {});
+            if (parseChild(w, abs2)) |c2| {
+                try w.node(cp, "ns", name, vis);
+                try walk(w, c2, c2.rootDecls(), cp, "struct", std.fs.path.dirname(abs2) orelse ".", depth + 1, relOf(w, abs2));
+            } else try w.node(cp, "nserr", name, vis);
+            return;
+        }
+    }
+    if (containerKind(ast, init)) |ck| {
+        try w.node(cp, ck, name, vis);
+        try w.attr(cp, "loc", try locOf(w, ast, found, rel));
+        var cb: [2]Ast.Node.Index = undefined;
+        const cd = ast.fullContainerDecl(&cb, init).?;
+        try walk(w, ast, cd.ast.members, cp, ck, dir, depth + 1, rel);
+        return;
+    }
+    const trimmed = std.mem.trim(u8, isrc, " \t\r\n");
+    if (isAliasChain(trimmed)) return leaf(w, cp, name, vis, trimmed);
+    try w.node(cp, "const", name, vis);
 }
 
 pub fn main(init: std.process.Init) !void {
@@ -437,6 +555,7 @@ pub fn main(init: std.process.Init) !void {
         .aliases = std.StringHashMap([]const u8).init(arena),
         .generics = std.StringHashMap(void).init(arena),
         .edges = .empty,
+        .root_dir = std.fs.path.dirname(root) orelse ".",
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
@@ -447,7 +566,7 @@ pub fn main(init: std.process.Init) !void {
 
     // Phase 1 — walk the whole organism: follow every @import, building the complete node set.
     const root_dir = std.fs.path.dirname(root) orelse ".";
-    try walk(&w, &ast, ast.rootDecls(), root_name, "root", root_dir, 0);
+    try walk(&w, &ast, ast.rootDecls(), root_name, "root", root_dir, 0, std.fs.path.basename(root));
     try w.nodes.flush();
     try w.attrs.flush();
 
