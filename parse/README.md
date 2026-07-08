@@ -1,3 +1,4 @@
+<!-- GENERATED from templates/parse.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
 # zephem · parse — the faithful reader
 
 **`parse/` reads Zig as *text* and emits the shape model — three streams keyed by `path`.**
@@ -34,16 +35,16 @@ edges.tsv : src · type · target · scope       Edges        — typed referenc
 > The Tree stays a pure mirror; interpretation lives in the derive layer on top.
 
 The product is **ephemeral by design**: never hand-authored, always regenerable from source,
-pinned to one Zig version (`../data/std/PINNED` → @@ZIG@@). The product is the pipeline that
+pinned to one Zig version (`../data/std/PINNED` → zig 0.16.0). The product is the pipeline that
 reproduces it, not the bytes.
 
 ## 2. What it produces (`../data/std/extracted/`)
 
 | stream | shape | what it is |
 |---|---|---|
-| `nodes.tsv` | Tree | @@N_NODES@@ nodes (@@N_PUB@@ pub / @@N_PRIV@@ priv), incl. fields, tags, and factory members (`<fn>()`) |
-| `attrs.tsv` | Attributes | @@N_ATTRS@@ facts — @@N_DOCS@@ docs · @@N_SIGS@@ sigs · @@N_VALUES@@ values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies |
-| `edges.tsv` | Edges | @@N_EDGES@@ typed references, @@E_RESOLVED_PCT@@% of the resolvable ones landing on a node/primitive |
+| `nodes.tsv` | Tree | 63,494 nodes (56,088 pub / 7,406 priv), incl. fields, tags, and factory members (`<fn>()`) |
+| `attrs.tsv` | Attributes | 109,748 facts — 13,724 docs · 11,273 sigs · 19,809 values · 63,509 locations · 1,433 test bodies |
+| `edges.tsv` | Edges | 54,667 typed references, 96% of the resolvable ones landing on a node/primitive |
 
 (The `index.tsv` table of contents is built *from* the Tree by the [`../derive/`](../derive/)
 engine, not by the parser. Per-column detail lives in the folder README:

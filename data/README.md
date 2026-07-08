@@ -10,7 +10,7 @@ by *where each fact comes from*:
 
 | folder | what it holds | producer | trust |
 |---|---|---|---|
-| **[`std/extracted/`](std/extracted/)** | literal facts read straight from Zig — the map, signatures, docs, fields/tags, and the compiler's resolved view | `parse/` + `reflect/` | if a row is wrong, **Zig** said so |
+| **[`std/extracted/`](std/extracted/)** | literal facts read straight from Zig — the parser's shape model (tree, attributes, edges) and the compiler's resolved view | `parse/` + `reflect/` | if a row is wrong, **Zig** said so |
 | **[`std/derived/`](std/derived/)** | joins, comparisons, and reshapes over the extracted files — TOC, consensus, canon, doc-coverage, signature shapes, call-card | `derive/` + `scripts/` | every row **traces back** to extracted rows; nothing invented |
 
 Each folder has its own README documenting every dataset it contains (columns, counts,
@@ -18,9 +18,10 @@ and the self-check that guards it). The clean line: **extracted/ is what Zig say
 derived/ is what zephem computes from it, and can be deleted and rebuilt from extracted/
 alone.**
 
-At a glance — **48,499 nodes across 310 files** (map), 6,163 signatures,
-11,610 docs, 31,048 fields/tags, 1,284 test/doctest examples, 1,324 containers resolved, and six
-derivatives keyed back to the map at the same `path`.
+At a glance — the parser's shape model is **63,494 nodes across 340 files**
+(the tree), **109,748 attributes** (13,724 docs, 11,273 sigs, 19,809 values,
+63,509 locations, 1,433 test bodies), and **54,667 typed edges**; reflect adds
+2,908 containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## Kind policy — who owns what, and which overlay counts it
 
@@ -31,21 +32,22 @@ documented rule below — so a kind is never double-counted or silently dropped.
 
 | kind / thing | owned by | in `index` | in `doccov` | in `consensus` | in `sigshape`/`callcard` |
 |---|---|---|---|---|---|
-| decl (`fn`/`const`/`struct`/`enum`/`union`/`opaque`/`alias`/`ns`) | parser | if `n_children>0` | ✅ all | ✅ (vs reflect) | fns only |
-| **`field` / `tag`** | parser (`fields.tsv`) | no (leaves) | ✅ all | **excluded** — reflect never resolves a field as its own path | no (not callables) |
-| **factory member** (`…()` path) | parser (as-written) · reflect owns *resolved* (Phase D) | if `n_children>0` | ✅ all | **excluded** — uninstantiated; nothing to resolve yet | ✅ as *parser-only* (written sig, no resolved type) |
-| **delegator** (`fn` with a `delegates.tsv` row) | parser (`delegates.tsv`) | no (leaf) | ✅ all | ✅ (it's a normal `fn`) | fns only |
+| decl (`fn`/`const`/`struct`/`enum`/`union`/`opaque`/`alias`/`ns`) | parser (tree) | if it has children | ✅ all | ✅ (vs reflect) | fns only |
+| **`field` / `tag`** | parser (tree; type/value in `attrs`) | no (leaves) | ✅ all | **excluded** — reflect never resolves a field as its own path | no (not callables) |
+| **factory member** (`…()` path) | parser (as-written) · reflect owns *resolved* (Phase D) | if it has children | ✅ all | **excluded** — uninstantiated; nothing to resolve yet | ✅ as *parser-only* (written sig, no resolved type) |
+| **private decl** (`vis == priv`) | parser (tree) | if it has children | ✅ all | `read-only` unless reflect built it too | fns only |
+| **delegator** (`fn` with a `delegates` edge) | parser (`edges`) | no (leaf) | ✅ all | ✅ (it's a normal `fn`) | fns only |
 
-Rules of thumb: **`doccov`** is 1:1 with the whole map. **`consensus`** compares only
+Rules of thumb: **`doccov`** is 1:1 with the whole tree. **`consensus`** compares only
 what *both* engines can name — so parser-only structural members (fields, tags,
 uninstantiated factory members) are out of scope. **`callcard`/`sigshape`** are about
-signatures, so factory-member fns join in (as parser-only until Phase D resolves them).
-**Nothing is computed twice.**
+signatures, so factory-member and private fns join in (as parser-only where the compiler
+couldn't build them). **Nothing is computed twice.**
 
 ## Regenerate
 
 ```nu
-nu scripts/build_std.nu          # parse → index → verify (extracted/nodes+sigs+docs+fields+delegates, derived/index)
+nu scripts/build_std.nu          # parse → index → verify (extracted/{nodes,attrs,edges}, derived/index)
 nu scripts/build_depth.nu --commit   # reflect sweep → extracted/{resolved,poison,status} (slow; separate)
 nu scripts/build_consensus.nu    # and build_canon / build_doccov / build_sigshape / build_callcard → derived/
 ```

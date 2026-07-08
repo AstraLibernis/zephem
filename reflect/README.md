@@ -41,7 +41,7 @@ Every container in the map is swept; each is a binary outcome — it **resolved*
 | `poison.tsv` | the containers that *didn't* resolve, each with the compiler's own first error line (platform / foreign lib / `@compileError` / timeout) | `path · reason` |
 | `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the resolved/poison split from it | `path · status · n_rows` |
 
-On zig 0.16.0: **2,966 containers swept → 1,324 resolved (15,720 rows) / 31 genuine poison.**
+On zig 0.16.0: **4,042 containers swept → 2,908 resolved (15,792 rows) / 1,134 genuine poison.**
 
 ### Planned — the same sweep, more facts
 

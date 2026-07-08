@@ -1,8 +1,8 @@
 # zephem
 
 **Z**ig + **ephem**eral. A tool that extracts the structure of a Zig module — its
-**containers, labels, and levels** — and transforms it into pristine, queryable
-**datasets** built for LLM consumption and static research.
+**containers, labels, levels, and the references between them** — and transforms it into
+pristine, queryable **datasets** built for LLM consumption and static research.
 
 The data is *ephemeral by design*: never hand-authored, always regenerated from the
 compiler's own source. A committed dataset is just a pinned snapshot of a fixed Zig
@@ -12,18 +12,27 @@ version — the product is the pipeline that reproduces it, not the bytes.
 
 Point it at a Zig source root and it walks the whole logical namespace tree — following
 `@import` edges between files and descending inline `struct`/`enum`/`union`/`opaque`
-literals — emitting one tidy row per public declaration:
+literals and type factories — emitting the **shape model**: three streams that together
+describe every node, all keyed by the same dotted `path`.
 
 ```
-path · depth · kind · name · n_children · detail
+nodes.tsv : path · kind · name · vis          the Tree     — where the node sits
+attrs.tsv : path · attr · value               Attributes   — facts it carries about itself
+edges.tsv : src · type · target · scope       Edges        — typed references it makes
 ```
 
-- **levels** — depth + the dotted `path` encode the full tree
-- **labels** — `kind` classifies every decl: `ns` (an `@import`'d file) · `nsref` (a
-  reference to a file already expanded elsewhere) · `nserr` (unreadable file) ·
-  `struct`/`enum`/`union`/`opaque` (inline container) · `fn` · `const` · `alias`
-  (a re-export like `pub const X = Y.Z`) · `modref` (import of a module, not a file)
-- **n_children** — every container records how many public children it emits
+- **the Tree** — the `path` and its kind encode the full containment spine, public **and**
+  private (`vis`), in Zig's own source order. `kind` classifies every node: `ns` (an
+  `@import`'d file) · `nsref` (a reference to a file expanded elsewhere) · `struct`/`enum`/
+  `union`/`opaque` (container) · `fn` · `const` · `alias` (a re-export) · `modref` (a module
+  import) · `field` · `tag`.
+- **Attributes** — a node's own facts: `loc` (source location), `value` (a field/const's
+  written type & default), `doc` (`///` comment), `sig` (a fn's as-written signature),
+  `example` (a `test {}` body).
+- **Edges** — the typed references it makes (`has_type`, `alias`, `error_set`, `imports`,
+  `delegates`), each **resolved** to a `scope` recording where its target landed — a node in
+  its own container (`local`), one elsewhere (`cross`), a primitive, a module boundary, or
+  unresolved.
 
 ### Why parsing, not reflection
 
@@ -34,41 +43,42 @@ the first un-evaluatable decl.
 
 ## The headline dataset: the full std map
 
-`nu scripts/build_std.nu` scans the active toolchain's `std` and writes
-`data/std/extracted/nodes.tsv`. On @@ZIG@@ that is **@@N_NODES@@ public nodes across @@N_FILES@@ files**
-(decls plus @@N_FIELDS@@ struct/union fields and enum tags), max nesting depth @@MAXDEPTH@@.
+`nu scripts/build_std.nu` scans the active toolchain's `std` and writes the three streams to
+`data/std/extracted/`. On @@ZIG@@ that is **@@N_NODES@@ nodes across @@N_FILES@@ files**
+(@@N_PUB@@ public, @@N_PRIV@@ private), max nesting depth @@MAXDEPTH@@ — carrying @@N_ATTRS@@
+attributes and @@N_EDGES@@ typed edges.
 
 ```nu
 open data/std/extracted/nodes.tsv | where kind == 'ns'                  # every std source file
 open data/std/extracted/nodes.tsv | where path =~ '^std\.crypto\.'      # the crypto subtree
-open data/std/extracted/nodes.tsv | where kind == 'fn' | length         # public fn count (@@N_FN@@)
-open data/std/extracted/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}}
+open data/std/extracted/nodes.tsv | where kind == 'fn' | length         # public+private fn count (@@N_FN@@)
+open data/std/extracted/edges.tsv | where type == 'has_type' and scope == 'cross'   # cross-container type refs
 ```
 
 ### It proves itself — no external oracle
 
 The build is **two passes that must agree**, bundled on purpose:
 
-- **forward** (`parse/build.zig`) reads the source into rows.
-- **backward** (`scripts/verify_std.nu`) re-reads `nodes.tsv` *from the other end* —
-  grouping rows by parent path — and checks the tree reconciles.
+- **forward** (`parse/build.zig`) reads the source into the three streams.
+- **backward** (`scripts/verify_std.nu`) re-reads them *the other way* and checks the shapes
+  reconcile.
 
-The core check is a **conservation law**: every node except the root is exactly one node's
-child, so `Σ n_children == (rows − 1)`. A dropped, double-counted, or truncated decl breaks
-it. The verifier also checks per-node child counts, kind partition (every row classified
-once), and `nsref` integrity (every reference points at a file expanded somewhere). If the
-two passes disagree, `build_std.nu` exits non-zero and claims nothing.
+There is no `n_children` count to conserve — depth and parent are read straight off each
+`path`. The checks are **referential**: the Tree is **connected** (every non-root path's
+parent is itself a node), the kinds **partition** (every row classified once), every
+**attribute keys onto a real node**, and every **`local`/`cross` edge resolves to a real
+node** — the one invariant that makes the reference graph trustworthy. If the two passes
+disagree, `build_std.nu` exits non-zero and claims nothing.
 
 ```
 $ nu scripts/build_std.nu
-[forward]  scanning .../std.zig  (@@ZIG@@, depth 24)
-           rows: @@N_NODES_RAW@@   files: @@N_FILES@@   max depth: @@MAXDEPTH@@
-[index]    containers: @@N_INDEX_RAW@@   root span: @@N_NODES_RAW@@
+[forward]  scanning .../std.zig  (@@ZIG@@, depth @@MAXDEPTH@@)
+           rows: @@N_NODES_RAW@@   files: @@N_FILES@@   private: @@N_PRIV_RAW@@
+[index]    containers: @@N_INDEX_RAW@@   root span: @@N_NODES_RAW@@   max depth: @@MAXDEPTH@@
+[attrs]    @@N_ATTRS_RAW@@ rows — doc @@A_DOC_RAW@@ · sig @@A_SIG_RAW@@ · value @@A_VAL_RAW@@ · example @@A_EX_RAW@@
+[edges]    @@N_EDGES_RAW@@ rows — resolved @@E_RESOLVED_RAW@@ / unresolved @@E_UNRES_RAW@@
 [backward] re-reading the datasets — must reconcile...
-conservation:  Σ n_children = @@N_EDGES_RAW@@   rows − 1 = @@N_EDGES_RAW@@   ✓
-per-node:       @@N_INDEX_RAW@@ expanded containers checked           ✓
-partition:      Σ kinds = @@N_NODES_RAW@@   rows = @@N_NODES_RAW@@             ✓
-nsref integrity: @@N_NSREF@@ refs                                    ✓
+VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.
 ```
 
@@ -79,33 +89,34 @@ The dataset proves itself without any external oracle (above). Separately — as
 sanity-check, not a correctness proof — [`docs/comparison/autodoc-vs-zephem.md`](docs/comparison/autodoc-vs-zephem.md)
 lines this snapshot up against Zig's own autodoc extraction (autodoc's `Walk.zig` driven
 natively): on the shared public-declaration surface the two reach a near-identical set, and
-zephem additionally carries fields, enum tags, and the resolved layer autodoc does not emit.
-That note is a *dated* comparison, not a regenerated artifact — it pins its inputs and ships
-the commands to re-derive every figure; autodoc's side is not rebuilt as part of zephem.
+zephem additionally carries fields, enum tags, private decls, the edge graph, and the
+resolved layer autodoc does not emit. That note is a *dated* comparison, not a regenerated
+artifact — it pins its inputs and ships the commands to re-derive every figure; autodoc's
+side is not rebuilt as part of zephem.
 
 ### Reading it efficiently: the table of contents
 
-The whole file is ~221k tokens — too big to read linearly to answer a narrow question. But
-because rows are emitted pre-order, **every subtree is a contiguous block**, so you never
-have to. `data/std/derived/index.tsv` is a tiny map (@@N_INDEX@@ containers) of `path · line · span`: look
-up a module, then read exactly its block.
+The whole tree is large — too big to read linearly to answer a narrow question. But because
+rows are emitted pre-order, **every subtree is a contiguous block**, so you never have to.
+`data/std/derived/index.tsv` is a tiny map (@@N_INDEX@@ containers) of `path · line · span`:
+look up a module, then read exactly its block.
 
 ```nu
 let b = (open data/std/derived/index.tsv | where path == 'std.crypto' | first)  # line @@CRYPTO_LINE@@, span @@CRYPTO_SPAN@@
 open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span            # just the crypto subtree
 ```
 
-The index self-checks: the root's span equals the whole file (conservation again), and
-`verify_std.nu` re-derives every block's edges from `nodes.tsv` so the map can't drift.
+The index self-checks: the root's span equals the whole file, and `verify_std.nu` re-derives
+every block from `nodes.tsv` so the map can't drift.
 
 Copy-pasteable query recipes (read one module, find by name, the kind breakdown) live with the
 data they query: **[data/README.md](data/README.md)**.
 
 ## Beyond the map: the other engines, keyed to it
 
-The map is the skeleton — and the *only* thing the parser emits. Deeper facts are produced by
-**separate engines** and join back at the same `path`, so every row anchors to a node that
-exists. Three ship today, all self-verifying and byte-identical on rerun:
+The shape model is the skeleton the parser emits. Deeper facts are produced by **separate
+engines** and join back at the same `path`, so every row anchors to a node that exists. Three
+ship today, all self-verifying and byte-identical on rerun:
 
 > This is the tour. The canonical per-dataset reference — every extractor's columns, purpose, and
 > self-check — lives in the folder READMEs: [`extracted/`](data/std/extracted/) and
@@ -125,10 +136,10 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
   **every** path by which witness can see it: `read+run` (both independently agree — @@CON_RR@@),
   `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
-  @@CON_RUNONLY@@), `read-only` (text read it but it can't run here: poison, or the `std` root — @@CON_READONLY@@). The
-  two single-witness buckets **are** the differences; the agreement is independent evidence. One row
-  per path in `nodes ∪ resolved` (@@N_CONSENSUS@@), **zero blanks**, enforced by `scripts/verify_consensus.nu`
-  and deterministic (`--check`).
+  @@CON_RUNONLY@@), `read-only` (text read it but it can't run here: poison, private, or the `std`
+  root — @@CON_READONLY@@). The two single-witness buckets **are** the differences; the agreement
+  is independent evidence. One row per path in `nodes ∪ resolved` (@@N_CONSENSUS@@), **zero blanks**,
+  enforced by `scripts/verify_consensus.nu` and deterministic (`--check`).
 
 - **`data/std/derived/canon.tsv`** (dedup / dealias) — `path · canon` from `scripts/build_canon.nu`. The
   compiler resolves every type to a canonical `@typeName`, so two paths that name the *same*
@@ -137,8 +148,8 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
   excluding primitive / error-set / anonymous identities that collide by accident, not by aliasing.
   Reads `resolved.tsv` alone; verified by `scripts/verify_canon.nu`, deterministic (`--check`).
 
-The deferred "organize later" layers (references/links, grouping by purpose) and the roadmap for
-the remaining work (L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
+The deferred edge layers (body-level `calls`/`references`) and the roadmap for the remaining
+work (L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
 
 ## Documentation map — where to look
 
@@ -160,16 +171,15 @@ Rule of thumb: **datasets are described once, in the folder READMEs; engines onc
 
 `scripts/build_arch.nu` regenerates every markdown doc from the sources in
 [`templates/`](templates/), injecting each number live from `data/std/` — so the docs can't drift
-from the data, and `build_arch.nu --check` proves each one rebuilds byte-identical. (A visual HTML
-viewer used to live here; it was cut to keep things simple and will be rebuilt later.)
+from the data, and `build_arch.nu --check` proves each one rebuilds byte-identical.
 
 ## Where it started: `std.crypto` (archived)
 
 zephem began life (as `zcrypto`) pointed only at `std.crypto`, via **reflection** — which
 resolves real byte sizes and signatures but can't generalize (a reflection walk dies on the
 first platform-gated decl). That whole pipeline — tools, scripts, and datasets — is retired
-(now retired — deleted, with provenance in the archive tombstone
-[`docs/archive/README.md`](docs/archive/README.md)). The AST scanner above replaced it as
+(deleted, with provenance in the archive tombstone
+[`docs/archive/README.md`](docs/archive/README.md)). The AST parser above replaced it as
 the general tool the project is built around now.
 
 ## How it's built
@@ -177,29 +187,28 @@ the general tool the project is built around now.
 The extractor is **three engines**, split by *what each reads*:
 
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
-  [parse/README.md](parse/README.md)). `parse/build.zig` parses std **once** and drives a
-  single generic walk (`parse/walk.zig`) → the **map** (`nodes.tsv`: paths, names, kinds,
-  child-counts, files, source order) plus the raw source facts only a parser can see:
-  as-written **fn signatures** (`sigs.tsv`, @@N_SIGS@@), **`///` docs** (`docs.tsv`, @@N_DOCS@@),
-  **struct/union fields + enum tags** (`fields.tsv`, @@N_FIELDS@@ — `path·type·value`), and
-  **delegating-factory targets** (`delegates.tsv`, @@N_DELEGATES@@), all keyed by `path`. The walk
-  also **descends type factories** — a `fn(…) type` with one `return struct {…}` gets its members
-  mapped under `<fn>()` (`std.HashMap().get`). It reads source as text and never runs the compiler,
+  [parse/README.md](parse/README.md)). `parse/build.zig` follows `@import` from the root **once**
+  and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
+  the Attributes (`attrs.tsv` — @@N_SIGS@@ signatures, @@N_DOCS@@ `///` docs, @@N_VALUES@@ field/const
+  values, @@N_LOC@@ locations, @@N_EXAMPLES@@ test bodies), and the Edges (`edges.tsv` — @@N_EDGES@@
+  typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
+  `return struct {…}` gets its members under `<fn>()`, e.g. `std.HashMap().get`) and gives each
+  selective re-export a single canonical home. It reads source as text and never runs the compiler,
   which is what lets it map all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
   parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.
 - **[`derive/`](derive/)** — the **transform** engine. Reads no Zig at all, only the datasets
   above, each as its own single-purpose overlay: `derive/index.zig` builds the table of contents
-  (`index.tsv`) over the map; `scripts/build_canon.nu` dedups/de-aliases resolved types into
+  (`index.tsv`) over the Tree; `scripts/build_canon.nu` dedups/de-aliases resolved types into
   alias/dup families (`canon.tsv`); and `scripts/build_consensus.nu` compares parse vs reflect,
   tagging where the two readers agree or differ (`consensus.tsv`).
 
 The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The dividing line:
-**raw source facts go in the parser** (structure, signatures, docs, fields/tags — and next,
-location/modifiers and generic-factory descent); **organisation is deferred to derive** —
-**references/links** between names and **grouping** the map by purpose, never mixed into the
-parse. Phases and status: **[PLAN.md](PLAN.md)**.
+**raw source facts go in the parser** (the tree, attributes, and declaration-level edges);
+**organisation is deferred to derive** (resolved cross-link graphs, purpose-groupings), and
+**body-level edges** (`calls`/`references`) are the parser's next layer. Phases and status:
+**[PLAN.md](PLAN.md)**.
 
 ## Toolchain
 

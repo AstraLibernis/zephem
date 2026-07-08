@@ -45,22 +45,24 @@ collide on it. This surfaces exactly those collisions — **@@N_CANON@@ paths in
 
 ### `doccov.tsv` — documentation coverage
 `path · kind · documented`, from `build_doccov.nu` over `nodes.tsv` (every node) joined
-against `docs.tsv` (which paths carry a `///` doc). 1:1 with the whole map. On @@ZIG@@:
-**@@DOC_PCT@@% documented** (@@DOC_DOCUMENTED@@ nodes). Verified by `verify_doccov.nu`.
+against the `doc` attributes (`attrs.tsv` where `attr == doc` — which paths carry a `///`
+doc). 1:1 with the whole map. On @@ZIG@@: **@@DOC_PCT@@% documented** (@@DOC_DOCUMENTED@@
+nodes). Verified by `verify_doccov.nu`.
 
 ### `sigshape.tsv` — signature shapes
-`path · first_param · io · generic`, from `build_sigshape.nu` over `sigs.tsv` alone.
-Classes each signature by first-param kind (`self`/`none`/`allocator`/`other`), whether
-it threads `Io`, and whether it's generic (`comptime`/`anytype`). **@@N_SIGSHAPE@@ fns**,
-every field a closed set. Verified by `verify_sigshape.nu`.
+`path · first_param · io · generic`, from `build_sigshape.nu` over the `sig` attributes
+(`attrs.tsv` where `attr == sig`). Classes each signature by first-param kind
+(`self`/`none`/`allocator`/`other`), whether it threads `Io`, and whether it's generic
+(`comptime`/`anytype`). **@@N_SIGSHAPE@@ fns**, every field a closed set. Verified by
+`verify_sigshape.nu`.
 
 ### `callcard.tsv` — as-written ⋈ resolved
-`path · witness · sig · resolved`, from `build_callcard.nu` — the merge of `sigs.tsv`
-(as-written) and `resolved.tsv` (typed) on a normalized path. One row per callable
-(@@N_CALLCARD@@): `both` (@@CC_BOTH@@ — the resolved column fills in real types where the
-source said `@This()`/`Self`), `reflect-only` (@@CC_REFLECT@@), `parser-only`
-(@@CC_PARSER@@ — e.g. an uninstantiated factory member, no resolved type yet). Verified
-by `verify_callcard.nu`.
+`path · witness · sig · resolved`, from `build_callcard.nu` — the merge of the `sig`
+attributes (as-written) and `resolved.tsv` (typed) on a normalized path. One row per
+callable (@@N_CALLCARD@@): `both` (@@CC_BOTH@@ — the resolved column fills in real types
+where the source said `@This()`/`Self`), `reflect-only` (@@CC_REFLECT@@), `parser-only`
+(@@CC_PARSER@@ — a private or uninstantiated-factory fn the compiler couldn't build here,
+no resolved type). Verified by `verify_callcard.nu`.
 
 ---
 

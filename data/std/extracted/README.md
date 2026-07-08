@@ -14,57 +14,76 @@ below) is x86_64-linux.
 
 ---
 
-## From the parser (`parse/`) — source as text
+## From the parser (`parse/`) — the shape model
 
-Read with `std.zig.Ast`, so comptime is never evaluated: platform-gated and "poison"
-decls are just harmless text, which is what lets the parser map **all** of std.
+One walk over the source (`std.zig.Ast`, so comptime is never evaluated — platform-gated
+and "poison" decls are just harmless text, which is what lets the parser map **all** of
+std) emits **three streams**, the three shapes every node has:
 
-### `nodes.tsv` — the full std map (the headline dataset)
-The whole `std` namespace tree. One row per public decl, struct/union **field**, enum
-**tag**, or **type-factory member** (a member of the type a `fn(…) type` returns,
-pathed under `<fn>()` — e.g. `std.ArrayList().append`; the `()` marks "instantiate
-first"). **48,499 rows / 310 files / max depth 9.**
-Columns: `path · depth · kind · name · n_children · detail`.
-`kind ∈ ns · nsref · nserr · struct · enum · union · opaque · fn · const · alias · modref · field · tag`.
+- **the Tree** — where a node sits (`nodes.tsv`)
+- its **Attributes** — the facts a node carries about itself (`attrs.tsv`)
+- its **Edges** — the typed references a node makes to other nodes (`edges.tsv`)
 
-Self-verifying: `build_std.nu` runs a **forward** pass (parse) and a **backward** pass
-(`verify_std.nu`, re-reading rows grouped by parent) that must agree. Core invariant:
-the conservation law `Σ n_children == rows − 1`; the verifier also checks per-node
-child counts, kind partition, and `nsref` integrity. Disagreement → non-zero exit.
+All three key on the same dotted `path`, so they re-join without a lookup table.
 
-### `sigs.tsv` — as-written signatures
-`path · sig`. `sig` is a function's signature from the `fn` keyword through the return
-type (body excluded), whitespace-collapsed. One row per public `fn` (incl. re-exports).
-**6,163 signatures.**
+### `nodes.tsv` — the Tree (the headline dataset)
+The whole `std` namespace tree, one row per node. A node is a declaration (public **or**
+private), a struct/union **field**, an enum **tag**, or a **type-factory member** (a member
+of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.ArrayList().append`;
+the `()` marks "instantiate first"). **63,494 rows** (56,088 pub / 7,406 priv)
+across **340 files**, max depth **8**.
+Columns: `path · kind · name · vis`  (`vis ∈ pub · priv`).
+`kind ∈ ns · nsref · nserr · modref · struct · enum · union · opaque · fn · const · alias · field · tag`.
 
-### `docs.tsv` — `///` doc-comments
-`path · doc`. The decl's doc-comment text, whitespace-collapsed. A row exists only for
-documented decls (any kind). **11,610 docs.**
+Emitted pre-order, depth-first, in Zig's own source order — never sorted, never grouped.
+Because it's pre-order, **every subtree is a contiguous block** (that's what `../derived/index.tsv`
+indexes). The tree carries no `n_children` column: a node's depth and parent are read straight
+off its `path`, and the verifier reconciles the tree by that — every non-root path's parent is
+itself a node.
 
-### `fields.tsv` — field types & tag values
-`path · type · value`. The payload of every `field`/`tag` node: a struct/union field's
-written type (and default), or an enum tag's value. 1:1 with the `field`/`tag` rows in
-`nodes.tsv`. **31,048 fields/tags.**
+### `attrs.tsv` — Attributes (a node's own facts)
+`path · attr · value`. Sparse: a row exists only where the fact is present. **109,748 rows**
+across five attributes:
 
-### `delegates.tsv` — factory forwarding
-`path · target`. A *delegating* factory (`fn X(…) type { return Y(args); }`) and the raw
-call it forwards to, so a factory we don't descend isn't a dead end. The target is
-source text, **unresolved** (resolving it to a path is a derived-layer job).
-**32 delegators** (e.g. `std.ArrayList → array_list.Aligned(T, null)`).
+| attr | value | count |
+|---|---|---|
+| `loc` | source location `file:line` (root-relative, machine-independent) | 63,509 |
+| `value` | a `field`/`tag`'s written type & default, or a `const`'s literal | 19,809 |
+| `doc` | the decl's `///` doc-comment, whitespace-collapsed | 13,724 |
+| `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 11,273 |
+| `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,433 |
 
-### `examples.tsv` — usage from tests & doctests
-`path · kind · name · code`. Every `test` declaration in std, as a real, compilable usage
-example. `kind = doctest` for a `test <identifier>` — bound by name to the decl it documents,
-so `path` joins straight onto that node (`test parseInt` in `fmt.zig` → `std.fmt.parseInt`);
-`kind = test` for a `test "…"` / anonymous test, whose `path` is the enclosing namespace.
-`code` is the whole `test … {}` source with tabs/newlines escaped (`\t`/`\n`) so a multi-line
-snippet stays on one row. On zig 0.16.0: **1,284 examples** (411 doctests bound
-to a decl). A doctest may name a *private* decl, so its `path` won't always be in the pub map —
-but its parent namespace always is.
+### `edges.tsv` — Edges (typed references, resolved)
+`src · type · target · scope`. Every reference a declaration makes, **with its reach resolved**
+in a second pass against the walked node set. **54,667 edges**, five types:
 
-`verify_std.nu` proves these overlays *register* on the map: every `sigs`/`docs` path is
-a real node, paths are unique, the signature set equals the map's function set, and every
-example anchors to the map (its owner or the owner's parent is a real node).
+| type | count | what it links |
+|---|---|---|
+| `has_type` | 47,983 | a fn param/return or field → the type it names |
+| `alias` | 2,942 | a re-export (`pub const X = Y.Z`) → what it points at |
+| `error_set` | 2,876 | an `error{…}` / error-union → its members |
+| `imports` | 829 | an `@import` alias → the file/module it names |
+| `delegates` | 37 | a forwarding factory (`fn X() type { return Y(args); }`) → its target |
+
+`scope` records **where the target landed** — the one invariant worth protecting is that a
+`local`/`cross` edge always points at a real node:
+
+| scope | count | meaning |
+|---|---|---|
+| `primitive` | 21,486 | a language builtin (`i32`, `usize`, `type`, …) |
+| `local` | 16,533 | a node inside `src`'s own container (incl. `@This()`) |
+| `cross` | 9,490 | a node elsewhere in the tree |
+| `module` | 4,008 | an `@import` alias / a file or module boundary |
+| `unresolved` | 2,056 | couldn't place it (comptime-built, exotic) |
+| `inline` | 603 | an inline `struct{…}`/`enum{…}` literal target |
+| `generic` | 491 | a comptime type parameter in scope |
+
+**48,000 of 54,667 edges (96% of the resolvable ones)** land on a
+node, primitive, or generic param; 2,056 stay unresolved.
+
+`verify_std.nu` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
+is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to
+a real node** — the links are valid.
 
 ---
 
@@ -78,11 +97,14 @@ poison here.
 
 ### `resolved.tsv` — resolved depth
 `path · kind · detail`. Resolved const values, expanded generics, typed signatures.
-On zig 0.16.0: **1,324 containers resolved (15,720 rows).**
+On zig 0.16.0: **2,908 containers resolved (15,792 rows).**
 
 ### `poison.tsv` — what didn't resolve
 `path · reason`. Decls that failed to resolve, each with the compiler's exact reason
-(platform / foreign lib / `@compileError` / timeout). **31 genuine poison.**
+(platform / foreign lib / `@compileError` / timeout). **1,134 genuine poison.**
+The tree now includes private decls (many platform/foreign-lib) and uninstantiated `()`
+factory containers, so poison is higher than the pub-only parser's was — each is an honest
+"the compiler couldn't build this here", not a miss.
 
 ### `status.tsv` — the per-container ledger
 `path · status · n_rows`. One row per container the sweep attempted; the verifier
