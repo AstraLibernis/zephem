@@ -41,6 +41,8 @@ const W = struct {
     aliases: std.StringHashMap([]const u8), // alias-node path → its RHS target text (for chasing)
     generics: std.StringHashMap(void), // "<factory()path>#<paramname>" — comptime type params in scope
     root_dir: []const u8, // std root dir, for machine-independent relative loc paths
+    ast_cache: std.StringHashMap(*Ast), // abs file path → parsed Ast — parse each file once per build
+    line_cache: std.StringHashMap([]usize), // rel file → sorted newline offsets (fast line lookup)
     edges: std.ArrayList(Edge), // raw edges, resolved in phase 2
 
     fn node(w: *W, path: []const u8, kind: []const u8, name: []const u8, vis: []const u8) !void {
@@ -133,10 +135,12 @@ fn importTarget(src: []const u8) ?[]const u8 {
 /// Read + parse a child file, arena-storing the Ast so it outlives the recursive walk. null on
 /// read/parse failure (the caller emits an `nserr` leaf).
 fn parseChild(w: *W, abs: []const u8) ?*Ast {
+    if (w.ast_cache.get(abs)) |a| return a; // already parsed this build — reuse (Asts are arena-persistent)
     const src = std.Io.Dir.cwd().readFileAllocOptions(w.io, abs, w.arena, .unlimited, .of(u8), 0) catch return null;
     const a = w.arena.create(Ast) catch return null;
     a.* = Ast.parse(w.arena, src, .zig) catch return null;
     if (a.errors.len != 0) return null;
+    w.ast_cache.put(abs, a) catch {};
     return a;
 }
 
@@ -417,11 +421,27 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
     }
 }
 
+/// 1-based line of `off`, via a per-file newline-offset table (built once, then binary-searched) —
+/// std.zig.findLineColumn rescans from byte 0 each call, which is O(file) per node.
+fn lineOf(w: *W, source: []const u8, rel: []const u8, off: usize) usize {
+    const table = w.line_cache.get(rel) orelse blk: {
+        var list: std.ArrayList(usize) = .empty;
+        for (source, 0..) |c, i| if (c == '\n') list.append(w.arena, i) catch {};
+        w.line_cache.put(rel, list.items) catch {};
+        break :blk list.items;
+    };
+    var lo: usize = 0;
+    var hi: usize = table.len;
+    while (lo < hi) { // count of newlines strictly before off
+        const mid = lo + (hi - lo) / 2;
+        if (table[mid] < off) lo = mid + 1 else hi = mid;
+    }
+    return lo + 1;
+}
 /// `<relfile>:<line>` for a node's first token.
 fn locOf(w: *W, ast: *const Ast, node: Ast.Node.Index, rel: []const u8) ![]const u8 {
     const off = ast.tokens.items(.start)[ast.firstToken(node)];
-    const line = std.zig.findLineColumn(ast.source, off).line + 1;
-    return std.fmt.allocPrint(w.arena, "{s}:{d}", .{ rel, line });
+    return std.fmt.allocPrint(w.arena, "{s}:{d}", .{ rel, lineOf(w, ast.source, rel, off) });
 }
 fn relOf(w: *W, abs: []const u8) []const u8 {
     if (std.mem.startsWith(u8, abs, w.root_dir) and abs.len > w.root_dir.len) {
@@ -556,6 +576,8 @@ pub fn main(init: std.process.Init) !void {
         .generics = std.StringHashMap(void).init(arena),
         .edges = .empty,
         .root_dir = std.fs.path.dirname(root) orelse ".",
+        .ast_cache = std.StringHashMap(*Ast).init(arena),
+        .line_cache = std.StringHashMap([]usize).init(arena),
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
