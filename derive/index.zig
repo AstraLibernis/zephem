@@ -1,28 +1,35 @@
 //! index.zig — the "table of contents" for data/std/extracted/nodes.tsv.
 //!
-//! nodes.tsv is emitted in pre-order DFS, so EVERY node's subtree is a single
-//! contiguous run of rows. This reads nodes.tsv and, for each container (a row
-//! with n_children > 0), records where that block lives:
+//! nodes.tsv (path · kind · name · vis) is emitted in pre-order DFS, so EVERY node's subtree is a
+//! single contiguous run of rows. This reads it and, for each container (a node that has children),
+//! records where that block lives:
 //!
 //!   path · line · span · depth · kind · n_children
 //!
-//!   line = 1-based file line in nodes.tsv (header is line 1) — so a consumer can
-//!          read exactly the block with `Read(offset=line, limit=span)` / `sed`.
-//!   span = number of rows in this node's subtree, including the node itself.
-//!          The block is lines [line, line + span).
+//!   line = 1-based file line in nodes.tsv (header is line 1) — a consumer reads exactly the block
+//!          with `Read(offset=line, limit=span)` / `sed`.
+//!   span = rows in this node's subtree, including the node itself → block is [line, line + span).
 //!
-//! A node's span is computed from the `depth` column alone: a node owns every
-//! following row whose depth is greater, up to the first row whose depth drops
-//! back to its own or less (a monotonic-stack "next depth ≤ mine" scan).
+//! depth is NOT a column — it's derived from the path (count of top-level `.`, ignoring dots inside
+//! `@"…"`). span then falls out of a monotonic-stack scan on depth; n_children is the count of
+//! direct children found while reconciling each span.
 //!
-//! Self-checking (the same conservation idea as the tree): the root's span must
-//! equal the whole file, and every container's span must equal 1 + Σ its direct
-//! children's spans. Both are asserted here before a single row is written, so a
-//! bad index never reaches disk.
+//! Self-checking: the root's span must equal the whole file, and every container's span must equal
+//! 1 + Σ its direct children's spans — asserted before a row is written.
 //!
 //! Run: zig run derive/index.zig -- [nodes.tsv]   (default data/std/extracted/nodes.tsv)
 
 const std = @import("std");
+
+/// Logical depth = number of top-level `.` separators (a `.` inside `@"…"` is part of a name).
+fn depthOf(path: []const u8) u32 {
+    var d: u32 = 0;
+    var in_quote = false;
+    for (path) |c| {
+        if (c == '"') in_quote = !in_quote else if (c == '.' and !in_quote) d += 1;
+    }
+    return d;
+}
 
 pub fn main(init: std.process.Init) !void {
     var arena_state = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -34,7 +41,6 @@ pub fn main(init: std.process.Init) !void {
 
     const content = try std.Io.Dir.cwd().readFileAllocOptions(init.io, in_path, arena, .unlimited, .of(u8), 0);
 
-    // count data lines (skip header)
     var n: usize = 0;
     {
         var it = std.mem.splitScalar(u8, content, '\n');
@@ -47,7 +53,6 @@ pub fn main(init: std.process.Init) !void {
     const paths = try arena.alloc([]const u8, n);
     const depths = try arena.alloc(u32, n);
     const kinds = try arena.alloc([]const u8, n);
-    const nch = try arena.alloc(u32, n);
 
     var lines = std.mem.splitScalar(u8, content, '\n');
     _ = lines.next(); // header
@@ -56,14 +61,10 @@ pub fn main(init: std.process.Init) !void {
         if (ln.len == 0) continue;
         var f = std.mem.splitScalar(u8, ln, '\t');
         const path = f.next() orelse continue;
-        const depth_s = f.next() orelse continue;
-        const kind = f.next() orelse continue;
-        _ = f.next(); // name
-        const nch_s = f.next() orelse continue;
+        const kind = f.next() orelse continue; // parse2 column order: path · kind · name · vis
         paths[idx] = path;
-        depths[idx] = std.fmt.parseInt(u32, depth_s, 10) catch 0;
+        depths[idx] = depthOf(path);
         kinds[idx] = kind;
-        nch[idx] = std.fmt.parseInt(u32, nch_s, 10) catch 0;
         idx += 1;
     }
 
@@ -82,27 +83,31 @@ pub fn main(init: std.process.Init) !void {
     i = 0;
     while (i < n) : (i += 1) span[i] = endi[i] - i;
 
-    // self-check: root owns everything, and every container span reconciles.
+    // self-check + direct-child counts. A container is any node with descendants (span > 1).
     if (n == 0 or span[0] != n) std.debug.panic("root span {d} != {d} rows", .{ if (n > 0) span[0] else 0, n });
+    const nch = try arena.alloc(u32, n);
     var containers: usize = 0;
     i = 0;
     while (i < n) : (i += 1) {
-        if (nch[i] == 0) continue;
+        nch[i] = 0;
+        if (span[i] <= 1) continue;
         containers += 1;
         var s: usize = 1;
         var j: usize = i + 1;
-        while (j < i + span[i]) : (j += span[j]) s += span[j];
+        while (j < i + span[i]) : (j += span[j]) {
+            s += span[j];
+            nch[i] += 1;
+        }
         if (s != span[i]) std.debug.panic("span mismatch at {s}: {d} vs Σchildren {d}", .{ paths[i], span[i], s });
     }
 
-    // emit the index (containers only — leaves live inside their parent's block)
     var wbuf: [1 << 16]u8 = undefined;
     var fw = std.Io.File.stdout().writer(init.io, &wbuf);
     const w = &fw.interface;
     try w.print("path\tline\tspan\tdepth\tkind\tn_children\n", .{});
     i = 0;
     while (i < n) : (i += 1) {
-        if (nch[i] == 0) continue;
+        if (span[i] <= 1) continue;
         try w.print("{s}\t{d}\t{d}\t{d}\t{s}\t{d}\n", .{ paths[i], i + 2, span[i], depths[i], kinds[i], nch[i] });
     }
     try w.flush();
