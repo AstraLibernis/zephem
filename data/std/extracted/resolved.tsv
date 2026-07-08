@@ -1063,6 +1063,7 @@ std.BufSet.iterator	fn	fn (*const buf_set.BufSet) hash_map.HashMapUnmanaged([]co
 std.BufSet.allocator	fn	fn (*const buf_set.BufSet) mem.Allocator
 std.BufSet.cloneWithAllocator	fn	fn (*const buf_set.BufSet, mem.Allocator) error{OutOfMemory}!buf_set.BufSet
 std.BufSet.clone	fn	fn (*const buf_set.BufSet) error{OutOfMemory}!buf_set.BufSet
+std.Deque	fn	fn (comptime type) type
 std.DoublyLinkedList.Node	type	DoublyLinkedList.Node
 std.DoublyLinkedList.insertAfter	fn	fn (*DoublyLinkedList, *DoublyLinkedList.Node, *DoublyLinkedList.Node) void
 std.DoublyLinkedList.insertBefore	fn	fn (*DoublyLinkedList, *DoublyLinkedList.Node, *DoublyLinkedList.Node) void
@@ -1269,6 +1270,7 @@ std.Io.Reader.writableVectorPosix	fn	fn (*Io.Reader, []posix.iovec, []const []u8
 std.Io.Reader.writableVectorWsa	fn	fn (*Io.Reader, []os.windows.AFD.WSABUF(.var), []const []u8) error{EndOfStream,ReadFailed}!struct { usize, usize }
 std.Io.Reader.writableVector	fn	fn (*Io.Reader, [][]u8, []const []u8) error{EndOfStream,ReadFailed}!struct { usize, usize }
 std.Io.Reader.Limited.init	fn	fn (*Io.Reader, Io.Limit, []u8) Io.Reader.Limited
+std.Io.Reader.Hashed	fn	fn (comptime type) type
 std.Io.Writer.VTable	type	Io.Writer.VTable
 std.Io.Writer.Error	type	error{WriteFailed}
 std.Io.Writer.FileAllError	type	error{ReadFailed,WriteFailed}
@@ -1361,6 +1363,8 @@ std.Io.Writer.Discarding.init	fn	fn ([]u8) Io.Writer.Discarding
 std.Io.Writer.Discarding.fullCount	fn	fn (*const Io.Writer.Discarding) u64
 std.Io.Writer.Discarding.drain	fn	fn (*Io.Writer, []const []const u8, usize) error{WriteFailed}!usize
 std.Io.Writer.Discarding.sendFile	fn	fn (*Io.Writer, *Io.File.Reader, Io.Limit) error{EndOfStream,ReadFailed,Unimplemented,WriteFailed}!usize
+std.Io.Writer.Hashed	fn	fn (comptime type) type
+std.Io.Writer.Hashing	fn	fn (comptime type) type
 std.Io.Writer.Allocating.init	fn	fn (mem.Allocator) Io.Writer.Allocating
 std.Io.Writer.Allocating.initAligned	fn	fn (mem.Allocator, mem.Alignment) Io.Writer.Allocating
 std.Io.Writer.Allocating.initCapacity	fn	fn (mem.Allocator, usize) error{OutOfMemory}!Io.Writer.Allocating
@@ -1873,6 +1877,7 @@ std.Io.File.MultiReader.fill	fn	fn (*Io.File.MultiReader, usize, Io.Timeout) err
 std.Io.File.MultiReader.fillRemaining	fn	fn (*Io.File.MultiReader, Io.Timeout) error{Canceled,ConcurrencyUnavailable,Timeout}!void
 std.Io.File.MultiReader.Streams.contexts	fn	fn (*Io.File.MultiReader.Streams) []Io.File.MultiReader.Context
 std.Io.File.MultiReader.Streams.storage	fn	fn (*Io.File.MultiReader.Streams) []Io.Operation.Storage
+std.Io.File.MultiReader.Buffer	fn	fn (comptime usize) type
 std.Io.File.SetTimestamp.init	fn	fn (?Io.Timestamp) Io.File.SetTimestamp
 std.Io.Terminal.Color	type	Io.Terminal.Color
 std.Io.Terminal.Mode	type	Io.Terminal.Mode
@@ -1985,11 +1990,13 @@ std.Io.Timeout.toTimestamp	fn	fn (Io.Timeout, Io) ?Io.Clock.Timestamp
 std.Io.Timeout.toDeadline	fn	fn (Io.Timeout, Io) Io.Timeout
 std.Io.Timeout.toDurationFromNow	fn	fn (Io.Timeout, Io) ?Io.Clock.Duration
 std.Io.Timeout.sleep	fn	fn (Io.Timeout, Io) error{Canceled}!void
+std.Io.Future	fn	fn (type) type
 std.Io.Group.init	const_other	Io.Group
 std.Io.Group.async	fn	fn (*Io.Group, Io, anytype, anytype) void
 std.Io.Group.concurrent	fn	fn (*Io.Group, Io, anytype, anytype) error{ConcurrencyUnavailable}!void
 std.Io.Group.await	fn	fn (*Io.Group, Io) error{Canceled}!void
 std.Io.Group.cancel	fn	fn (*Io.Group, Io) void
+std.Io.Select	fn	fn (comptime type) type
 std.Io.Mutex.init	const_other	Io.Mutex
 std.Io.Mutex.State	type	Io.Mutex.State
 std.Io.Mutex.tryLock	fn	fn (*Io.Mutex) bool
@@ -2014,8 +2021,12 @@ std.Io.TypeErasedQueue.put	fn	fn (*Io.TypeErasedQueue, Io, []const u8, usize) er
 std.Io.TypeErasedQueue.putUncancelable	fn	fn (*Io.TypeErasedQueue, Io, []const u8, usize) error{Closed}!usize
 std.Io.TypeErasedQueue.get	fn	fn (*Io.TypeErasedQueue, Io, []u8, usize) error{Canceled,Closed}!usize
 std.Io.TypeErasedQueue.getUncancelable	fn	fn (*Io.TypeErasedQueue, Io, []u8, usize) error{Closed}!usize
+std.Io.Queue	fn	fn (type) type
 std.Io.LockedStderr.terminal	fn	fn (Io.LockedStderr) Io.Terminal
 std.Io.LockedStderr.clear	fn	fn (Io.LockedStderr, []u8) error{Canceled}!void
+std.MultiArrayList	fn	fn (comptime type) type
+std.PriorityQueue	fn	fn (comptime type, comptime type, comptime anytype) type
+std.PriorityDequeue	fn	fn (comptime type, comptime type, comptime anytype) type
 std.Progress.Status	type	Progress.Status
 std.Progress.Ipc	type	Progress.Ipc
 std.Progress.TerminalMode	type	Progress.TerminalMode
@@ -2150,6 +2161,7 @@ std.Random.ziggurat.exp_v	const_other	comptime_float
 std.Random.ziggurat.exp_f	fn	fn (f64) f64
 std.Random.ziggurat.exp_f_inv	fn	fn (f64) f64
 std.Random.ziggurat.exp_zero_case	fn	fn (Random, f64) f64
+std.Random.lcg.Wrapping	fn	fn (comptime type) type
 std.Random.lcg.Wrapping	fn	fn (comptime type) type
 std.Random.IoSource.interface	fn	fn (*const Random.IoSource) Random
 std.SemanticVersion.Range	type	SemanticVersion.Range
@@ -3754,6 +3766,7 @@ std.Target.Cpu.Feature.Set.populateDependencies	fn	fn (*Target.Cpu.Feature.Set, 
 std.Target.Cpu.Feature.Set.asBytes	fn	fn (*const Target.Cpu.Feature.Set) *const [40]u8
 std.Target.Cpu.Feature.Set.eql	fn	fn (Target.Cpu.Feature.Set, Target.Cpu.Feature.Set) bool
 std.Target.Cpu.Feature.Set.isSuperSetOf	fn	fn (Target.Cpu.Feature.Set, Target.Cpu.Feature.Set) bool
+std.Target.Cpu.Feature.FeatureSetFns	fn	fn (comptime type) type
 std.Target.Cpu.Arch.Family	type	Target.Cpu.Arch.Family
 std.Target.Cpu.Arch.family	fn	fn (Target.Cpu.Arch) callconv(.@"inline") Target.Cpu.Arch.Family
 std.Target.Cpu.Arch.isX86	fn	fn (Target.Cpu.Arch) callconv(.@"inline") bool
@@ -3820,6 +3833,7 @@ std.Thread.YieldError	type	error{SystemCannotYield}
 std.Thread.yield	fn	fn () error{SystemCannotYield}!void
 std.Thread.maybeAttachSignalStack	fn	fn () void
 std.Thread.SpawnConfig.default_stack_size	const_int	16777216
+std.Treap	fn	fn (comptime type, comptime anytype) type
 std.Uri.GetHostError	type	error{UriMissingHost}
 std.Uri.getHost	fn	fn (Uri, *[255]u8) error{UriMissingHost}!Io.net.HostName
 std.Uri.GetHostAllocError	type	error{OutOfMemory,UriMissingHost}
@@ -3855,6 +3869,8 @@ std.Uri.Format.Flags.all	const_other	Uri.Format.Flags
 std.array_list.Managed	fn	fn (comptime type) type
 std.array_list.AlignedManaged	fn	fn (comptime type, comptime ?mem.Alignment) type
 std.array_list.Aligned	fn	fn (comptime type, comptime ?mem.Alignment) type
+std.array_list.AlignedManaged	fn	fn (comptime type, comptime ?mem.Alignment) type
+std.array_list.Aligned	fn	fn (comptime type, comptime ?mem.Alignment) type
 std.array_hash_map.Auto	fn	fn (comptime type, comptime type) type
 std.array_hash_map.String	fn	fn (comptime type) type
 std.array_hash_map.StringContext	type	array_hash_map.StringContext
@@ -3871,11 +3887,14 @@ std.array_hash_map.autoEqlIsCheap	fn	fn (comptime type) bool
 std.array_hash_map.getAutoHashStratFn	fn	fn (comptime type, comptime type, comptime hash.auto_hash.HashStrategy) anytype
 std.array_hash_map.StringContext.hash	fn	fn (array_hash_map.StringContext, []const u8) u32
 std.array_hash_map.StringContext.eql	fn	fn (array_hash_map.StringContext, []const u8, []const u8, usize) bool
+std.array_hash_map.Custom	fn	fn (comptime type, comptime type, comptime type, comptime bool) type
+std.array_hash_map.AutoContext	fn	fn (comptime type) type
 std.atomic.Value	fn	fn (comptime type) type
 std.atomic.spinLoopHint	fn	fn () callconv(.@"inline") void
 std.atomic.cacheLineForCpu	fn	fn (Target.Cpu) u16
 std.atomic.cache_line	const_int	128
 std.atomic.Mutex	type	atomic.Mutex
+std.atomic.Value	fn	fn (comptime type) type
 std.atomic.Mutex.tryLock	fn	fn (*atomic.Mutex) bool
 std.atomic.Mutex.unlock	fn	fn (*atomic.Mutex) void
 std.base64.Error	type	error{InvalidCharacter,InvalidPadding,NoSpaceLeft}
@@ -3907,6 +3926,8 @@ std.bit_set.DynamicBitSetUnmanaged	type	bit_set.DynamicBitSetUnmanaged
 std.bit_set.DynamicBitSet	type	bit_set.DynamicBitSet
 std.bit_set.IteratorOptions	type	bit_set.IteratorOptions
 std.bit_set.Range	type	bit_set.Range
+std.bit_set.IntegerBitSet	fn	fn (comptime u16) type
+std.bit_set.ArrayBitSet	fn	fn (comptime type, comptime usize) type
 std.bit_set.DynamicBitSetUnmanaged.MaskInt	type	usize
 std.bit_set.DynamicBitSetUnmanaged.ShiftInt	type	u6
 std.bit_set.DynamicBitSetUnmanaged.initEmpty	fn	fn (mem.Allocator, usize) @typeInfo(@typeInfo(@TypeOf(bit_set.DynamicBitSetUnmanaged.initEmpty)).@"fn".return_type.?).error_union.error_set!bit_set.DynamicBitSetUnmanaged
@@ -4116,9 +4137,6 @@ std.coff.ImportNameType	type	coff.ImportNameType
 std.coff.Relocation	type	coff.Relocation
 std.coff.IMAGE	type	coff.IMAGE
 std.coff.Header.Flags	type	coff.Header.Flags
-std.coff.OptionalHeader.Magic	type	coff.OptionalHeader.Magic
-std.coff.OptionalHeader.PE32	type	coff.OptionalHeader.PE32
-std.coff.OptionalHeader.@"PE32+"	type	coff.OptionalHeader.PE32+
 std.coff.ImportLookupEntry32.ByName	type	coff.ImportLookupEntry32.ByName
 std.coff.ImportLookupEntry32.ByOrdinal	type	coff.ImportLookupEntry32.ByOrdinal
 std.coff.ImportLookupEntry32.getImportByName	fn	fn (u32) ?coff.ImportLookupEntry32.ByName
@@ -4270,6 +4288,7 @@ std.compress.lzma.Decode.CircularBuffer.appendLiteral	fn	fn (*compress.lzma.Deco
 std.compress.lzma.Decode.CircularBuffer.appendLz	fn	fn (*compress.lzma.Decode.CircularBuffer, mem.Allocator, usize, usize, *Io.Writer) @typeInfo(@typeInfo(@TypeOf(compress.lzma.Decode.CircularBuffer.appendLz)).@"fn".return_type.?).error_union.error_set!void
 std.compress.lzma.Decode.CircularBuffer.finish	fn	fn (*compress.lzma.Decode.CircularBuffer, *Io.Writer) @typeInfo(@typeInfo(@TypeOf(compress.lzma.Decode.CircularBuffer.finish)).@"fn".return_type.?).error_union.error_set!void
 std.compress.lzma.Decode.CircularBuffer.deinit	fn	fn (*compress.lzma.Decode.CircularBuffer, mem.Allocator) void
+std.compress.lzma.Decode.BitTree	fn	fn (comptime usize) type
 std.compress.lzma.Decode.LenDecoder.decode	fn	fn (*compress.lzma.Decode.LenDecoder, *Io.Reader, *compress.lzma.RangeDecoder, usize, *u64) @typeInfo(@typeInfo(@TypeOf(compress.lzma.Decode.LenDecoder.decode)).@"fn".return_type.?).error_union.error_set!usize
 std.compress.lzma.Decode.LenDecoder.reset	fn	fn (*compress.lzma.Decode.LenDecoder) void
 std.compress.lzma.Decode.Vec2d.init	fn	fn (mem.Allocator, u16, usize, usize) @typeInfo(@typeInfo(@TypeOf(compress.lzma.Decode.Vec2d.init)).@"fn".return_type.?).error_union.error_set!compress.lzma.Decode.Vec2d
@@ -4388,6 +4407,7 @@ std.compress.zstd.table_size_max.offset	const_int	256
 std.static_string_map.StaticStringMap	fn	fn (comptime type) type
 std.static_string_map.defaultEql	fn	fn ([]const u8, []const u8) bool
 std.static_string_map.eqlAsciiIgnoreCase	fn	fn ([]const u8, []const u8) bool
+std.static_string_map.StaticStringMapWithEql	fn	fn (comptime type, comptime fn ([]const u8, []const u8) bool) type
 std.static_string_map.StaticStringMapWithEql	fn	fn (comptime type, comptime fn ([]const u8, []const u8) bool) type
 std.crypto.timing_safe	type	crypto.timing_safe
 std.crypto.aead	type	crypto.aead
@@ -4657,6 +4677,8 @@ std.crypto.auth.siphash	type	crypto.siphash
 std.crypto.auth.aegis	type	crypto.auth.aegis
 std.crypto.auth.cmac	type	crypto.cmac
 std.crypto.auth.cbc_mac	type	crypto.cbc_mac
+std.crypto.auth.cbc_mac.CbcMacAes128	type	crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128)
+std.crypto.auth.cbc_mac.CbcMac	fn	fn (comptime type) type
 std.crypto.auth.hmac.HmacMd5	type	crypto.hmac.Hmac(crypto.md5.Md5)
 std.crypto.auth.hmac.HmacMd5.mac_length	const_int	16
 std.crypto.auth.hmac.HmacMd5.key_length_min	const_int	0
@@ -4707,6 +4729,7 @@ std.crypto.auth.hmac.sha2.HmacSha512.create	fn	fn (*[64]u8, []const u8, []const 
 std.crypto.auth.hmac.sha2.HmacSha512.init	fn	fn ([]const u8) crypto.hmac.Hmac(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512))
 std.crypto.auth.hmac.sha2.HmacSha512.update	fn	fn (*crypto.hmac.Hmac(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512)), []const u8) void
 std.crypto.auth.hmac.sha2.HmacSha512.final	fn	fn (*crypto.hmac.Hmac(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512)), *[64]u8) void
+std.crypto.auth.hmac.Hmac	fn	fn (comptime type) type
 std.crypto.auth.siphash.SipHash64	fn	fn (comptime usize, comptime usize) type
 std.crypto.auth.siphash.SipHash128	fn	fn (comptime usize, comptime usize) type
 std.crypto.auth.aegis.Aegis128X4Mac	type	crypto.aegis.AegisMac(crypto.aegis.Aegis128XGeneric(4,256))
@@ -4850,15 +4873,7 @@ std.crypto.auth.cmac.CmacAes128.init	fn	fn (*const [16]u8) crypto.cmac.Cmac(cryp
 std.crypto.auth.cmac.CmacAes128.update	fn	fn (*crypto.cmac.Cmac(crypto.aes.aesni.Aes128), []const u8) void
 std.crypto.auth.cmac.CmacAes128.final	fn	fn (*crypto.cmac.Cmac(crypto.aes.aesni.Aes128), *[16]u8) void
 std.crypto.auth.cmac.Cmac	fn	fn (comptime type) type
-std.crypto.auth.cbc_mac.CbcMacAes128	type	crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128)
-std.crypto.auth.cbc_mac.CbcMacAes128.key_length	const_int	16
-std.crypto.auth.cbc_mac.CbcMacAes128.block_length	const_int	16
-std.crypto.auth.cbc_mac.CbcMacAes128.mac_length	const_int	16
-std.crypto.auth.cbc_mac.CbcMacAes128.create	fn	fn (*[16]u8, []const u8, *const [16]u8) void
-std.crypto.auth.cbc_mac.CbcMacAes128.init	fn	fn (*const [16]u8) crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128)
-std.crypto.auth.cbc_mac.CbcMacAes128.update	fn	fn (*crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128), []const u8) void
-std.crypto.auth.cbc_mac.CbcMacAes128.final	fn	fn (*crypto.cbc_mac.CbcMac(crypto.aes.aesni.Aes128), *[16]u8) void
-std.crypto.auth.cbc_mac.CbcMac	fn	fn (comptime type) type
+std.crypto.auth.cmac.Cmac	fn	fn (comptime type) type
 std.crypto.core.aes	type	crypto.aes
 std.crypto.core.keccak	type	crypto.keccak_p
 std.crypto.core.Ascon	fn	fn (comptime builtin.Endian) type
@@ -4895,6 +4910,9 @@ std.crypto.core.aes.Aes256.initEnc	fn	fn ([32]u8) crypto.aes.aesni.AesEncryptCtx
 std.crypto.core.aes.Aes256.initDec	fn	fn ([32]u8) crypto.aes.aesni.AesDecryptCtx(crypto.aes.aesni.Aes256)
 std.crypto.core.keccak.KeccakF	fn	fn (comptime u11) type
 std.crypto.core.keccak.State	fn	fn (comptime u11, comptime u11, comptime u5) type
+std.crypto.core.keccak.KeccakF	fn	fn (comptime u11) type
+std.crypto.core.keccak.State	fn	fn (comptime u11, comptime u11, comptime u5) type
+std.crypto.core.Ascon	fn	fn (comptime builtin.Endian) type
 std.crypto.core.modes.ctr	fn	fn (comptime anytype, anytype, []u8, []const u8, anytype, builtin.Endian) void
 std.crypto.core.modes.ctrSlice	fn	fn (comptime anytype, anytype, []u8, []const u8, anytype, builtin.Endian, comptime usize, comptime usize) void
 std.crypto.dh.X25519	type	crypto.25519.x25519.X25519
@@ -4999,6 +5017,7 @@ std.crypto.kem.hybrid.MlKem1024P384.SecretKey	type	crypto.hybrid_kem.HybridKem(.
 std.crypto.kem.hybrid.MlKem1024P384.KeyPair	type	crypto.hybrid_kem.HybridKem(.{ .name = &.{ ... }[0..(...)], .label = &.{ ... }[0..(...)], .PqKem = crypto.ml_kem.Kyber(.{ .name = &.{ ... }[0..(...)], .ml_kem = true, .k = 4, .eta1 = 2, .du = 11, .dv = 5 }), .Group = crypto.hybrid_kem.NistCurveGroup(crypto.pcurves.p384.P384), .pq_nseed = 64, .Nseed = 32, .Nek = 1665, .Ndk = 32, .Nct = 1665, .Nss = 32, .Xof = crypto.sha3.ShakeLike(256,31,24) }).KeyPair
 std.crypto.kem.hybrid.MlKem1024P384.EncapsulatedSecret	type	crypto.hybrid_kem.HybridKem(.{ .name = &.{ ... }[0..(...)], .label = &.{ ... }[0..(...)], .PqKem = crypto.ml_kem.Kyber(.{ .name = &.{ ... }[0..(...)], .ml_kem = true, .k = 4, .eta1 = 2, .du = 11, .dv = 5 }), .Group = crypto.hybrid_kem.NistCurveGroup(crypto.pcurves.p384.P384), .pq_nseed = 64, .Nseed = 32, .Nek = 1665, .Ndk = 32, .Nct = 1665, .Nss = 32, .Xof = crypto.sha3.ShakeLike(256,31,24) }).EncapsulatedSecret
 std.crypto.kem.hybrid.Params	type	crypto.hybrid_kem.Params
+std.crypto.kem.hybrid.HybridKem	fn	fn (comptime crypto.hybrid_kem.Params) type
 std.crypto.kem.hybrid.HybridKem	fn	fn (comptime crypto.hybrid_kem.Params) type
 std.crypto.kem.kyber_d00.Kyber512	type	crypto.ml_kem.Kyber(.{ .name = &.{ ... }[0..(...)], .ml_kem = false, .k = 2, .eta1 = 3, .du = 10, .dv = 4 })
 std.crypto.kem.kyber_d00.Kyber512.ciphertext_length	const_int	768
@@ -5723,6 +5742,8 @@ std.crypto.hash.blake2.Blake2b512.hash	fn	fn ([]const u8, *[64]u8, crypto.blake2
 std.crypto.hash.blake2.Blake2b512.update	fn	fn (*crypto.blake2.Blake2b(512), []const u8) void
 std.crypto.hash.blake2.Blake2b512.final	fn	fn (*crypto.blake2.Blake2b(512), *[64]u8) void
 std.crypto.hash.blake2.Blake2b	fn	fn (comptime usize) type
+std.crypto.hash.blake2.Blake2s	fn	fn (comptime usize) type
+std.crypto.hash.blake2.Blake2b	fn	fn (comptime usize) type
 std.crypto.hash.Blake3.block_length	const_int	64
 std.crypto.hash.Blake3.digest_length	const_int	32
 std.crypto.hash.Blake3.key_length	const_int	32
@@ -6006,6 +6027,7 @@ std.crypto.hash.sha3.CShake	fn	fn (comptime u11, comptime ?[]const u8) type
 std.crypto.hash.sha3.KMac	fn	fn (comptime u11) type
 std.crypto.hash.sha3.TupleHash	fn	fn (comptime u11) type
 std.crypto.hash.sha3.NistLengthEncoding	type	crypto.sha3.NistLengthEncoding
+std.crypto.hash.sha3.Keccak	fn	fn (comptime u11, comptime u11, comptime u8, comptime u5) type
 std.crypto.hash.sha3.NistLengthEncoding.Length	type	crypto.sha3.NistLengthEncoding.Length
 std.crypto.hash.sha3.NistLengthEncoding.encode	fn	fn (comptime crypto.sha3.NistLengthEncoding, usize) crypto.sha3.NistLengthEncoding.Length
 std.crypto.hash.sha3.NistLengthEncoding.Length.slice	fn	fn (*const crypto.sha3.NistLengthEncoding.Length) []const u8
@@ -6034,6 +6056,7 @@ std.crypto.hash.composition.Sha512oSha512.init	fn	fn (crypto.hash_composition.Co
 std.crypto.hash.composition.Sha512oSha512.hash	fn	fn ([]const u8, *[64]u8, crypto.hash_composition.Composition(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512),crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512)).Options) void
 std.crypto.hash.composition.Sha512oSha512.update	fn	fn (*crypto.hash_composition.Composition(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512),crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512)), []const u8) void
 std.crypto.hash.composition.Sha512oSha512.final	fn	fn (*crypto.hash_composition.Composition(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512),crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512)), *[64]u8) void
+std.crypto.hash.composition.Composition	fn	fn (comptime type, comptime type) type
 std.crypto.kdf.hkdf	type	crypto.hkdf
 std.crypto.kdf.hkdf.HkdfSha256	type	crypto.hkdf.Hkdf(crypto.hmac.Hmac(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256)))
 std.crypto.kdf.hkdf.HkdfSha256.prk_length	const_int	32
@@ -6045,6 +6068,7 @@ std.crypto.kdf.hkdf.HkdfSha512.prk_length	const_int	64
 std.crypto.kdf.hkdf.HkdfSha512.extract	fn	fn ([]const u8, []const u8) [64]u8
 std.crypto.kdf.hkdf.HkdfSha512.extractInit	fn	fn ([]const u8) crypto.hmac.Hmac(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512))
 std.crypto.kdf.hkdf.HkdfSha512.expand	fn	fn ([]u8, []const u8, [64]u8) void
+std.crypto.kdf.hkdf.Hkdf	fn	fn (comptime type) type
 std.crypto.kdf.hkdf.Hkdf	fn	fn (comptime type) type
 std.crypto.onetimeauth.Ghash	type	crypto.ghash_polyval.Hash(.big,true)
 std.crypto.onetimeauth.Ghash.block_length	const_int	16
@@ -6084,6 +6108,11 @@ std.crypto.pwhash.bcrypt	type	crypto.bcrypt
 std.crypto.pwhash.scrypt	type	crypto.scrypt
 std.crypto.pwhash.pbkdf2	fn	fn ([]u8, []const u8, []const u8, u32, comptime type) error{OutputTooLong,WeakParameters}!void
 std.crypto.pwhash.phc_format	type	crypto.phc_encoding
+std.crypto.pwhash.phc_format.Error	type	error{InvalidEncoding,NoSpaceLeft}
+std.crypto.pwhash.phc_format.BinValue	fn	fn (comptime usize) type
+std.crypto.pwhash.phc_format.deserialize	fn	fn (comptime type, []const u8) anytype
+std.crypto.pwhash.phc_format.serialize	fn	fn (anytype, []u8) error{InvalidEncoding,NoSpaceLeft}![]const u8
+std.crypto.pwhash.phc_format.calcSize	fn	fn (anytype) usize
 std.crypto.pwhash.argon2.Mode	type	crypto.argon2.Mode
 std.crypto.pwhash.argon2.Params	type	crypto.argon2.Params
 std.crypto.pwhash.argon2.kdf	fn	fn (mem.Allocator, []u8, []const u8, []const u8, crypto.argon2.Params, crypto.argon2.Mode, Io) error{AuthenticationFailed,Canceled,ContextTooLong,IdentityElement,InvalidEncoding,KeyMismatch,LockedMemoryLimitExceeded,NonCanonical,NotSquare,OutOfMemory,OutputTooLong,PasswordVerificationFailed,SignatureVerificationFailed,SystemResources,ThreadQuotaExceeded,Unexpected,UnexpectedSubgroup,WeakParameters,WeakPublicKey}!void
@@ -6124,11 +6153,6 @@ std.crypto.pwhash.scrypt.Params.interactive	const_other	crypto.scrypt.Params
 std.crypto.pwhash.scrypt.Params.sensitive	const_other	crypto.scrypt.Params
 std.crypto.pwhash.scrypt.Params.owasp	const_other	crypto.scrypt.Params
 std.crypto.pwhash.scrypt.Params.fromLimits	fn	fn (u64, usize) crypto.scrypt.Params
-std.crypto.pwhash.phc_format.Error	type	error{InvalidEncoding,NoSpaceLeft}
-std.crypto.pwhash.phc_format.BinValue	fn	fn (comptime usize) type
-std.crypto.pwhash.phc_format.deserialize	fn	fn (comptime type, []const u8) anytype
-std.crypto.pwhash.phc_format.serialize	fn	fn (anytype, []u8) error{InvalidEncoding,NoSpaceLeft}![]const u8
-std.crypto.pwhash.phc_format.calcSize	fn	fn (anytype) usize
 std.crypto.sign.Ed25519	type	crypto.25519.ed25519.Ed25519
 std.crypto.sign.ecdsa	type	crypto.ecdsa
 std.crypto.sign.mldsa	type	crypto.ml_dsa
@@ -6253,6 +6277,7 @@ std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256oSha256.Signer	type	crypto.ecdsa.Ecdsa
 std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256oSha256.Verifier	type	crypto.ecdsa.Ecdsa(crypto.pcurves.secp256k1.Secp256k1,crypto.hash_composition.Composition(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256),crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256))).Verifier
 std.crypto.sign.ecdsa.EcdsaSecp256k1Sha256oSha256.KeyPair	type	crypto.ecdsa.Ecdsa(crypto.pcurves.secp256k1.Secp256k1,crypto.hash_composition.Composition(crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256),crypto.sha2.Sha2x32(.{ 1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225 },256))).KeyPair
 std.crypto.sign.ecdsa.Ecdsa	fn	fn (comptime type, comptime type) type
+std.crypto.sign.ecdsa.Ecdsa	fn	fn (comptime type, comptime type) type
 std.crypto.sign.mldsa.MLDSA44	type	crypto.ml_dsa.MLDSAImpl(.{ .name = &.{ ... }[0..(...)], .k = 4, .l = 4, .eta = 2, .omega = 80, .tau = 39, .gamma1_bits = 17, .gamma2 = 95232, .tr_size = 64, .ctilde_size = 32 })
 std.crypto.sign.mldsa.MLDSA44.params	const_other	crypto.ml_dsa.Params
 std.crypto.sign.mldsa.MLDSA44.name	const_other	[]const u8
@@ -6373,6 +6398,8 @@ std.crypto.stream.salsa.XSalsa20	type	crypto.salsa20.XSalsa(20)
 std.crypto.stream.salsa.XSalsa20.nonce_length	const_int	24
 std.crypto.stream.salsa.XSalsa20.key_length	const_int	32
 std.crypto.stream.salsa.XSalsa20.xor	fn	fn ([]u8, []const u8, u64, [32]u8, [24]u8) void
+std.crypto.stream.salsa.Salsa	fn	fn (comptime comptime_int) type
+std.crypto.stream.salsa.XSalsa	fn	fn (comptime comptime_int) type
 std.crypto.nacl.Box	type	crypto.salsa20.Box
 std.crypto.nacl.Box.public_length	const_int	32
 std.crypto.nacl.Box.secret_length	const_int	32
@@ -6406,11 +6433,21 @@ std.crypto.ff.RepresentationError	type	error{UnexpectedRepresentation}
 std.crypto.ff.Error	type	error{EvenModulus,ModulusTooSmall,NonCanonical,NullExponent,Overflow,UnexpectedRepresentation}
 std.crypto.ff.Uint	fn	fn (comptime comptime_int) type
 std.crypto.ff.Modulus	fn	fn (comptime comptime_int) type
+std.crypto.ff.Uint	fn	fn (comptime comptime_int) type
+std.crypto.ff.Modulus	fn	fn (comptime comptime_int) type
 std.crypto.codecs.asn1	type	crypto.codecs.asn1
 std.crypto.codecs.base64	type	crypto.codecs.base64_hex_ct.base64
 std.crypto.codecs.hex	type	crypto.codecs.base64_hex_ct.hex
 std.crypto.codecs.asn1.der	type	crypto.codecs.asn1.der
 std.crypto.codecs.asn1.Oid	type	crypto.codecs.asn1.Oid
+std.crypto.codecs.asn1.Oid.InitError	type	error{InvalidCharacter,MissingPrefix,Overflow,WriteFailed}
+std.crypto.codecs.asn1.Oid.fromDot	fn	fn ([]const u8, []u8) error{InvalidCharacter,MissingPrefix,Overflow,WriteFailed}!crypto.codecs.asn1.Oid
+std.crypto.codecs.asn1.Oid.toDot	fn	fn (crypto.codecs.asn1.Oid, anytype) anytype
+std.crypto.codecs.asn1.Oid.asn1_tag	const_other	crypto.codecs.asn1.Tag
+std.crypto.codecs.asn1.Oid.decodeDer	fn	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Oid.decodeDer)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.Oid
+std.crypto.codecs.asn1.Oid.encodeDer	fn	fn (crypto.codecs.asn1.Oid, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Oid.encodeDer)).@"fn".return_type.?).error_union.error_set!void
+std.crypto.codecs.asn1.Oid.fromDotComptime	fn	fn (comptime []const u8) crypto.codecs.asn1.Oid
+std.crypto.codecs.asn1.Oid.StaticMap	fn	fn (comptime type) type
 std.crypto.codecs.asn1.Index	type	u32
 std.crypto.codecs.asn1.Tag	type	crypto.codecs.asn1.Tag
 std.crypto.codecs.asn1.Element	type	crypto.codecs.asn1.Element
@@ -6427,14 +6464,6 @@ std.crypto.codecs.asn1.der.Decoder.any	fn	fn (*crypto.codecs.asn1.der.Decoder, c
 std.crypto.codecs.asn1.der.Decoder.sequence	fn	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.der.Decoder.sequence)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.Element
 std.crypto.codecs.asn1.der.Decoder.element	fn	fn (*crypto.codecs.asn1.der.Decoder, crypto.codecs.asn1.ExpectedTag) error{EndOfStream,UnexpectedElement}!crypto.codecs.asn1.Element
 std.crypto.codecs.asn1.der.Decoder.view	fn	fn (crypto.codecs.asn1.der.Decoder, crypto.codecs.asn1.Element) []const u8
-std.crypto.codecs.asn1.Oid.InitError	type	error{InvalidCharacter,MissingPrefix,Overflow,WriteFailed}
-std.crypto.codecs.asn1.Oid.fromDot	fn	fn ([]const u8, []u8) error{InvalidCharacter,MissingPrefix,Overflow,WriteFailed}!crypto.codecs.asn1.Oid
-std.crypto.codecs.asn1.Oid.toDot	fn	fn (crypto.codecs.asn1.Oid, anytype) anytype
-std.crypto.codecs.asn1.Oid.asn1_tag	const_other	crypto.codecs.asn1.Tag
-std.crypto.codecs.asn1.Oid.decodeDer	fn	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Oid.decodeDer)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.Oid
-std.crypto.codecs.asn1.Oid.encodeDer	fn	fn (crypto.codecs.asn1.Oid, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Oid.encodeDer)).@"fn".return_type.?).error_union.error_set!void
-std.crypto.codecs.asn1.Oid.fromDotComptime	fn	fn (comptime []const u8) crypto.codecs.asn1.Oid
-std.crypto.codecs.asn1.Oid.StaticMap	fn	fn (comptime type) type
 std.crypto.codecs.asn1.Tag.Number	type	crypto.codecs.asn1.Tag.Number
 std.crypto.codecs.asn1.Tag.Class	type	crypto.codecs.asn1.Tag.Class
 std.crypto.codecs.asn1.Tag.init	fn	fn (crypto.codecs.asn1.Tag.Number, bool, crypto.codecs.asn1.Tag.Class) crypto.codecs.asn1.Tag
@@ -6458,6 +6487,7 @@ std.crypto.codecs.asn1.FieldTag.toTag	fn	fn (crypto.codecs.asn1.FieldTag) crypto
 std.crypto.codecs.asn1.BitString.bitLen	fn	fn (crypto.codecs.asn1.BitString) usize
 std.crypto.codecs.asn1.BitString.decodeDer	fn	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.BitString.decodeDer)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.BitString
 std.crypto.codecs.asn1.BitString.encodeDer	fn	fn (crypto.codecs.asn1.BitString, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.BitString.encodeDer)).@"fn".return_type.?).error_union.error_set!void
+std.crypto.codecs.asn1.Opaque	fn	fn (comptime crypto.codecs.asn1.Tag) type
 std.crypto.codecs.asn1.Any.decodeDer	fn	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Any.decodeDer)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.Any
 std.crypto.codecs.asn1.Any.encodeDer	fn	fn (crypto.codecs.asn1.Any, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Any.encodeDer)).@"fn".return_type.?).error_union.error_set!void
 std.crypto.codecs.base64.Variant	type	crypto.codecs.base64_hex_ct.base64.Variant
@@ -6542,6 +6572,8 @@ std.crypto.tls.Alert.Description.Error	type	error{TlsAlertAccessDenied,TlsAlertB
 std.crypto.tls.Alert.Description.toError	fn	fn (crypto.tls.Alert.Description) error{TlsAlertAccessDenied,TlsAlertBadCertificate,TlsAlertBadCertificateStatusResponse,TlsAlertBadRecordMac,TlsAlertCertificateExpired,TlsAlertCertificateRequired,TlsAlertCertificateRevoked,TlsAlertCertificateUnknown,TlsAlertDecodeError,TlsAlertDecryptError,TlsAlertHandshakeFailure,TlsAlertIllegalParameter,TlsAlertInappropriateFallback,TlsAlertInsufficientSecurity,TlsAlertInternalError,TlsAlertMissingExtension,TlsAlertNoApplicationProtocol,TlsAlertProtocolVersion,TlsAlertRecordOverflow,TlsAlertUnexpectedMessage,TlsAlertUnknown,TlsAlertUnknownCa,TlsAlertUnknownPskIdentity,TlsAlertUnrecognizedName,TlsAlertUnsupportedCertificate,TlsAlertUnsupportedExtension}!void
 std.crypto.tls.CipherSuite.With	type	crypto.tls.CipherSuite.With
 std.crypto.tls.CipherSuite.with	fn	fn (crypto.tls.CipherSuite) crypto.tls.CipherSuite.With
+std.crypto.tls.HandshakeCipherT	fn	fn (comptime type, comptime type, comptime comptime_int) type
+std.crypto.tls.ApplicationCipherT	fn	fn (comptime type, comptime type, comptime comptime_int) type
 std.crypto.tls.Decoder.fromTheirSlice	fn	fn ([]u8) crypto.tls.Decoder
 std.crypto.tls.Decoder.readAtLeast	fn	fn (*crypto.tls.Decoder, *Io.Reader, usize) @typeInfo(@typeInfo(@TypeOf(crypto.tls.Decoder.readAtLeast)).@"fn".return_type.?).error_union.error_set!void
 std.crypto.tls.Decoder.readAtLeastOurAmt	fn	fn (*crypto.tls.Decoder, *Io.Reader, usize) @typeInfo(@typeInfo(@TypeOf(crypto.tls.Decoder.readAtLeastOurAmt)).@"fn".return_type.?).error_union.error_set!void
@@ -6751,6 +6783,8 @@ std.debug.Dwarf.getSymbols	fn	fn (*debug.Dwarf, mem.Allocator, mem.Allocator, bu
 std.debug.Dwarf.expression.Context	type	debug.Dwarf.expression.Context
 std.debug.Dwarf.expression.Options	type	debug.Dwarf.expression.Options
 std.debug.Dwarf.expression.Error	type	error{DivisionByZero,EndOfStream,IncompatibleRegisterSize,IncompleteExpressionContext,InvalidCFAOpcode,InvalidExpression,InvalidFrameBase,InvalidIntegralTypeSize,InvalidRegister,InvalidSubExpression,InvalidTypeLength,OutOfMemory,Overflow,ReadFailed,TruncatedIntegralType,UnimplementedExpressionCall,UnimplementedOpcode,UnimplementedTypeConversion,UnimplementedTypedComparison,UnimplementedUserOpcode,UnknownExpressionOpcode,UnsupportedRegister}
+std.debug.Dwarf.expression.StackMachine	fn	fn (comptime debug.Dwarf.expression.Options) type
+std.debug.Dwarf.expression.Builder	fn	fn (comptime debug.Dwarf.expression.Options) type
 std.debug.Dwarf.expression.StackMachine	fn	fn (comptime debug.Dwarf.expression.Options) type
 std.debug.Dwarf.expression.Builder	fn	fn (comptime debug.Dwarf.expression.Options) type
 std.debug.Dwarf.Unwind.VirtualMachine	type	debug.Dwarf.Unwind.VirtualMachine
@@ -7042,9 +7076,11 @@ std.debug.no_panic.forLenMismatch	fn	fn () noreturn
 std.debug.no_panic.copyLenMismatch	fn	fn () noreturn
 std.debug.no_panic.memcpyAlias	fn	fn () noreturn
 std.debug.no_panic.noreturnReturned	fn	fn () noreturn
+std.debug.FullPanic	fn	fn (comptime fn ([]const u8, ?usize) noreturn) type
 std.debug.SourceLocation.invalid	const_other	debug.SourceLocation
 std.debug.Symbol.unknown	const_other	debug.Symbol
 std.debug.FormatStackTrace.format	fn	fn (debug.FormatStackTrace, *Io.Writer) error{WriteFailed}!void
+std.debug.ConfigurableTrace	fn	fn (comptime usize, comptime usize, comptime bool) type
 std.debug.SafetyLock.State	type	debug.SafetyLock.State__enum
 std.debug.SafetyLock.lock	fn	fn (*debug.SafetyLock) void
 std.debug.SafetyLock.unlock	fn	fn (*debug.SafetyLock) void
@@ -7934,6 +7970,11 @@ std.enums.EnumMultiset	fn	fn (comptime type) type
 std.enums.BoundedEnumMultiset	fn	fn (comptime type, comptime type) type
 std.enums.EnumArray	fn	fn (comptime type, comptime type) type
 std.enums.EnumIndexer	fn	fn (comptime type) type
+std.enums.EnumSet	fn	fn (comptime type) type
+std.enums.EnumMap	fn	fn (comptime type, comptime type) type
+std.enums.BoundedEnumMultiset	fn	fn (comptime type, comptime type) type
+std.enums.EnumArray	fn	fn (comptime type, comptime type) type
+std.enums.EnumIndexer	fn	fn (comptime type) type
 std.fmt.float	type	fmt.float
 std.fmt.default_max_depth	const_int	3
 std.fmt.Alignment	type	fmt.Alignment
@@ -7983,6 +8024,7 @@ std.fmt.float.binaryToDecimal	fn	fn (comptime type, anytype, anytype, u5, bool, 
 std.fmt.float.Backend128_Tables	type	fmt.float.Backend128_Tables
 std.fmt.float.Backend64_TablesFull	type	fmt.float.Backend64_TablesFull
 std.fmt.float.Backend64_TablesSmall	type	fmt.float.Backend64_TablesSmall
+std.fmt.float.FloatDecimal	fn	fn (comptime type) type
 std.fmt.Options.toNumber	fn	fn (fmt.Options, fmt.Number.Mode, fmt.Case) fmt.Number
 std.fmt.Number.Mode	type	fmt.Number.Mode
 std.fmt.Number.Mode.base	fn	fn (fmt.Number.Mode) ?u8
@@ -7995,6 +8037,7 @@ std.fmt.Parser.specifier	fn	fn (*fmt.Parser) @typeInfo(@typeInfo(@TypeOf(fmt.Par
 std.fmt.Parser.peek	fn	fn (*fmt.Parser, usize) ?u8
 std.fmt.ArgState.hasUnusedArgs	fn	fn (*fmt.ArgState) bool
 std.fmt.ArgState.nextArg	fn	fn (*fmt.ArgState, ?usize) ?usize
+std.fmt.Alt	fn	fn (comptime type, comptime anytype) type
 std.fs.path	type	fs.path
 std.fs.base64_alphabet	const_other	[64:0]u8
 std.fs.base64_encoder	const_other	base64.Base64Encoder
@@ -8063,6 +8106,8 @@ std.fs.path.Win32PathType	type	fs.path.Win32PathType
 std.fs.path.getWin32PathType	fn	fn (comptime type, anytype) fs.path.Win32PathType
 std.fs.path.PathType.isSep	fn	fn (comptime fs.path.PathType, comptime type, anytype) callconv(.@"inline") bool
 std.fs.path.WindowsPath.Kind	type	fs.path.WindowsPath.Kind
+std.fs.path.WindowsPath2	fn	fn (comptime type) type
+std.fs.path.ComponentIterator	fn	fn (comptime fs.path.PathType, comptime type) type
 std.gpu.ExecutionMode.Tag	type	gpu.ExecutionMode.Tag
 std.gpu.ExecutionMode.LocalSize	type	gpu.ExecutionMode.LocalSize
 std.hash.Adler32	type	hash.Adler32
@@ -8187,12 +8232,15 @@ std.hash_map.StringIndexAdapter	type	hash_map.StringIndexAdapter
 std.hash_map.default_max_load_percentage	const_int	80
 std.hash_map.HashMap	fn	fn (comptime type, comptime type, comptime type, comptime u64) type
 std.hash_map.HashMapUnmanaged	fn	fn (comptime type, comptime type, comptime type, comptime u64) type
+std.hash_map.AutoContext	fn	fn (comptime type) type
 std.hash_map.StringContext.hash	fn	fn (hash_map.StringContext, []const u8) u64
 std.hash_map.StringContext.eql	fn	fn (hash_map.StringContext, []const u8, []const u8) bool
 std.hash_map.StringIndexContext.eql	fn	fn (hash_map.StringIndexContext, u32, u32) bool
 std.hash_map.StringIndexContext.hash	fn	fn (hash_map.StringIndexContext, u32) u64
 std.hash_map.StringIndexAdapter.eql	fn	fn (hash_map.StringIndexAdapter, []const u8, u32) bool
 std.hash_map.StringIndexAdapter.hash	fn	fn (hash_map.StringIndexAdapter, []const u8) u64
+std.hash_map.HashMap	fn	fn (comptime type, comptime type, comptime type, comptime u64) type
+std.hash_map.HashMapUnmanaged	fn	fn (comptime type, comptime type, comptime type, comptime u64) type
 std.heap.ArenaAllocator.State	type	heap.ArenaAllocator.State
 std.heap.ArenaAllocator.allocator	fn	fn (*heap.ArenaAllocator) mem.Allocator
 std.heap.ArenaAllocator.init	fn	fn (mem.Allocator) heap.ArenaAllocator
@@ -8218,12 +8266,16 @@ std.heap.PageAllocator.vtable	const_other	mem.Allocator.VTable
 std.heap.PageAllocator.map	fn	fn (usize, mem.Alignment) ?[*]u8
 std.heap.PageAllocator.unmap	fn	fn ([]align(4096) u8) void
 std.heap.PageAllocator.realloc	fn	fn ([]u8, mem.Alignment, usize, bool) ?[*]u8
+std.heap.DebugAllocator	fn	fn (comptime heap.debug_allocator.Config) type
 std.heap.memory_pool.Managed	fn	fn (comptime type) type
 std.heap.memory_pool.Aligned	fn	fn (comptime type, comptime mem.Alignment) type
 std.heap.memory_pool.AlignedManaged	fn	fn (comptime type, comptime mem.Alignment) type
 std.heap.memory_pool.Options	type	heap.memory_pool.Options
 std.heap.memory_pool.Extra	fn	fn (comptime type, comptime heap.memory_pool.Options) type
 std.heap.memory_pool.ExtraManaged	fn	fn (comptime type, comptime heap.memory_pool.Options) type
+std.heap.memory_pool.Extra	fn	fn (comptime type, comptime heap.memory_pool.Options) type
+std.heap.memory_pool.ExtraManaged	fn	fn (comptime type, comptime heap.memory_pool.Options) type
+std.heap.StackFallbackAllocator	fn	fn (comptime usize) type
 std.http.Client	type	http.Client
 std.http.Server	type	http.Server
 std.http.HeadParser	type	http.HeadParser
@@ -8577,6 +8629,7 @@ std.json.Value.dump	fn	fn (json.dynamic.Value) void
 std.json.Value.jsonStringify	fn	fn (json.dynamic.Value, anytype) @typeInfo(@typeInfo(@TypeOf(json.dynamic.Value.jsonStringify)).@"fn".return_type.?).error_union.error_set!void
 std.json.Value.jsonParse	fn	fn (mem.Allocator, anytype, json.static.ParseOptions) anytype
 std.json.Value.jsonParseFromValue	fn	fn (mem.Allocator, json.dynamic.Value, json.static.ParseOptions) @typeInfo(@typeInfo(@TypeOf(json.dynamic.Value.jsonParseFromValue)).@"fn".return_type.?).error_union.error_set!json.dynamic.Value
+std.json.ArrayHashMap	fn	fn (comptime type) type
 std.json.Scanner.initStreaming	fn	fn (mem.Allocator) json.Scanner
 std.json.Scanner.initCompleteInput	fn	fn (mem.Allocator, []const u8) json.Scanner
 std.json.Scanner.deinit	fn	fn (*json.Scanner) void
@@ -8628,6 +8681,7 @@ std.json.Scanner.Reader.stackHeight	fn	fn (*const json.Scanner.Reader) usize
 std.json.Scanner.Reader.ensureTotalStackCapacity	fn	fn (*json.Scanner.Reader, usize) error{OutOfMemory}!void
 std.json.Scanner.Reader.next	fn	fn (*json.Scanner.Reader) error{EndOfStream,OutOfMemory,ReadFailed,SyntaxError,UnexpectedEndOfInput}!json.Scanner.Token
 std.json.Scanner.Reader.peekNextTokenType	fn	fn (*json.Scanner.Reader) error{EndOfStream,ReadFailed,SyntaxError,UnexpectedEndOfInput}!json.Scanner.TokenType
+std.json.Parsed	fn	fn (comptime type) type
 std.json.Stringify.Error	type	error{WriteFailed}
 std.json.Stringify.beginArray	fn	fn (*json.Stringify) error{WriteFailed}!void
 std.json.Stringify.beginObject	fn	fn (*json.Stringify) error{WriteFailed}!void
@@ -8646,6 +8700,7 @@ std.json.Stringify.value	fn	fn (anytype, json.Stringify.Options, *Io.Writer) err
 std.json.Stringify.valueAlloc	fn	fn (mem.Allocator, anytype, json.Stringify.Options) error{OutOfMemory}![]u8
 std.json.Stringify.encodeJsonString	fn	fn ([]const u8, json.Stringify.Options, *Io.Writer) error{WriteFailed}!void
 std.json.Stringify.encodeJsonStringChars	fn	fn ([]const u8, json.Stringify.Options, *Io.Writer) error{WriteFailed}!void
+std.json.Formatter	fn	fn (comptime type) type
 std.leb.writeUnsignedFixed	fn	fn (comptime usize, anytype, anytype) void
 std.leb.writeUnsignedExtended	fn	fn ([]u8, anytype) void
 std.leb.writeSignedFixed	fn	fn (comptime usize, anytype, anytype) void
@@ -8669,6 +8724,7 @@ std.log.warn	fn	fn (comptime []const u8, anytype) void
 std.log.info	fn	fn (comptime []const u8, anytype) void
 std.log.debug	fn	fn (comptime []const u8, anytype) void
 std.log.Level.asText	fn	fn (comptime log.Level) []const u8
+std.log.scoped	fn	fn (comptime @EnumLiteral()) type
 std.macho.cpu_type_t	type	c_int
 std.macho.cpu_subtype_t	type	c_int
 std.macho.vm_prot_t	type	macho.vm_prot_t
@@ -9142,6 +9198,8 @@ std.math.boolMask	fn	fn (comptime type, bool) callconv(.@"inline") anytype
 std.math.comptimeMod	fn	fn (anytype, comptime comptime_int) anytype
 std.math.F80	type	math.F80
 std.math.sign	fn	fn (anytype) callconv(.@"inline") anytype
+std.math.Frexp	fn	fn (comptime type) type
+std.math.Modf	fn	fn (comptime type) type
 std.math.complex.abs	fn	fn (anytype) anytype
 std.math.complex.acosh	fn	fn (anytype) anytype
 std.math.complex.acos	fn	fn (anytype) anytype
@@ -9162,6 +9220,7 @@ std.math.complex.sin	fn	fn (anytype) anytype
 std.math.complex.sqrt	fn	fn (anytype) anytype
 std.math.complex.tanh	fn	fn (anytype) anytype
 std.math.complex.tan	fn	fn (anytype) anytype
+std.math.complex.Complex	fn	fn (comptime type) type
 std.math.complex.Complex	fn	fn (comptime type) type
 std.math.big.int	type	math.big.int
 std.math.big.Limb	type	usize
@@ -9546,6 +9605,12 @@ std.mem.Alignment.min	fn	fn (mem.Alignment, mem.Alignment) mem.Alignment
 std.mem.Alignment.forward	fn	fn (mem.Alignment, usize) usize
 std.mem.Alignment.backward	fn	fn (mem.Alignment, usize) usize
 std.mem.Alignment.check	fn	fn (mem.Alignment, usize) bool
+std.mem.ValidationAllocator	fn	fn (comptime type) type
+std.mem.WindowIterator	fn	fn (comptime type) type
+std.mem.TokenIterator	fn	fn (comptime type, comptime mem.DelimiterType) type
+std.mem.SplitIterator	fn	fn (comptime type, comptime mem.DelimiterType) type
+std.mem.SplitBackwardsIterator	fn	fn (comptime type, comptime mem.DelimiterType) type
+std.mem.ReverseIterator	fn	fn (comptime type) type
 std.meta.TrailerFlags	fn	fn (comptime type) type
 std.meta.stringToEnum	fn	fn (comptime type, []const u8) anytype
 std.meta.alignment	fn	fn (comptime type) comptime_int
@@ -9574,6 +9639,7 @@ std.meta.isError	fn	fn (anytype) bool
 std.meta.hasFn	fn	fn (comptime type, comptime []const u8) callconv(.@"inline") bool
 std.meta.hasMethod	fn	fn (comptime type, comptime []const u8) callconv(.@"inline") bool
 std.meta.hasUniqueRepresentation	fn	fn (comptime type) callconv(.@"inline") bool
+std.meta.TrailerFlags	fn	fn (comptime type) type
 std.os.linux	type	os.linux
 std.os.plan9	type	os.plan9
 std.os.uefi	type	os.uefi
@@ -11315,6 +11381,7 @@ std.os.uefi.protocol.Udp6ServiceBinding.guid	const_other	os.uefi.Guid
 std.os.uefi.protocol.Udp6	type	os.uefi.protocol.udp6.Udp6
 std.os.uefi.protocol.HiiDatabase	type	os.uefi.protocol.hii_database.HiiDatabase
 std.os.uefi.protocol.HiiPopup	type	os.uefi.protocol.hii_popup.HiiPopup
+std.os.uefi.protocol.ServiceBinding	fn	fn (os.uefi.Guid) type
 std.os.uefi.protocol.LoadedImage.UnloadError	type	error{InvalidParameter,Unexpected}
 std.os.uefi.protocol.LoadedImage.unload	fn	fn (*os.uefi.protocol.loaded_image.LoadedImage, *os.uefi.Handle__opaque) error{InvalidParameter,Unexpected}!void
 std.os.uefi.protocol.LoadedImage.guid	const_other	os.uefi.Guid
@@ -12564,7 +12631,10 @@ std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH	type	os.windows.CONSOLE.USER_IO.IN
 std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Tag	type	@typeInfo(os.windows.CONSOLE.USER_IO.INFO.FILL.WITH).@"union".tag_type.?
 std.os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Payload	type	os.windows.CONSOLE.USER_IO.INFO.FILL.WITH.Payload__union
 std.os.windows.CONSOLE.USER_IO.INFO.READ_OUTPUT_CHARACTER.MODE	type	os.windows.CONSOLE.USER_IO.INFO.READ_OUTPUT_CHARACTER.MODE
+std.os.windows.CONSOLE.USER_IO.Request	fn	fn (comptime u32, comptime u32) type
 std.os.windows.CONSOLE.USER_IO.Header.With	fn	fn (comptime type) type
+std.os.windows.CONSOLE.USER_IO.Header.With	fn	fn (comptime type) type
+std.os.windows.AFD.WSABUF	fn	fn (comptime os.windows.AFD.Mutability) type
 std.os.windows.AFD.OPEN_PACKET.NAME	const_other	*const [15:0]u8
 std.os.windows.AFD.OPEN_PACKET.FULL_EA_INFORMATION	type	os.windows.AFD.OPEN_PACKET.FULL_EA_INFORMATION
 std.os.windows.AFD.BIND_INFO.MODE	type	os.windows.AFD.BIND_INFO.MODE
@@ -12614,7 +12684,6 @@ std.os.windows.DNS.QUERY.REQUEST	type	os.windows.DNS.QUERY.REQUEST
 std.os.windows.DNS.QUERY.RESULT	type	os.windows.DNS.QUERY.RESULT
 std.os.windows.DNS.QUERY.CANCEL	type	os.windows.DNS.QUERY.CANCEL
 std.os.windows.DNS.QUERY.COMPLETION_ROUTINE	type	fn (?*anyopaque, *os.windows.DNS.QUERY.RESULT) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) void
-std.os.windows.DNS.QUERY.REQUEST.@"3"	type	os.windows.DNS.QUERY.REQUEST.3
 std.os.windows.DNS.RECORD.FLAGS	type	os.windows.DNS.RECORD.FLAGS
 std.os.windows.SYSTEM.INFORMATION_CLASS	type	os.windows.SYSTEM.INFORMATION_CLASS
 std.os.windows.SYSTEM.BASIC_INFORMATION	type	os.windows.SYSTEM.BASIC_INFORMATION
@@ -13284,6 +13353,7 @@ std.os.windows.LDR.DLL_NOTIFICATION.FUNCTION	type	fn (os.windows.LDR.DLL_NOTIFIC
 std.os.windows.LDR.DLL_NOTIFICATION.REGISTER	type	os.windows.LDR.DLL_NOTIFICATION.REGISTER
 std.os.windows.LDR.DLL_NOTIFICATION.DATA.LOADED	type	os.windows.LDR.DLL_NOTIFICATION.DATA.LOADED
 std.os.windows.LDR.DLL_NOTIFICATION.DATA.UNLOADED	type	os.windows.LDR.DLL_NOTIFICATION.DATA.UNLOADED
+std.os.windows.FileInformationIterator	fn	fn (comptime type) type
 std.pdb.DbiStreamHeader	type	pdb.DbiStreamHeader
 std.pdb.SectionContribEntry	type	pdb.SectionContribEntry
 std.pdb.ModInfo	type	pdb.ModInfo
@@ -13432,6 +13502,7 @@ std.process.Args.Iterator.Wasi.init	fn	fn (mem.Allocator) error{OutOfMemory,Unex
 std.process.Args.Iterator.Wasi.next	fn	fn (*process.Args.Iterator.Wasi) ?[:0]const u8
 std.process.Args.Iterator.Wasi.skip	fn	fn (*process.Args.Iterator.Wasi) bool
 std.process.Args.Iterator.Wasi.deinit	fn	fn (*process.Args.Iterator.Wasi) void
+std.process.Args.IteratorGeneral	fn	fn (comptime process.Args.IteratorGeneralOptions) type
 std.process.Environ.empty	const_other	process.Environ
 std.process.Environ.Block	type	process.Environ.PosixBlock
 std.process.Environ.Block.empty	const_other	process.Environ.PosixBlock
@@ -14817,6 +14888,7 @@ std.zig.llvm.BitcodeReader.next	fn	fn (*zig.llvm.BitcodeReader) @typeInfo(@typeI
 std.zig.llvm.BitcodeReader.skipBlock	fn	fn (*zig.llvm.BitcodeReader, zig.llvm.BitcodeReader.Block) @typeInfo(@typeInfo(@TypeOf(zig.llvm.BitcodeReader.skipBlock)).@"fn".return_type.?).error_union.error_set!void
 std.zig.llvm.bitcode_writer.AbbrevOp	type	zig.llvm.bitcode_writer.AbbrevOp
 std.zig.llvm.bitcode_writer.Error	type	error{OutOfMemory}
+std.zig.llvm.bitcode_writer.BitcodeWriter	fn	fn (comptime []const type) type
 std.zig.llvm.bitcode_writer.BitcodeWriter	fn	fn (comptime []const type) type
 std.zig.llvm.Builder.expected_args_len	const_int	16
 std.zig.llvm.Builder.expected_attrs_len	const_int	16
