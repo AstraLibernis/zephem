@@ -98,14 +98,18 @@ open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span          
 The index self-checks: the root's span equals the whole file (conservation again), and
 `verify_std.nu` re-derives every block's edges from `nodes.tsv` so the map can't drift.
 
-Copy-pasteable recipes (read one module, find by name, orient, regenerate) are parked in
-**[docs/archive/USAGE.md](docs/archive/USAGE.md)** pending a rewrite.
+Copy-pasteable query recipes (read one module, find by name, the kind breakdown) live with the
+data they query: **[data/README.md](data/README.md)**.
 
 ## Beyond the map: the other engines, keyed to it
 
 The map is the skeleton — and the *only* thing the parser emits. Deeper facts are produced by
 **separate engines** and join back at the same `path`, so every row anchors to a node that
 exists. Three ship today, all self-verifying and byte-identical on rerun:
+
+> This is the tour. The canonical per-dataset reference — every extractor's columns, purpose, and
+> self-check — lives in the folder READMEs: [`extracted/`](data/std/extracted/) and
+> [`derived/`](data/std/derived/); engine internals in [`parse/`](parse/) and [`reflect/`](reflect/).
 
 - **`data/std/extracted/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
@@ -136,24 +140,36 @@ exists. Three ship today, all self-verifying and byte-identical on rerun:
 The deferred "organize later" layers (references/links, grouping by purpose) and the roadmap for
 the remaining work (L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
 
-## Browse it: the generated viewer
+## Documentation map — where to look
 
-**[`docs/architecture.html`](docs/architecture.html)** is a generated site — a hub plus one page
-per derivative under **`docs/views/`** (index, canon, consensus). Each slice charts its primary
-drivers and differences (containers by depth, alias family sizes, the read-only ◀ both ▶ run-only
-split, poison ranked by compiler error) and links to the raw `.tsv`. Nothing is hand-authored:
-`scripts/build_arch.nu` injects every number, chart, and row from `data/std/` on each build, the
-charts are plain CSS bars (no JS — works straight off the filesystem), and the findings update the
-moment the data does. `build_arch.nu --check` proves every page rebuilds byte-identical. The same
-script also regenerates this README and the other markdown docs from `.tmpl.md` templates, so their
-numbers can't drift either.
+| doc | for | who |
+|---|---|---|
+| **[README.md](README.md)** (this) | what/why, quickstart | everyone — start here |
+| **[PLAN.md](PLAN.md)** | status + roadmap | maintainers |
+| **[parse/README.md](parse/README.md)** · **[reflect/README.md](reflect/README.md)** | how each engine works | contributors |
+| **[data/README.md](data/README.md)** | the data layer + query recipes | users of the datasets |
+| **[data/std/extracted/README.md](data/std/extracted/README.md)** · **[derived/README.md](data/std/derived/README.md)** | per-dataset reference (columns, purpose, self-check) | anyone consuming a `.tsv` |
+| **[docs/reproducibility.md](docs/reproducibility.md)** | the determinism / `--check` contract | maintainers |
+| **[docs/comparison/autodoc-vs-zephem.md](docs/comparison/autodoc-vs-zephem.md)** | how coverage compares to Zig's own autodoc | curious |
+| **[docs/archive/README.md](docs/archive/README.md)** | tombstone — retired work, *historical only* | provenance |
+
+Rule of thumb: **datasets are described once, in the folder READMEs; engines once, in `parse/` +
+`reflect/`.** Everything else links to those rather than re-describing them.
+
+## How the docs stay current
+
+`scripts/build_arch.nu` regenerates every markdown doc from the sources in
+[`templates/`](templates/), injecting each number live from `data/std/` — so the docs can't drift
+from the data, and `build_arch.nu --check` proves each one rebuilds byte-identical. (A visual HTML
+viewer used to live here; it was cut to keep things simple and will be rebuilt later.)
 
 ## Where it started: `std.crypto` (archived)
 
 zephem began life (as `zcrypto`) pointed only at `std.crypto`, via **reflection** — which
 resolves real byte sizes and signatures but can't generalize (a reflection walk dies on the
 first platform-gated decl). That whole pipeline — tools, scripts, and datasets — is retired
-under **`archive/crypto-reflection/`** (see its README). The AST scanner above replaced it as
+(now retired — deleted, with provenance in the archive tombstone
+[`docs/archive/README.md`](docs/archive/README.md)). The AST scanner above replaced it as
 the general tool the project is built around now.
 
 ## How it's built
@@ -195,5 +211,5 @@ parse. Phases and status: **[PLAN.md](PLAN.md)**.
   `build_std.nu` reads it from there, so the snapshot tracks whatever Zig is on `PATH`.
 - Prior life: zephem began as `zcrypto`, an attempt to *learn* crypto, then a faithful map of
   it. Renamed and reframed 2026-06-17 — the tool is the extractor, not the crypto. The retired
-  crypto pipeline lives in `archive/crypto-reflection/`; retired human-readable docs in
-  `docs/archive/` (each has a README).
+  crypto pipeline and the retired human-readable docs were deleted and folded into one provenance
+  note, [`docs/archive/README.md`](docs/archive/README.md) (recover any file from git history).

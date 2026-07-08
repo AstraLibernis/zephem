@@ -1,3 +1,4 @@
+<!-- GENERATED from templates/derived.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
 # derived/ — computed from the extracted data
 
 Everything here is **produced by zephem** from the literal facts in

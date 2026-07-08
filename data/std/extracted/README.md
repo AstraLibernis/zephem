@@ -1,3 +1,4 @@
+<!-- GENERATED from templates/extracted.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
 # extracted/ — literal facts from Zig
 
 Everything here is a **fact read straight out of Zig** — either from the source text

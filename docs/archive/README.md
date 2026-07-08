@@ -1,53 +1,32 @@
-# docs/archive
+# docs/archive — tombstone (historical only)
 
-Retired documents, kept for provenance (archive-don't-delete). Nothing here is
-maintained; the live project is the datasets under `data/` (see `../../PLAN.md`).
+> **Nothing here is current, and nothing here is data.** This folder holds a single note about
+> retired work, kept for provenance. The live project is the datasets under
+> [`../../data/std/`](../../data/std/) and the docs linked from the root
+> [`README.md`](../../README.md). If a tool or a person is looking for current data or docs, it is
+> **not here** — do not read anything under this path as active.
 
-## Why these are archived
+The documents and datasets that used to live here (and under `archive/crypto-reflection/`) were
+**deleted** to keep the tree clean. They are preserved in **git history** — recover any of them with:
 
-zcrypto went through three framings before settling:
+```sh
+git log --all --oneline -- <path>      # find the commit
+git show <sha>:<path>                   # print the old file
+```
 
-1. **Explanatory guide** — explain what each primitive is for, how to compose safely,
-   footguns. Retired: it required authored crypto expertise neither the std source nor
-   we can warrant (the "why" is not in the files).
-2. **Faithful map** — hand-written per-family pages that state only what's traceable.
-   Retired 2026-06-17: the markdown only ever re-printed the datasets and goes stale the
-   moment Zig changes. The data is the original; prose is a lossy photocopy.
-3. **Data-extraction pipeline** (current) — the datasets are the product. See `PLAN.md`.
+## What was here, and why it's gone
 
-## Contents
+zephem began as **zcrypto**, aimed only at `std.crypto`, and went through three framings before the
+current source-AST extractor. Each left docs or data behind:
 
-- `plan-v1-guide.md` — the original 7-phase explanatory plan (framing 1).
-- `map.md`, `inventory.md` — hand-authored mental model + annotated inventory (framing 1;
-  carry judgement the later charter forbids).
-- `hash.md`, `mac.md`, `aead.md`, `stream.md`, `kdf.md`, `kex.md`, `sign.md`, `kem.md`,
-  `pwhash.md`, `nacl.md` — the per-family map pages (framing 2). Each is a human-verified
-  assertion of what the datasets contain, so they double as **verification fixtures** for
-  the pipeline.
-- `surface.md`, `structure.md`, `clusters.md`, `clusters.svg` — rendered snapshots of the
-  generated datasets (point-in-time; regenerate from `data/` instead of reading these).
+| retired | what it was | superseded by |
+|---|---|---|
+| crypto guide pages — `aead.md` `hash.md` `kdf.md` `kem.md` `kex.md` `mac.md` `nacl.md` `pwhash.md` `sign.md` `stream.md` | hand-written per-primitive explainers | (dropped — required crypto expertise the source can't warrant) |
+| `map.md` `structure.md` `concepts.md` `inventory.md` `surface.md` `clusters.*` | early design / model docs | the engine READMEs — [`parse/`](../../parse/) · [`reflect/`](../../reflect/) |
+| `layers/L0–L6` | the old "layer" model | the parse / reflect / derive engines |
+| `plan-v1-guide.md` `REFACTOR-MAP.md` | old plans | [`../../PLAN.md`](../../PLAN.md) |
+| `USAGE.md` `DATAFLOW.md` `dataflow.html` | query / dataflow guides | [`../../data/README.md`](../../data/README.md) |
+| **`archive/crypto-reflection/`** — data + scripts + src (`primitives.tsv`, `crypto_tree.*`, `surface.tsv`, `crypto_raw.csv`, …) | the retired reflection-only crypto pipeline and its datasets | the general AST extractor. **Its `.tsv`/`.csv`/`.json` were NOT current data and are now deleted.** |
 
-### Refactor-era architecture docs (archived 2026-06-21)
-
-Superseded when the extractor was folded into `mapper/` (one parse, many visitors) and
-the live "how it works" moved to [`../../mapper/README.md`](../../mapper/README.md). These
-describe the old `src/scan.zig` + `src/enrich.zig` two-walk layout, which no longer exists.
-
-- `REFACTOR-MAP.md` — the working map for the scan+enrich → `build.zig`+`walk.zig` refactor.
-  Its job (plan the move) is done; kept for provenance of *why* the merge happened.
-- `DATAFLOW.md`, `dataflow.html` — the whole-pipeline "star, not a loop" diagram, with the
-  pre-refactor node names (`scan.zig`/`enrich.zig`). The mapper's flow now lives in
-  `mapper/README.md §3`.
-
-### Docs cleared for rewrite (archived 2026-06-21)
-
-The live doc set was deliberately cut to three: the top `README.md`, the summarized `PLAN.md`,
-and `mapper/README.md`. These older docs are accurate-in-spirit but pre-date the `mapper/` +
-`clusters/` split and carry more detail than the new direction wants; **kept verbatim as the
-source material for a future rewrite**, not maintained.
-
-- `USAGE.md` — copy-pasteable query recipes (read one module, find by name, regenerate).
-- `concepts.md` — the shared model (parse-don't-reflect, the pristine bar, the layer principle).
-- `reproducibility.md` — the determinism contract and the `--check` harness story + timings.
-- `layers/` — the per-dataset reference pages (L0 structure, L1/L2 decls, L3 tunnels,
-  L4 examples [planned], L5 depth, L6 version-diff [planned]).
+Retired 2026-06-17; the reproducibility contract was promoted out to
+[`../reproducibility.md`](../reproducibility.md); everything else folded to this single note 2026-07-08.

@@ -66,11 +66,12 @@ let b = (open data/std/derived/index.tsv | where path == 'std.mem' | first)
 open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span
 ```
 
-Full recipes: **[../docs/archive/USAGE.md](../docs/archive/USAGE.md)** pending a rewrite.
+Per-dataset columns, purpose, and the self-check that guards each live in the folder READMEs:
+**[std/extracted/](std/extracted/)** and **[std/derived/](std/derived/)**.
 
 ## Archived
 
-The original `std.crypto` reflection pipeline and its datasets (`primitives.tsv`,
-`crypto_tree.{tsv,json}`, `surface.tsv`, `clusters.tsv`, `crypto_raw.csv`) were retired
-2026-06-17 to **`../archive/crypto-reflection/`** (see its README). Retired crypto
-*docs* live in `../docs/archive/`.
+The original `std.crypto` reflection pipeline (datasets, scripts, src) was retired 2026-06-17 and
+its files deleted — **no archived `.tsv` lingers to be mistaken for current data.** Provenance and
+git-recovery instructions live in the archive tombstone,
+[`../docs/archive/README.md`](../docs/archive/README.md).

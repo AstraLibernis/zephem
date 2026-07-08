@@ -1,7 +1,7 @@
 # zephem — Reproducibility
 
 "Build it again, prove you got the same thing." This is enforced machinery, not an aspiration.
-Index: [PLAN.md](../PLAN.md) · model: [concepts.md](concepts.md).
+Index: [PLAN.md](../PLAN.md) · engines: [parse](../parse/) · [reflect](../reflect/).
 
 Datasets are **ephemeral by design** — derived, regenerable, never hand-authored. A committed
 snapshot is a *pinned cache* of compiler/source truth for one Zig version. So a snapshot you
@@ -76,8 +76,8 @@ source — disagreed *only* on those counters (`E__enum_5797` vs `5796`,
 day one. `norm-row` strips the volatile digits (keeping `…timespec__struct`); the same pass
 relativizes absolute toolchain/scratch paths in poison reasons. After normalization the same
 two-sweep test is byte-identical. A full cold sweep then a warm sweep reproduced the committed
-snapshot byte-for-byte across all four files, with zero duplicate rows (15,720 distinct ==
-15,720).
+snapshot byte-for-byte across all four files, with zero duplicate rows (every distinct resolved
+path accounted for).
 
 **Follow-up — `__opaque` (2026-06-19).** The original `norm-row` regex covered
 `struct`/`union`/`enum` but not `opaque`; on the VM (warm cache) that gap stayed hidden because
@@ -101,8 +101,7 @@ ballpark, not a contract. The cold sweep that takes ~13 min on a small VM finish
 under a minute on a fast many-core desktop; what stays constant is the *shape* (cold ≫ warm,
 cache is the big lever).
 
-*(VM: fedora-KDE Hyper-V, 6 vCPU = 3 physical + SMT, no GPU; Zig 0.16.0, full std = 1,355
-containers; 2026-06-19)*
+*(VM: fedora-KDE Hyper-V, 6 vCPU = 3 physical + SMT, no GPU; Zig 0.16.0, full std sweep; 2026-06-19)*
 
 | sweep | wall time |
 |---|---|

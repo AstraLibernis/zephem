@@ -1,3 +1,4 @@
+<!-- GENERATED from templates/plan.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
 # zephem — Plan
 
 **What it is.** A tool that, pointed at a Zig source root, emits pristine, queryable
@@ -25,14 +26,14 @@ never folded into the base.
 
 1. **zcrypto** (retired) — began pointed only at `std.crypto`, via **reflection**, to learn
    crypto. A reflection walk dies on the first platform-gated decl, so it couldn't generalize.
-   Whole pipeline archived under `archive/crypto-reflection/`.
+   Whole pipeline retired & deleted (provenance: `docs/archive/README.md`).
 2. **zephem** (2026-06-17) — reframed as a general extractor built on **AST parsing**
    (parse-don't-reflect): it reads source as syntax, never evaluates comptime, so it maps
    **all** of std including poison decls. The tool is the extractor, not the crypto.
 3. **engine split** (2026-06-21) — split by *what each reads* into three engines: **`parse/`**
    (read source as text), **`reflect/`** (run the compiler → resolved depth), **`derive/`**
    (transform the datasets, read no Zig → index, canon). Docs cut to three (this file,
-   `README.md`, `parse/README.md`); the rest parked in `docs/archive/` for rewrite.
+   `README.md`, `parse/README.md`); the rest retired to the archive tombstone `docs/archive/README.md`.
 4. **parser stripped to one file** (2026-06-21) — the parser now emits *only* the structural
    map (`nodes.tsv`). Signatures/doc-comments (`decls`) and references (`tunnels`) were
    **removed from the parser** — they are *our* organisation (added detail and resolved links),
@@ -46,6 +47,11 @@ never folded into the base.
 
 The datasets live in [`data/std/`](data/std/) (the product), pinned to **zig 0.16.0**.
 Everything below is self-verifying and byte-identical on rerun.
+
+> This table is **status** — what's built and how much. The canonical per-dataset docs (columns,
+> purpose, self-check) live once, in the folder READMEs: [`extracted/`](data/std/extracted/) (facts
+> from Zig) and [`derived/`](data/std/derived/) (computed). Engine internals: [`parse/`](parse/) ·
+> [`reflect/`](reflect/). Don't re-describe datasets here — link to those.
 
 | piece | built by | status |
 |---|---|---|
