@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 # verify_layers.nu — cross-LAYER agreement: do independently-built layers agree on shared facts?
 #
-# The other verifiers (verify_std / verify_tunnels / verify_depth) each prove ONE layer
+# The other verifiers (verify_std / verify_depth) each prove ONE layer
 # reconciles with itself or the map by re-reading the *same* artifact a second way. That catches
 # corruption and loss, but it cannot catch a blind spot shared by the producer and the checker.
 #
@@ -162,17 +162,24 @@ def main [--dir: string = "data/std", --anchor] {
         print ""
         print "── source anchor: grep `pub fn` vs parser fn count, leaf namespaces (approx) ──"
         let std_dir = (^zig env | lines | parse -r '\.std_dir = "(?<p>[^"]+)"' | get p.0)
-        let ns = (open $"($dir)/extracted/nodes.tsv" | where kind == "ns" | select path detail)
-        let nspaths = ($ns | get path)
-        let leaves = ($ns | where {|r| ($nspaths | where ($it | str starts-with $"($r.path).") | is-empty) })
+        let ns = (open $"($dir)/extracted/nodes.tsv" | where kind == "ns" | get path)
+        let leaves = ($ns | where {|p| ($ns | where ($it | str starts-with $"($p).") | is-empty) })
+        # a node's source file now comes from its `loc` attr (`file:line`); an ns's own loc is the
+        # IMPORT site, so take a child's loc file — the subtree lives in one file.
+        let locOf = (open $"($dir)/extracted/attrs.tsv" | where attr == "loc"
+            | insert file {|r| $r.value | split row ":" | first }
+            | select path file | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.file })
         let allfns = (open $"($dir)/extracted/nodes.tsv" | where kind == "fn" | get path)
-        for r in ($leaves | first 6) {
-            let file = $"($std_dir)/($r.detail)"
+        for p in ($leaves | first 6) {
+            let child = ($allfns | where ($it | str starts-with $"($p).") | first)
+            let rel = (if $child != null { $locOf | get -o $child } else { null })
+            if $rel == null { continue }
+            let file = $"($std_dir)/($rel)"
             if not ($file | path exists) { continue }
             let grepn = (open --raw $file | lines | where ($it =~ '^\s*pub fn ') | length)
-            let parsern = ($allfns | where ($it | str starts-with $"($r.path).") | length)
+            let parsern = ($allfns | where ($it | str starts-with $"($p).") | length)
             let mark = (if $grepn == $parsern { "✓" } else { "≈" })
-            print $"  ($mark) ($r.path): grep pub fn = ($grepn)   parser fn = ($parsern)   \(($r.detail)\)"
+            print $"  ($mark) ($p): grep pub fn = ($grepn)   parser fn = ($parsern)   \(($rel)\)"
         }
     }
 
