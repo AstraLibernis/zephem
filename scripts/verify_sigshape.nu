@@ -10,6 +10,7 @@
 #   3. CONSISTENCY    each stored label equals an independent regex re-read of the signature.
 #
 # Usage:  nu scripts/verify_sigshape.nu [data/std]
+use verify_lib.nu *   # presence, lookup
 
 def main [dir: string = "data/std"] {
     for f in ["derived/sigshape.tsv" "extracted/attrs.tsv" "extracted/nodes.tsv"] {
@@ -18,8 +19,8 @@ def main [dir: string = "data/std"] {
     let ss = (open $"($dir)/derived/sigshape.tsv")
     let sigs = (open $"($dir)/extracted/attrs.tsv" | where attr == "sig")
     # joinable path → sig (hash join, not a per-row probe into an 11k-key record).
-    let sig_val = ($sigs | select path value | rename --column {value: _sig} | uniq-by path)
-    let sig_exists = ($sig_val | select path | insert _s true)
+    let sig_val = (lookup $sigs path value _sig)
+    let sig_exists = (presence $sig_val path _s)
     let fns = (open $"($dir)/extracted/nodes.tsv" | where kind == "fn" | length)
     mut ok = true
     print $"sigshape: ($ss | length) fns"

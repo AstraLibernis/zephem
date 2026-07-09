@@ -11,6 +11,8 @@
 #
 # Usage:  nu scripts/verify_canon.nu [data/std]
 
+use verify_lib.nu *   # lookup
+
 def nominal [id: string] {
     not (($id | str starts-with "error{")
       or ($id =~ '__(struct|enum|union|opaque)')
@@ -24,7 +26,7 @@ def main [dir: string = "data/std"] {
     let canon = (open $"($dir)/derived/canon.tsv")
     let types = (open $"($dir)/extracted/resolved.tsv" | where kind == "type")
     # joinable path → resolved detail (hash join, not a per-row probe into a big record).
-    let type_detail = ($types | select path detail | uniq-by path | rename --column {detail: _detail})
+    let type_detail = (lookup $types path detail _detail)
     mut ok = true
     print $"canon: ($canon | length) aliased/duplicated paths"
 

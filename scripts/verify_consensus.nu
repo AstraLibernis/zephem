@@ -11,7 +11,7 @@
 #
 # Usage:  nu scripts/verify_consensus.nu [data/std]
 
-def norm-path [p: string] { if ($p | str contains '@"') { $p | str replace --regex --all '@"([^"]+)"' '$1' } else { $p } }
+use verify_lib.nu *   # norm-path, presence
 
 def main [dir: string = "data/std"] {
     for f in ["derived/consensus.tsv" "extracted/nodes.tsv" "extracted/resolved.tsv"] {
@@ -24,8 +24,8 @@ def main [dir: string = "data/std"] {
     let nodes = (open $"($dir)/extracted/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path})
     let res = (open $"($dir)/extracted/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path})
     # joinable membership views — a hash join beats per-row probes into a 60k-key record.
-    let node_np = ($nodes | select np | uniq-by np | insert _inN true)
-    let res_np = ($res | select np | uniq-by np | insert _inR true)
+    let node_np = (presence $nodes np _inN)
+    let res_np = (presence $res np _inR)
     mut ok = true
     print $"consensus: ($con | length) paths"
 

@@ -9,6 +9,7 @@
 #   3. TRUTH       documented=="yes" ⟺ path ∈ docs.tsv — no missed doc, no phantom doc.
 #
 # Usage:  nu scripts/verify_doccov.nu [data/std]
+use verify_lib.nu *   # presence, lookup
 
 def main [dir: string = "data/std"] {
     for f in ["derived/doccov.tsv" "extracted/nodes.tsv" "extracted/attrs.tsv"] {
@@ -18,9 +19,9 @@ def main [dir: string = "data/std"] {
     let nodes = (open $"($dir)/extracted/nodes.tsv" | select path kind)
     let docpaths = (open $"($dir)/extracted/attrs.tsv" | where attr == "doc" | get path | uniq)
     # joinable views — a hash join beats per-row probes into a 60k-key record (quadratic to build).
-    let node_exists = ($nodes | select path | insert _n true)
-    let node_kind = ($nodes | rename --column {kind: _mapkind})
-    let doc_exists = ($docpaths | wrap path | insert _d true)
+    let node_exists = (presence $nodes path _n)
+    let node_kind = (lookup $nodes path kind _mapkind)
+    let doc_exists = (presence ($docpaths | wrap path) path _d)
     mut ok = true
     print $"doccov: ($dc | length) nodes"
 

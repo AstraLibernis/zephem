@@ -43,11 +43,7 @@ def compiler-kind [k: string] {
     if $k == "fn" { "fn" } else if $k == "type" { "type" } else if $k in ["const_int" "const_bool" "const_other"] { "const" } else { $k }
 }
 
-# Strip Zig keyword-quoting so the parser's `@"type"` and the compiler's `type` compare equal.
-# Fast path: skip the regex unless the path actually carries a `@"…"` quote (the vast majority don't).
-def norm-path [p: string] {
-    if ($p | str contains '@"') { $p | str replace --regex --all '@"([^"]+)"' '$1' } else { $p }
-}
+use verify_lib.nu *   # norm-path, presence
 
 def main [--dir: string = "data/std", --anchor] {
     for f in ["extracted/nodes.tsv" "extracted/resolved.tsv"] {
@@ -93,9 +89,10 @@ def main [--dir: string = "data/std", --anchor] {
     # ── 3. COVERAGE DELTAS — classified, so only a TRUE miss is flagged ─────────────────────────
     let CONTAINERS = ["struct" "enum" "union" "opaque" "ns"]
     # joinable membership/kind views — a hash join beats per-row probes into 60k-key records.
-    let node_np = ($nodes | select npath | uniq-by npath | insert _n true)
-    let node_fn_np = ($nodes | where pk == "fn" | select npath | uniq-by npath | insert _fn true)
-    let comp_fn_np = ($res | where ck == "fn" | select npath | uniq-by npath | insert _cfn true)
+    let node_np = (presence $nodes npath _n)
+    let node_fn_np = (presence ($nodes | where pk == "fn") npath _fn)
+    let comp_fn_np = (presence ($res | where ck == "fn") npath _cfn)
+    # node_kind keeps the key too (renamed _anc) so it can join an exploded ancestor column.
     let node_kind = ($nodes | select npath nraw | uniq-by npath | rename --column {npath: _anc, nraw: _anckind})
 
     print "── coverage deltas (functions one view has, the other lacks — quote-normalized) ──"

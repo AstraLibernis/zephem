@@ -17,6 +17,7 @@
 #
 # Usage:  nu scripts/verify_std.nu            # checks data/std/extracted/nodes.tsv
 #         nu scripts/verify_std.nu other.tsv --partial
+use verify_lib.nu *   # presence
 
 # Parent path. A `<fn>()` factory node's parent is the fn (drop the `()`); otherwise drop the last
 # top-level segment. Fast path: a plain dotted path splits directly; only a `@"…"` quoted segment
@@ -58,7 +59,7 @@ def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     mut ok = true
     let root = ($t | first | get path)
     # the node set as a joinable table (one hash-join beats 200k record probes).
-    let node_exists = ($t | select path | insert _n true)
+    let node_exists = (presence $t path _n)
 
     # 1. CONNECTED — every non-root node's parent is a real node.
     let orphans = (missing-nodes ($t | where path != $root | insert par {|r| parent $r.path} | where par != "") "par" $node_exists)
