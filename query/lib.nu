@@ -4,13 +4,19 @@
 # helpers are that freshness gate. They moved here from zcanon: whoever owns the data
 # owns the query layer over it.
 
-# Installed Zig's std dir + version (the source of truth — never snapshot it).
+# Installed Zig's version (the source of truth — never snapshot it).
 export def zig-env [] {
     let out = (^zig env | str join)
-    {
-        std: ($out | parse --regex '\.std_dir\s*=\s*"(?<v>[^"]+)"' | get v.0)
-        ver: ($out | parse --regex '\.version\s*=\s*"(?<v>[^"]+)"' | get v.0)
-    }
+    { ver: ($out | parse --regex '\.version\s*=\s*"(?<v>[^"]+)"' | get v.0) }
+}
+
+# Default data dir for zephem's datasets ($ZEPHEM_DATA overrides). Shared by every
+# query tool so the default map location lives in exactly one place.
+export def zephem-dir [] { $env.ZEPHEM_DATA? | default ([$env.HOME projects zephem data std] | path join) }
+
+# long-form attrs → a narrow {path, <col>} table for one attr, deduped 1:1 on path.
+export def attr-col [attrs: table, name: string, col: string] {
+    $attrs | where attr == $name | select path value | rename --column {value: $col} | uniq-by path
 }
 
 # ---- map freshness --------------------------------------------------------

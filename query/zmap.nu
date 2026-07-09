@@ -10,14 +10,7 @@
 #
 # Reads zephem's datasets at $ZEPHEM_DATA (default ~/projects/zephem/data/std) — the sole
 # source of truth. If the map's PINNED zig differs from yours, regenerate the map.
-use lib.nu *
-
-def zephem-dir [] { $env.ZEPHEM_DATA? | default ([$env.HOME projects zephem data std] | path join) }
-
-# long-form attrs → a narrow {path, <col>} table for one attr, deduped 1:1 on path.
-def attr-col [attrs: table, name: string, col: string] {
-    $attrs | where attr == $name | select path value | rename --column {value: $col} | uniq-by path
-}
+use lib.nu *   # zephem-dir, attr-col, zephem-staleness
 
 def load-map [] {
     let d = (zephem-dir)

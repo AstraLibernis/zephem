@@ -29,20 +29,14 @@
 #
 # Reads zephem's datasets at $ZEPHEM_DATA (default ~/projects/zephem/data/std);
 # writes the lookup table at $ZEPHEM_LOOKUP (default ~/.config/zephem/lookup.tsv).
-use lib.nu *
+use lib.nu *   # zephem-dir, attr-col, zephem-staleness
 
-def zephem-dir [] { $env.ZEPHEM_DATA? | default ([$env.HOME projects zephem data std] | path join) }
 def lookup-path [] { $env.ZEPHEM_LOOKUP? | default ([$env.HOME ".config" zephem lookup.tsv] | path join) }
 
 # depth = dotted levels + factory-call levels in a path, matching index.zig's counting
 # ("()" marks a descent into a `fn(…) type` factory's members).
 def path-depth [p: string] {
     (($p | split row '.' | length) - 1) + (($p | split row '()' | length) - 1)
-}
-
-# long-form attrs → a narrow {path, <col>} table for one attr, deduped 1:1 on path.
-def attr-col [attrs: table, name: string, col: string] {
-    $attrs | where attr == $name | select path value | rename --column {value: $col} | uniq-by path
 }
 
 # typed edges → a narrow {path, <col>} table for one edge type (src keyed as path).

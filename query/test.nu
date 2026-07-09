@@ -3,8 +3,6 @@
 # tools: zlook (SIMD search over the baked lookup table, via its build-if-stale wrapper)
 # and zmap (reads the extracted TSVs directly). Run against the installed Zig's map.
 #   nu query/test.nu
-use lib.nu *
-
 let here  = $env.FILE_PWD
 let zlook = ($here | path join zlook.nu)
 let zmap  = ($here | path join zmap.nu)
