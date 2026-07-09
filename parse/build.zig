@@ -240,6 +240,30 @@ fn extractBase(s: []const u8) []const u8 {
     return "";
 }
 
+/// True when `raw` is an anonymous container literal in type position — `struct {…}`,
+/// `enum(u8) {…}`, `union(enum) {…}`, `opaque {…}`, `error{…}` (optionally `extern`/`packed`).
+/// The leading keyword is what marks it, NOT the mere presence of `{`: `Tuple(&.{u8})` and
+/// `meta.Int(.{…})` carry a brace but reference a real decl, so they must resolve, not bucket as inline.
+fn isInlineContainer(raw: []const u8) bool {
+    const s = std.mem.trim(u8, raw, " \t\r\n");
+    if (std.mem.indexOfScalar(u8, s, '{') == null) return false;
+    var t = s;
+    for ([_][]const u8{ "extern ", "packed " }) |q| {
+        if (std.mem.startsWith(u8, t, q)) {
+            t = std.mem.trimStart(u8, t[q.len..], " \t");
+            break;
+        }
+    }
+    for ([_][]const u8{ "struct", "enum", "union", "opaque", "error" }) |kw| {
+        if (std.mem.startsWith(u8, t, kw)) {
+            const rest = t[kw.len..];
+            if (rest.len == 0) return false; // bare keyword, no body
+            return rest[0] == '{' or rest[0] == ' ' or rest[0] == '(';
+        }
+    }
+    return false;
+}
+
 const Scope = enum { local, cross, primitive, module, generic, @"inline", unresolved };
 const Res = struct { scope: Scope, target: []const u8 };
 
@@ -272,7 +296,7 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
     const container = parent(src);
     const trimmed = std.mem.trim(u8, raw, " \t\r\n");
     // an inline/anonymous type in the signature (`error{…}`, `struct {…}`) — no node to point at.
-    if (std.mem.indexOfScalar(u8, trimmed, '{') != null) return Res{ .scope = .@"inline", .target = trimmed };
+    if (isInlineContainer(trimmed)) return Res{ .scope = .@"inline", .target = trimmed };
     const base = extractBase(raw);
     if (base.len == 0) return Res{ .scope = .unresolved, .target = raw };
 
@@ -328,6 +352,49 @@ fn fnEdges(w: *W, ast: *const Ast, cp: []const u8, m: Ast.Node.Index, proto: *co
     };
 }
 
+/// A node's own declaration-site facts — its source location and `///` doc. One place so the
+/// two callers (in-place walk · re-export follower) can never emit a differing shape.
+fn declFacts(w: *W, cp: []const u8, loc: []const u8, doc: []const u8) !void {
+    try w.attr(cp, "loc", loc);
+    try w.attr(cp, "doc", doc);
+}
+
+/// Emit a fn node with its facts (loc · doc · sig · edges) and, when it's a single-return type
+/// factory, descend the produced type under `<cp>()` — recording the factory's comptime type
+/// params so `T`/`K`/`V` inside resolve to `generic`. Shared by `walk` (in-place decls) and
+/// `emitReexport` (followed re-exports) so loc/doc/generics/factory-loc can't drift between them.
+fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const u8, node: Ast.Node.Index, proto: *const Ast.full.FnProto, dir: []const u8, rel: []const u8, depth: u32, fallback_doc: []const u8) anyerror!void {
+    try w.node(cp, "fn", name, vis);
+    const own_doc = try docComment(w, ast, node);
+    try declFacts(w, cp, try locOf(w, ast, node, rel), if (own_doc.len != 0) own_doc else fallback_doc);
+    if (try fnSig(w, ast, proto)) |sg| try w.attr(cp, "sig", sg);
+    try fnEdges(w, ast, cp, node, proto);
+    if (ast.nodeTag(node) != .fn_decl) return;
+    switch (classifyFactory(ast, node, proto)) {
+        .descend => |d| {
+            const child = try std.fmt.allocPrint(w.arena, "{s}()", .{cp});
+            var cbuf: [2]Ast.Node.Index = undefined;
+            const cd = ast.fullContainerDecl(&cbuf, d).?;
+            const ck = ast.tokenSlice(cd.ast.main_token);
+            try w.node(child, ck, name, vis);
+            try w.attr(child, "loc", try locOf(w, ast, d, rel)); // the produced type's own location
+            // record this factory's comptime type params (`comptime T: type`, `anytype`) so
+            // references to T/K/V inside `<fn>()` resolve to a `generic` scope, not unresolved.
+            var pit = proto.iterate(ast);
+            while (pit.next()) |p| {
+                const is_type_param = p.anytype_ellipsis3 != null or
+                    (p.type_expr != null and std.mem.eql(u8, std.mem.trim(u8, ast.getNodeSource(p.type_expr.?), " \t\r\n"), "type"));
+                if (is_type_param) if (p.name_token) |nt| {
+                    const key = try std.fmt.allocPrint(w.arena, "{s}#{s}", .{ child, ast.tokenSlice(nt) });
+                    try w.generics.put(key, {});
+                };
+            }
+            try walk(w, ast, cd.ast.members, child, ck, dir, depth + 1, rel);
+        },
+        else => {},
+    }
+}
+
 fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u8, parent_kind: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) !void {
     var tuple_idx: usize = 0; // names unnamed (positional) tuple fields per container
     for (members) |m| {
@@ -350,33 +417,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             const name = ast.tokenSlice(proto.name_token orelse continue);
             const vis = if (proto.visib_token != null) "pub" else "priv";
             const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
-            try w.node(cp, "fn", name, vis);
-            try w.attr(cp, "loc", try locOf(w, ast, m, rel));
-            try w.attr(cp, "doc", try docComment(w, ast, m));
-            if (try fnSig(w, ast, &proto)) |sg| try w.attr(cp, "sig", sg);
-            try fnEdges(w, ast, cp, m, &proto);
-            // FACTORY DESCENT: a fn whose body is `return struct {…}` — walk it under `<fn>()`.
-            if (ast.nodeTag(m) == .fn_decl) switch (classifyFactory(ast, m, &proto)) {
-                .descend => |d| {
-                    const child = try std.fmt.allocPrint(w.arena, "{s}()", .{cp});
-                    var cbuf: [2]Ast.Node.Index = undefined;
-                    const cd = ast.fullContainerDecl(&cbuf, d).?;
-                    try w.node(child, ast.tokenSlice(cd.ast.main_token), name, vis);
-                    // record this factory's comptime type params (`comptime T: type`, `anytype`) so
-                    // references to T/K/V inside `<fn>()` resolve to a `generic` scope, not unresolved.
-                    var pit = proto.iterate(ast);
-                    while (pit.next()) |p| {
-                        const is_type_param = p.anytype_ellipsis3 != null or
-                            (p.type_expr != null and std.mem.eql(u8, std.mem.trim(u8, ast.getNodeSource(p.type_expr.?), " \t\r\n"), "type"));
-                        if (is_type_param) if (p.name_token) |nt| {
-                            const key = try std.fmt.allocPrint(w.arena, "{s}#{s}", .{ child, ast.tokenSlice(nt) });
-                            try w.generics.put(key, {});
-                        };
-                    }
-                    try walk(w, ast, cd.ast.members, child, ast.tokenSlice(cd.ast.main_token), base_dir, depth + 1, rel);
-                },
-                else => {},
-            };
+            try emitFn(w, ast, cp, name, vis, m, &proto, base_dir, rel, depth, "");
             continue;
         }
         // container fields / enum tags
@@ -403,9 +444,13 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         const name = ast.tokenSlice(vd.ast.mut_token + 1);
         const vis = if (vd.visib_token != null) "pub" else "priv";
         const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
-        try w.attr(cp, "loc", try locOf(w, ast, m, rel));
-        try w.attr(cp, "doc", try docComment(w, ast, m));
+        // Declaration-site facts. Used for every kind EXCEPT a followed selective re-export,
+        // whose loc/doc come from the target it resolves to (emitReexport owns them, falling
+        // back to these only when the target can't be reached).
+        const decl_loc = try locOf(w, ast, m, rel);
+        const decl_doc = try docComment(w, ast, m);
         const init = vd.ast.init_node.unwrap() orelse {
+            try declFacts(w, cp, decl_loc, decl_doc);
             try w.node(cp, "const", name, vis);
             continue;
         };
@@ -415,6 +460,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             const bare = std.mem.endsWith(u8, t, ")"); // `@import("x")` vs `@import("x").Sel`
             if (!std.mem.endsWith(u8, tgt, ".zig")) {
                 // a MODULE we don't own (std / builtin / root) — external, never followed.
+                try declFacts(w, cp, decl_loc, decl_doc);
                 try w.node(cp, "modref", name, vis);
                 try w.imports.put(name, tgt);
                 try w.edge(cp, "imports", tgt);
@@ -422,15 +468,17 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             }
             if (!bare) { // `@import("x").Sel` — FOLLOW it, place Sel under cp (its single home).
                 const rabs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
+                    try declFacts(w, cp, decl_loc, decl_doc);
                     try w.node(cp, "alias", name, vis);
                     try w.edge(cp, "alias", tgt);
                     try w.aliases.put(cp, tgt);
                     continue;
                 };
-                try emitReexport(w, rabs, selectorOf(init_src), cp, name, vis, depth + 1);
+                try emitReexport(w, rabs, selectorOf(init_src), cp, name, vis, depth + 1, decl_loc, decl_doc);
                 continue;
             }
             // an OWNED .zig file — FOLLOW it, once, building the full tree.
+            try declFacts(w, cp, decl_loc, decl_doc);
             const abs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
                 try w.node(cp, "nserr", name, vis);
                 continue;
@@ -440,14 +488,15 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                 try w.node(cp, "nsref", name, vis); // already expanded elsewhere (its canonical home)
                 continue;
             }
-            try w.visited.put(abs, {});
             if (parseChild(w, abs)) |child| {
-                try w.node(cp, "ns", name, vis);
+                try w.visited.put(abs, {}); // mark visited only on a successful parse — a failed
+                try w.node(cp, "ns", name, vis); // read stays `nserr` and can be retried elsewhere
                 const child_dir = std.fs.path.dirname(abs) orelse ".";
                 try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
             } else try w.node(cp, "nserr", name, vis);
             continue;
         }
+        try declFacts(w, cp, decl_loc, decl_doc);
         if (containerKind(ast, init)) |ck| {
             try w.node(cp, ck, name, vis);
             var cbuf: [2]Ast.Node.Index = undefined;
@@ -518,53 +567,56 @@ fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, sel: []const u8) ?
 
 /// A selective re-export `pub const X = @import("f").Sel` — follow into `f`, find `Sel`, and place
 /// IT (its members, if a container) under `cp`. Selective-only files have no other home, so this is
-/// option B's single canonical home, not duplication. Falls back to an alias leaf when it can't.
-fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: []const u8, vis: []const u8, depth: u32) anyerror!void {
+/// option B's single canonical home, not duplication. The node takes the TARGET's loc/doc (that is
+/// where the code lives); `decl_loc`/`decl_doc` are the re-export site, used only as a fallback when
+/// the target can't be reached (unparsable file, missing decl, dotted/too-deep selector).
+fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: []const u8, vis: []const u8, depth: u32, decl_loc: []const u8, decl_doc: []const u8) anyerror!void {
     const leaf = struct {
-        fn f(ww: *W, c: []const u8, n: []const u8, v: []const u8, t: []const u8) !void {
+        fn f(ww: *W, c: []const u8, n: []const u8, v: []const u8, t: []const u8, loc: []const u8, doc: []const u8) !void {
+            try declFacts(ww, c, loc, doc);
             try ww.node(c, "alias", n, v);
             try ww.edge(c, "alias", t);
             try ww.aliases.put(c, t);
         }
     }.f;
-    if (std.mem.indexOfScalar(u8, sel, '.') != null or depth >= MAX_DEPTH) return leaf(w, cp, name, vis, sel);
-    const ast = parseChild(w, abs) orelse return w.node(cp, "nserr", name, vis);
-    const found = findDecl(ast, ast.rootDecls(), sel) orelse return leaf(w, cp, name, vis, sel);
+    if (std.mem.indexOfScalar(u8, sel, '.') != null or depth >= MAX_DEPTH) return leaf(w, cp, name, vis, sel, decl_loc, decl_doc);
+    const ast = parseChild(w, abs) orelse {
+        try declFacts(w, cp, decl_loc, decl_doc);
+        return w.node(cp, "nserr", name, vis);
+    };
+    const found = findDecl(ast, ast.rootDecls(), sel) orelse return leaf(w, cp, name, vis, sel, decl_loc, decl_doc);
     const dir = std.fs.path.dirname(abs) orelse ".";
     const rel = relOf(w, abs);
 
     var fb: [1]Ast.Node.Index = undefined;
     if (ast.fullFnProto(&fb, found)) |proto| {
-        try w.node(cp, "fn", name, vis);
-        try w.attr(cp, "loc", try locOf(w, ast, found, rel));
-        try w.attr(cp, "doc", try docComment(w, ast, found));
-        if (try fnSig(w, ast, &proto)) |sg| try w.attr(cp, "sig", sg);
-        try fnEdges(w, ast, cp, found, &proto);
-        if (ast.nodeTag(found) == .fn_decl) switch (classifyFactory(ast, found, &proto)) {
-            .descend => |d| {
-                const child = try std.fmt.allocPrint(w.arena, "{s}()", .{cp});
-                var cb: [2]Ast.Node.Index = undefined;
-                const cd = ast.fullContainerDecl(&cb, d).?;
-                try w.node(child, ast.tokenSlice(cd.ast.main_token), name, vis);
-                try walk(w, ast, cd.ast.members, child, ast.tokenSlice(cd.ast.main_token), dir, depth + 1, rel);
-            },
-            else => {},
-        };
+        try emitFn(w, ast, cp, name, vis, found, &proto, dir, rel, depth, decl_doc);
         return;
     }
+    // A followed non-fn target owns its facts from where it is actually declared. Its doc is the
+    // target's, falling back to the re-export site's own `///` when the target is undocumented.
+    const tgt_loc = try locOf(w, ast, found, rel);
+    const found_doc = try docComment(w, ast, found);
+    const tgt_doc = if (found_doc.len != 0) found_doc else decl_doc;
     const vd = ast.fullVarDecl(found).?;
-    try w.attr(cp, "doc", try docComment(w, ast, found));
-    const init = vd.ast.init_node.unwrap() orelse return w.node(cp, "const", name, vis);
+    const init = vd.ast.init_node.unwrap() orelse {
+        try declFacts(w, cp, tgt_loc, tgt_doc);
+        return w.node(cp, "const", name, vis);
+    };
     const isrc = ast.getNodeSource(init);
     if (importTarget(isrc)) |t2| {
         if (std.mem.endsWith(u8, t2, ".zig")) {
-            const abs2 = std.fs.path.resolve(w.arena, &.{ dir, t2 }) catch return w.node(cp, "nserr", name, vis);
+            const abs2 = std.fs.path.resolve(w.arena, &.{ dir, t2 }) catch {
+                try declFacts(w, cp, tgt_loc, tgt_doc);
+                return w.node(cp, "nserr", name, vis);
+            };
             const bare2 = std.mem.endsWith(u8, std.mem.trim(u8, isrc, " \t\r\n"), ")");
-            if (!bare2) return emitReexport(w, abs2, selectorOf(isrc), cp, name, vis, depth + 1);
+            if (!bare2) return emitReexport(w, abs2, selectorOf(isrc), cp, name, vis, depth + 1, tgt_loc, tgt_doc);
+            try declFacts(w, cp, tgt_loc, tgt_doc);
             try w.edge(cp, "imports", t2);
             if (w.visited.contains(abs2) or depth >= MAX_DEPTH) return w.node(cp, "nsref", name, vis);
-            try w.visited.put(abs2, {});
             if (parseChild(w, abs2)) |c2| {
+                try w.visited.put(abs2, {}); // mark visited only on a successful parse
                 try w.node(cp, "ns", name, vis);
                 try walk(w, c2, c2.rootDecls(), cp, "struct", std.fs.path.dirname(abs2) orelse ".", depth + 1, relOf(w, abs2));
             } else try w.node(cp, "nserr", name, vis);
@@ -572,15 +624,16 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
         }
     }
     if (containerKind(ast, init)) |ck| {
+        try declFacts(w, cp, tgt_loc, tgt_doc);
         try w.node(cp, ck, name, vis);
-        try w.attr(cp, "loc", try locOf(w, ast, found, rel));
         var cb: [2]Ast.Node.Index = undefined;
         const cd = ast.fullContainerDecl(&cb, init).?;
         try walk(w, ast, cd.ast.members, cp, ck, dir, depth + 1, rel);
         return;
     }
     const trimmed = std.mem.trim(u8, isrc, " \t\r\n");
-    if (isAliasChain(trimmed)) return leaf(w, cp, name, vis, trimmed);
+    if (isAliasChain(trimmed)) return leaf(w, cp, name, vis, trimmed, tgt_loc, tgt_doc);
+    try declFacts(w, cp, tgt_loc, tgt_doc);
     try w.node(cp, "const", name, vis);
 }
 

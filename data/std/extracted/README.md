@@ -42,14 +42,14 @@ off its `path`, and the verifier reconciles the tree by that — every non-root 
 itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
-`path · attr · value`. Sparse: a row exists only where the fact is present. **109,748 rows**
+`path · attr · value`. Sparse: a row exists only where the fact is present. **109,729 rows**
 across five attributes:
 
 | attr | value | count |
 |---|---|---|
-| `loc` | source location `file:line` (root-relative, machine-independent) | 63,509 |
+| `loc` | source location `file:line` (root-relative, machine-independent) | 63,493 |
 | `value` | a `field`/`tag`'s written type & default, or a `const`'s literal | 19,809 |
-| `doc` | the decl's `///` doc-comment, whitespace-collapsed | 13,724 |
+| `doc` | the decl's `///` doc-comment, whitespace-collapsed | 13,721 |
 | `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 11,273 |
 | `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,433 |
 
@@ -71,15 +71,15 @@ in a second pass against the walked node set. **54,667 edges**, five types:
 | scope | count | meaning |
 |---|---|---|
 | `primitive` | 21,486 | a language builtin (`i32`, `usize`, `type`, …) |
-| `local` | 16,533 | a node inside `src`'s own container (incl. `@This()`) |
-| `cross` | 9,490 | a node elsewhere in the tree |
-| `module` | 4,008 | an `@import` alias / a file or module boundary |
-| `unresolved` | 2,056 | couldn't place it (comptime-built, exotic) |
-| `inline` | 603 | an inline `struct{…}`/`enum{…}` literal target |
-| `generic` | 491 | a comptime type parameter in scope |
+| `local` | 16,538 | a node inside `src`'s own container (incl. `@This()`) |
+| `cross` | 9,497 | a node elsewhere in the tree |
+| `module` | 4,014 | an `@import` alias / a file or module boundary |
+| `unresolved` | 2,020 | couldn't place it (comptime-built, exotic) |
+| `inline` | 539 | an inline `struct{…}`/`enum{…}` literal target |
+| `generic` | 573 | a comptime type parameter in scope |
 
-**48,000 of 54,667 edges (96% of the resolvable ones)** land on a
-node, primitive, or generic param; 2,056 stay unresolved.
+**48,094 of 54,667 edges (96% of the resolvable ones)** land on a
+node, primitive, or generic param; 2,020 stay unresolved.
 
 `verify_std.nu` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to

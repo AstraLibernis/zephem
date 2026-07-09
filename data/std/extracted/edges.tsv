@@ -844,7 +844,7 @@ std.Build.Step.CheckObject.ElfDumper.ArchiveContext.gpa	has_type	std.Build.Step.
 std.Build.Step.CheckObject.ElfDumper.ArchiveContext.data	has_type	u8	primitive
 std.Build.Step.CheckObject.ElfDumper.ArchiveContext.symtab	has_type	std	module
 std.Build.Step.CheckObject.ElfDumper.ArchiveContext.strtab	has_type	u8	primitive
-std.Build.Step.CheckObject.ElfDumper.ArchiveContext.objects	has_type	std.ArrayList(struct { name: []const u8, off: usize, len: usize })	inline
+std.Build.Step.CheckObject.ElfDumper.ArchiveContext.objects	has_type	std	module
 std.Build.Step.CheckObject.ElfDumper.ArchiveContext.parseSymtab	has_type	void	primitive
 std.Build.Step.CheckObject.ElfDumper.ArchiveContext.parseSymtab	has_type	std.Build.Step.CheckObject.ElfDumper.ArchiveContext	local
 std.Build.Step.CheckObject.ElfDumper.ArchiveContext.parseSymtab	has_type	u8	primitive
@@ -2234,7 +2234,7 @@ std.Build.Step.allocPrintCmd	error_set	std	module
 std.Build.Step.allocPrintCmd	has_type	u8	primitive
 std.Build.Step.allocPrintCmd	has_type	std.Build.Step.Allocator	local
 std.Build.Step.allocPrintCmd	has_type	std	module
-std.Build.Step.allocPrintCmd	has_type	?struct { child: *const std.process.Environ.Map, parent: *const std.process.Environ.Map, }	inline
+std.Build.Step.allocPrintCmd	has_type	?struct { child: *const std.process.Environ.Map, parent: *const std.process.Environ.Map, }	unresolved
 std.Build.Step.allocPrintCmd	has_type	u8	primitive
 std.Build.Step.cacheHit	has_type	bool	primitive
 std.Build.Step.cacheHit	has_type	std.Build.Step.Step	local
@@ -3701,7 +3701,7 @@ std.StaticStringMap	alias	std.static_string_map.StaticStringMap	local
 std.StaticStringMapWithEql	alias	std.static_string_map.StaticStringMapWithEql	local
 std.Deque	has_type	type	primitive
 std.Deque	has_type	type	primitive
-std.Deque().buffer	has_type	[]T	unresolved
+std.Deque().buffer	has_type	T	generic
 std.Deque().head	has_type	usize	primitive
 std.Deque().len	has_type	usize	primitive
 std.Deque().initCapacity	error_set	Allocator.Error	unresolved
@@ -3709,7 +3709,7 @@ std.Deque().initCapacity	has_type	std.Deque().Self	local
 std.Deque().initCapacity	has_type	Allocator	unresolved
 std.Deque().initCapacity	has_type	usize	primitive
 std.Deque().initBuffer	has_type	std.Deque().Self	local
-std.Deque().initBuffer	has_type	[]T	unresolved
+std.Deque().initBuffer	has_type	T	generic
 std.Deque().deinit	has_type	void	primitive
 std.Deque().deinit	has_type	std.Deque().Self	local
 std.Deque().deinit	has_type	Allocator	unresolved
@@ -3732,77 +3732,77 @@ std.Deque().pushFront	error_set	error{OutOfMemory}	inline
 std.Deque().pushFront	has_type	void	primitive
 std.Deque().pushFront	has_type	std.Deque().Self	local
 std.Deque().pushFront	has_type	Allocator	unresolved
-std.Deque().pushFront	has_type	T	unresolved
+std.Deque().pushFront	has_type	T	generic
 std.Deque().pushFrontBounded	error_set	error{OutOfMemory}	inline
 std.Deque().pushFrontBounded	has_type	void	primitive
 std.Deque().pushFrontBounded	has_type	std.Deque().Self	local
-std.Deque().pushFrontBounded	has_type	T	unresolved
+std.Deque().pushFrontBounded	has_type	T	generic
 std.Deque().pushFrontAssumeCapacity	has_type	void	primitive
 std.Deque().pushFrontAssumeCapacity	has_type	std.Deque().Self	local
-std.Deque().pushFrontAssumeCapacity	has_type	T	unresolved
+std.Deque().pushFrontAssumeCapacity	has_type	T	generic
 std.Deque().pushBack	error_set	error{OutOfMemory}	inline
 std.Deque().pushBack	has_type	void	primitive
 std.Deque().pushBack	has_type	std.Deque().Self	local
 std.Deque().pushBack	has_type	Allocator	unresolved
-std.Deque().pushBack	has_type	T	unresolved
+std.Deque().pushBack	has_type	T	generic
 std.Deque().pushBackBounded	error_set	error{OutOfMemory}	inline
 std.Deque().pushBackBounded	has_type	void	primitive
 std.Deque().pushBackBounded	has_type	std.Deque().Self	local
-std.Deque().pushBackBounded	has_type	T	unresolved
+std.Deque().pushBackBounded	has_type	T	generic
 std.Deque().pushBackAssumeCapacity	has_type	void	primitive
 std.Deque().pushBackAssumeCapacity	has_type	std.Deque().Self	local
-std.Deque().pushBackAssumeCapacity	has_type	T	unresolved
+std.Deque().pushBackAssumeCapacity	has_type	T	generic
 std.Deque().pushFrontSlice	error_set	error{OutOfMemory}	inline
 std.Deque().pushFrontSlice	has_type	void	primitive
 std.Deque().pushFrontSlice	has_type	std.Deque().Self	local
 std.Deque().pushFrontSlice	has_type	Allocator	unresolved
-std.Deque().pushFrontSlice	has_type	[]const T	unresolved
+std.Deque().pushFrontSlice	has_type	T	generic
 std.Deque().pushFrontSliceBounded	error_set	error{OutOfMemory}	inline
 std.Deque().pushFrontSliceBounded	has_type	void	primitive
 std.Deque().pushFrontSliceBounded	has_type	std.Deque().Self	local
-std.Deque().pushFrontSliceBounded	has_type	[]const T	unresolved
+std.Deque().pushFrontSliceBounded	has_type	T	generic
 std.Deque().pushFrontSliceAssumeCapacity	has_type	void	primitive
 std.Deque().pushFrontSliceAssumeCapacity	has_type	std.Deque().Self	local
-std.Deque().pushFrontSliceAssumeCapacity	has_type	[]const T	unresolved
+std.Deque().pushFrontSliceAssumeCapacity	has_type	T	generic
 std.Deque().pushBackSlice	error_set	error{OutOfMemory}	inline
 std.Deque().pushBackSlice	has_type	void	primitive
 std.Deque().pushBackSlice	has_type	std.Deque().Self	local
 std.Deque().pushBackSlice	has_type	Allocator	unresolved
-std.Deque().pushBackSlice	has_type	[]const T	unresolved
+std.Deque().pushBackSlice	has_type	T	generic
 std.Deque().pushBackSliceBounded	error_set	error{OutOfMemory}	inline
 std.Deque().pushBackSliceBounded	has_type	void	primitive
 std.Deque().pushBackSliceBounded	has_type	std.Deque().Self	local
-std.Deque().pushBackSliceBounded	has_type	[]const T	unresolved
+std.Deque().pushBackSliceBounded	has_type	T	generic
 std.Deque().pushBackSliceAssumeCapacity	has_type	void	primitive
 std.Deque().pushBackSliceAssumeCapacity	has_type	std.Deque().Self	local
-std.Deque().pushBackSliceAssumeCapacity	has_type	[]const T	unresolved
-std.Deque().front	has_type	?T	unresolved
+std.Deque().pushBackSliceAssumeCapacity	has_type	T	generic
+std.Deque().front	has_type	T	generic
 std.Deque().front	has_type	std.Deque().Self	local
-std.Deque().frontPtr	has_type	?*T	unresolved
+std.Deque().frontPtr	has_type	T	generic
 std.Deque().frontPtr	has_type	std.Deque().Self	local
-std.Deque().back	has_type	?T	unresolved
+std.Deque().back	has_type	T	generic
 std.Deque().back	has_type	std.Deque().Self	local
-std.Deque().backPtr	has_type	?*T	unresolved
+std.Deque().backPtr	has_type	T	generic
 std.Deque().backPtr	has_type	std.Deque().Self	local
-std.Deque().at	has_type	T	unresolved
+std.Deque().at	has_type	T	generic
 std.Deque().at	has_type	std.Deque().Self	local
 std.Deque().at	has_type	usize	primitive
-std.Deque().atPtr	has_type	*T	unresolved
+std.Deque().atPtr	has_type	T	generic
 std.Deque().atPtr	has_type	std.Deque().Self	local
 std.Deque().atPtr	has_type	usize	primitive
-std.Deque().popFront	has_type	?T	unresolved
+std.Deque().popFront	has_type	T	generic
 std.Deque().popFront	has_type	std.Deque().Self	local
-std.Deque().popBack	has_type	?T	unresolved
+std.Deque().popBack	has_type	T	generic
 std.Deque().popBack	has_type	std.Deque().Self	local
 std.Deque().Iterator.deque	has_type	std.Deque().Self	cross
 std.Deque().Iterator.index	has_type	usize	primitive
-std.Deque().Iterator.peek	has_type	?T	unresolved
+std.Deque().Iterator.peek	has_type	T	generic
 std.Deque().Iterator.peek	has_type	std.Deque().Iterator	local
-std.Deque().Iterator.next	has_type	?T	unresolved
+std.Deque().Iterator.next	has_type	T	generic
 std.Deque().Iterator.next	has_type	std.Deque().Iterator	local
-std.Deque().Iterator.peekPtr	has_type	?*T	unresolved
+std.Deque().Iterator.peekPtr	has_type	T	generic
 std.Deque().Iterator.peekPtr	has_type	std.Deque().Iterator	local
-std.Deque().Iterator.nextPtr	has_type	?*T	unresolved
+std.Deque().Iterator.nextPtr	has_type	T	generic
 std.Deque().Iterator.nextPtr	has_type	std.Deque().Iterator	local
 std.Deque().iterator	has_type	std.Deque().Iterator	local
 std.Deque().iterator	has_type	std.Deque().Self	local
@@ -5160,7 +5160,7 @@ std.Io.Threaded.netSendManyPosix	has_type	usize	primitive
 std.Io.Threaded.netSendManyPosix	has_type	std.Io.net.Socket.Handle	cross
 std.Io.Threaded.netSendManyPosix	has_type	std.Io.net.OutgoingMessage	cross
 std.Io.Threaded.netSendManyPosix	has_type	u32	primitive
-std.Io.Threaded.netReceivePosix	error_set	(net.Socket.ReceiveError || error{WouldBlock})	inline
+std.Io.Threaded.netReceivePosix	error_set	std.Io.net.Socket.ReceiveError	cross
 std.Io.Threaded.netReceivePosix	has_type	void	primitive
 std.Io.Threaded.netReceivePosix	has_type	std.Io.net.Socket.Handle	cross
 std.Io.Threaded.netReceivePosix	has_type	std.Io.net.IncomingMessage	cross
@@ -5198,7 +5198,7 @@ std.Io.Threaded.addAfdBuf	has_type	void	primitive
 std.Io.Threaded.addAfdBuf	has_type	std	module
 std.Io.Threaded.addAfdBuf	has_type	std	module
 std.Io.Threaded.addAfdBuf	has_type	u32	primitive
-std.Io.Threaded.addAfdBuf	has_type	switch (mutability) { .@"const" => []const u8, .@"var" => []u8, }	inline
+std.Io.Threaded.addAfdBuf	has_type	switch (mutability) { .@"const" => []const u8, .@"var" => []u8, }	unresolved
 std.Io.Threaded.addBuf	has_type	void	primitive
 std.Io.Threaded.addBuf	has_type	std.posix.iovec_const	cross
 std.Io.Threaded.addBuf	has_type	std.Io.Threaded.iovlen_t	local
@@ -6753,7 +6753,7 @@ std.Io.Dispatch.readAll	has_type	void	primitive
 std.Io.Dispatch.readAll	has_type	std.Io.Dispatch.Evented	local
 std.Io.Dispatch.readAll	has_type	std.Io.Dispatch.File	local
 std.Io.Dispatch.readAll	has_type	u8	primitive
-std.Io.Dispatch.writeAll	error_set	(File.Writer.Error || error{EndOfStream})	inline
+std.Io.Dispatch.writeAll	error_set	std.Io.File.Writer.Error	cross
 std.Io.Dispatch.writeAll	has_type	void	primitive
 std.Io.Dispatch.writeAll	has_type	std.Io.Dispatch.Evented	local
 std.Io.Dispatch.writeAll	has_type	std.Io.Dispatch.File	local
@@ -7240,7 +7240,7 @@ std.Io.Uring.Thread.io_uring	has_type	std.Io.Uring.IoUring	cross
 std.Io.Uring.Thread.idle_search_index	has_type	u32	primitive
 std.Io.Uring.Thread.steal_ready_search_index	has_type	u32	primitive
 std.Io.Uring.Thread.steal_free_search_index	has_type	u32	primitive
-std.Io.Uring.Thread.name_arena	has_type	if (tracy.enable) std.heap.ArenaAllocator.State else struct {}	inline
+std.Io.Uring.Thread.name_arena	has_type	if (tracy.enable) std.heap.ArenaAllocator.State else struct {}	unresolved
 std.Io.Uring.Thread.csprng	has_type	std.Io.Uring.Csprng	cross
 std.Io.Uring.Thread.self	alias	null	primitive
 std.Io.Uring.Thread.current	has_type	std.Io.Uring.Thread	local
@@ -8173,7 +8173,7 @@ std.Io.Uring.fchownat	has_type	u8	primitive
 std.Io.Uring.fchownat	has_type	std	module
 std.Io.Uring.fchownat	has_type	std	module
 std.Io.Uring.fchownat	has_type	u32	primitive
-std.Io.Uring.flock	error_set	(File.LockError || error{WouldBlock})	inline
+std.Io.Uring.flock	error_set	std.Io.File.LockError	cross
 std.Io.Uring.flock	has_type	void	primitive
 std.Io.Uring.flock	has_type	std.Io.Uring.Evented	local
 std.Io.Uring.flock	has_type	std.Io.Uring.CancelRegion.Sync	local
@@ -8223,7 +8223,7 @@ std.Io.Uring.pwritev	has_type	std.Io.Uring.CancelRegion	local
 std.Io.Uring.pwritev	has_type	std.Io.Uring.fd_t	local
 std.Io.Uring.pwritev	has_type	std.Io.Uring.iovec_const	local
 std.Io.Uring.pwritev	has_type	u64	primitive
-std.Io.Uring.readAll	error_set	(File.Reader.Error || error{EndOfStream})	inline
+std.Io.Uring.readAll	error_set	std.Io.File.Reader.Error	cross
 std.Io.Uring.readAll	has_type	void	primitive
 std.Io.Uring.readAll	has_type	std.Io.Uring.Evented	local
 std.Io.Uring.readAll	has_type	std.Io.Uring.CancelRegion	local
@@ -8262,14 +8262,14 @@ std.Io.Uring.stat	has_type	std.Io.Dir.Stat	cross
 std.Io.Uring.stat	has_type	std.Io.Uring.Evented	local
 std.Io.Uring.stat	has_type	std.Io.Uring.CancelRegion	local
 std.Io.Uring.stat	has_type	std.Io.Uring.fd_t	local
-std.Io.Uring.statx	error_set	(Dir.StatError || Dir.PathNameError || error{ FileNotFound, NotDir, SymLinkLoop })	inline
+std.Io.Uring.statx	error_set	std.Io.Dir.StatError	cross
 std.Io.Uring.statx	has_type	std.Io.Dir.Stat	cross
 std.Io.Uring.statx	has_type	std.Io.Uring.Evented	local
 std.Io.Uring.statx	has_type	std.Io.Uring.CancelRegion	local
 std.Io.Uring.statx	has_type	std.Io.Uring.fd_t	local
 std.Io.Uring.statx	has_type	u8	primitive
 std.Io.Uring.statx	has_type	u32	primitive
-std.Io.Uring.urandomReadAll	error_set	(File.OpenError || File.Reader.Error || error{EndOfStream})	inline
+std.Io.Uring.urandomReadAll	error_set	std.Io.File.OpenError	cross
 std.Io.Uring.urandomReadAll	has_type	void	primitive
 std.Io.Uring.urandomReadAll	has_type	std.Io.Uring.Evented	local
 std.Io.Uring.urandomReadAll	has_type	std.Io.Uring.CancelRegion	local
@@ -10725,7 +10725,7 @@ std.Io.VTable.netConnectIp	has_type	*const fn (?*anyopaque, address: *const net.
 std.Io.VTable.netListenUnix	has_type	*const fn (?*anyopaque, *const net.UnixAddress, net.UnixAddress.ListenOptions) net.UnixAddress.ListenError!net.Socket.Handle	unresolved
 std.Io.VTable.netConnectUnix	has_type	*const fn (?*anyopaque, *const net.UnixAddress) net.UnixAddress.ConnectError!net.Socket.Handle	unresolved
 std.Io.VTable.netSocketCreatePair	has_type	*const fn (?*anyopaque, net.Socket.CreatePairOptions) net.Socket.CreatePairError![2]net.Socket	unresolved
-std.Io.VTable.netSend	has_type	*const fn (?*anyopaque, net.Socket.Handle, []net.OutgoingMessage, net.SendFlags) struct { ?net.Socket.SendError, usize }	inline
+std.Io.VTable.netSend	has_type	*const fn (?*anyopaque, net.Socket.Handle, []net.OutgoingMessage, net.SendFlags) struct { ?net.Socket.SendError, usize }	unresolved
 std.Io.VTable.netRead	has_type	*const fn (?*anyopaque, src: net.Socket.Handle, data: [][]u8) net.Stream.Reader.Error!usize	unresolved
 std.Io.VTable.netWrite	has_type	*const fn (?*anyopaque, dest: net.Socket.Handle, header: []const u8, data: []const []const u8, splat: usize) net.Stream.Writer.Error!usize	unresolved
 std.Io.VTable.netWriteFile	has_type	*const fn (?*anyopaque, net.Socket.Handle, header: []const u8, *Io.File.Reader, Io.Limit) net.Stream.Writer.WriteFileError!usize	unresolved
@@ -11827,8 +11827,8 @@ std.MultiArrayList().Slice.items	has_type	std.MultiArrayList().Field	cross
 std.MultiArrayList().Slice.set	has_type	void	primitive
 std.MultiArrayList().Slice.set	has_type	std.MultiArrayList().Slice	local
 std.MultiArrayList().Slice.set	has_type	usize	primitive
-std.MultiArrayList().Slice.set	has_type	T	unresolved
-std.MultiArrayList().Slice.get	has_type	T	unresolved
+std.MultiArrayList().Slice.set	has_type	T	generic
+std.MultiArrayList().Slice.get	has_type	T	generic
 std.MultiArrayList().Slice.get	has_type	std.MultiArrayList().Slice	local
 std.MultiArrayList().Slice.get	has_type	usize	primitive
 std.MultiArrayList().Slice.toMultiArrayList	has_type	std.MultiArrayList().Self	cross
@@ -11858,22 +11858,22 @@ std.MultiArrayList().items	has_type	std.MultiArrayList().Field	local
 std.MultiArrayList().set	has_type	void	primitive
 std.MultiArrayList().set	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().set	has_type	usize	primitive
-std.MultiArrayList().set	has_type	T	unresolved
-std.MultiArrayList().get	has_type	T	unresolved
+std.MultiArrayList().set	has_type	T	generic
+std.MultiArrayList().get	has_type	T	generic
 std.MultiArrayList().get	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().get	has_type	usize	primitive
 std.MultiArrayList().append	error_set	Allocator.Error	unresolved
 std.MultiArrayList().append	has_type	void	primitive
 std.MultiArrayList().append	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().append	has_type	Allocator	unresolved
-std.MultiArrayList().append	has_type	T	unresolved
+std.MultiArrayList().append	has_type	T	generic
 std.MultiArrayList().appendAssumeCapacity	has_type	void	primitive
 std.MultiArrayList().appendAssumeCapacity	has_type	std.MultiArrayList().Self	local
-std.MultiArrayList().appendAssumeCapacity	has_type	T	unresolved
+std.MultiArrayList().appendAssumeCapacity	has_type	T	generic
 std.MultiArrayList().appendBounded	error_set	error{OutOfMemory}	inline
 std.MultiArrayList().appendBounded	has_type	void	primitive
 std.MultiArrayList().appendBounded	has_type	std.MultiArrayList().Self	local
-std.MultiArrayList().appendBounded	has_type	T	unresolved
+std.MultiArrayList().appendBounded	has_type	T	generic
 std.MultiArrayList().addOne	error_set	Allocator.Error	unresolved
 std.MultiArrayList().addOne	has_type	usize	primitive
 std.MultiArrayList().addOne	has_type	std.MultiArrayList().Self	local
@@ -11883,22 +11883,22 @@ std.MultiArrayList().addOneAssumeCapacity	has_type	std.MultiArrayList().Self	loc
 std.MultiArrayList().addOneBounded	error_set	error{OutOfMemory}	inline
 std.MultiArrayList().addOneBounded	has_type	usize	primitive
 std.MultiArrayList().addOneBounded	has_type	std.MultiArrayList().Self	local
-std.MultiArrayList().pop	has_type	?T	unresolved
+std.MultiArrayList().pop	has_type	T	generic
 std.MultiArrayList().pop	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().insert	has_type	void	primitive
 std.MultiArrayList().insert	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().insert	has_type	Allocator	unresolved
 std.MultiArrayList().insert	has_type	usize	primitive
-std.MultiArrayList().insert	has_type	T	unresolved
+std.MultiArrayList().insert	has_type	T	generic
 std.MultiArrayList().insertAssumeCapacity	has_type	void	primitive
 std.MultiArrayList().insertAssumeCapacity	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().insertAssumeCapacity	has_type	usize	primitive
-std.MultiArrayList().insertAssumeCapacity	has_type	T	unresolved
+std.MultiArrayList().insertAssumeCapacity	has_type	T	generic
 std.MultiArrayList().insertBounded	error_set	error{OutOfMemory}	inline
 std.MultiArrayList().insertBounded	has_type	void	primitive
 std.MultiArrayList().insertBounded	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().insertBounded	has_type	usize	primitive
-std.MultiArrayList().insertBounded	has_type	T	unresolved
+std.MultiArrayList().insertBounded	has_type	T	generic
 std.MultiArrayList().swapRemove	has_type	void	primitive
 std.MultiArrayList().swapRemove	has_type	std.MultiArrayList().Self	local
 std.MultiArrayList().swapRemove	has_type	usize	primitive
@@ -11978,47 +11978,47 @@ std.PriorityQueue	has_type	type	primitive
 std.PriorityQueue	has_type	type	primitive
 std.PriorityQueue	has_type	type	primitive
 std.PriorityQueue	has_type	fn (context: Context, a: T, b: T) Order	unresolved
-std.PriorityQueue().items	has_type	[]T	unresolved
+std.PriorityQueue().items	has_type	T	generic
 std.PriorityQueue().cap	has_type	usize	primitive
-std.PriorityQueue().context	has_type	Context	unresolved
+std.PriorityQueue().context	has_type	Context	generic
 std.PriorityQueue().initContext	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().initContext	has_type	Context	unresolved
+std.PriorityQueue().initContext	has_type	Context	generic
 std.PriorityQueue().deinit	has_type	void	primitive
 std.PriorityQueue().deinit	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().deinit	has_type	Allocator	unresolved
 std.PriorityQueue().push	has_type	void	primitive
 std.PriorityQueue().push	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().push	has_type	Allocator	unresolved
-std.PriorityQueue().push	has_type	T	unresolved
+std.PriorityQueue().push	has_type	T	generic
 std.PriorityQueue().pushUnchecked	has_type	void	primitive
 std.PriorityQueue().pushUnchecked	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().pushUnchecked	has_type	T	unresolved
+std.PriorityQueue().pushUnchecked	has_type	T	generic
 std.PriorityQueue().siftUp	has_type	void	primitive
 std.PriorityQueue().siftUp	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().siftUp	has_type	usize	primitive
 std.PriorityQueue().pushSlice	has_type	void	primitive
 std.PriorityQueue().pushSlice	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().pushSlice	has_type	Allocator	unresolved
-std.PriorityQueue().pushSlice	has_type	[]const T	unresolved
-std.PriorityQueue().peek	has_type	?T	unresolved
+std.PriorityQueue().pushSlice	has_type	T	generic
+std.PriorityQueue().peek	has_type	T	generic
 std.PriorityQueue().peek	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().pop	has_type	?T	unresolved
+std.PriorityQueue().pop	has_type	T	generic
 std.PriorityQueue().pop	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().popIndex	has_type	T	unresolved
+std.PriorityQueue().popIndex	has_type	T	generic
 std.PriorityQueue().popIndex	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().popIndex	has_type	usize	primitive
 std.PriorityQueue().count	has_type	usize	primitive
 std.PriorityQueue().count	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().capacity	has_type	usize	primitive
 std.PriorityQueue().capacity	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().allocatedSlice	has_type	[]T	unresolved
+std.PriorityQueue().allocatedSlice	has_type	T	generic
 std.PriorityQueue().allocatedSlice	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().siftDown	has_type	void	primitive
 std.PriorityQueue().siftDown	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().siftDown	has_type	usize	primitive
 std.PriorityQueue().fromOwnedSlice	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().fromOwnedSlice	has_type	[]T	unresolved
-std.PriorityQueue().fromOwnedSlice	has_type	Context	unresolved
+std.PriorityQueue().fromOwnedSlice	has_type	T	generic
+std.PriorityQueue().fromOwnedSlice	has_type	Context	generic
 std.PriorityQueue().ensureTotalCapacity	has_type	void	primitive
 std.PriorityQueue().ensureTotalCapacity	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().ensureTotalCapacity	has_type	Allocator	unresolved
@@ -12042,11 +12042,11 @@ std.PriorityQueue().clearAndFree	has_type	std.PriorityQueue().Self	local
 std.PriorityQueue().clearAndFree	has_type	Allocator	unresolved
 std.PriorityQueue().update	has_type	void	primitive
 std.PriorityQueue().update	has_type	std.PriorityQueue().Self	local
-std.PriorityQueue().update	has_type	T	unresolved
-std.PriorityQueue().update	has_type	T	unresolved
+std.PriorityQueue().update	has_type	T	generic
+std.PriorityQueue().update	has_type	T	generic
 std.PriorityQueue().Iterator.queue	has_type	std.PriorityQueue	cross
 std.PriorityQueue().Iterator.count	has_type	usize	primitive
-std.PriorityQueue().Iterator.next	has_type	?T	unresolved
+std.PriorityQueue().Iterator.next	has_type	T	generic
 std.PriorityQueue().Iterator.next	has_type	std.PriorityQueue().Iterator	local
 std.PriorityQueue().Iterator.reset	has_type	void	primitive
 std.PriorityQueue().Iterator.reset	has_type	std.PriorityQueue().Iterator	local
@@ -12056,25 +12056,25 @@ std.PriorityDequeue	has_type	type	primitive
 std.PriorityDequeue	has_type	type	primitive
 std.PriorityDequeue	has_type	type	primitive
 std.PriorityDequeue	has_type	fn (context: Context, a: T, b: T) Order	unresolved
-std.PriorityDequeue().items	has_type	[]T	unresolved
+std.PriorityDequeue().items	has_type	T	generic
 std.PriorityDequeue().len	has_type	usize	primitive
-std.PriorityDequeue().context	has_type	Context	unresolved
+std.PriorityDequeue().context	has_type	Context	generic
 std.PriorityDequeue().initContext	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().initContext	has_type	Context	unresolved
+std.PriorityDequeue().initContext	has_type	Context	generic
 std.PriorityDequeue().deinit	has_type	void	primitive
 std.PriorityDequeue().deinit	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().deinit	has_type	Allocator	unresolved
 std.PriorityDequeue().push	has_type	void	primitive
 std.PriorityDequeue().push	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().push	has_type	Allocator	unresolved
-std.PriorityDequeue().push	has_type	T	unresolved
+std.PriorityDequeue().push	has_type	T	generic
 std.PriorityDequeue().pushSlice	has_type	void	primitive
 std.PriorityDequeue().pushSlice	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().pushSlice	has_type	Allocator	unresolved
-std.PriorityDequeue().pushSlice	has_type	[]const T	unresolved
+std.PriorityDequeue().pushSlice	has_type	T	generic
 std.PriorityDequeue().pushUnchecked	has_type	void	primitive
 std.PriorityDequeue().pushUnchecked	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().pushUnchecked	has_type	T	unresolved
+std.PriorityDequeue().pushUnchecked	has_type	T	generic
 std.PriorityDequeue().isMinLayer	has_type	bool	primitive
 std.PriorityDequeue().isMinLayer	has_type	usize	primitive
 std.PriorityDequeue().nextIsMinLayer	has_type	bool	primitive
@@ -12083,7 +12083,7 @@ std.PriorityDequeue().StartIndexAndLayer.index	has_type	usize	primitive
 std.PriorityDequeue().StartIndexAndLayer.min_layer	has_type	bool	primitive
 std.PriorityDequeue().getStartForSiftUp	has_type	std.PriorityDequeue().StartIndexAndLayer	local
 std.PriorityDequeue().getStartForSiftUp	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().getStartForSiftUp	has_type	T	unresolved
+std.PriorityDequeue().getStartForSiftUp	has_type	T	generic
 std.PriorityDequeue().getStartForSiftUp	has_type	usize	primitive
 std.PriorityDequeue().siftUp	has_type	void	primitive
 std.PriorityDequeue().siftUp	has_type	std.PriorityDequeue().Self	local
@@ -12092,17 +12092,17 @@ std.PriorityDequeue().doSiftUp	has_type	void	primitive
 std.PriorityDequeue().doSiftUp	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().doSiftUp	has_type	usize	primitive
 std.PriorityDequeue().doSiftUp	has_type	Order	unresolved
-std.PriorityDequeue().peekMin	has_type	?T	unresolved
+std.PriorityDequeue().peekMin	has_type	T	generic
 std.PriorityDequeue().peekMin	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().peekMax	has_type	?T	unresolved
+std.PriorityDequeue().peekMax	has_type	T	generic
 std.PriorityDequeue().peekMax	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().maxIndex	has_type	usize	primitive
 std.PriorityDequeue().maxIndex	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().popMin	has_type	?T	unresolved
+std.PriorityDequeue().popMin	has_type	T	generic
 std.PriorityDequeue().popMin	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().popMax	has_type	?T	unresolved
+std.PriorityDequeue().popMax	has_type	T	generic
 std.PriorityDequeue().popMax	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().popIndex	has_type	T	unresolved
+std.PriorityDequeue().popIndex	has_type	T	generic
 std.PriorityDequeue().popIndex	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().popIndex	has_type	usize	primitive
 std.PriorityDequeue().siftDown	has_type	void	primitive
@@ -12114,10 +12114,10 @@ std.PriorityDequeue().doSiftDown	has_type	usize	primitive
 std.PriorityDequeue().doSiftDown	has_type	Order	unresolved
 std.PriorityDequeue().swapIfParentIsBetter	has_type	void	primitive
 std.PriorityDequeue().swapIfParentIsBetter	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().swapIfParentIsBetter	has_type	T	unresolved
+std.PriorityDequeue().swapIfParentIsBetter	has_type	T	generic
 std.PriorityDequeue().swapIfParentIsBetter	has_type	usize	primitive
 std.PriorityDequeue().swapIfParentIsBetter	has_type	Order	unresolved
-std.PriorityDequeue().ItemAndIndex.item	has_type	T	unresolved
+std.PriorityDequeue().ItemAndIndex.item	has_type	T	generic
 std.PriorityDequeue().ItemAndIndex.index	has_type	usize	primitive
 std.PriorityDequeue().getItem	has_type	std.PriorityDequeue().ItemAndIndex	local
 std.PriorityDequeue().getItem	has_type	std.PriorityDequeue().Self	local
@@ -12142,8 +12142,8 @@ std.PriorityDequeue().count	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().capacity	has_type	usize	primitive
 std.PriorityDequeue().capacity	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().fromOwnedSlice	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().fromOwnedSlice	has_type	[]T	unresolved
-std.PriorityDequeue().fromOwnedSlice	has_type	Context	unresolved
+std.PriorityDequeue().fromOwnedSlice	has_type	T	generic
+std.PriorityDequeue().fromOwnedSlice	has_type	Context	generic
 std.PriorityDequeue().ensureTotalCapacity	has_type	void	primitive
 std.PriorityDequeue().ensureTotalCapacity	has_type	std.PriorityDequeue().Self	local
 std.PriorityDequeue().ensureTotalCapacity	has_type	Allocator	unresolved
@@ -12158,11 +12158,11 @@ std.PriorityDequeue().shrinkAndFree	has_type	Allocator	unresolved
 std.PriorityDequeue().shrinkAndFree	has_type	usize	primitive
 std.PriorityDequeue().update	has_type	void	primitive
 std.PriorityDequeue().update	has_type	std.PriorityDequeue().Self	local
-std.PriorityDequeue().update	has_type	T	unresolved
-std.PriorityDequeue().update	has_type	T	unresolved
+std.PriorityDequeue().update	has_type	T	generic
+std.PriorityDequeue().update	has_type	T	generic
 std.PriorityDequeue().Iterator.queue	has_type	std.PriorityDequeue	cross
 std.PriorityDequeue().Iterator.count	has_type	usize	primitive
-std.PriorityDequeue().Iterator.next	has_type	?T	unresolved
+std.PriorityDequeue().Iterator.next	has_type	T	generic
 std.PriorityDequeue().Iterator.next	has_type	std.PriorityDequeue().Iterator	local
 std.PriorityDequeue().Iterator.reset	has_type	void	primitive
 std.PriorityDequeue().Iterator.reset	has_type	std.PriorityDequeue().Iterator	local
@@ -12980,7 +12980,7 @@ std.Target.Os.versionRange	has_type	std.Target.Os	local
 std.Target.Os.isAtLeast	has_type	bool	primitive
 std.Target.Os.isAtLeast	has_type	std.Target.Os	local
 std.Target.Os.isAtLeast	has_type	std.Target.Os.Tag	local
-std.Target.Os.isAtLeast	has_type	switch (tag.versionRangeTag()) { .none => void, .semver, .hurd, .linux => std.SemanticVersion, .windows => WindowsVersion, }	inline
+std.Target.Os.isAtLeast	has_type	switch (tag.versionRangeTag()) { .none => void, .semver, .hurd, .linux => std.SemanticVersion, .windows => WindowsVersion, }	unresolved
 std.Target.aarch64	imports	Target/aarch64.zig	module
 std.Target.aarch64.std	imports	../std.zig	module
 std.Target.aarch64.CpuFeature	alias	std	module
@@ -13413,7 +13413,7 @@ std.Thread.join	has_type	void	primitive
 std.Thread.join	has_type	std.Thread.Thread	local
 std.Thread.yield	error_set	std.Thread.YieldError	local
 std.Thread.yield	has_type	void	primitive
-std.Thread.callFn	has_type	switch (Impl) { WindowsThreadImpl => windows.NTSTATUS, LinuxThreadImpl => u8, PosixThreadImpl => ?*anyopaque, else => unreachable, }	inline
+std.Thread.callFn	has_type	switch (Impl) { WindowsThreadImpl => windows.NTSTATUS, LinuxThreadImpl => u8, PosixThreadImpl => ?*anyopaque, else => unreachable, }	unresolved
 std.Thread.UnsupportedImpl.ThreadHandle	alias	void	primitive
 std.Thread.UnsupportedImpl.getCurrentId	has_type	usize	primitive
 std.Thread.UnsupportedImpl.getCpuCount	has_type	usize	primitive
@@ -13528,15 +13528,15 @@ std.Thread.maybeAttachSignalStack	has_type	void	primitive
 std.Treap	has_type	type	primitive
 std.Treap	has_type	type	primitive
 std.Treap().compare	has_type	Order	unresolved
-std.Treap().compare	has_type	Key	unresolved
-std.Treap().compare	has_type	Key	unresolved
+std.Treap().compare	has_type	Key	generic
+std.Treap().compare	has_type	Key	generic
 std.Treap().root	has_type	std.Treap().Node	local
 std.Treap().prng	has_type	std.Treap().Prng	local
 std.Treap().Prng.xorshift	has_type	usize	primitive
 std.Treap().Prng.random	has_type	usize	primitive
 std.Treap().Prng.random	has_type	std.Treap().Prng	local
 std.Treap().Prng.random	has_type	usize	primitive
-std.Treap().Node.key	has_type	Key	unresolved
+std.Treap().Node.key	has_type	Key	generic
 std.Treap().Node.priority	has_type	usize	primitive
 std.Treap().Node.parent	has_type	std.Treap().Node	local
 std.Treap().Node.children	has_type	std.Treap().Node	local
@@ -13556,11 +13556,11 @@ std.Treap().getMax	has_type	std.Treap().Node	local
 std.Treap().getMax	has_type	std.Treap().Self	local
 std.Treap().getEntryFor	has_type	std.Treap().Entry	local
 std.Treap().getEntryFor	has_type	std.Treap().Self	local
-std.Treap().getEntryFor	has_type	Key	unresolved
+std.Treap().getEntryFor	has_type	Key	generic
 std.Treap().getEntryForExisting	has_type	std.Treap().Entry	local
 std.Treap().getEntryForExisting	has_type	std.Treap().Self	local
 std.Treap().getEntryForExisting	has_type	std.Treap().Node	local
-std.Treap().Entry.key	has_type	Key	unresolved
+std.Treap().Entry.key	has_type	Key	generic
 std.Treap().Entry.treap	has_type	std.Treap().Self	cross
 std.Treap().Entry.node	has_type	std.Treap().Node	cross
 std.Treap().Entry.context	has_type	union(enum) { /// A find() was called for this entry and the position in the treap is known. inserted_under: ?*Node, /// The entry's node was removed from the treap and a lookup must occur again for modification. removed, }	inline
@@ -13569,11 +13569,11 @@ std.Treap().Entry.set	has_type	std.Treap().Entry	local
 std.Treap().Entry.set	has_type	std.Treap().Node	cross
 std.Treap().find	has_type	std.Treap().Node	local
 std.Treap().find	has_type	std.Treap().Self	local
-std.Treap().find	has_type	Key	unresolved
+std.Treap().find	has_type	Key	generic
 std.Treap().find	has_type	std.Treap().Node	local
 std.Treap().insert	has_type	void	primitive
 std.Treap().insert	has_type	std.Treap().Self	local
-std.Treap().insert	has_type	Key	unresolved
+std.Treap().insert	has_type	Key	generic
 std.Treap().insert	has_type	std.Treap().Node	local
 std.Treap().insert	has_type	std.Treap().Node	local
 std.Treap().replace	has_type	void	primitive
@@ -18475,7 +18475,7 @@ std.c.private.getdirentries	has_type	std.c.fd_t	cross
 std.c.private.getdirentries	has_type	u8	primitive
 std.c.private.getdirentries	has_type	usize	primitive
 std.c.private.getdirentries	has_type	i64	primitive
-std.c.private.getdents	has_type	switch (native_os) { .freebsd => isize, .illumos => usize, else => c_int, }	inline
+std.c.private.getdents	has_type	switch (native_os) { .freebsd => isize, .illumos => usize, else => c_int, }	unresolved
 std.c.private.getdents	has_type	c_int	primitive
 std.c.private.getdents	has_type	u8	primitive
 std.c.private.getdents	has_type	usize	primitive
@@ -19318,7 +19318,7 @@ std.compress.flate.Compress.Huffman.outputBytes	has_type	bool	primitive
 std.compress.flate.Compress.Huffman.CodesBuf.dyn_codes	has_type	u16	primitive
 std.compress.flate.Compress.Huffman.CodesBuf.dyn_bits	has_type	u4	primitive
 std.compress.flate.Compress.Huffman.outputHeader	error_set	std.Io.Writer.Error	cross
-std.compress.flate.Compress.Huffman.outputHeader	has_type	?struct { codes: *const [257]u16, bits: *const [257]u4, }	inline
+std.compress.flate.Compress.Huffman.outputHeader	has_type	?struct { codes: *const [257]u16, bits: *const [257]u4, }	unresolved
 std.compress.flate.Compress.Huffman.outputHeader	has_type	std.compress.flate.Compress.Huffman	local
 std.compress.flate.Compress.Huffman.outputHeader	has_type	u16	primitive
 std.compress.flate.Compress.Huffman.outputHeader	has_type	std.compress.flate.Compress.Huffman.CodesBuf	local
@@ -19455,7 +19455,7 @@ std.compress.flate.Decompress.HuffmanDecoder	has_type	u16	primitive
 std.compress.flate.Decompress.HuffmanDecoder	has_type	u4	primitive
 std.compress.flate.Decompress.HuffmanDecoder	has_type	u4	primitive
 std.compress.flate.Decompress.HuffmanDecoder().lookup	has_type	[1 << lookup_bits]Symbol	unresolved
-std.compress.flate.Decompress.HuffmanDecoder().linked	has_type	if (lookup_bits == max_code_bits) void else [alphabet_size]struct { // sym.value is the next index in linked where the current index ends the chain // the actual symbol is this nodes's index sym: Symbol, code: u16, }	inline
+std.compress.flate.Decompress.HuffmanDecoder().linked	has_type	if (lookup_bits == max_code_bits) void else [alphabet_size]struct { // sym.value is the next index in linked where the current index ends the chain // the actual symbol is this nodes's index sym: Symbol, code: u16, }	unresolved
 std.compress.flate.Decompress.HuffmanDecoder().reverseIdx	has_type	u16	primitive
 std.compress.flate.Decompress.HuffmanDecoder().reverseIdx	has_type	usize	primitive
 std.compress.flate.Decompress.HuffmanDecoder().generate	has_type	void	primitive
@@ -24894,7 +24894,7 @@ std.crypto.codecs.asn1.der.Decoder.any	has_type	std.crypto.codecs.asn1.der.Decod
 std.crypto.codecs.asn1.der.Decoder.any	has_type	type	primitive
 std.crypto.codecs.asn1.der.Decoder.sequence	has_type	std.crypto.codecs.asn1.der.Decoder.Element	local
 std.crypto.codecs.asn1.der.Decoder.sequence	has_type	std.crypto.codecs.asn1.der.Decoder.Decoder	local
-std.crypto.codecs.asn1.der.Decoder.element	error_set	(error{ EndOfStream, UnexpectedElement } || Element.DecodeError)	inline
+std.crypto.codecs.asn1.der.Decoder.element	error_set	(error{ EndOfStream, UnexpectedElement } || Element.DecodeError)	unresolved
 std.crypto.codecs.asn1.der.Decoder.element	has_type	std.crypto.codecs.asn1.der.Decoder.Element	local
 std.crypto.codecs.asn1.der.Decoder.element	has_type	std.crypto.codecs.asn1.der.Decoder.Decoder	local
 std.crypto.codecs.asn1.der.Decoder.element	has_type	std.crypto.codecs.asn1.der.Decoder.ExpectedTag	local
@@ -25977,7 +25977,7 @@ std.debug.Dwarf.Unwind.VirtualMachine.Column.rule	has_type	std.debug.Dwarf.Unwin
 std.debug.Dwarf.Unwind.VirtualMachine.ColumnRange.start	has_type	usize	primitive
 std.debug.Dwarf.Unwind.VirtualMachine.ColumnRange.len	has_type	u8	primitive
 std.debug.Dwarf.Unwind.VirtualMachine.columns	has_type	std	module
-std.debug.Dwarf.Unwind.VirtualMachine.stack	has_type	std.ArrayList(struct { cfa: CfaRule, columns: ColumnRange, })	inline
+std.debug.Dwarf.Unwind.VirtualMachine.stack	has_type	std	module
 std.debug.Dwarf.Unwind.VirtualMachine.current_row	has_type	std.debug.Dwarf.Unwind.VirtualMachine.Row	local
 std.debug.Dwarf.Unwind.VirtualMachine.cie_row	has_type	std.debug.Dwarf.Unwind.VirtualMachine.Row	local
 std.debug.Dwarf.Unwind.VirtualMachine.deinit	has_type	void	primitive
@@ -26037,8 +26037,8 @@ std.debug.Dwarf.Unwind.VirtualMachine.assert	alias	std	module
 std.debug.Dwarf.Unwind.VirtualMachine.Allocator	alias	std	module
 std.debug.Dwarf.Unwind.VirtualMachine.Unwind	alias	std	module
 std.debug.Dwarf.Unwind.frame_section	has_type	struct { id: Section, /// The virtual address of the start of the section. "Virtual address" refers to the address in /// the binary (e.g. `sh_addr` in an ELF file); the equivalent runtime address may be relocated /// in position-independent binaries. vaddr: u64, /// The full contents of the section. May have imprecise bounds depending on `section`. This /// memory is externally managed. /// /// For `.debug_frame`, the slice length is exactly equal to the section length. This is needed /// to know the number of CIEs and FDEs. /// /// For `.eh_frame`, the slice length may exceed the section length, i.e. the slice may refer to /// more bytes than are in the second. This restriction exists because `.eh_frame_hdr` only /// includes the address of the loaded `.eh_frame` data, not its length. It is not a problem /// because unlike `.debug_frame`, the end of the CIE/FDE list is signaled through a sentinel /// value. If this slice does have bounds, they will still be checked, preventing crashes when /// reading potentially-invalid `.eh_frame` data from files. bytes: []const u8, }	inline
-std.debug.Dwarf.Unwind.lookup	has_type	?union(enum) { /// The `.eh_frame_hdr` section contains a pre-computed search table which we can use. eh_frame_hdr: struct { /// Virtual address of the `.eh_frame_hdr` section. vaddr: u64, table: EhFrameHeader.SearchTable, }, /// There is no pre-computed search table, so we have built one ourselves. /// Allocated into `gpa` and freed by `deinit`. sorted_fdes: []SortedFdeEntry, }	inline
-std.debug.Dwarf.Unwind.cie_list	has_type	std.MultiArrayList(struct { offset: u64, cie: CommonInformationEntry, })	inline
+std.debug.Dwarf.Unwind.lookup	has_type	?union(enum) { /// The `.eh_frame_hdr` section contains a pre-computed search table which we can use. eh_frame_hdr: struct { /// Virtual address of the `.eh_frame_hdr` section. vaddr: u64, table: EhFrameHeader.SearchTable, }, /// There is no pre-computed search table, so we have built one ourselves. /// Allocated into `gpa` and freed by `deinit`. sorted_fdes: []SortedFdeEntry, }	unresolved
+std.debug.Dwarf.Unwind.cie_list	has_type	std	module
 std.debug.Dwarf.Unwind.SortedFdeEntry.pc_begin	has_type	u64	primitive
 std.debug.Dwarf.Unwind.SortedFdeEntry.fde_offset	has_type	u64	primitive
 std.debug.Dwarf.Unwind.initEhFrameHdr	has_type	std.debug.Dwarf.Unwind.Unwind	local
@@ -26090,7 +26090,7 @@ std.debug.Dwarf.Unwind.CommonInformationEntry.fde_pointer_enc	has_type	std	modul
 std.debug.Dwarf.Unwind.CommonInformationEntry.is_signal_frame	has_type	bool	primitive
 std.debug.Dwarf.Unwind.CommonInformationEntry.augmentation_kind	has_type	std.debug.Dwarf.Unwind.CommonInformationEntry.AugmentationKind	local
 std.debug.Dwarf.Unwind.CommonInformationEntry.initial_instructions	has_type	u8	primitive
-std.debug.Dwarf.Unwind.CommonInformationEntry.last_row	has_type	?struct { offset: u64, cfa: VirtualMachine.CfaRule, cols: []VirtualMachine.Column, }	inline
+std.debug.Dwarf.Unwind.CommonInformationEntry.last_row	has_type	?struct { offset: u64, cfa: VirtualMachine.CfaRule, cols: []VirtualMachine.Column, }	unresolved
 std.debug.Dwarf.Unwind.CommonInformationEntry.parse	has_type	std.debug.Dwarf.Unwind.CommonInformationEntry	local
 std.debug.Dwarf.Unwind.CommonInformationEntry.parse	has_type	std.debug.Dwarf.Unwind.Format	cross
 std.debug.Dwarf.Unwind.CommonInformationEntry.parse	has_type	u8	primitive
@@ -26157,7 +26157,7 @@ std.debug.Dwarf.SelfUnwinder	imports	Dwarf/SelfUnwinder.zig	module
 std.debug.Dwarf.SelfUnwinder.cpu_state	has_type	std	module
 std.debug.Dwarf.SelfUnwinder.pc	has_type	usize	primitive
 std.debug.Dwarf.SelfUnwinder.cfi_vm	has_type	std.debug.Dwarf.Unwind.VirtualMachine	cross
-std.debug.Dwarf.SelfUnwinder.expr_vm	has_type	Dwarf.expression.StackMachine(.{ .call_frame_context = true })	inline
+std.debug.Dwarf.SelfUnwinder.expr_vm	has_type	std.debug.Dwarf.expression.StackMachine	cross
 std.debug.Dwarf.SelfUnwinder.CacheEntry.pc	has_type	usize	primitive
 std.debug.Dwarf.SelfUnwinder.CacheEntry.cie	has_type	std.debug.Dwarf.Unwind.CommonInformationEntry	cross
 std.debug.Dwarf.SelfUnwinder.CacheEntry.cfa_rule	has_type	std.debug.Dwarf.Unwind.VirtualMachine.CfaRule	cross
@@ -26739,7 +26739,7 @@ std.debug.ElfFile.LoadInnerResult.is_64	has_type	bool	primitive
 std.debug.ElfFile.LoadInnerResult.endian	has_type	std.debug.ElfFile.Endian	cross
 std.debug.ElfFile.LoadInnerResult.sections	has_type	std.debug.ElfFile.Section.Array	cross
 std.debug.ElfFile.LoadInnerResult.mapped_mem	has_type	[]align(std.heap.page_size_min) const u8	unresolved
-std.debug.ElfFile.loadInner	error_set	(LoadError || error{ CrcMismatch, Streaming, Canceled })	inline
+std.debug.ElfFile.loadInner	error_set	std.debug.ElfFile.LoadError	local
 std.debug.ElfFile.loadInner	has_type	std.debug.ElfFile.LoadInnerResult	local
 std.debug.ElfFile.loadInner	has_type	std.debug.ElfFile.Allocator	local
 std.debug.ElfFile.loadInner	has_type	std.debug.ElfFile.Io	local
@@ -28052,7 +28052,7 @@ std.enums.EnumSet().differenceWith	has_type	std.enums.EnumSet().Self	local
 std.enums.EnumSet().differenceWith	has_type	std.enums.EnumSet().Self	local
 std.enums.EnumSet().iterator	has_type	std.enums.EnumSet().Iterator	local
 std.enums.EnumSet().iterator	has_type	std.enums.EnumSet().Self	local
-std.enums.EnumSet().Iterator.inner	has_type	BitSet.Iterator(.{})	inline
+std.enums.EnumSet().Iterator.inner	has_type	BitSet.Iterator(.{})	unresolved
 std.enums.EnumSet().Iterator.next	has_type	std.enums.EnumSet().Key	cross
 std.enums.EnumSet().Iterator.next	has_type	std.enums.EnumSet().Iterator	local
 std.enums.EnumMap	has_type	type	primitive
@@ -28116,7 +28116,7 @@ std.enums.EnumMap().iterator	has_type	std.enums.EnumMap().Iterator	local
 std.enums.EnumMap().iterator	has_type	std.enums.EnumMap().Self	local
 std.enums.EnumMap().Entry.key	has_type	std.enums.EnumMap().Key	cross
 std.enums.EnumMap().Entry.value	has_type	std.enums.EnumMap().Value	cross
-std.enums.EnumMap().Iterator.inner	has_type	BitSet.Iterator(.{})	inline
+std.enums.EnumMap().Iterator.inner	has_type	BitSet.Iterator(.{})	unresolved
 std.enums.EnumMap().Iterator.values	has_type	*[Indexer.count]Value	unresolved
 std.enums.EnumMap().Iterator.next	has_type	std.enums.EnumMap().Entry	cross
 std.enums.EnumMap().Iterator.next	has_type	std.enums.EnumMap().Iterator	local
@@ -28453,7 +28453,7 @@ std.fmt.parseFloat	error_set	std.fmt.ParseFloatError	local
 std.fmt.parseFloat	has_type	T	unresolved
 std.fmt.parseFloat	has_type	type	primitive
 std.fmt.parseFloat	has_type	u8	primitive
-std.fmt.charToDigit	has_type	(error{InvalidCharacter}!u8)	inline
+std.fmt.charToDigit	has_type	(error{InvalidCharacter}!u8)	unresolved
 std.fmt.charToDigit	has_type	u8	primitive
 std.fmt.charToDigit	has_type	u8	primitive
 std.fmt.digitToChar	has_type	u8	primitive
@@ -28572,7 +28572,7 @@ std.fs.path.WindowsPath.kind	has_type	std.fs.path.WindowsPath.Kind	local
 std.fs.path.WindowsPath.disk_designator	has_type	u8	primitive
 std.fs.path.windowsParsePath	has_type	std.fs.path.WindowsPath	local
 std.fs.path.windowsParsePath	has_type	u8	primitive
-std.fs.path.parsePath	has_type	switch (native_os) { .windows => WindowsPath2(u8), else => PosixPath, }	inline
+std.fs.path.parsePath	has_type	switch (native_os) { .windows => WindowsPath2(u8), else => PosixPath, }	unresolved
 std.fs.path.parsePath	has_type	u8	primitive
 std.fs.path.PosixPath.kind	has_type	enum { relative, absolute }	inline
 std.fs.path.PosixPath.root	has_type	u8	primitive
@@ -30281,7 +30281,7 @@ std.heap.DebugAllocator().resizeSmall	has_type	usize	primitive
 std.heap.DebugAllocator().resizeSmall	has_type	usize	primitive
 std.heap.MemoryPool	has_type	type	primitive
 std.heap.MemoryPool	has_type	type	primitive
-std.heap.MemoryPool	delegates	memory_pool.Extra(Item, .{ .alignment = null })	inline
+std.heap.MemoryPool	delegates	std.heap.memory_pool.Extra	local
 std.heap.memory_pool	imports	heap/memory_pool.zig	module
 std.heap.memory_pool.std	imports	../std.zig	module
 std.heap.memory_pool.Allocator	alias	std	module
@@ -30289,15 +30289,15 @@ std.heap.memory_pool.Alignment	alias	std	module
 std.heap.memory_pool.MemoryPool	alias	std	module
 std.heap.memory_pool.Managed	has_type	type	primitive
 std.heap.memory_pool.Managed	has_type	type	primitive
-std.heap.memory_pool.Managed	delegates	ExtraManaged(Item, .{ .alignment = null })	inline
+std.heap.memory_pool.Managed	delegates	std.heap.memory_pool.ExtraManaged	local
 std.heap.memory_pool.Aligned	has_type	type	primitive
 std.heap.memory_pool.Aligned	has_type	type	primitive
 std.heap.memory_pool.Aligned	has_type	std.heap.memory_pool.Alignment	local
-std.heap.memory_pool.Aligned	delegates	Extra(Item, .{ .alignment = alignment })	inline
+std.heap.memory_pool.Aligned	delegates	std.heap.memory_pool.Extra	local
 std.heap.memory_pool.AlignedManaged	has_type	type	primitive
 std.heap.memory_pool.AlignedManaged	has_type	type	primitive
 std.heap.memory_pool.AlignedManaged	has_type	std.heap.memory_pool.Alignment	local
-std.heap.memory_pool.AlignedManaged	delegates	ExtraManaged(Item, .{ .alignment = alignment })	inline
+std.heap.memory_pool.AlignedManaged	delegates	std.heap.memory_pool.ExtraManaged	local
 std.heap.memory_pool.Options.alignment	has_type	std.heap.memory_pool.Alignment	cross
 std.heap.memory_pool.Options.growable	has_type	bool	primitive
 std.heap.memory_pool.Extra	has_type	type	primitive
@@ -31316,7 +31316,7 @@ std.json.ParseOptions.parse_numbers	has_type	bool	primitive
 std.json.Parsed	has_type	type	primitive
 std.json.Parsed	has_type	type	primitive
 std.json.Parsed().arena	has_type	*ArenaAllocator	unresolved
-std.json.Parsed().value	has_type	T	unresolved
+std.json.Parsed().value	has_type	T	generic
 std.json.Parsed().deinit	has_type	void	primitive
 std.json.Parsed().deinit	has_type	std.json.Parsed()	local
 std.json.parseFromSlice	error_set	std.json.ParseError	local
@@ -31377,8 +31377,8 @@ std.json.Stringify.writer	has_type	std.json.Stringify.Writer	local
 std.json.Stringify.options	has_type	std.json.Stringify.Options	local
 std.json.Stringify.indent_level	has_type	usize	primitive
 std.json.Stringify.next_punctuation	has_type	enum { the_beginning, none, comma, colon, }	inline
-std.json.Stringify.nesting_stack	has_type	switch (safety_checks) { .checked_to_fixed_depth => |fixed_buffer_size| [(fixed_buffer_size + 7) >> 3]u8, .assumed_correct => void, }	inline
-std.json.Stringify.raw_streaming_mode	has_type	if (build_mode_has_safety) enum { none, value, objectField } else void	inline
+std.json.Stringify.nesting_stack	has_type	switch (safety_checks) { .checked_to_fixed_depth => |fixed_buffer_size| [(fixed_buffer_size + 7) >> 3]u8, .assumed_correct => void, }	unresolved
+std.json.Stringify.raw_streaming_mode	has_type	if (build_mode_has_safety) enum { none, value, objectField } else void	unresolved
 std.json.Stringify.Error	alias	std	module
 std.json.Stringify.beginArray	error_set	std.json.Stringify.Error	local
 std.json.Stringify.beginArray	has_type	void	primitive
@@ -31934,13 +31934,13 @@ std.math.isSignalNan	has_type	bool	primitive
 std.math.frexp	has_type	std.math.Frexp	local
 std.math.Frexp	has_type	type	primitive
 std.math.Frexp	has_type	type	primitive
-std.math.Frexp().significand	has_type	T	unresolved
+std.math.Frexp().significand	has_type	T	generic
 std.math.Frexp().exponent	has_type	i32	primitive
 std.math.modf	has_type	std.math.Modf	local
 std.math.Modf	has_type	type	primitive
 std.math.Modf	has_type	type	primitive
-std.math.Modf().fpart	has_type	T	unresolved
-std.math.Modf().ipart	has_type	T	unresolved
+std.math.Modf().fpart	has_type	T	generic
+std.math.Modf().ipart	has_type	T	generic
 std.math.copysign	has_type	@TypeOf(magnitude)	unresolved
 std.math.copysign	has_type	@TypeOf(magnitude)	unresolved
 std.math.isFinite	has_type	bool	primitive
@@ -31963,7 +31963,7 @@ std.math.pow	has_type	T	unresolved
 std.math.pow	has_type	type	primitive
 std.math.pow	has_type	T	unresolved
 std.math.pow	has_type	T	unresolved
-std.math.powi	has_type	(error{ Overflow, Underflow, }!T)	inline
+std.math.powi	has_type	(error{ Overflow, Underflow, }!T)	unresolved
 std.math.powi	has_type	type	primitive
 std.math.powi	has_type	T	unresolved
 std.math.powi	has_type	T	unresolved
@@ -32872,15 +32872,15 @@ std.math.Min	has_type	type	primitive
 std.math.Min	has_type	type	primitive
 std.math.wrap	has_type	@TypeOf(x)	unresolved
 std.math.clamp	has_type	@TypeOf(val, lower, upper)	unresolved
-std.math.mul	has_type	(error{Overflow}!T)	inline
+std.math.mul	has_type	(error{Overflow}!T)	unresolved
 std.math.mul	has_type	type	primitive
 std.math.mul	has_type	T	unresolved
 std.math.mul	has_type	T	unresolved
-std.math.add	has_type	(error{Overflow}!T)	inline
+std.math.add	has_type	(error{Overflow}!T)	unresolved
 std.math.add	has_type	type	primitive
 std.math.add	has_type	T	unresolved
 std.math.add	has_type	T	unresolved
-std.math.sub	has_type	(error{Overflow}!T)	inline
+std.math.sub	has_type	(error{Overflow}!T)	unresolved
 std.math.sub	has_type	type	primitive
 std.math.sub	has_type	T	unresolved
 std.math.sub	has_type	T	unresolved
@@ -32964,7 +32964,7 @@ std.math.ceil	has_type	@TypeOf(value)	unresolved
 std.math.ceilPowerOfTwoPromote	has_type	std	module
 std.math.ceilPowerOfTwoPromote	has_type	type	primitive
 std.math.ceilPowerOfTwoPromote	has_type	T	unresolved
-std.math.ceilPowerOfTwo	has_type	(error{Overflow}!T)	inline
+std.math.ceilPowerOfTwo	has_type	(error{Overflow}!T)	unresolved
 std.math.ceilPowerOfTwo	has_type	type	primitive
 std.math.ceilPowerOfTwo	has_type	T	unresolved
 std.math.ceilPowerOfTwoAssert	has_type	T	unresolved
@@ -33579,19 +33579,19 @@ std.mem.cutSuffix	has_type	?[]const T	unresolved
 std.mem.cutSuffix	has_type	type	primitive
 std.mem.cutSuffix	has_type	[]const T	unresolved
 std.mem.cutSuffix	has_type	[]const T	unresolved
-std.mem.cut	has_type	?struct { []const T, []const T }	inline
+std.mem.cut	has_type	?struct { []const T, []const T }	unresolved
 std.mem.cut	has_type	type	primitive
 std.mem.cut	has_type	[]const T	unresolved
 std.mem.cut	has_type	[]const T	unresolved
-std.mem.cutLast	has_type	?struct { []const T, []const T }	inline
+std.mem.cutLast	has_type	?struct { []const T, []const T }	unresolved
 std.mem.cutLast	has_type	type	primitive
 std.mem.cutLast	has_type	[]const T	unresolved
 std.mem.cutLast	has_type	[]const T	unresolved
-std.mem.cutScalar	has_type	?struct { []const T, []const T }	inline
+std.mem.cutScalar	has_type	?struct { []const T, []const T }	unresolved
 std.mem.cutScalar	has_type	type	primitive
 std.mem.cutScalar	has_type	[]const T	unresolved
 std.mem.cutScalar	has_type	T	unresolved
-std.mem.cutScalarLast	has_type	?struct { []const T, []const T }	inline
+std.mem.cutScalarLast	has_type	?struct { []const T, []const T }	unresolved
 std.mem.cutScalarLast	has_type	type	primitive
 std.mem.cutScalarLast	has_type	[]const T	unresolved
 std.mem.cutScalarLast	has_type	T	unresolved
@@ -33599,7 +33599,7 @@ std.mem.TokenIterator	has_type	type	primitive
 std.mem.TokenIterator	has_type	type	primitive
 std.mem.TokenIterator	has_type	std.mem.DelimiterType	local
 std.mem.TokenIterator().buffer	has_type	T	generic
-std.mem.TokenIterator().delimiter	has_type	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	inline
+std.mem.TokenIterator().delimiter	has_type	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	unresolved
 std.mem.TokenIterator().index	has_type	usize	primitive
 std.mem.TokenIterator().next	has_type	T	generic
 std.mem.TokenIterator().next	has_type	std.mem.TokenIterator().Self	local
@@ -33617,7 +33617,7 @@ std.mem.SplitIterator	has_type	type	primitive
 std.mem.SplitIterator	has_type	std.mem.DelimiterType	local
 std.mem.SplitIterator().buffer	has_type	T	generic
 std.mem.SplitIterator().index	has_type	usize	primitive
-std.mem.SplitIterator().delimiter	has_type	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	inline
+std.mem.SplitIterator().delimiter	has_type	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	unresolved
 std.mem.SplitIterator().first	has_type	T	generic
 std.mem.SplitIterator().first	has_type	std.mem.SplitIterator().Self	local
 std.mem.SplitIterator().next	has_type	T	generic
@@ -33633,7 +33633,7 @@ std.mem.SplitBackwardsIterator	has_type	type	primitive
 std.mem.SplitBackwardsIterator	has_type	std.mem.DelimiterType	local
 std.mem.SplitBackwardsIterator().buffer	has_type	T	generic
 std.mem.SplitBackwardsIterator().index	has_type	usize	primitive
-std.mem.SplitBackwardsIterator().delimiter	has_type	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	inline
+std.mem.SplitBackwardsIterator().delimiter	has_type	switch (delimiter_type) { .sequence, .any => []const T, .scalar => T, }	unresolved
 std.mem.SplitBackwardsIterator().first	has_type	T	generic
 std.mem.SplitBackwardsIterator().first	has_type	std.mem.SplitBackwardsIterator().Self	local
 std.mem.SplitBackwardsIterator().next	has_type	T	generic
@@ -33928,9 +33928,9 @@ std.meta.declarations	has_type	type	primitive
 std.meta.declarationInfo	has_type	std	module
 std.meta.declarationInfo	has_type	type	primitive
 std.meta.declarationInfo	has_type	u8	primitive
-std.meta.fields	has_type	switch (@typeInfo(T)) { .@"struct" => []const Type.StructField, .@"union" => []const Type.UnionField, .@"enum" => []const Type.EnumField, .error_set => []const Type.Error, else => @compileError("Expected struct, union, error set or enum type, found '" ++ @typeName(T) ++ "'"), }	inline
+std.meta.fields	has_type	switch (@typeInfo(T)) { .@"struct" => []const Type.StructField, .@"union" => []const Type.UnionField, .@"enum" => []const Type.EnumField, .error_set => []const Type.Error, else => @compileError("Expected struct, union, error set or enum type, found '" ++ @typeName(T) ++ "'"), }	unresolved
 std.meta.fields	has_type	type	primitive
-std.meta.fieldInfo	has_type	switch (@typeInfo(T)) { .@"struct" => Type.StructField, .@"union" => Type.UnionField, .@"enum" => Type.EnumField, .error_set => Type.Error, else => @compileError("Expected struct, union, error set or enum type, found '" ++ @typeName(T) ++ "'"), }	inline
+std.meta.fieldInfo	has_type	switch (@typeInfo(T)) { .@"struct" => Type.StructField, .@"union" => Type.UnionField, .@"enum" => Type.EnumField, .error_set => Type.Error, else => @compileError("Expected struct, union, error set or enum type, found '" ++ @typeName(T) ++ "'"), }	unresolved
 std.meta.fieldInfo	has_type	type	primitive
 std.meta.fieldInfo	has_type	std.meta.FieldEnum	local
 std.meta.fieldNames	has_type	std.meta.fields	local
@@ -35846,7 +35846,7 @@ std.os.linux.TFD_TIMER.CANCEL_ON_SET	has_type	bool	primitive
 std.os.linux.TFD_TIMER._	has_type	u30	primitive
 std.os.linux.Sigaction.handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
 std.os.linux.Sigaction.mask	has_type	std.os.linux.sigset_t	cross
-std.os.linux.Sigaction.flags	has_type	switch (native_arch) { .mips, .mipsel, .mips64, .mips64el => c_uint, else => c_ulong, }	inline
+std.os.linux.Sigaction.flags	has_type	switch (native_arch) { .mips, .mipsel, .mips64, .mips64el => c_uint, else => c_ulong, }	unresolved
 std.os.linux.signalfd_siginfo.signo	has_type	u32	primitive
 std.os.linux.signalfd_siginfo.errno	has_type	i32	primitive
 std.os.linux.signalfd_siginfo.code	has_type	i32	primitive
@@ -38824,7 +38824,7 @@ std.os.uefi.tables.BootServices.locateHandle	has_type	std.os.uefi.tables.BootSer
 std.os.uefi.tables.BootServices.locateHandle	has_type	std.os.uefi.tables.LocateSearch	cross
 std.os.uefi.tables.BootServices.locateHandle	has_type	std.os.uefi.tables.Handle	cross
 std.os.uefi.tables.BootServices.locateDevicePath	error_set	std.os.uefi.tables.BootServices.LocateHandleError	local
-std.os.uefi.tables.BootServices.locateDevicePath	has_type	?struct { *const DevicePathProtocol, Handle }	inline
+std.os.uefi.tables.BootServices.locateDevicePath	has_type	?struct { *const DevicePathProtocol, Handle }	unresolved
 std.os.uefi.tables.BootServices.locateDevicePath	has_type	std.os.uefi.tables.BootServices	local
 std.os.uefi.tables.BootServices.locateDevicePath	has_type	*const DevicePathProtocol	unresolved
 std.os.uefi.tables.BootServices.locateDevicePath	has_type	type	primitive
@@ -38989,12 +38989,12 @@ std.os.uefi.tables.RuntimeServices.convertPointer	has_type	std.os.uefi.tables.Ru
 std.os.uefi.tables.RuntimeServices.convertPointer	has_type	std.os.uefi.tables.RuntimeServices.DebugDisposition	local
 std.os.uefi.tables.RuntimeServices.convertPointer	has_type	@FieldType(PointerConversion, @tagName(disposition))	unresolved
 std.os.uefi.tables.RuntimeServices.getVariableSize	error_set	std.os.uefi.tables.RuntimeServices.GetVariableSizeError	local
-std.os.uefi.tables.RuntimeServices.getVariableSize	has_type	?struct { usize, VariableAttributes }	inline
+std.os.uefi.tables.RuntimeServices.getVariableSize	has_type	?struct { usize, VariableAttributes }	unresolved
 std.os.uefi.tables.RuntimeServices.getVariableSize	has_type	std.os.uefi.tables.RuntimeServices	local
 std.os.uefi.tables.RuntimeServices.getVariableSize	has_type	u16	primitive
 std.os.uefi.tables.RuntimeServices.getVariableSize	has_type	std.os.uefi.tables.Guid	cross
 std.os.uefi.tables.RuntimeServices.getVariable	error_set	std.os.uefi.tables.RuntimeServices.GetVariableError	local
-std.os.uefi.tables.RuntimeServices.getVariable	has_type	?struct { []u8, VariableAttributes }	inline
+std.os.uefi.tables.RuntimeServices.getVariable	has_type	?struct { []u8, VariableAttributes }	unresolved
 std.os.uefi.tables.RuntimeServices.getVariable	has_type	std.os.uefi.tables.RuntimeServices	local
 std.os.uefi.tables.RuntimeServices.getVariable	has_type	u16	primitive
 std.os.uefi.tables.RuntimeServices.getVariable	has_type	std.os.uefi.tables.Guid	cross
@@ -41095,7 +41095,7 @@ std.os.windows.AFD.Reserved0	has_type	u30	primitive
 std.os.windows.AFD.WSABUF	has_type	type	primitive
 std.os.windows.AFD.WSABUF	has_type	std.os.windows.AFD.Mutability	local
 std.os.windows.AFD.WSABUF().len	has_type	std.os.windows.ULONG	cross
-std.os.windows.AFD.WSABUF().buf	has_type	switch (mutability) { .@"const" => [*]const u8, .@"var" => [*]u8, }	inline
+std.os.windows.AFD.WSABUF().buf	has_type	switch (mutability) { .@"const" => [*]const u8, .@"var" => [*]u8, }	unresolved
 std.os.windows.AFD.ENDPOINT_TYPE.CONNECTIONLESS	has_type	bool	primitive
 std.os.windows.AFD.ENDPOINT_TYPE.Reserved1	has_type	u3	primitive
 std.os.windows.AFD.ENDPOINT_TYPE.MESSAGEMODE	has_type	bool	primitive
@@ -42076,7 +42076,7 @@ std.os.windows.PEB.ImageSubSystem	has_type	std.os.windows.ULONG	cross
 std.os.windows.PEB.ImageSubSystemMajorVersion	has_type	std.os.windows.ULONG	cross
 std.os.windows.PEB.ImageSubSystemMinorVersion	has_type	std.os.windows.ULONG	cross
 std.os.windows.PEB.ActiveProcessAffinityMask	has_type	std.os.windows.KAFFINITY	cross
-std.os.windows.PEB.GdiHandleBuffer	has_type	[ switch (@sizeOf(usize)) { 4 => 0x22, 8 => 0x3C, else => unreachable, } ]ULONG	inline
+std.os.windows.PEB.GdiHandleBuffer	has_type	[ switch (@sizeOf(usize)) { 4 => 0x22, 8 => 0x3C, else => unreachable, } ]ULONG	unresolved
 std.os.windows.PEB.PostProcessInitRoutine	has_type	std.os.windows.PVOID	cross
 std.os.windows.PEB.TlsExpansionBitmap	has_type	std.os.windows.RTL_BITMAP	cross
 std.os.windows.PEB.TlsExpansionBitmapBits	has_type	std.os.windows.ULONG	cross
@@ -44255,7 +44255,7 @@ std.testing.Smith.sliceWeightedWithHash	has_type	std.testing.Smith.Weight	local
 std.testing.Smith.sliceWeightedWithHash	has_type	std.testing.Smith.Weight	local
 std.testing.Smith.sliceWeightedWithHash	has_type	u32	primitive
 std.testing.Smith.constructInput	has_type	u8	primitive
-std.testing.Smith.constructInput	has_type	[]const union(enum) { eos: bool, int: u64, bytes: []const u8, slice: []const u8, }	inline
+std.testing.Smith.constructInput	has_type	[]const union(enum) { eos: bool, int: u64, bytes: []const u8, slice: []const u8, }	unresolved
 std.testing.FuzzInputOptions.corpus	has_type	u8	primitive
 std.testing.fuzz	error_set	anyerror	primitive
 std.testing.fuzz	has_type	void	primitive
@@ -44497,7 +44497,7 @@ std.unicode.formatUtf8	has_type	u8	primitive
 std.unicode.formatUtf8	has_type	std	module
 std.unicode.fmtUtf8	has_type	std	module
 std.unicode.fmtUtf8	has_type	u8	primitive
-std.unicode.utf16LeToUtf8ArrayListImpl	error_set	(switch (surrogates) { .cannot_encode_surrogate_half => Utf16LeToUtf8AllocError, .can_encode_surrogate_half => Allocator.Error, })	inline
+std.unicode.utf16LeToUtf8ArrayListImpl	error_set	(switch (surrogates) { .cannot_encode_surrogate_half => Utf16LeToUtf8AllocError, .can_encode_surrogate_half => Allocator.Error, })	unresolved
 std.unicode.utf16LeToUtf8ArrayListImpl	has_type	void	primitive
 std.unicode.utf16LeToUtf8ArrayListImpl	has_type	std	module
 std.unicode.utf16LeToUtf8ArrayListImpl	has_type	u16	primitive
@@ -44515,7 +44515,7 @@ std.unicode.utf16LeToUtf8AllocZ	has_type	u8	primitive
 std.unicode.utf16LeToUtf8AllocZ	has_type	std.unicode.Allocator	local
 std.unicode.utf16LeToUtf8AllocZ	has_type	u16	primitive
 std.unicode.Utf16LeToUtf8Error	alias	std.unicode.Utf16LeIterator.NextCodepointError	local
-std.unicode.utf16LeToUtf8Impl	error_set	(switch (surrogates) { .cannot_encode_surrogate_half => Utf16LeToUtf8Error, .can_encode_surrogate_half => error{}, })	inline
+std.unicode.utf16LeToUtf8Impl	error_set	(switch (surrogates) { .cannot_encode_surrogate_half => Utf16LeToUtf8Error, .can_encode_surrogate_half => error{}, })	unresolved
 std.unicode.utf16LeToUtf8Impl	has_type	usize	primitive
 std.unicode.utf16LeToUtf8Impl	has_type	u8	primitive
 std.unicode.utf16LeToUtf8Impl	has_type	u16	primitive
@@ -48052,12 +48052,12 @@ std.zig.AstSmith.tokens_len	has_type	usize	primitive
 std.zig.AstSmith.not_token	has_type	std	module
 std.zig.AstSmith.not_token_comptime	has_type	bool	primitive
 std.zig.AstSmith.not_expr_suffix	has_type	bool	primitive
-std.zig.AstSmith.not_labelable_expr	has_type	?enum { colon, expr }	inline
+std.zig.AstSmith.not_labelable_expr	has_type	?enum { colon, expr }	unresolved
 std.zig.AstSmith.not_label	has_type	bool	primitive
 std.zig.AstSmith.not_break_label	has_type	bool	primitive
 std.zig.AstSmith.not_block_expr	has_type	bool	primitive
 std.zig.AstSmith.not_expr_statement	has_type	bool	primitive
-std.zig.AstSmith.prev_ids_buf	has_type	[256]struct { start: u16, len: u16 }	inline
+std.zig.AstSmith.prev_ids_buf	has_type	[256]struct { start: u16, len: u16 }	unresolved
 std.zig.AstSmith.prev_ids_len	has_type	usize	primitive
 std.zig.AstSmith.init	has_type	std.zig.AstSmith.AstSmith	local
 std.zig.AstSmith.init	has_type	std.zig.AstSmith.Smith	local
@@ -49936,7 +49936,7 @@ std.zig.WindowsSdk.Registry.Key.open	has_type	u16	primitive
 std.zig.WindowsSdk.Registry.Key.ValueEntry.default	has_type	void	primitive
 std.zig.WindowsSdk.Registry.Key.ValueEntry.name	has_type	u16	primitive
 std.zig.WindowsSdk.Registry.Key.getString	error_set	error{ OutOfMemory, ValueNameNotFound, NotAString, StringNotFound }	inline
-std.zig.WindowsSdk.Registry.Key.getString	has_type	(switch (result_encoding) { .wtf8 => []u8, .wtf16 => []u16, })	inline
+std.zig.WindowsSdk.Registry.Key.getString	has_type	(switch (result_encoding) { .wtf8 => []u8, .wtf16 => []u16, })	unresolved
 std.zig.WindowsSdk.Registry.Key.getString	has_type	std.zig.WindowsSdk.Registry.Key	local
 std.zig.WindowsSdk.Registry.Key.getString	has_type	std.zig.WindowsSdk.Allocator	cross
 std.zig.WindowsSdk.Registry.Key.getString	has_type	std.zig.WindowsSdk.Registry.Key.ValueEntry	local
@@ -50318,7 +50318,7 @@ std.zig.llvm.bitcode_writer.charTo6Bit	has_type	u8	primitive
 std.zig.llvm.bitcode_writer.BufType	has_type	type	primitive
 std.zig.llvm.bitcode_writer.BufType	has_type	type	primitive
 std.zig.llvm.bitcode_writer.BufType	has_type	usize	primitive
-std.zig.llvm.bitcode_writer.BufType	delegates	std.meta.Int(.unsigned, @max(min_len, @bitSizeOf(switch (@typeInfo(T)) { .comptime_int => u32, .int => |info| if (info.signedness == .unsigned) T else @compileError("Unsupported type: " ++ @typeName(T)), .@"enum" => |info| info.tag_type, .bool => u1, .@"struct" => |info| switch (info.layout) { .auto, .@"extern" => @compileError("Unsupported type: " ++ @typeName(T)), .@"packed" => std.meta.Int(.unsigned, @bitSizeOf(T)), }, else => @compileError("Unsupported type: " ++ @typeName(T)), })))	inline
+std.zig.llvm.bitcode_writer.BufType	delegates	std	module
 std.zig.llvm.bitcode_writer.bufValue	has_type	std.zig.llvm.bitcode_writer.BufType	local
 std.zig.llvm.bitcode_writer.bufValue	has_type	usize	primitive
 std.zig.llvm.Builder	imports	llvm/Builder.zig	module
@@ -50734,7 +50734,7 @@ std.zig.llvm.Builder.metadata_items	has_type	std	module
 std.zig.llvm.Builder.metadata_extra	has_type	std	module
 std.zig.llvm.Builder.metadata_limbs	has_type	std	module
 std.zig.llvm.Builder.metadata_forward_references	has_type	std	module
-std.zig.llvm.Builder.metadata_named	has_type	std.AutoArrayHashMapUnmanaged(String, struct { len: u32, index: Metadata.Item.ExtraIndex, })	inline
+std.zig.llvm.Builder.metadata_named	has_type	std	module
 std.zig.llvm.Builder.metadata_string_map	has_type	std	module
 std.zig.llvm.Builder.metadata_string_indices	has_type	std	module
 std.zig.llvm.Builder.metadata_string_bytes	has_type	std	module
@@ -52468,7 +52468,7 @@ std.zig.llvm.Builder.Metadata.GlobalVarExpression.variable	has_type	std.zig.llvm
 std.zig.llvm.Builder.Metadata.GlobalVarExpression.expression	has_type	std.zig.llvm.Builder.Metadata.Optional	cross
 std.zig.llvm.Builder.Metadata.Formatter.builder	has_type	std.zig.llvm.Builder.Builder	cross
 std.zig.llvm.Builder.Metadata.Formatter.need_comma	has_type	bool	primitive
-std.zig.llvm.Builder.Metadata.Formatter.map	has_type	std.AutoArrayHashMapUnmanaged(union(enum) { metadata: Metadata, debug_location: DebugLocation.Location, }, void)	inline
+std.zig.llvm.Builder.Metadata.Formatter.map	has_type	std	module
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.formatter	has_type	std.zig.llvm.Builder.Metadata.Formatter	cross
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.prefix	has_type	u8	primitive
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.node	has_type	std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node	local
@@ -52492,7 +52492,7 @@ std.zig.llvm.Builder.Metadata.Formatter.format	error_set	std	module
 std.zig.llvm.Builder.Metadata.Formatter.format	has_type	void	primitive
 std.zig.llvm.Builder.Metadata.Formatter.format	has_type	std.zig.llvm.Builder.Metadata.Formatter.FormatData	local
 std.zig.llvm.Builder.Metadata.Formatter.format	has_type	std.zig.llvm.Builder.Writer	cross
-std.zig.llvm.Builder.Metadata.Formatter.fmt	error_set	switch (@TypeOf(node)) { Metadata, Metadata.Optional, ?Metadata => Allocator.Error, else => error{}, }	inline
+std.zig.llvm.Builder.Metadata.Formatter.fmt	error_set	switch (@TypeOf(node)) { Metadata, Metadata.Optional, ?Metadata => Allocator.Error, else => error{}, }	unresolved
 std.zig.llvm.Builder.Metadata.Formatter.fmt	has_type	std	module
 std.zig.llvm.Builder.Metadata.Formatter.fmt	has_type	std.zig.llvm.Builder.Metadata.Formatter	local
 std.zig.llvm.Builder.Metadata.Formatter.fmt	has_type	u8	primitive
@@ -53801,7 +53801,7 @@ std.zig.c_translation.helpers.castToPtr	has_type	type	primitive
 std.zig.c_translation.helpers.sizeof	has_type	usize	primitive
 std.zig.c_translation.helpers.div	has_type	std.zig.c_translation.helpers.ArithmeticConversion	local
 std.zig.c_translation.helpers.rem	has_type	std.zig.c_translation.helpers.ArithmeticConversion	local
-std.zig.c_translation.helpers.CAST_OR_CALL	has_type	switch (@typeInfo(@TypeOf(a))) { .type => a, .@"fn" => |fn_info| fn_info.return_type orelse void, else => |info| @compileError("Unexpected argument type: " ++ @tagName(info)), }	inline
+std.zig.c_translation.helpers.CAST_OR_CALL	has_type	switch (@typeInfo(@TypeOf(a))) { .type => a, .@"fn" => |fn_info| fn_info.return_type orelse void, else => |info| @compileError("Unexpected argument type: " ++ @tagName(info)), }	unresolved
 std.zig.c_translation.helpers.DISCARD	has_type	void	primitive
 std.zig.c_translation.helpers.F_SUFFIX	has_type	f32	primitive
 std.zig.c_translation.helpers.F_SUFFIX	has_type	comptime_float	primitive
