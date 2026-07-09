@@ -17,7 +17,7 @@
 #
 # Usage:  nu scripts/verify_std.nu            # checks data/std/extracted/nodes.tsv
 #         nu scripts/verify_std.nu other.tsv --partial
-use verify_lib.nu *   # presence
+use lib.nu *   # presence
 
 # Parent path. A `<fn>()` factory node's parent is the fn (drop the `()`); otherwise drop the last
 # top-level segment. Fast path: a plain dotted path splits directly; only a `@"…"` quoted segment

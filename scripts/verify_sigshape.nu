@@ -10,7 +10,7 @@
 #   3. CONSISTENCY    each stored label equals an independent regex re-read of the signature.
 #
 # Usage:  nu scripts/verify_sigshape.nu [data/std]
-use verify_lib.nu *   # presence, lookup
+use lib.nu *   # presence, lookup
 
 def main [dir: string = "data/std"] {
     for f in ["derived/sigshape.tsv" "extracted/attrs.tsv" "extracted/nodes.tsv"] {

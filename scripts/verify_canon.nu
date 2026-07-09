@@ -11,7 +11,7 @@
 #
 # Usage:  nu scripts/verify_canon.nu [data/std]
 
-use verify_lib.nu *   # lookup
+use lib.nu *   # lookup
 
 def nominal [id: string] {
     not (($id | str starts-with "error{")

@@ -11,7 +11,7 @@
 #
 # Usage:  nu scripts/verify_callcard.nu [data/std]
 
-use verify_lib.nu *   # norm-path, lookup
+use lib.nu *   # norm-path, lookup
 
 def main [dir: string = "data/std"] {
     for f in ["derived/callcard.tsv" "extracted/attrs.tsv" "extracted/resolved.tsv"] {

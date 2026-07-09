@@ -19,6 +19,7 @@
 #         nu scripts/build_doccov.nu --check
 
 const MANIFEST = "data/std/SHA256SUMS.doccov"
+use lib.nu *   # check-manifest, write-manifest
 
 def derive [dir: string] {
     for f in ["extracted/nodes.tsv" "extracted/attrs.tsv"] {
@@ -32,25 +33,16 @@ def derive [dir: string] {
 }
 
 def main [--dir: string = "data/std", --check] {
-    if $check {
-        if not ($MANIFEST | path exists) { print $"[doccov check] no ($MANIFEST) — build first"; exit 1 }
-        let fresh = (derive $dir | to tsv)
-        let want = (open $MANIFEST | lines | first | parse -r '(?<hash>\S+)' | get hash.0)
-        let got = ($fresh | hash sha256)
-        if $got == $want { print $"[doccov check] ✓ rebuilds byte-identical \(($got)\)" } else {
-            print $"[doccov check] ✗ DRIFT — manifest ($want) vs rebuild ($got)"; exit 1
-        }
-        return
-    }
+    if $check { check-manifest $MANIFEST (derive $dir | to tsv) "doccov"; return }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/derived/doccov.tsv"
+    let tsv = ($rows | to tsv)
+    $tsv | save -f $"($dir)/derived/doccov.tsv"
     let n = ($rows | length)
     let doc = ($rows | where documented == "yes" | length)
     let pct = (($doc * 100) / $n | math round | into int)
     print $"[doccov] ($n) nodes → ($dir)/derived/doccov.tsv"
     print $"  documented: ($doc)   undocumented: (($n) - ($doc))   \(($pct)% covered\)"
     $rows | group-by kind | items {|k, v| {kind: $k, total: ($v | length), documented: ($v | where documented == "yes" | length)}} | sort-by total --reverse | print
-    let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/derived/doccov.tsv\n" | save -f $MANIFEST
+    write-manifest $tsv "data/std/derived/doccov.tsv" $MANIFEST
     print $"[doccov] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

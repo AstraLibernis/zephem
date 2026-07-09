@@ -20,6 +20,7 @@
 #         nu scripts/build_sigshape.nu --check
 
 const MANIFEST = "data/std/SHA256SUMS.sigshape"
+use lib.nu *   # check-manifest, write-manifest
 
 # The substring inside the FIRST balanced (...) group — i.e. the parameter list.
 def param-list [sig: string] {
@@ -77,24 +78,15 @@ def derive [dir: string] {
 }
 
 def main [--dir: string = "data/std", --check] {
-    if $check {
-        if not ($MANIFEST | path exists) { print $"[sigshape check] no ($MANIFEST) — build first"; exit 1 }
-        let fresh = (derive $dir | to tsv)
-        let want = (open $MANIFEST | lines | first | parse -r '(?<hash>\S+)' | get hash.0)
-        let got = ($fresh | hash sha256)
-        if $got == $want { print $"[sigshape check] ✓ rebuilds byte-identical \(($got)\)" } else {
-            print $"[sigshape check] ✗ DRIFT — manifest ($want) vs rebuild ($got)"; exit 1
-        }
-        return
-    }
+    if $check { check-manifest $MANIFEST (derive $dir | to tsv) "sigshape"; return }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/derived/sigshape.tsv"
+    let tsv = ($rows | to tsv)
+    $tsv | save -f $"($dir)/derived/sigshape.tsv"
     let n = ($rows | length)
     print $"[sigshape] ($n) fns → ($dir)/derived/sigshape.tsv"
     print "  first parameter:"
     $rows | group-by first_param | items {|k, v| {first_param: $k, n: ($v | length)}} | sort-by n --reverse | print
     print $"  Io-threading: ($rows | where io == 'yes' | length)   generic \(comptime/anytype\): ($rows | where generic == 'yes' | length)"
-    let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/derived/sigshape.tsv\n" | save -f $MANIFEST
+    write-manifest $tsv "data/std/derived/sigshape.tsv" $MANIFEST
     print $"[sigshape] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

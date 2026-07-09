@@ -22,9 +22,8 @@
 #         nu scripts/build_consensus.nu --check
 
 const MANIFEST = "data/std/SHA256SUMS.consensus"
+use lib.nu *   # norm-path, check-manifest, write-manifest
 
-# Strip Zig keyword-quoting so the parser's `@"type"` and the compiler's `type` key equal.
-def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
 # The path's parent (drop the last dotted segment); "" for a single-segment root.
 def parent-of [p: string] { $p | split row "." | drop 1 | str join "." }
 
@@ -48,25 +47,16 @@ def derive [dir: string] {
 }
 
 def main [--dir: string = "data/std", --check] {
-    if $check {
-        if not ($MANIFEST | path exists) { print $"[consensus check] no ($MANIFEST) — build first"; exit 1 }
-        let fresh = (derive $dir | to tsv)
-        let want = (open $MANIFEST | lines | first | parse -r '(?<hash>\S+)' | get hash.0)
-        let got = ($fresh | hash sha256)
-        if $got == $want { print $"[consensus check] ✓ rebuilds byte-identical \(($got)\)" } else {
-            print $"[consensus check] ✗ DRIFT — manifest ($want) vs rebuild ($got)"; exit 1
-        }
-        return
-    }
+    if $check { check-manifest $MANIFEST (derive $dir | to tsv) "consensus"; return }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/derived/consensus.tsv"
+    let tsv = ($rows | to tsv)
+    $tsv | save -f $"($dir)/derived/consensus.tsv"
     let n = ($rows | length)
     let agree = ($rows | where origin == "read+run" | length)
     print $"[consensus] ($n) paths → ($dir)/derived/consensus.tsv"
     print $"  AGREEMENT  read+run: ($agree)"
     print $"  DIFFERENCES: (($n) - ($agree)) ="
     $rows | where origin != "read+run" | group-by origin | items {|k, v| {origin: $k, n: ($v | length)}} | sort-by n --reverse | print
-    let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/derived/consensus.tsv\n" | save -f $MANIFEST
+    write-manifest $tsv "data/std/derived/consensus.tsv" $MANIFEST
     print $"[consensus] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

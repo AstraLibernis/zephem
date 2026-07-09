@@ -11,7 +11,7 @@
 #
 # Usage:  nu scripts/verify_consensus.nu [data/std]
 
-use verify_lib.nu *   # norm-path, presence
+use lib.nu *   # norm-path, presence
 
 def main [dir: string = "data/std"] {
     for f in ["derived/consensus.tsv" "extracted/nodes.tsv" "extracted/resolved.tsv"] {

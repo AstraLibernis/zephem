@@ -9,7 +9,7 @@
 #   3. TRUTH       documented=="yes" ⟺ path ∈ docs.tsv — no missed doc, no phantom doc.
 #
 # Usage:  nu scripts/verify_doccov.nu [data/std]
-use verify_lib.nu *   # presence, lookup
+use lib.nu *   # presence, lookup
 
 def main [dir: string = "data/std"] {
     for f in ["derived/doccov.tsv" "extracted/nodes.tsv" "extracted/attrs.tsv"] {

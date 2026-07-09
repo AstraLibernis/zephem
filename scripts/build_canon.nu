@@ -27,6 +27,7 @@
 #         nu scripts/build_canon.nu --check
 
 const MANIFEST = "data/std/SHA256SUMS.canon"
+use lib.nu *   # check-manifest, write-manifest
 
 # A nominal/relocatable identity worth deduping — excludes bare primitives, error sets, anon markers.
 def nominal [id: string] {
@@ -48,23 +49,14 @@ def derive [dir: string] {
 }
 
 def main [--dir: string = "data/std", --check] {
-    if $check {
-        if not ($MANIFEST | path exists) { print $"[canon check] no ($MANIFEST) — build first"; exit 1 }
-        let fresh = (derive $dir | to tsv)
-        let want = (open $MANIFEST | lines | first | parse -r '(?<hash>\S+)' | get hash.0)
-        let got = ($fresh | hash sha256)
-        if $got == $want { print $"[canon check] ✓ rebuilds byte-identical \(($got)\)" } else {
-            print $"[canon check] ✗ DRIFT — manifest ($want) vs rebuild ($got)"; exit 1
-        }
-        return
-    }
+    if $check { check-manifest $MANIFEST (derive $dir | to tsv) "canon"; return }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/derived/canon.tsv"
+    let tsv = ($rows | to tsv)
+    $tsv | save -f $"($dir)/derived/canon.tsv"
     let families = ($rows | get canon | uniq | length)
     print $"[canon] ($rows | length) aliased/duplicated paths in ($families) families → ($dir)/derived/canon.tsv"
     print "── largest families ──"
     $rows | group-by canon | items {|k, v| {canon: $k, n: ($v | length)}} | sort-by n --reverse | first 5 | print
-    let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/derived/canon.tsv\n" | save -f $MANIFEST
+    write-manifest $tsv "data/std/derived/canon.tsv" $MANIFEST
     print $"[canon] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

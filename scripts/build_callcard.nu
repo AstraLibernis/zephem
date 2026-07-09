@@ -26,9 +26,7 @@
 #         nu scripts/build_callcard.nu --check
 
 const MANIFEST = "data/std/SHA256SUMS.callcard"
-
-# Strip Zig keyword-quoting so the parser's `@"x"` and the compiler's `x` key equal.
-def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
+use lib.nu *   # norm-path, check-manifest, write-manifest
 
 def derive [dir: string] {
     for f in ["extracted/attrs.tsv" "extracted/resolved.tsv"] {
@@ -49,22 +47,13 @@ def derive [dir: string] {
 }
 
 def main [--dir: string = "data/std", --check] {
-    if $check {
-        if not ($MANIFEST | path exists) { print $"[callcard check] no ($MANIFEST) — build first"; exit 1 }
-        let fresh = (derive $dir | to tsv)
-        let want = (open $MANIFEST | lines | first | parse -r '(?<hash>\S+)' | get hash.0)
-        let got = ($fresh | hash sha256)
-        if $got == $want { print $"[callcard check] ✓ rebuilds byte-identical \(($got)\)" } else {
-            print $"[callcard check] ✗ DRIFT — manifest ($want) vs rebuild ($got)"; exit 1
-        }
-        return
-    }
+    if $check { check-manifest $MANIFEST (derive $dir | to tsv) "callcard"; return }
     let rows = (derive $dir)
-    $rows | to tsv | save -f $"($dir)/derived/callcard.tsv"
+    let tsv = ($rows | to tsv)
+    $tsv | save -f $"($dir)/derived/callcard.tsv"
     let n = ($rows | length)
     print $"[callcard] ($n) callables → ($dir)/derived/callcard.tsv"
     $rows | group-by witness | items {|k, v| {witness: $k, n: ($v | length)}} | sort-by n --reverse | print
-    let h = ($rows | to tsv | hash sha256)
-    $"($h)  data/std/derived/callcard.tsv\n" | save -f $MANIFEST
+    write-manifest $tsv "data/std/derived/callcard.tsv" $MANIFEST
     print $"[callcard] manifest → ($MANIFEST)  \(run --check to prove it rebuilds\)"
 }

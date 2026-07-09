@@ -43,7 +43,7 @@ def compiler-kind [k: string] {
     if $k == "fn" { "fn" } else if $k == "type" { "type" } else if $k in ["const_int" "const_bool" "const_other"] { "const" } else { $k }
 }
 
-use verify_lib.nu *   # norm-path, presence
+use lib.nu *   # norm-path, presence
 
 def main [--dir: string = "data/std", --anchor] {
     for f in ["extracted/nodes.tsv" "extracted/resolved.tsv"] {
