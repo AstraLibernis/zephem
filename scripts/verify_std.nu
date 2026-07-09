@@ -11,13 +11,22 @@
 #   EDGES        every edge starts at a real node, and every RESOLVED edge (local/cross) points at
 #                a real node — i.e. the link has a valid target found in the data (the B invariant)
 #
+# Membership ("is this path a real node?") is tested with a hash JOIN against the node table, not a
+# per-row lookup into a 60k-key record — the latter is quadratic to build and linear to probe, which
+# on full std turned a seconds-long check into minutes.
+#
 # Usage:  nu scripts/verify_std.nu            # checks data/std/extracted/nodes.tsv
 #         nu scripts/verify_std.nu other.tsv --partial
 
 # Parent path. A `<fn>()` factory node's parent is the fn (drop the `()`); otherwise drop the last
-# top-level segment (a `.` inside `@"…"` is part of a name, not a separator).
+# top-level segment. Fast path: a plain dotted path splits directly; only a `@"…"` quoted segment
+# (where a `.` is part of a name, not a separator) needs the char-by-char scan.
 def parent [path: string] {
     if ($path | str ends-with "()") { return ($path | str replace --regex '\(\)$' "") }
+    if not ($path | str contains '@"') {
+        let segs = ($path | split row ".")
+        return (if ($segs | length) <= 1 { "" } else { $segs | drop 1 | str join "." })
+    }
     mut segs = []
     mut cur = ""
     mut inq = false
@@ -37,18 +46,22 @@ def parent [path: string] {
     if ($segs | length) <= 1 { "" } else { $segs | drop 1 | str join "." }
 }
 
+# Rows of `tbl` whose `col` value is NOT a real node — a left join against the node set, keeping the
+# unmatched (`_n == null`) rows. `col` is renamed to `path` so it joins the node key.
+def missing-nodes [tbl: table, col: string, node_exists: table] {
+    $tbl | select $col | rename path | join --left $node_exists path | where _n == null
+}
+
 def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     let t = (open $file)
     let n = ($t | length)
     mut ok = true
     let root = ($t | first | get path)
-    let nodeset = ($t | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+    # the node set as a joinable table (one hash-join beats 200k record probes).
+    let node_exists = ($t | select path | insert _n true)
 
     # 1. CONNECTED — every non-root node's parent is a real node.
-    let orphans = ($t | where path != $root | where {|r|
-        let p = (parent $r.path)
-        $p != "" and ($nodeset | get -o $p) != true
-    })
+    let orphans = (missing-nodes ($t | where path != $root | insert par {|r| parent $r.path} | where par != "") "par" $node_exists)
     print $"connected:  ($n) nodes"
     if ($orphans | length) > 0 { print $"  ✗ ($orphans | length) orphan\(s\) — parent path missing"; $orphans | first 5 | print; $ok = false } else { print "  ✓ every node hangs off a real parent" }
 
@@ -63,7 +76,7 @@ def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     # 3. INDEX — the table of contents registers on the map, root owns everything.
     if ("data/std/derived/index.tsv" | path exists) {
         let ix = (open data/std/derived/index.tsv)
-        let notreal = ($ix | where {|r| ($nodeset | get -o $r.path) != true})
+        let notreal = (missing-nodes $ix "path" $node_exists)
         print $"index:      ($ix | length) containers"
         if ($notreal | length) > 0 { print $"  ✗ ($notreal | length) index row\(s\) point at a non-node"; $ok = false } else { print "  ✓ every index entry is a real node" }
         if (($ix | get span | into int | math max) != $n) { print $"  ✗ root span != ($n) rows"; $ok = false } else { print "  ✓ root span == total rows" }
@@ -75,7 +88,7 @@ def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     if ($"($dir)/attrs.tsv" | path exists) {
         let a = (open $"($dir)/attrs.tsv")
         let known_attr = ["doc" "sig" "value" "loc" "example"]
-        let a_orphan = ($a | where {|r| ($nodeset | get -o $r.path) != true})
+        let a_orphan = (missing-nodes $a "path" $node_exists)
         let a_bad = ($a | where attr not-in $known_attr)
         print $"attrs:      ($a | length) rows"
         if ($a_orphan | length) > 0 { print $"  ✗ ($a_orphan | length) attr\(s\) key onto a missing node"; $ok = false } else { print "  ✓ every attr keys onto a real node" }
@@ -85,8 +98,8 @@ def main [file: string = "data/std/extracted/nodes.tsv", --partial] {
     # 5. EDGES — start at a real node; every RESOLVED edge points at a real node (the B invariant).
     if ($"($dir)/edges.tsv" | path exists) {
         let e = (open $"($dir)/edges.tsv")
-        let e_orphan = ($e | where {|r| ($nodeset | get -o $r.src) != true})
-        let bad_link = ($e | where scope in ["local" "cross"] | where {|r| ($nodeset | get -o $r.target) != true})
+        let e_orphan = (missing-nodes $e "src" $node_exists)
+        let bad_link = (missing-nodes ($e | where scope in ["local" "cross"]) "target" $node_exists)
         print $"edges:      ($e | length) rows"
         if ($e_orphan | length) > 0 { print $"  ✗ ($e_orphan | length) edge\(s\) start at a missing node"; $ok = false } else { print "  ✓ every edge starts at a real node" }
         if ($bad_link | length) > 0 { print $"  ✗ ($bad_link | length) resolved edge\(s\) point at a MISSING node — a link lies"; $bad_link | first 5 | print; $ok = false } else { print "  ✓ every local/cross edge resolves to a real node — links are valid" }
