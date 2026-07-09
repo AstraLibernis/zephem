@@ -11,7 +11,7 @@
 #
 # Usage:  nu scripts/verify_callcard.nu [data/std]
 
-def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
+def norm-path [p: string] { if ($p | str contains '@"') { $p | str replace --regex --all '@"([^"]+)"' '$1' } else { $p } }
 
 def main [dir: string = "data/std"] {
     for f in ["derived/callcard.tsv" "extracted/attrs.tsv" "extracted/resolved.tsv"] {
@@ -20,8 +20,9 @@ def main [dir: string = "data/std"] {
     let cc = (open $"($dir)/derived/callcard.tsv")
     let sigs = (open $"($dir)/extracted/attrs.tsv" | where attr == "sig" | select path value | rename --column {value: sig} | insert np {|r| norm-path $r.path})
     let res = (open $"($dir)/extracted/resolved.tsv" | where kind == "fn" | select path detail | insert np {|r| norm-path $r.path} | uniq-by np)
-    let sigByNp = ($sigs | reduce --fold {} {|r, acc| $acc | upsert $r.np $r.sig})
-    let resByNp = ($res | reduce --fold {} {|r, acc| $acc | upsert $r.np $r.detail})
+    # joinable np → sig / detail views (hash join, not per-row probes into big records).
+    let sigByNp = ($sigs | select np sig | uniq-by np | rename --column {sig: _wsig})
+    let resByNp = ($res | select np detail | uniq-by np | rename --column {detail: _wres})
     let signp = ($sigs | get np)
     let resnp = ($res | get np)
     let union = (($signp ++ $resnp) | uniq | length)
@@ -37,10 +38,9 @@ def main [dir: string = "data/std"] {
     if $uniqn != $ccount { print $"  ✗ (($ccount) - ($uniqn)) duplicate path\(s\)"; $ok = false } else { print "  ✓ no duplicate paths" }
 
     # 2 + 3. WITNESS + CONTENT — re-derive every field from the sources independently.
-    let mism = ($cc | each {|r|
-        let np = (norm-path $r.path)
-        let s = ($sigByNp | get -o $np)
-        let rv = ($resByNp | get -o $np)
+    let mism = ($cc | insert np {|r| norm-path $r.path} | join --left $sigByNp np | join --left $resByNp np | each {|r|
+        let s = ($r._wsig? | default null)
+        let rv = ($r._wres? | default null)
         let inS = ($s != null)
         let inR = ($rv != null)
         let want_w = (if ($inS and $inR) { "both" } else if $inS { "parser-only" } else if $inR { "reflect-only" } else { "ABSENT" })

@@ -11,7 +11,7 @@
 #
 # Usage:  nu scripts/verify_consensus.nu [data/std]
 
-def norm-path [p: string] { $p | str replace --regex --all '@"([^"]+)"' '$1' }
+def norm-path [p: string] { if ($p | str contains '@"') { $p | str replace --regex --all '@"([^"]+)"' '$1' } else { $p } }
 
 def main [dir: string = "data/std"] {
     for f in ["derived/consensus.tsv" "extracted/nodes.tsv" "extracted/resolved.tsv"] {
@@ -23,19 +23,23 @@ def main [dir: string = "data/std"] {
     # decls/containers only.
     let nodes = (open $"($dir)/extracted/nodes.tsv" | where kind not-in ["field" "tag"] | where {|r| not ($r.path | str contains "(")} | select path | insert np {|r| norm-path $r.path})
     let res = (open $"($dir)/extracted/resolved.tsv" | select path | uniq-by path | insert np {|r| norm-path $r.path})
-    let nodeset = ($nodes | get np | reduce --fold {} {|p, acc| $acc | upsert $p true})
-    let resset = ($res | get np | reduce --fold {} {|p, acc| $acc | upsert $p true})
+    # joinable membership views — a hash join beats per-row probes into a 60k-key record.
+    let node_np = ($nodes | select np | uniq-by np | insert _inN true)
+    let res_np = ($res | select np | uniq-by np | insert _inR true)
     mut ok = true
     print $"consensus: ($con | length) paths"
 
     # 1. PARTITION — origin must equal actual membership; census = the union of the two layers.
-    let mis = ($con | each {|r|
-        let np = (norm-path $r.path)
-        let inN = (($nodeset | get -o $np) == true)
-        let inR = (($resset | get -o $np) == true)
-        let want = (if ($inN and $inR) { "read+run" } else if $inR { "run-only" } else if $inN { "read-only" } else { "ABSENT" })
-        if $r.origin == $want { null } else { {path: $r.path, origin: $r.origin, should_be: $want} }
-    } | compact)
+    # Vectorized: attach membership by join, then check each of the 4 (inN,inR) cells with a filter —
+    # no per-row closure over the 28k-row overlay.
+    let cj = ($con | insert np {|r| norm-path $r.path} | join --left $node_np np | join --left $res_np np
+        | default false _inN | default false _inR)
+    let mis = ([
+        ($cj | where _inN == true  | where _inR == true  | where origin != "read+run"  | insert should_be "read+run")
+        ($cj | where _inN == false | where _inR == true  | where origin != "run-only"  | insert should_be "run-only")
+        ($cj | where _inN == true  | where _inR == false | where origin != "read-only" | insert should_be "read-only")
+        ($cj | where _inN == false | where _inR == false | where origin != "ABSENT"    | insert should_be "ABSENT")
+    ] | flatten | select path origin should_be)
     let union = (($nodes | get np) ++ ($res | get np) | uniq | length)
     print "── 1. partition (origin = membership; census = |nodes ∪ resolved|) ──"
     print $"  census ($con | length) vs union ($union)"
@@ -50,7 +54,7 @@ def main [dir: string = "data/std"] {
     if $blank_owner > 0 { print $"  ✗ ($blank_owner) non-root path\(s\) with no owner"; $ok = false } else { print "  ✓ every non-root path has an owner" }
 
     # 3. OWNER REAL — every non-empty owner is a readable node.
-    let bad_owner = ($con | where owner != "" | where {|r| ($nodeset | get -o (norm-path $r.owner)) != true} | length)
+    let bad_owner = ($con | where owner != "" | insert np {|r| norm-path $r.owner} | join --left $node_np np | where _inN == null | length)
     print "── 3. owner is a real readable node ──"
     if $bad_owner > 0 { print $"  ✗ ($bad_owner) owner\(s\) are not a node in the map"; $ok = false } else { print "  ✓ every owner is a real node \(the doorway/container exists\)" }
 

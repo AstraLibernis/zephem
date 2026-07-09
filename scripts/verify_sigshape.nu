@@ -17,15 +17,16 @@ def main [dir: string = "data/std"] {
     }
     let ss = (open $"($dir)/derived/sigshape.tsv")
     let sigs = (open $"($dir)/extracted/attrs.tsv" | where attr == "sig")
-    let sigmap = ($sigs | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.value})
-    let sigset = ($sigs | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
+    # joinable path → sig (hash join, not a per-row probe into an 11k-key record).
+    let sig_val = ($sigs | select path value | rename --column {value: _sig} | uniq-by path)
+    let sig_exists = ($sig_val | select path | insert _s true)
     let fns = (open $"($dir)/extracted/nodes.tsv" | where kind == "fn" | length)
     mut ok = true
     print $"sigshape: ($ss | length) fns"
 
     # 1. REGISTRATION — one row per signature, which is exactly the map's fn set.
     let cnt = ($ss | length)
-    let orphans = ($ss | where {|r| ($sigset | get -o $r.path) != true} | length)
+    let orphans = ($ss | join --left $sig_exists path | where _s == null | length)
     print "── 1. registration (each path is a signed fn) ──"
     if $cnt != ($sigs | length) { print $"  ✗ rows ($cnt) ≠ sigs.tsv (($sigs | length))"; $ok = false } else { print $"  ✓ one row per signature \(($cnt)\)" }
     if $cnt != $fns { print $"  ✗ rows ($cnt) ≠ map fn count ($fns)"; $ok = false } else { print $"  ✓ matches the map's fn set \(($fns)\)" }
@@ -39,8 +40,8 @@ def main [dir: string = "data/std"] {
     if $badflag > 0 { print $"  ✗ ($badflag) row\(s\) with io/generic ∉ yes/no"; $ok = false } else { print "  ✓ io, generic ∈ yes/no" }
 
     # 3. CONSISTENCY — independent regex re-derivation of every label must match.
-    let mism = ($ss | each {|r|
-        let sig = ($sigmap | get -o $r.path)
+    let mism = ($ss | join --left $sig_val path | each {|r|
+        let sig = ($r._sig? | default null)
         # anchor to the parameter list — the FIRST `(` — so `@This()` etc. in a type can't masquerade.
         let want_fp = (if ($sig =~ '^[^(]*\(\s*\)') { "none" } else if ($sig =~ '^[^(]*\(\s*(self|this)\b') { "self" } else if ($sig =~ '^[^(]*\(\s*[^,)]*Allocator') { "allocator" } else { "other" })
         let want_io = (if ($sig =~ "Io") { "yes" } else { "no" })

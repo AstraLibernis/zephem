@@ -23,12 +23,13 @@ def main [dir: string = "data/std"] {
     }
     let canon = (open $"($dir)/derived/canon.tsv")
     let types = (open $"($dir)/extracted/resolved.tsv" | where kind == "type")
-    let pathId = ($types | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.detail })
+    # joinable path → resolved detail (hash join, not a per-row probe into a big record).
+    let type_detail = ($types | select path detail | uniq-by path | rename --column {detail: _detail})
     mut ok = true
     print $"canon: ($canon | length) aliased/duplicated paths"
 
     # 1. SOURCED — every claimed (path → canon) is exactly what resolved.tsv says.
-    let unsourced = ($canon | where {|r| ($pathId | get -o $r.path) != $r.canon})
+    let unsourced = ($canon | join --left $type_detail path | where {|r| ($r._detail? | default null) != $r.canon})
     print "── 1. sourced (every path·canon is a resolved type row) ──"
     if ($unsourced | length) > 0 { print $"  ✗ ($unsourced | length) row\(s\) not backed by resolved.tsv"; $unsourced | first 5 | print; $ok = false } else { print "  ✓ every path resolves to its stated canon in resolved.tsv" }
 

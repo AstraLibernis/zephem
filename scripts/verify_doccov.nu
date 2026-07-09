@@ -16,10 +16,11 @@ def main [dir: string = "data/std"] {
     }
     let dc = (open $"($dir)/derived/doccov.tsv")
     let nodes = (open $"($dir)/extracted/nodes.tsv" | select path kind)
-    let kindmap = ($nodes | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.kind})
-    let nodeset = ($nodes | get path | reduce --fold {} {|p, acc| $acc | upsert $p true})
     let docpaths = (open $"($dir)/extracted/attrs.tsv" | where attr == "doc" | get path | uniq)
-    let docset = ($docpaths | reduce --fold {} {|p, acc| $acc | upsert $p true})
+    # joinable views — a hash join beats per-row probes into a 60k-key record (quadratic to build).
+    let node_exists = ($nodes | select path | insert _n true)
+    let node_kind = ($nodes | rename --column {kind: _mapkind})
+    let doc_exists = ($docpaths | wrap path | insert _d true)
     mut ok = true
     print $"doccov: ($dc | length) nodes"
 
@@ -27,24 +28,24 @@ def main [dir: string = "data/std"] {
     let dcount = ($dc | length)
     let ncount = ($nodes | length)
     let uniqn = ($dc | get path | uniq | length)
-    let orphans = ($dc | where {|r| ($nodeset | get -o $r.path) != true} | length)
+    let orphans = ($dc | join --left $node_exists path | where _n == null | length)
     print "── 1. census (one row per map node) ──"
     if $dcount != $ncount { print $"  ✗ row count ($dcount) ≠ nodes ($ncount)"; $ok = false } else { print $"  ✓ one row per node \(($dcount)\)" }
     if $uniqn != $dcount { print $"  ✗ (($dcount) - ($uniqn)) duplicate path\(s\)"; $ok = false } else { print "  ✓ no duplicate paths" }
     if $orphans > 0 { print $"  ✗ ($orphans) path\(s\) not in the map"; $ok = false } else { print "  ✓ every path is a real node" }
 
     # 2. PARTITION — documented flag is yes/no; kind agrees with the map.
-    let badval = ($dc | where {|r| $r.documented not-in ["yes" "no"]} | length)
-    let badkind = ($dc | where {|r| ($kindmap | get -o $r.path) != $r.kind} | length)
+    let badval = ($dc | where documented not-in ["yes" "no"] | length)
+    let badkind = ($dc | join --left $node_kind path | where {|r| $r.kind != ($r._mapkind? | default null)} | length)
     print "── 2. partition (documented flag + kind agree with the map) ──"
     if $badval > 0 { print $"  ✗ ($badval) row\(s\) with documented ∉ yes/no"; $ok = false } else { print "  ✓ every documented flag is yes or no" }
     if $badkind > 0 { print $"  ✗ ($badkind) row\(s\) whose kind disagrees with the map"; $ok = false } else { print "  ✓ every kind matches the map" }
 
     # 3. TRUTH — documented=="yes" exactly when the path has a `///` doc.
     let yes = ($dc | where documented == "yes")
-    let wrong_yes = ($yes | where {|r| ($docset | get -o $r.path) != true} | length)
+    let wrong_yes = ($yes | join --left $doc_exists path | where _d == null | length)
     let no = ($dc | where documented == "no")
-    let wrong_no = ($no | where {|r| ($docset | get -o $r.path) == true} | length)
+    let wrong_no = ($no | join --left $doc_exists path | where _d == true | length)
     print "── 3. truth (yes ⟺ present in docs.tsv) ──"
     print $"  documented \(yes\): ($yes | length)   docs.tsv paths: ($docpaths | length)"
     if ($yes | length) != ($docpaths | length) { print "  ✗ documented count ≠ docs.tsv path count"; $ok = false }
