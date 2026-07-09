@@ -44,24 +44,9 @@ def compiler-kind [k: string] {
 }
 
 # Strip Zig keyword-quoting so the parser's `@"type"` and the compiler's `type` compare equal.
+# Fast path: skip the regex unless the path actually carries a `@"…"` quote (the vast majority don't).
 def norm-path [p: string] {
-    $p | str replace --regex --all '@"([^"]+)"' '$1'
-}
-
-# Walk a path's ancestors; return {kind, immediate} for the nearest ancestor the parser knows.
-# `immediate` = that ancestor is the path's direct parent (no unseen segments between).
-def nearest-ancestor [p: string, kindOf: record] {
-    let segs = ($p | split row ".")
-    let n = ($segs | length)
-    mut i = 1
-    mut out = {kind: "", immediate: false}
-    while $i < $n {
-        let anc = ($segs | first ($n - $i) | str join ".")
-        let k = ($kindOf | get -o $anc)
-        if $k != null { $out = {kind: $k, immediate: ($i == 1)}; break }
-        $i = $i + 1
-    }
-    $out
+    if ($p | str contains '@"') { $p | str replace --regex --all '@"([^"]+)"' '$1' } else { $p }
 }
 
 def main [--dir: string = "data/std", --anchor] {
@@ -107,19 +92,32 @@ def main [--dir: string = "data/std", --anchor] {
 
     # ── 3. COVERAGE DELTAS — classified, so only a TRUE miss is flagged ─────────────────────────
     let CONTAINERS = ["struct" "enum" "union" "opaque" "ns"]
-    let kindOf = ($nodes | reduce --fold {} {|r, acc| $acc | upsert $r.npath $r.nraw })
-    let nodeset = ($nodes | get npath | reduce --fold {} {|p, acc| $acc | upsert $p true })
-    let node_fnset = ($nodes | where pk == "fn" | get npath | reduce --fold {} {|p, acc| $acc | upsert $p true })
-    let comp_fnset = ($res | where ck == "fn" | get npath | reduce --fold {} {|p, acc| $acc | upsert $p true })
+    # joinable membership/kind views — a hash join beats per-row probes into 60k-key records.
+    let node_np = ($nodes | select npath | uniq-by npath | insert _n true)
+    let node_fn_np = ($nodes | where pk == "fn" | select npath | uniq-by npath | insert _fn true)
+    let comp_fn_np = ($res | where ck == "fn" | select npath | uniq-by npath | insert _cfn true)
+    let node_kind = ($nodes | select npath nraw | uniq-by npath | rename --column {npath: _anc, nraw: _anckind})
 
     print "── coverage deltas (functions one view has, the other lacks — quote-normalized) ──"
 
     # (a) compiler-fns the parser didn't emit, bucketed by what the parser calls the parent.
-    let unseen = ($res | where ck == "fn" | where {|r| ($nodeset | get -o $r.npath) != true})
-    let classed = ($unseen | each {|r|
-        let a = (nearest-ancestor $r.npath $kindOf)
-        let bucket = (if $a.kind == "" { "truly-absent (no known ancestor)" } else if ($a.immediate and ($a.kind in $CONTAINERS)) { "GENUINE-missing (parser descended here)" } else if $a.kind in ["alias" "nsref"] { "alias/ns re-home" } else if $a.kind == "const" { "behind const/generic type" } else if $a.kind in $CONTAINERS { "behind nested const/generic type" } else { $"behind ($a.kind)" })
-        {path: $r.cpath, parent_kind: $a.kind, immediate: $a.immediate, bucket: $bucket}
+    let unseen = ($res | where ck == "fn" | join --left $node_np npath | where _n == null)
+    # nearest known ancestor per unseen path: explode to ancestors, keep those that are real nodes,
+    # take the closest (min level) — set-based, replacing the walk over a 60k-key kind record.
+    let anc = ($unseen | select cpath npath | each {|r|
+        let segs = ($r.npath | split row ".")
+        let n = ($segs | length)
+        (1..($n - 1)) | each {|i| {cpath: $r.cpath, npath: $r.npath, _anc: ($segs | first ($n - $i) | str join "."), level: $i}}
+    } | flatten)
+    let nearest = ($anc | join $node_kind _anc | group-by npath | items {|np, rows|
+        let b = ($rows | sort-by level | first)
+        {npath: $np, akind: $b._anckind, immediate: ($b.level == 1)}
+    })
+    let classed = ($unseen | join --left $nearest npath | each {|r|
+        let akind = ($r.akind? | default "")
+        let immediate = ($r.immediate? | default false)
+        let bucket = (if $akind == "" { "truly-absent (no known ancestor)" } else if ($immediate and ($akind in $CONTAINERS)) { "GENUINE-missing (parser descended here)" } else if $akind in ["alias" "nsref"] { "alias/ns re-home" } else if $akind == "const" { "behind const/generic type" } else if $akind in $CONTAINERS { "behind nested const/generic type" } else { $"behind ($akind)" })
+        {path: $r.cpath, parent_kind: $akind, immediate: $immediate, bucket: $bucket}
     })
     print $"  compiler-fn the parser didn't emit \(($unseen | length)\) — classified:"
     $classed | group-by bucket | items {|k, v| {bucket: $k, n: ($v | length)} } | sort-by n --reverse | print
@@ -132,14 +130,14 @@ def main [--dir: string = "data/std", --anchor] {
     }
 
     # (b) compiler-fns whose path IS a parser node but NOT a parser fn (const/alias bound to a fn).
-    let reclassed = ($res | where ck == "fn" | where {|r| ($nodeset | get -o $r.npath) == true and ($node_fnset | get -o $r.npath) != true})
-    print $"  compiler-fn the parser emitted as non-fn:      ($reclassed | length)   \(const/alias bound to a fn — benign\)"
+    let reclassed = ($res | where ck == "fn" | join --left $node_np npath | where _n == true | join --left $node_fn_np npath | where _fn == null | length)
+    print $"  compiler-fn the parser emitted as non-fn:      ($reclassed)   \(const/alias bound to a fn — benign\)"
 
     # (c) parser-fns the compiler never resolved → container didn't reflect (poison). Cross-check.
     let poison_paths = if ($"($dir)/extracted/poison.tsv" | path exists) { (open $"($dir)/extracted/poison.tsv" | get -o path | default []) } else { [] }
-    let poiset = ($poison_paths | each {|p| norm-path $p} | reduce --fold {} {|p, acc| $acc | upsert $p true })
-    let parser_only = ($nodes | where pk == "fn" | where {|r| ($comp_fnset | get -o $r.npath) != true})
-    let parser_only_unexplained = ($parser_only | where {|r| ($poiset | get -o ($r.npath | split row "." | drop 1 | str join ".")) != true})
+    let poi_cont = ($poison_paths | each {|p| norm-path $p} | wrap _cont | uniq-by _cont | insert _poi true)
+    let parser_only = ($nodes | where pk == "fn" | join --left $comp_fn_np npath | where _cfn == null)
+    let parser_only_unexplained = ($parser_only | insert _cont {|r| $r.npath | split row "." | drop 1 | str join "."} | join --left $poi_cont _cont | where _poi == null)
     print $"  parser-fn the compiler never resolved:         ($parser_only | length)   \(of which (($parser_only | length) - ($parser_only_unexplained | length)) sit under a poison container\)"
     if ($parser_only_unexplained | length) > 0 {
         print $"    ⚠ ($parser_only_unexplained | length) NOT explained by poison — worth a look:"
@@ -166,13 +164,12 @@ def main [--dir: string = "data/std", --anchor] {
         let leaves = ($ns | where {|p| ($ns | where ($it | str starts-with $"($p).") | is-empty) })
         # a node's source file now comes from its `loc` attr (`file:line`); an ns's own loc is the
         # IMPORT site, so take a child's loc file — the subtree lives in one file.
-        let locOf = (open $"($dir)/extracted/attrs.tsv" | where attr == "loc"
-            | insert file {|r| $r.value | split row ":" | first }
-            | select path file | reduce --fold {} {|r, acc| $acc | upsert $r.path $r.file })
+        let locTable = (open $"($dir)/extracted/attrs.tsv" | where attr == "loc"
+            | insert file {|r| $r.value | split row ":" | first } | select path file)
         let allfns = (open $"($dir)/extracted/nodes.tsv" | where kind == "fn" | get path)
         for p in ($leaves | first 6) {
             let child = ($allfns | where ($it | str starts-with $"($p).") | first)
-            let rel = (if $child != null { $locOf | get -o $child } else { null })
+            let rel = (if $child != null { $locTable | where path == $child | get file.0? } else { null })
             if $rel == null { continue }
             let file = $"($std_dir)/($rel)"
             if not ($file | path exists) { continue }
