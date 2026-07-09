@@ -47,7 +47,7 @@ the first un-evaluatable decl.
 `nu scripts/build_std.nu` scans the active toolchain's `std` and writes the three streams to
 `data/std/extracted/`. On zig 0.16.0 that is **63,494 nodes across 340 files**
 (56,088 public, 7,406 private), max nesting depth 8 — carrying 109,729
-attributes and 54,667 typed edges.
+attributes and 54,666 typed edges.
 
 ```nu
 open data/std/extracted/nodes.tsv | where kind == 'ns'                  # every std source file
@@ -77,7 +77,7 @@ $ nu scripts/build_std.nu
            rows: 63494   files: 340   private: 7406
 [index]    containers: 4042   root span: 63494   max depth: 8
 [attrs]    109729 rows — doc 13721 · sig 11273 · value 19809 · example 1433
-[edges]    54667 rows — resolved 48094 / unresolved 2020
+[edges]    54666 rows — resolved 48094 / unresolved 2020
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.
@@ -191,7 +191,7 @@ The extractor is **three engines**, split by *what each reads*:
   [parse/README.md](parse/README.md)). `parse/build.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
   the Attributes (`attrs.tsv` — 11,273 signatures, 13,721 `///` docs, 19,809 field/const
-  values, 63,493 locations, 1,433 test bodies), and the Edges (`edges.tsv` — 54,667
+  values, 63,493 locations, 1,433 test bodies), and the Edges (`edges.tsv` — 54,666
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
   `return struct {…}` gets its members under `<fn>()`, e.g. `std.HashMap().get`) and gives each
   selective re-export a single canonical home. It reads source as text and never runs the compiler,

@@ -55,14 +55,14 @@ across five attributes:
 
 ### `edges.tsv` — Edges (typed references, resolved)
 `src · type · target · scope`. Every reference a declaration makes, **with its reach resolved**
-in a second pass against the walked node set. **54,667 edges**, five types:
+in a second pass against the walked node set. **54,666 edges**, five types:
 
 | type | count | what it links |
 |---|---|---|
 | `has_type` | 47,983 | a fn param/return or field → the type it names |
 | `alias` | 2,942 | a re-export (`pub const X = Y.Z`) → what it points at |
 | `error_set` | 2,876 | an `error{…}` / error-union → its members |
-| `imports` | 829 | an `@import` alias → the file/module it names |
+| `imports` | 828 | an `@import` alias → the file/module it names |
 | `delegates` | 37 | a forwarding factory (`fn X() type { return Y(args); }`) → its target |
 
 `scope` records **where the target landed** — the one invariant worth protecting is that a
@@ -73,12 +73,12 @@ in a second pass against the walked node set. **54,667 edges**, five types:
 | `primitive` | 21,486 | a language builtin (`i32`, `usize`, `type`, …) |
 | `local` | 16,538 | a node inside `src`'s own container (incl. `@This()`) |
 | `cross` | 9,497 | a node elsewhere in the tree |
-| `module` | 4,014 | an `@import` alias / a file or module boundary |
+| `module` | 4,013 | an `@import` alias / a file or module boundary |
 | `unresolved` | 2,020 | couldn't place it (comptime-built, exotic) |
 | `inline` | 539 | an inline `struct{…}`/`enum{…}` literal target |
 | `generic` | 573 | a comptime type parameter in scope |
 
-**48,094 of 54,667 edges (96% of the resolvable ones)** land on a
+**48,094 of 54,666 edges (96% of the resolvable ones)** land on a
 node, primitive, or generic param; 2,020 stay unresolved.
 
 `verify_std.nu` proves the shapes reconcile: every non-root path's **parent is a node** (the tree

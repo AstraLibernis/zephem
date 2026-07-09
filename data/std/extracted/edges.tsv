@@ -27443,7 +27443,6 @@ std.elf.math	alias	std	module
 std.elf.mem	alias	std	module
 std.elf.assert	alias	std	module
 std.elf.Endian	alias	std	module
-std.elf.native_endian	imports	builtin	module
 std.elf.DT_PROCNUM	alias	std.elf.DT_MIPS_NUM	local
 std.elf.Versym.VERSION	has_type	u15	primitive
 std.elf.Versym.HIDDEN	has_type	bool	primitive

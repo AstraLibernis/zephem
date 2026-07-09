@@ -24893,7 +24893,7 @@ std.elf.gnu_hash.Header.symoffset	field	no
 std.elf.gnu_hash.calculate	fn	yes
 std.elf.math	alias	no
 std.elf.mem	alias	no
-std.elf.native_endian	modref	no
+std.elf.native_endian	const	no
 std.elf.std	nsref	no
 std.elf.takeDynamicSection	fn	no
 std.elf.takeProgramHeader	fn	no

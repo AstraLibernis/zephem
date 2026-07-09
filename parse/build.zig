@@ -60,9 +60,24 @@ const W = struct {
 
 const Factory = union(enum) { none, descend: Ast.Node.Index, delegate: []const u8 };
 
+/// The parent path in the tree. A `<fn>()` factory container's parent is the fn it descends from
+/// (drop the trailing `()`); otherwise drop the last dotted segment, treating a `.` inside a `@"…"`
+/// quoted name as part of the name, not a separator — so all three `parent` readers (here,
+/// `index.zig`, `verify_std.nu`) agree, incl. names like `Version.@"HTTP/1.1"`.
 fn parent(path: []const u8) []const u8 {
-    const i = std.mem.lastIndexOfScalar(u8, path, '.') orelse return "";
-    return path[0..i];
+    if (std.mem.endsWith(u8, path, "()")) return path[0 .. path.len - 2];
+    var inq = false;
+    var last_dot: ?usize = null;
+    for (path, 0..) |c, j| {
+        if (inq) {
+            if (c == '"') inq = false;
+        } else if (c == '"') {
+            inq = true;
+        } else if (c == '.') {
+            last_dot = j;
+        }
+    }
+    return if (last_dot) |k| path[0..k] else "";
 }
 
 fn collapse(arena: std.mem.Allocator, s: []const u8) ![]const u8 {
@@ -456,8 +471,15 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         };
         const init_src = ast.getNodeSource(init);
         if (importTarget(init_src)) |tgt| {
-            const t = std.mem.trim(u8, init_src, " \t\r\n");
-            const bare = std.mem.endsWith(u8, t, ")"); // `@import("x")` vs `@import("x").Sel`
+            const sel = selectorOf(init_src);
+            // `@import("f").foo()` — a CALL selector yields a computed value/type we can't resolve by
+            // parsing (it needs the compiler). Neither a namespace nor a plain re-export: a const.
+            if (std.mem.indexOfScalar(u8, sel, '(') != null) {
+                try declFacts(w, cp, decl_loc, decl_doc);
+                try w.node(cp, "const", name, vis);
+                continue;
+            }
+            const bare = sel.len == 0; // `@import("x")` vs `@import("x").Sel`
             if (!std.mem.endsWith(u8, tgt, ".zig")) {
                 // a MODULE we don't own (std / builtin / root) — external, never followed.
                 try declFacts(w, cp, decl_loc, decl_doc);
@@ -474,7 +496,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                     try w.aliases.put(cp, tgt);
                     continue;
                 };
-                try emitReexport(w, rabs, selectorOf(init_src), cp, name, vis, depth + 1, decl_loc, decl_doc);
+                try emitReexport(w, rabs, sel, cp, name, vis, depth + 1, decl_loc, decl_doc);
                 continue;
             }
             // an OWNED .zig file — FOLLOW it, once, building the full tree.
@@ -605,13 +627,19 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     };
     const isrc = ast.getNodeSource(init);
     if (importTarget(isrc)) |t2| {
+        const isrc_sel = selectorOf(isrc);
+        // `@import("f").foo()` — a CALL selector is a computed const, not a followable namespace.
+        if (std.mem.indexOfScalar(u8, isrc_sel, '(') != null) {
+            try declFacts(w, cp, tgt_loc, tgt_doc);
+            return w.node(cp, "const", name, vis);
+        }
         if (std.mem.endsWith(u8, t2, ".zig")) {
             const abs2 = std.fs.path.resolve(w.arena, &.{ dir, t2 }) catch {
                 try declFacts(w, cp, tgt_loc, tgt_doc);
                 return w.node(cp, "nserr", name, vis);
             };
-            const bare2 = std.mem.endsWith(u8, std.mem.trim(u8, isrc, " \t\r\n"), ")");
-            if (!bare2) return emitReexport(w, abs2, selectorOf(isrc), cp, name, vis, depth + 1, tgt_loc, tgt_doc);
+            const bare2 = isrc_sel.len == 0;
+            if (!bare2) return emitReexport(w, abs2, isrc_sel, cp, name, vis, depth + 1, tgt_loc, tgt_doc);
             try declFacts(w, cp, tgt_loc, tgt_doc);
             try w.edge(cp, "imports", t2);
             if (w.visited.contains(abs2) or depth >= MAX_DEPTH) return w.node(cp, "nsref", name, vis);

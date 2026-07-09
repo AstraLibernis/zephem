@@ -23213,7 +23213,7 @@ std.elf.math	alias	math	priv
 std.elf.mem	alias	mem	priv
 std.elf.assert	alias	assert	priv
 std.elf.Endian	alias	Endian	priv
-std.elf.native_endian	modref	native_endian	priv
+std.elf.native_endian	const	native_endian	priv
 std.elf.AT_NULL	const	AT_NULL	pub
 std.elf.AT_IGNORE	const	AT_IGNORE	pub
 std.elf.AT_EXECFD	const	AT_EXECFD	pub
