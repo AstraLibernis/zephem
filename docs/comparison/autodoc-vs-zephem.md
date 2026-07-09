@@ -5,6 +5,15 @@ Zig's own `autodoc` extraction. This is a **dated audit note**, not a regenerate
 artifact: the numbers are pinned to the run below and are not expected to
 auto-update.
 
+> **Post-audit drift (as of the shape-model refactor).** This note describes the
+> `5dcdc17` snapshot, whose model differs from current HEAD: `nodes.tsv` was then
+> **pub-only** and fields lived in a separate `fields.tsv`. The current model includes
+> **private** decls (a `vis` column) and folds fields/tags into `nodes.tsv` with facts in
+> `attrs.tsv`/`edges.tsv` (no `fields.tsv`). So every figure and the [Reproduction](#reproduction)
+> commands below are historical: re-run them on current HEAD and the counts will differ, and the
+> `cut -f1 nodes.tsv` step now includes private rows (no longer apples-to-apples without a
+> `vis == pub` filter). Left frozen on purpose — to regenerate against current data is a new audit.
+
 | | |
 |---|---|
 | Measured | 2026-07-07 |

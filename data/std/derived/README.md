@@ -69,5 +69,5 @@ no resolved type). Verified by `verify_callcard.nu`.
 
 All six are deterministic (same `extracted/` → byte-identical) with a `--check` mode
 that rebuilds and compares against a committed `SHA256SUMS.<slice>` sidecar. See
-[`../README.md`](../README.md) for the kind-policy table (who owns what, and which
+[`../../README.md`](../../README.md) for the kind-policy table (who owns what, and which
 derivative counts each kind).

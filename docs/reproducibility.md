@@ -39,27 +39,23 @@ A drift in any fails the build loudly. A shared single build path (`regen` in `b
 
 **Robust regeneration.** Parsing-not-reflection means no input kills the parse layers: an
 unreadable file becomes an `nserr` row, a moved file a different path — the snapshot is always
-*valid*, and a Zig upgrade produces an additive, diffable delta (which [L6](layers/L6-version-diff.md)
-renders).
+*valid*, and a Zig upgrade produces an additive, diffable delta (which the planned L6 version-diff
+layer will render — see [PLAN.md](../PLAN.md)).
 
 ---
 
-## Three harnesses — fast parses, slow depth (kept separate on purpose)
+## Two harnesses — fast parses, slow depth (kept separate on purpose)
 
 - **Map + decls (parse): `nu scripts/build_std.nu --check`** — instant. Every build writes
   `data/std/SHA256SUMS` (a `sha256sum -c`-compatible manifest, hashed in pure Nushell) over the
   parse-based datasets; `--check` proves the three guarantees per dataset and exits non-zero on
   any drift. New parse datasets register by adding their name to one `NAMES` list.
 
-- **Tunnels (parse + resolve): `nu scripts/build_tunnels.nu --check`** — also fast (a parse).
-  Records `data/std/SHA256SUMS.tunnels` over `tunnels.tsv` + `unresolved.tsv` and proves the same
-  three ways. See [L3](layers/L3-tunnels.md).
-
 - **Depth (reflection): `nu scripts/build_depth.nu --check`** — slow, and deliberately **not**
-  wired into `build_std.nu`. `--commit` records `data/std/SHA256SUMS.depth` over the four L5
-  files (`status/resolved/redirects/poison.tsv`); `--check` proves the same three ways. It lives
+  wired into `build_std.nu`. `--commit` records `data/std/SHA256SUMS.depth` over the three L5
+  files (`status/resolved/poison.tsv`); `--check` proves the same three ways. It lives
   apart because the map is a parse (instant) while an L5 rebuild is a full reflection sweep —
-  mixing them would wreck the fast map check. See [L5](layers/L5-depth.md) for the layer itself.
+  mixing them would wreck the fast map check. See [reflect/](../reflect/) for the layer itself.
 
 ---
 
@@ -76,7 +72,7 @@ source — disagreed *only* on those counters (`E__enum_5797` vs `5796`,
 day one. `norm-row` strips the volatile digits (keeping `…timespec__struct`); the same pass
 relativizes absolute toolchain/scratch paths in poison reasons. After normalization the same
 two-sweep test is byte-identical. A full cold sweep then a warm sweep reproduced the committed
-snapshot byte-for-byte across all four files, with zero duplicate rows (every distinct resolved
+snapshot byte-for-byte across all three files, with zero duplicate rows (every distinct resolved
 path accounted for).
 
 **Follow-up — `__opaque` (2026-06-19).** The original `norm-row` regex covered
