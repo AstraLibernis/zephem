@@ -11,6 +11,8 @@
 # --limit is declared here (with zlook's own default) only so nu's parser passes it
 # through to the binary instead of rejecting it as an unknown flag; all positional
 # terms flow through untouched in $args.
+use lib.nu *   # lookup-staleness, lookup-path, zephem-dir
+
 def main [...args: string, --limit (-l): int = 12] {
     let src   = ($env.FILE_PWD | path join zlook.zig)
     let bin   = ($env.ZEPHEM_ZLOOK? | default ($env.HOME | path join .config zephem zlook))
@@ -23,5 +25,9 @@ def main [...args: string, --limit (-l): int = 12] {
         print -e $"zlook: compiling ($src) -> ($bin) ..."
         ^zig build-exe -OReleaseFast --cache-dir $cache $"-femit-bin=($bin)" $src
     }
+    # Warn (never silently serve) if the baked index predates the streams it was built
+    # from — the same-zig-version staleness the PINNED check can't see. Best-effort.
+    let warn = (lookup-staleness (lookup-path) (zephem-dir))
+    if not ($warn | is-empty) { print -e $warn }
     ^$bin ...$args --limit ($limit | into string)
 }

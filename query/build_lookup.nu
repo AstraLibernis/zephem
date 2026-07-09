@@ -29,9 +29,7 @@
 #
 # Reads zephem's datasets at $ZEPHEM_DATA (default ~/projects/zephem/data/std);
 # writes the lookup table at $ZEPHEM_LOOKUP (default ~/.config/zephem/lookup.tsv).
-use lib.nu *   # zephem-dir, attr-col, zephem-staleness
-
-def lookup-path [] { $env.ZEPHEM_LOOKUP? | default ([$env.HOME ".config" zephem lookup.tsv] | path join) }
+use lib.nu *   # zephem-dir, attr-col, zephem-staleness, lookup-path, lookup-inputs
 
 # depth = dotted levels + factory-call levels in a path, matching index.zig's counting
 # ("()" marks a descent into a `fn(…) type` factory's members).
@@ -46,7 +44,7 @@ def edge-col [edges: table, etype: string, col: string] {
 
 def main [--out: string, --force] {
     let d = (zephem-dir)
-    for f in ["extracted/nodes.tsv" "extracted/attrs.tsv" "extracted/edges.tsv" "extracted/resolved.tsv" "derived/index.tsv" "derived/canon.tsv"] {
+    for f in (lookup-inputs) {
         if not ($d | path join $f | path exists) {
             error make {msg: $"zephem dataset ($f) not found at ($d) — run `nu scripts/build_std.nu`, or set $ZEPHEM_DATA"}
         }

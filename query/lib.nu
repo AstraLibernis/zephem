@@ -44,3 +44,33 @@ export def zephem-staleness [dir: string] {
         $"⚠ zephem map is pinned to zig ($pinned) but you're on ($live) — map may be stale; discovered facts could be wrong. Regenerate the map: `nu scripts/build_std.nu` then `nu query/build_lookup.nu`."
     } else { "" }
 }
+
+# Default path for the baked lookup table zlook reads ($ZEPHEM_LOOKUP overrides).
+# Shared so the location lives in one place: build_lookup writes it, zlook reads it.
+export def lookup-path [] { $env.ZEPHEM_LOOKUP? | default ([$env.HOME ".config" zephem lookup.tsv] | path join) }
+
+# The dataset files build_lookup joins into the baked lookup — the lookup's inputs.
+# One list so the build's existence-check and the read's staleness-check can't drift.
+export def lookup-inputs [] {
+    ["extracted/nodes.tsv" "extracted/attrs.tsv" "extracted/edges.tsv"
+     "extracted/resolved.tsv" "derived/index.tsv" "derived/canon.tsv"]
+}
+
+# ---- lookup freshness (baked index vs the streams it was built from) -------
+# zlook reads a BAKED lookup.tsv, not the streams. If the streams are regenerated
+# afterward WITHOUT rebuilding the lookup, the index is stale — but zephem-staleness
+# (a zig-version compare) can't see it: the version is unchanged. This catches that
+# gap by mtime — is the baked lookup older than any stream it derives from?
+# Best-effort: if the datasets aren't present (the portable-lookup case the build
+# warns about), we can't check, so stay silent. Returns a warning string when the
+# lookup predates an input, else "".
+export def lookup-staleness [lookup: string, dir: string] {
+    if not ($lookup | path exists) { return "" }
+    let inputs = ((lookup-inputs) | each {|f| $dir | path join $f } | where {|p| $p | path exists })
+    if ($inputs | is-empty) { return "" }
+    let lookup_m = (ls $lookup | get 0.modified | into int)
+    let newest   = ($inputs | each {|p| ls $p | get 0.modified | into int } | math max)
+    if $newest > $lookup_m {
+        $"⚠ zephem lookup.tsv is older than its source streams — the baked index is STALE \(zlook may miss or misreport symbols\). Rebuild it: `nu query/build_lookup.nu`."
+    } else { "" }
+}
