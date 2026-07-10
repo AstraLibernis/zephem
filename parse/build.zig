@@ -537,11 +537,18 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
 
 /// 1-based line of `off`, via a per-file newline-offset table (built once, then binary-searched) —
 /// std.zig.findLineColumn rescans from byte 0 each call, which is O(file) per node.
-fn lineOf(w: *W, source: []const u8, rel: []const u8, off: usize) usize {
+/// Fallible: reserve once, then fill infallibly — so a low-memory condition surfaces here
+/// instead of silently dropping offsets, which would skew every line number after the gap.
+fn lineOf(w: *W, source: []const u8, rel: []const u8, off: usize) !usize {
     const table = w.line_cache.get(rel) orelse blk: {
+        var count: usize = 0;
+        for (source) |c| {
+            if (c == '\n') count += 1;
+        }
         var list: std.ArrayList(usize) = .empty;
-        for (source, 0..) |c, i| if (c == '\n') list.append(w.arena, i) catch {};
-        w.line_cache.put(rel, list.items) catch {};
+        try list.ensureTotalCapacity(w.arena, count);
+        for (source, 0..) |c, i| if (c == '\n') list.appendAssumeCapacity(i);
+        try w.line_cache.put(rel, list.items);
         break :blk list.items;
     };
     var lo: usize = 0;
@@ -555,7 +562,7 @@ fn lineOf(w: *W, source: []const u8, rel: []const u8, off: usize) usize {
 /// `<relfile>:<line>` for a node's first token.
 fn locOf(w: *W, ast: *const Ast, node: Ast.Node.Index, rel: []const u8) ![]const u8 {
     const off = ast.tokens.items(.start)[ast.firstToken(node)];
-    return std.fmt.allocPrint(w.arena, "{s}:{d}", .{ rel, lineOf(w, ast.source, rel, off) });
+    return std.fmt.allocPrint(w.arena, "{s}:{d}", .{ rel, try lineOf(w, ast.source, rel, off) });
 }
 fn relOf(w: *W, abs: []const u8) []const u8 {
     if (std.mem.startsWith(u8, abs, w.root_dir) and abs.len > w.root_dir.len) {
