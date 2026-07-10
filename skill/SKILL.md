@@ -17,26 +17,28 @@ std churns. **Do not write std signatures from memory.** Verify against the **ze
 — a complete, self-verified, *regenerable* snapshot of the actual std — first. Replace
 recall with ground truth.
 
-zephem lives at **`~/projects/zephem`**. The query tools are two commands (use full paths
-so they work from any directory):
+The query tools **self-locate** — each script finds zephem's data from its own path, so they
+work no matter where the repo is cloned, with no env var required. The commands below refer to
+the repo as **`$ZEPHEM_HOME`**; set it once to your clone (e.g. `export ZEPHEM_HOME=/path/to/zephem`)
+so these invocations run verbatim from any directory. The query tools are two commands:
 
 - **`zlook`** — SIMD-fast keyword search over a baked lookup table, one shot. Also searches
   the **resolved type/error-set** (e.g. find every fn that returns `OutOfMemory`). Run it
   through its wrapper, which compiles the binary once and reuses it:
   ```sh
-  nu ~/projects/zephem/query/zlook.nu parse int          # AND of all terms, structured hits
-  nu ~/projects/zephem/query/zlook.nu OutOfMemory        # find fns by resolved error set
-  nu ~/projects/zephem/query/zlook.nu HashMap get        # a factory member: Type().method
+  nu $ZEPHEM_HOME/query/zlook.nu parse int          # AND of all terms, structured hits
+  nu $ZEPHEM_HOME/query/zlook.nu OutOfMemory        # find fns by resolved error set
+  nu $ZEPHEM_HOME/query/zlook.nu HashMap get        # a factory member: Type().method
   ```
   (First call compiles `query/zlook.zig` → `~/.config/zephem/zlook` (~1s); every later call
   is the raw binary, single-digit ms. It needs the lookup table — build it once with
-  `nu ~/projects/zephem/query/build_lookup.nu`.)
+  `nu $ZEPHEM_HOME/query/build_lookup.nu`.)
 - **`zmap`** — the Nushell equivalent that reads zephem's TSVs directly (no lookup table to
   build); best for browsing a subtree or one exact decl:
   ```sh
-  nu ~/projects/zephem/query/zmap.nu find "constant time"   # quote a multi-word term
-  nu ~/projects/zephem/query/zmap.nu show std.fmt           # list a whole module/subtree
-  nu ~/projects/zephem/query/zmap.nu doc std.fmt.parseInt   # signature + doc for one path
+  nu $ZEPHEM_HOME/query/zmap.nu find "constant time"   # quote a multi-word term
+  nu $ZEPHEM_HOME/query/zmap.nu show std.fmt           # list a whole module/subtree
+  nu $ZEPHEM_HOME/query/zmap.nu doc std.fmt.parseInt   # signature + doc for one path
   ```
 
 ## Before you write a std API call
@@ -61,8 +63,8 @@ snapshot pinned to a Zig version, so it's authoritative, not a guess. If it's st
 `PINNED` zig differs from your installed zig, and the tools warn you — **regenerate it**,
 never fall back to memory:
 ```sh
-cd ~/projects/zephem && nu scripts/build_std.nu    # rebuild the map (self-verifies)
-nu ~/projects/zephem/query/build_lookup.nu         # refresh zlook's index from it
+cd $ZEPHEM_HOME && nu scripts/build_std.nu    # rebuild the map (self-verifies)
+nu $ZEPHEM_HOME/query/build_lookup.nu         # refresh zlook's index from it
 ```
 
 ## What this skill does NOT do

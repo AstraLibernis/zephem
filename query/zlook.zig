@@ -137,7 +137,7 @@ pub fn main(init: std.process.Init) !void {
         "lookup.tsv";
 
     const buf = std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited) catch {
-        try out.print("zlook: no lookup table at {s}\n  build it: nu ~/projects/zephem/query/build_lookup.nu  (needs zephem's data/std)\n", .{path});
+        try out.print("zlook: no lookup table at {s}\n  build it: run `nu query/build_lookup.nu` from the zephem repo (needs zephem's data/std)\n", .{path});
         try out.flush();
         return;
     };

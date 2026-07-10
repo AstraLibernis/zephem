@@ -27,7 +27,7 @@
 #   nu query/build_lookup.nu                 # write ~/.config/zephem/lookup.tsv (what zlook reads)
 #   nu query/build_lookup.nu --out other.tsv
 #
-# Reads zephem's datasets at $ZEPHEM_DATA (default ~/projects/zephem/data/std);
+# Reads zephem's datasets at $ZEPHEM_DATA (default: this repo's own data/std, self-located);
 # writes the lookup table at $ZEPHEM_LOOKUP (default ~/.config/zephem/lookup.tsv).
 use lib.nu *   # zephem-dir, attr-col, zephem-staleness, lookup-path, lookup-inputs
 

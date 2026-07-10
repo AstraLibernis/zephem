@@ -10,9 +10,15 @@ export def zig-env [] {
     { ver: ($out | parse --regex '\.version\s*=\s*"(?<v>[^"]+)"' | get v.0) }
 }
 
-# Default data dir for zephem's datasets ($ZEPHEM_DATA overrides). Shared by every
-# query tool so the default map location lives in exactly one place.
-export def zephem-dir [] { $env.ZEPHEM_DATA? | default ([$env.HOME projects zephem data std] | path join) }
+# zephem's repo root, self-located from this file (query/lib.nu → repo root).
+# `path self` only runs at parse time, so we capture it once into a const here and
+# every helper derives from it — the tools work wherever the repo is cloned, with no
+# install path baked in and no env var required.
+const ZEPHEM_ROOT = (path self | path dirname | path dirname)
+
+# Default data dir for zephem's datasets ($ZEPHEM_DATA overrides). Derived from the
+# self-located repo root above, so the default map location lives in exactly one place.
+export def zephem-dir [] { $env.ZEPHEM_DATA? | default ($ZEPHEM_ROOT | path join data std) }
 
 # long-form attrs → a narrow {path, <col>} table for one attr, deduped 1:1 on path.
 export def attr-col [attrs: table, name: string, col: string] {

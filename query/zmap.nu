@@ -8,8 +8,8 @@
 #   zmap show std.fmt              list one module/namespace subtree
 #   zmap doc std.fmt.parseInt      signature + doc for one exact path
 #
-# Reads zephem's datasets at $ZEPHEM_DATA (default ~/projects/zephem/data/std) — the sole
-# source of truth. If the map's PINNED zig differs from yours, regenerate the map.
+# Reads zephem's datasets at $ZEPHEM_DATA (default: this repo's own data/std, self-located) —
+# the sole source of truth. If the map's PINNED zig differs from yours, regenerate the map.
 use lib.nu *   # zephem-dir, attr-col, zephem-staleness
 
 def load-map [] {
