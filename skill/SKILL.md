@@ -50,6 +50,11 @@ so these invocations run verbatim from any directory. The query tools are two co
    "hash"), search, and if nothing lands, rethink the wording and search again. Use
    `zmap show <module>` when you know the neighborhood but not the exact name.
 
+   Hits tagged **`[priv]`** are private decls — real, but *not* callable at the path shown
+   from outside their source file (e.g. an internal `const Allocator = std.mem.Allocator`).
+   They're demoted below the public API and reported separately, never hidden; don't write a
+   call against a `[priv]` path.
+
 2. **Know the name? Look it up** for its exact signature, resolved type, doc, fields/tags,
    and factory members. The map carries everything needed to write the call — the as-written
    signature, the compiler-resolved type/error-set, a struct's field types, an enum's tags,

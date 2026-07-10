@@ -32,6 +32,7 @@ const COL_RDETAIL = 9;
 const COL_FTYPE = 11; // a field/tag's resolved type (edges[has_type])
 const COL_FVAL = 12; // a field default / enum tag value (attrs[value])
 const COL_DELEGATE = 13; // a delegating factory's target (edges[delegates])
+const COL_VIS = 14; // "pub" | "priv" — a private decl isn't callable at its path from outside its file
 
 inline fn lo(c: u8) u8 {
     return if (c >= 'A' and c <= 'Z') c + 32 else c;
@@ -83,10 +84,11 @@ fn field(line: []const u8, n: usize) []const u8 {
     return "";
 }
 
-const Hit = struct { line: []const u8, rank: u8, plen: usize };
+const Hit = struct { line: []const u8, rank: u8, priv: bool, plen: usize };
 
 fn lessThan(_: void, a: Hit, b: Hit) bool {
     if (a.rank != b.rank) return a.rank < b.rank;
+    if (a.priv != b.priv) return !a.priv; // public before private, at the same match tier
     return a.plen < b.plen;
 }
 
@@ -145,6 +147,7 @@ pub fn main(init: std.process.Init) !void {
     // ---- scan: every term must appear in the row; rank name-first ----
     var hits: std.ArrayList(Hit) = .empty;
     var total: usize = 0;
+    var npriv: usize = 0;
     var it = std.mem.splitScalar(u8, buf, '\n');
     _ = it.next(); // header
     while (it.next()) |line| {
@@ -154,7 +157,9 @@ pub fn main(init: std.process.Init) !void {
         const name = field(line, COL_NAME);
         const p = field(line, COL_PATH);
         const rank: u8 = if (allContain(name, terms)) 0 else if (allContain(p, terms)) 1 else 2;
-        try hits.append(a, .{ .line = line, .rank = rank, .plen = p.len });
+        const priv = std.mem.eql(u8, field(line, COL_VIS), "priv");
+        if (priv) npriv += 1;
+        try hits.append(a, .{ .line = line, .rank = rank, .priv = priv, .plen = p.len });
     }
     if (total == 0) {
         try out.print("no lookup entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw.items)});
@@ -164,9 +169,17 @@ pub fn main(init: std.process.Init) !void {
     std.mem.sort(Hit, hits.items, {}, lessThan);
 
     const shown = @min(limit, hits.items.len);
-    try out.print("# zlook: {s}  ({d} shown of {d} hits)\n\n", .{ try std.mem.join(a, " ", terms_raw.items), shown, total });
+    const query = try std.mem.join(a, " ", terms_raw.items);
+    if (npriv > 0) {
+        // Private decls are demoted (shown last) and tagged, never hidden — they aren't
+        // callable at their path from outside their file, so they shouldn't outrank real API.
+        try out.print("# zlook: {s}  ({d} shown of {d} hits · {d} private, tagged [priv])\n\n", .{ query, shown, total, npriv });
+    } else {
+        try out.print("# zlook: {s}  ({d} shown of {d} hits)\n\n", .{ query, shown, total });
+    }
     for (hits.items[0..shown]) |h| {
-        try out.print("  {s}  ({s})\n", .{ field(h.line, COL_PATH), field(h.line, COL_KIND) });
+        const vis_tag: []const u8 = if (h.priv) "  [priv]" else "";
+        try out.print("  {s}  ({s}){s}\n", .{ field(h.line, COL_PATH), field(h.line, COL_KIND), vis_tag });
         const sig = field(h.line, COL_SIG);
         const res = field(h.line, COL_RDETAIL);
         const doc = field(h.line, COL_DOC);

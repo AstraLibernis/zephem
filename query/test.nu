@@ -43,4 +43,15 @@ if ($pi | str contains "std.fmt.parseInt") { print "PASS: zmap find surfaces fmt
 let ct = (run [$zmap find "constant time" --limit 8])
 if ($ct | str contains "timing_safe") { print "PASS: zmap find surfaces timing_safe" } else { print "FAIL: zmap find did not surface timing_safe"; $fail = 1 }
 
+# --- visibility: private decls are tagged + demoted, never hidden (ArenaAllocator's
+#     internal `const Allocator = std.mem.Allocator` is priv, not callable at its path) ---
+let dp = (run [$zmap doc std.heap.ArenaAllocator.Allocator])
+if (($dp | str contains "[priv]") and ($dp | str contains "private decl")) { print "PASS: zmap doc flags a private decl" } else { print "FAIL: zmap doc did not flag the private decl"; $fail = 1 }
+let sh = (run [$zmap show std.heap.ArenaAllocator])
+if (($sh | str contains "## public") and ($sh | str contains "## private")) { print "PASS: zmap show sections public vs private" } else { print "FAIL: zmap show did not section by visibility"; $fail = 1 }
+# zlook: a public match must outrank the private alias of the same name, and the private
+# count is reported (not silently dropped).
+let al = (run [$zlook Alignment --limit 3])
+if (($al | str contains "std.mem.Alignment") and ($al | str contains "private, tagged")) { print "PASS: zlook demotes private + reports the count" } else { print "FAIL: zlook did not demote/report private"; $fail = 1 }
+
 if $fail == 0 { print "--- all passed ---" } else { print "--- failures present ---"; exit 1 }

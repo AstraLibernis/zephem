@@ -43,13 +43,17 @@ def cmd-find [map: table, terms: list, limit: int] {
             if ($lc | all {|t| $nm | str contains $t}) { 0
             } else if ($lc | all {|t| $pa | str contains $t}) { 1
             } else { 2 } }
+        | insert _v {|r| if $r.vis == 'pub' { 0 } else { 1 }}   # public before private at the same tier
         | insert _pl {|r| $r.path | str length }
-        | sort-by _s _pl
+        | sort-by _s _v _pl
         | first $limit)
     if ($scored | is-empty) { print $"no map entry matches: ($terms | str join ' ')"; return }
-    print $"# map find: ($terms | str join ' ')  \(top ($scored | length) of ($hits | length) hits)\n"
+    let npriv = ($hits | where vis == 'priv' | length)
+    let note = (if $npriv > 0 { $" · ($npriv) private, tagged [priv]" } else { "" })
+    print $"# map find: ($terms | str join ' ')  \(top ($scored | length) of ($hits | length) hits($note)\)\n"
     for r in $scored {
-        print $"  ($r.path)  \(($r.kind))"
+        let tag = (if $r.vis == 'priv' { '  [priv]' } else { '' })
+        print $"  ($r.path)  \(($r.kind))($tag)"
         let sig = ($r.sig? | default '')
         let doc = ($r.doc? | default '')
         if not ($sig | is-empty) { print $"      ($sig)" }
@@ -61,8 +65,19 @@ def cmd-show [map: table, pathprefix: string] {
     if ($pathprefix | is-empty) { print "usage: zmap show <path>"; return }
     let sub = ($map | where {|r| ($r.path == $pathprefix) or ($r.path | str starts-with $"($pathprefix).")} | sort-by path)
     if ($sub | is-empty) { print $"nothing under ($pathprefix)"; return }
-    print $"# map show ($pathprefix)  \(($sub | length) decls)\n"
-    $sub | select path kind | table
+    # Split public (the callable API surface) from private, so long paths that make a `vis`
+    # column truncate off-screen can't hide it — nothing is dropped, just sectioned.
+    let pub  = ($sub | where vis == 'pub')
+    let priv = ($sub | where vis != 'pub')
+    print $"# map show ($pathprefix)  \(($sub | length) decls: ($pub | length) pub · ($priv | length) priv\)\n"
+    if not ($pub | is-empty) {
+        print $"## public \(($pub | length)\)"
+        $pub | select path kind | table
+    }
+    if not ($priv | is-empty) {
+        print $"\n## private \(($priv | length)\) — not callable at these paths from outside their source file"
+        $priv | select path kind | table
+    }
 }
 
 def cmd-doc [map: table, path: string] {
@@ -70,11 +85,13 @@ def cmd-doc [map: table, path: string] {
     let row = ($map | where path == $path)
     if ($row | is-empty) { print $"($path) not in the map"; return }
     let r = ($row | first)
-    print $"($r.path)  \(($r.kind))"
+    let tag = (if $r.vis == 'priv' { '  [priv]' } else { '' })
+    print $"($r.path)  \(($r.kind))($tag)"
     let sig = ($r.sig? | default '')
     let doc = ($r.doc? | default '')
     if not ($sig | is-empty) { print $"  ($sig)" }
     if not ($doc | is-empty) { print $"\n  ($doc)" }
+    if $r.vis == 'priv' { print "\n  ⚠ private decl — not accessible as this path from outside its source file." }
     print "\n(from the zephem map — the source of truth; if it's stale, regenerate the map)"
 }
 
