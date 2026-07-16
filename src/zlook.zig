@@ -1,4 +1,6 @@
-//! zlook — fast structured lookup over the denormalized zephem "lookup" table.
+//! zlook.zig — the `look` subcommand: fast structured lookup over the denormalized zephem "lookup"
+//! table. In-process now (folded from the standalone `query/zlook.zig`); the SIMD search is
+//! unchanged, only the entry moved to `run(c, args, out)` writing to a caller-supplied writer.
 //!
 //! The discovery half of zephem's query layer: keyword search over the WHOLE mapped std
 //! in one shot — name · path · as-written signature · `///` doc · resolved type/error-set
@@ -17,6 +19,8 @@
 //! zig differs from yours, regenerate zephem then `query/build_lookup.nu` — never guess.
 const std = @import("std");
 const Io = std.Io;
+const Ctx = @import("ctx.zig").Ctx;
+const vars = @import("vars.zig");
 const V = @Vector(32, u8);
 
 // lookup.tsv columns (built by query/build_lookup.nu), tab-separated:
@@ -96,18 +100,14 @@ fn truncField(s: []const u8, max: usize) []const u8 {
     return if (s.len > max) s[0..max] else s;
 }
 
-pub fn main(init: std.process.Init) !void {
-    const a = init.arena.allocator();
-    const io = init.io;
-    var obuf: [1 << 16]u8 = undefined;
-    var ow = Io.File.stdout().writer(io, &obuf);
-    const out = &ow.interface;
+pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
+    const a = c.a;
+    const io = c.io;
 
     // ---- args: terms + --limit N ----
     var terms_raw: std.ArrayList([]const u8) = .empty;
     var limit: usize = 12;
-    const args = try init.minimal.args.toSlice(a);
-    var ai: usize = 1;
+    var ai: usize = 0;
     while (ai < args.len) : (ai += 1) {
         const arg = args[ai];
         if ((std.mem.eql(u8, arg, "--limit") or std.mem.eql(u8, arg, "-l")) and ai + 1 < args.len) {
@@ -126,20 +126,15 @@ pub fn main(init: std.process.Init) !void {
     const terms = try a.alloc([]const u8, terms_raw.items.len);
     for (terms_raw.items, 0..) |t, i| {
         const d = try a.alloc(u8, t.len);
-        for (t, 0..) |c, k| d[k] = lo(c);
+        for (t, 0..) |ch, k| d[k] = lo(ch);
         terms[i] = d;
     }
 
     // ---- locate lookup.tsv: $ZEPHEM_LOOKUP, else ~/.config/zephem/lookup.tsv ----
-    const path = if (init.environ_map.get("ZEPHEM_LOOKUP")) |p|
-        p
-    else if (init.environ_map.get("HOME")) |h|
-        try std.fs.path.join(a, &.{ h, ".config", "zephem", "lookup.tsv" })
-    else
-        "lookup.tsv";
+    const path = try vars.lookupPath(c);
 
     const buf = std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited) catch {
-        try out.print("zlook: no lookup table at {s}\n  build it: run `nu query/build_lookup.nu` from the zephem repo (needs zephem's data/std)\n", .{path});
+        try out.print("zlook: no lookup table at {s}\n  build it: run `zephem lookup` from the zephem repo (needs zephem's data/std)\n", .{path});
         try out.flush();
         return;
     };

@@ -1,0 +1,218 @@
+//! cmd/depth.zig — the `zephem depth` subcommand: the L5 reflection sweep (port of
+//! `scripts/build_depth.nu`). Deliberately separate from `zephem std --check` — an L5 rebuild is a
+//! full reflection sweep and is slow/machine-dependent, so its reproducibility lives here.
+const std = @import("std");
+const Ctx = @import("../ctx.zig").Ctx;
+const vars = @import("../vars.zig");
+const toolchain = @import("../toolchain.zig");
+const manifest = @import("../manifest.zig");
+const depth = @import("../depth.zig");
+const verify = @import("../verify/depth.zig");
+const rel = @import("../relation.zig");
+
+const names = [_][]const u8{ "extracted/status.tsv", "extracted/resolved.tsv", "extracted/poison.tsv" };
+const scratch_root = ".zig-cache/zephem-depth";
+
+pub fn run(c: Ctx, args: []const []const u8) !void {
+    var only: ?[]const u8 = null;
+    var filter: ?[]const u8 = null;
+    var list: ?[]const u8 = null;
+    var limit: usize = 0;
+    var timeout_s: u32 = 90;
+    var jobs: usize = 0;
+    var out: ?[]const u8 = null;
+    var commit = false;
+    var check = false;
+    var i: usize = 0;
+    while (i < args.len) : (i += 1) {
+        const arg = args[i];
+        if (std.mem.eql(u8, arg, "--commit")) commit = true else if (std.mem.eql(u8, arg, "--check")) check = true else if (std.mem.eql(u8, arg, "--only")) {
+            i += 1;
+            if (i < args.len) only = args[i];
+        } else if (std.mem.eql(u8, arg, "--filter")) {
+            i += 1;
+            if (i < args.len) filter = args[i];
+        } else if (std.mem.eql(u8, arg, "--list")) {
+            i += 1;
+            if (i < args.len) list = args[i];
+        } else if (std.mem.eql(u8, arg, "--limit")) {
+            i += 1;
+            if (i < args.len) limit = std.fmt.parseInt(usize, args[i], 10) catch 0;
+        } else if (std.mem.eql(u8, arg, "--timeout")) {
+            i += 1;
+            if (i < args.len) timeout_s = std.fmt.parseInt(u32, args[i], 10) catch timeout_s;
+        } else if (std.mem.eql(u8, arg, "--jobs")) {
+            i += 1;
+            if (i < args.len) jobs = std.fmt.parseInt(usize, args[i], 10) catch 0;
+        } else if (std.mem.eql(u8, arg, "--out")) {
+            i += 1;
+            if (i < args.len) out = args[i];
+        }
+    }
+
+    const a = c.a;
+    const data_dir = try vars.dataDir(c);
+    const index_path = try std.fs.path.join(a, &.{ data_dir, "derived/index.tsv" });
+    const index = try rel.load(a, c.io, index_path);
+    const template = try std.Io.Dir.cwd().readFileAlloc(c.io, try vars.repoFile(c, "reflect/resolve.zig"), a, .unlimited);
+    const env = try toolchain.probe(c);
+    const jcount = if (jobs > 0) jobs else @import("../proc.zig").ncpu();
+
+    var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));
+    const w = &ow.interface;
+    defer w.flush() catch {};
+
+    // the direct-child names of each container, for the SKIP set (dotted split-drop-last, exactly
+    // as the Nushell built it — quote edge cases included).
+    const kids = try buildKids(a, index);
+
+    if (check) {
+        try proveReproducible(c, index, kids, env, template, data_dir, timeout_s, jcount, w);
+        return;
+    }
+
+    const all_targets = try selectTargets(a, c, index, only, filter, list, limit);
+    const skips = try skipsFor(a, all_targets, kids);
+    const outdir = if (commit) data_dir else (out orelse try std.fs.path.join(a, &.{ scratch_root, "out" }));
+
+    try w.print("[L5] reflecting {d} container(s) — {d} lanes, {d}s timeout each, poison isolated per process\n", .{ all_targets.len, jcount, timeout_s });
+    const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount);
+    try w.print("[L5] resolved: {d} containers, {d} rows   poison: {d}   attempted: {d}\n", .{ counts.resolved_containers, counts.resolved_rows, counts.poison, counts.attempted });
+    try w.flush();
+
+    if (!try verify.run(c, outdir, index_path, commit)) {
+        try w.writeAll("build_depth: ✗ overlay rejected by verify_depth\n");
+        try w.flush();
+        std.process.exit(1);
+    }
+
+    if (commit) {
+        try writeManifest(c, data_dir, try std.fs.path.join(a, &.{ data_dir, "SHA256SUMS.depth" }));
+        try w.writeAll("[L5] manifest → SHA256SUMS.depth  (run --check to prove it rebuilds — SLOW)\n");
+    }
+}
+
+fn proveReproducible(c: Ctx, index: rel.Table, kids: Kids, env: toolchain.Env, template: []const u8, data_dir: []const u8, timeout_s: u32, jcount: usize, w: *std.Io.Writer) !void {
+    const a = c.a;
+    const man_path = try std.fs.path.join(a, &.{ data_dir, "SHA256SUMS.depth" });
+    const man_bytes = std.Io.Dir.cwd().readFileAlloc(c.io, man_path, a, .unlimited) catch {
+        try w.writeAll("[L5 check] no SHA256SUMS.depth — run --commit first\n");
+        std.process.exit(1);
+    };
+    const recorded = try manifest.parse(a, man_bytes);
+    try w.print("[L5 check] proving the depth overlay rebuilds — two full reflection sweeps, {d} lanes each\n", .{jcount});
+
+    var committed: [names.len][manifest.hex_len]u8 = undefined;
+    for (names, 0..) |name, k| committed[k] = try manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ data_dir, name }));
+
+    const targets = try allPaths(a, index);
+    const skips = try skipsFor(a, targets, kids);
+    const dir_a = try std.fs.path.join(a, &.{ scratch_root, "check-a" });
+    const dir_b = try std.fs.path.join(a, &.{ scratch_root, "check-b" });
+    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sa" }), dir_a, timeout_s, jcount);
+    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sb" }), dir_b, timeout_s, jcount);
+
+    var ok = true;
+    for (names, 0..) |name, k| {
+        const ha = try manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ dir_a, name }));
+        const hb = try manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ dir_b, name }));
+        const want = manifest.hexFor(recorded, name);
+        const intrinsic = std.mem.eql(u8, &ha, &hb);
+        const regression = if (want) |x| std.mem.eql(u8, &ha, x) else false;
+        const integrity = if (want) |x| std.mem.eql(u8, &committed[k], x) else false;
+        if (!intrinsic or !regression or !integrity) ok = false;
+        try w.print("  {s}: intrinsic {s}   reproduces-manifest {s}   on-disk-matches-manifest {s}\n", .{ name, mark(intrinsic), mark(regression), mark(integrity) });
+    }
+    if (ok) {
+        try w.writeAll("L5 reproducible: ✓ two fresh rebuilds agree, reproduce the manifest, and the snapshot matches it\n");
+    } else {
+        try w.writeAll("L5 reproducible: ✗ DRIFT — the overlay is NOT provably rebuildable\n");
+        try w.flush();
+        std.process.exit(1);
+    }
+}
+
+// ── target selection ────────────────────────────────────────────────────────
+
+fn selectTargets(a: std.mem.Allocator, c: Ctx, index: rel.Table, only: ?[]const u8, filter: ?[]const u8, list: ?[]const u8, limit: usize) ![]const []const u8 {
+    var targets: []const []const u8 = undefined;
+    if (only) |o| {
+        const t = try a.alloc([]const u8, 1);
+        t[0] = o;
+        targets = t;
+    } else if (list) |lp| {
+        const bytes = try std.Io.Dir.cwd().readFileAlloc(c.io, lp, a, .unlimited);
+        var out: std.ArrayList([]const u8) = .empty;
+        var lines = std.mem.splitScalar(u8, bytes, '\n');
+        while (lines.next()) |ln| {
+            const t = std.mem.trim(u8, ln, " \t\r");
+            if (t.len != 0) try out.append(a, t);
+        }
+        targets = try out.toOwnedSlice(a);
+    } else if (filter) |f| {
+        var out: std.ArrayList([]const u8) = .empty;
+        const pi = index.col("path");
+        for (index.rows) |r| {
+            if (std.mem.indexOf(u8, r[pi], f) != null) try out.append(a, r[pi]);
+        }
+        targets = try out.toOwnedSlice(a);
+    } else {
+        targets = try allPaths(a, index);
+    }
+    if (limit > 0 and targets.len > limit) targets = targets[0..limit];
+    return targets;
+}
+
+fn allPaths(a: std.mem.Allocator, index: rel.Table) ![]const []const u8 {
+    const pi = index.col("path");
+    const out = try a.alloc([]const u8, index.rows.len);
+    for (index.rows, 0..) |r, k| out[k] = r[pi];
+    return out;
+}
+
+// ── the SKIP (direct-child) map ─────────────────────────────────────────────
+
+const Kids = std.StringHashMap(std.ArrayList([]const u8));
+
+/// Group each index path's last dotted segment under its dotted parent (all-but-last segment),
+/// exactly matching the Nushell `split row "." | drop 1` behaviour.
+fn buildKids(a: std.mem.Allocator, index: rel.Table) !Kids {
+    var kids = Kids.init(a);
+    const pi = index.col("path");
+    for (index.rows) |r| {
+        const path = r[pi];
+        const par = dottedParent(path);
+        const child = lastSeg(path);
+        const gop = try kids.getOrPut(par);
+        if (!gop.found_existing) gop.value_ptr.* = .empty;
+        try gop.value_ptr.append(a, child);
+    }
+    return kids;
+}
+
+fn skipsFor(a: std.mem.Allocator, targets: []const []const u8, kids: Kids) ![]const []const []const u8 {
+    const out = try a.alloc([]const []const u8, targets.len);
+    for (targets, 0..) |t, k| {
+        out[k] = if (kids.get(t)) |g| g.items else &.{};
+    }
+    return out;
+}
+
+fn dottedParent(path: []const u8) []const u8 {
+    return if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[0..k] else "";
+}
+fn lastSeg(path: []const u8) []const u8 {
+    return if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[k + 1 ..] else path;
+}
+
+// ── misc ────────────────────────────────────────────────────────────────────
+
+fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
+    var entries: [names.len]manifest.Entry = undefined;
+    for (names, 0..) |name, k| entries[k] = .{ .path = name, .hex = try manifest.sha256File(c.io, c.a, try std.fs.path.join(c.a, &.{ data_dir, name })) };
+    try manifest.writeManifest(c.io, &entries, out_path);
+}
+
+fn mark(b: bool) []const u8 {
+    return if (b) "✓" else "✗ DRIFT";
+}

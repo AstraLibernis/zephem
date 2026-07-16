@@ -970,7 +970,7 @@ std.Build.Step.Compile.HeaderInstallation.getSource	fn	no
 std.Build.Step.Compile.InstallDir	alias	no
 std.Build.Step.Compile.Io	alias	no
 std.Build.Step.Compile.Kind	enum	no
-"std.Build.Step.Compile.Kind.@""test"""	tag	no
+std.Build.Step.Compile.Kind.@"test"	tag	no
 std.Build.Step.Compile.Kind.exe	tag	no
 std.Build.Step.Compile.Kind.isTest	fn	no
 std.Build.Step.Compile.Kind.lib	tag	no
@@ -1884,7 +1884,7 @@ std.Build.TopLevelStep.base_id	const	no
 std.Build.TopLevelStep.description	field	no
 std.Build.TopLevelStep.step	field	no
 std.Build.TypeId	enum	no
-"std.Build.TypeId.@""enum"""	tag	no
+std.Build.TypeId.@"enum"	tag	no
 std.Build.TypeId.bool	tag	no
 std.Build.TypeId.build_id	tag	no
 std.Build.TypeId.enum_list	tag	no
@@ -2840,7 +2840,7 @@ std.Io.Dispatch.BatchOperationUserdata.operation	field	no
 std.Io.Dispatch.BatchOperationUserdata.source	field	no
 std.Io.Dispatch.BatchOperationUserdata.toErased	fn	no
 std.Io.Dispatch.BatchWaiter	struct	no
-"std.Io.Dispatch.BatchWaiter.@""suspend"""	fn	no
+std.Io.Dispatch.BatchWaiter.@"suspend"	fn	no
 std.Io.Dispatch.BatchWaiter.already_signaled	const	no
 std.Io.Dispatch.BatchWaiter.queue	field	no
 std.Io.Dispatch.BatchWaiter.signal	fn	no
@@ -2868,7 +2868,7 @@ std.Io.Dispatch.DupError	const	no
 std.Io.Dispatch.Environ	alias	no
 std.Io.Dispatch.Evented	const	no
 std.Io.Dispatch.Fiber	struct	no
-"std.Io.Dispatch.Fiber.@""resume"""	fn	no
+std.Io.Dispatch.Fiber.@"resume"	fn	no
 std.Io.Dispatch.Fiber.CancelProtection	struct	no
 std.Io.Dispatch.Fiber.CancelProtection.acknowledge	fn	no
 std.Io.Dispatch.Fiber.CancelProtection.acknowledged	field	no
@@ -3049,7 +3049,7 @@ std.Io.Dispatch.Spawned.stdin	field	no
 std.Io.Dispatch.Spawned.stdout	field	no
 std.Io.Dispatch.SwitchMessage	struct	no
 std.Io.Dispatch.SwitchMessage.PendingTask	union	no
-"std.Io.Dispatch.SwitchMessage.PendingTask.@""resume"""	field	no
+std.Io.Dispatch.SwitchMessage.PendingTask.@"resume"	field	no
 std.Io.Dispatch.SwitchMessage.PendingTask.activate	field	no
 std.Io.Dispatch.SwitchMessage.PendingTask.after	field	no
 std.Io.Dispatch.SwitchMessage.PendingTask.await	field	no
@@ -6266,8 +6266,8 @@ std.PriorityQueue().siftDown	fn	no
 std.PriorityQueue().siftUp	fn	no
 std.PriorityQueue().update	fn	yes
 std.Progress	ns	no
-"std.Progress.@""progress_error {d}"""	const	no
-"std.Progress.@""progress_normal {d}"""	const	no
+std.Progress.@"progress_error {d}"	const	no
+std.Progress.@"progress_normal {d}"	const	no
 std.Progress.Children	struct	no
 std.Progress.Children.child	field	no
 std.Progress.Children.sibling	field	no
@@ -6964,7 +6964,7 @@ std.Target.Os.LinuxVersionRange.includesVersion	fn	no
 std.Target.Os.LinuxVersionRange.isAtLeast	fn	yes
 std.Target.Os.LinuxVersionRange.range	field	no
 std.Target.Os.Tag	enum	no
-"std.Target.Os.Tag.@""3ds"""	tag	no
+std.Target.Os.Tag.@"3ds"	tag	no
 std.Target.Os.Tag.amdhsa	tag	no
 std.Target.Os.Tag.amdpal	tag	no
 std.Target.Os.Tag.contiki	tag	no
@@ -7530,8 +7530,8 @@ std.Target.amdgcn	ns	no
 std.Target.amdgcn.CpuFeature	alias	no
 std.Target.amdgcn.CpuModel	alias	no
 std.Target.amdgcn.Feature	enum	no
-"std.Target.amdgcn.Feature.@""16_bit_insts"""	tag	no
-"std.Target.amdgcn.Feature.@""64_bit_literals"""	tag	no
+std.Target.amdgcn.Feature.@"16_bit_insts"	tag	no
+std.Target.amdgcn.Feature.@"64_bit_literals"	tag	no
 std.Target.amdgcn.Feature.a16	tag	no
 std.Target.amdgcn.Feature.add_no_carry_insts	tag	no
 std.Target.amdgcn.Feature.addressablelocalmemorysize163840	tag	no
@@ -7850,8 +7850,8 @@ std.Target.arm	ns	no
 std.Target.arm.CpuFeature	alias	no
 std.Target.arm.CpuModel	alias	no
 std.Target.arm.Feature	enum	no
-"std.Target.arm.Feature.@""32bit"""	tag	no
-"std.Target.arm.Feature.@""8msecext"""	tag	no
+std.Target.arm.Feature.@"32bit"	tag	no
+std.Target.arm.Feature.@"8msecext"	tag	no
 std.Target.arm.Feature.aapcs_frame_chain	tag	no
 std.Target.arm.Feature.aclass	tag	no
 std.Target.arm.Feature.acquire_release	tag	no
@@ -8160,7 +8160,7 @@ std.Target.avr	ns	no
 std.Target.avr.CpuFeature	alias	no
 std.Target.avr.CpuModel	alias	no
 std.Target.avr.Feature	enum	no
-"std.Target.avr.Feature.@""break"""	tag	no
+std.Target.avr.Feature.@"break"	tag	no
 std.Target.avr.Feature.addsubiw	tag	no
 std.Target.avr.Feature.avr0	tag	no
 std.Target.avr.Feature.avr1	tag	no
@@ -8619,13 +8619,13 @@ std.Target.csky	ns	no
 std.Target.csky.CpuFeature	alias	no
 std.Target.csky.CpuModel	alias	no
 std.Target.csky.Feature	enum	no
-"std.Target.csky.Feature.@""10e60"""	tag	no
-"std.Target.csky.Feature.@""2e3"""	tag	no
-"std.Target.csky.Feature.@""3e3r1"""	tag	no
-"std.Target.csky.Feature.@""3e3r2"""	tag	no
-"std.Target.csky.Feature.@""3e3r3"""	tag	no
-"std.Target.csky.Feature.@""3e7"""	tag	no
-"std.Target.csky.Feature.@""7e10"""	tag	no
+std.Target.csky.Feature.@"10e60"	tag	no
+std.Target.csky.Feature.@"2e3"	tag	no
+std.Target.csky.Feature.@"3e3r1"	tag	no
+std.Target.csky.Feature.@"3e3r2"	tag	no
+std.Target.csky.Feature.@"3e3r3"	tag	no
+std.Target.csky.Feature.@"3e7"	tag	no
+std.Target.csky.Feature.@"7e10"	tag	no
 std.Target.csky.Feature.btst16	tag	no
 std.Target.csky.Feature.cache	tag	no
 std.Target.csky.Feature.ccrt	tag	no
@@ -8684,7 +8684,7 @@ std.Target.csky.Feature.vdspv1	tag	no
 std.Target.csky.Feature.vdspv2	tag	no
 std.Target.csky.all_features	const	no
 std.Target.csky.cpu	struct	no
-"std.Target.csky.cpu.@""i805"""	const	no
+std.Target.csky.cpu.@"i805"	const	no
 std.Target.csky.cpu.c807	const	no
 std.Target.csky.cpu.c807f	const	no
 std.Target.csky.cpu.c810	const	no
@@ -8921,7 +8921,7 @@ std.Target.hppa	ns	no
 std.Target.hppa.CpuFeature	alias	no
 std.Target.hppa.CpuModel	alias	no
 std.Target.hppa.Feature	enum	no
-"std.Target.hppa.Feature.@""64bit"""	tag	no
+std.Target.hppa.Feature.@"64bit"	tag	no
 std.Target.hppa.Feature.max_1	tag	no
 std.Target.hppa.Feature.max_2	tag	no
 std.Target.hppa.Feature.v1_1	tag	no
@@ -9009,9 +9009,9 @@ std.Target.loongarch	ns	no
 std.Target.loongarch.CpuFeature	alias	no
 std.Target.loongarch.CpuModel	alias	no
 std.Target.loongarch.Feature	enum	no
-"std.Target.loongarch.Feature.@""32bit"""	tag	no
-"std.Target.loongarch.Feature.@""32s"""	tag	no
-"std.Target.loongarch.Feature.@""64bit"""	tag	no
+std.Target.loongarch.Feature.@"32bit"	tag	no
+std.Target.loongarch.Feature.@"32s"	tag	no
+std.Target.loongarch.Feature.@"64bit"	tag	no
 std.Target.loongarch.Feature.d	tag	no
 std.Target.loongarch.Feature.div32	tag	no
 std.Target.loongarch.Feature.f	tag	no
@@ -9147,9 +9147,9 @@ std.Target.mips.Feature.virt	tag	no
 std.Target.mips.Feature.xgot	tag	no
 std.Target.mips.all_features	const	no
 std.Target.mips.cpu	struct	no
-"std.Target.mips.cpu.@""i6400"""	const	no
-"std.Target.mips.cpu.@""i6500"""	const	no
-"std.Target.mips.cpu.@""octeon+"""	const	no
+std.Target.mips.cpu.@"i6400"	const	no
+std.Target.mips.cpu.@"i6500"	const	no
+std.Target.mips.cpu.@"octeon+"	const	no
 std.Target.mips.cpu.allegrex	const	no
 std.Target.mips.cpu.generic	const	no
 std.Target.mips.cpu.mips1	const	no
@@ -9312,8 +9312,8 @@ std.Target.powerpc	ns	no
 std.Target.powerpc.CpuFeature	alias	no
 std.Target.powerpc.CpuModel	alias	no
 std.Target.powerpc.Feature	enum	no
-"std.Target.powerpc.Feature.@""64bit"""	tag	no
-"std.Target.powerpc.Feature.@""64bitregs"""	tag	no
+std.Target.powerpc.Feature.@"64bit"	tag	no
+std.Target.powerpc.Feature.@"64bitregs"	tag	no
 std.Target.powerpc.Feature.allow_unaligned_fp_access	tag	no
 std.Target.powerpc.Feature.altivec	tag	no
 std.Target.powerpc.Feature.booke	tag	no
@@ -9393,21 +9393,21 @@ std.Target.powerpc.Feature.vectors_use_two_units	tag	no
 std.Target.powerpc.Feature.vsx	tag	no
 std.Target.powerpc.all_features	const	no
 std.Target.powerpc.cpu	struct	no
-"std.Target.powerpc.cpu.@""440"""	const	no
-"std.Target.powerpc.cpu.@""450"""	const	no
-"std.Target.powerpc.cpu.@""601"""	const	no
-"std.Target.powerpc.cpu.@""602"""	const	no
-"std.Target.powerpc.cpu.@""603"""	const	no
-"std.Target.powerpc.cpu.@""603e"""	const	no
-"std.Target.powerpc.cpu.@""603ev"""	const	no
-"std.Target.powerpc.cpu.@""604"""	const	no
-"std.Target.powerpc.cpu.@""604e"""	const	no
-"std.Target.powerpc.cpu.@""620"""	const	no
-"std.Target.powerpc.cpu.@""7400"""	const	no
-"std.Target.powerpc.cpu.@""7450"""	const	no
-"std.Target.powerpc.cpu.@""750"""	const	no
-"std.Target.powerpc.cpu.@""970"""	const	no
-"std.Target.powerpc.cpu.@""g4+"""	const	no
+std.Target.powerpc.cpu.@"440"	const	no
+std.Target.powerpc.cpu.@"450"	const	no
+std.Target.powerpc.cpu.@"601"	const	no
+std.Target.powerpc.cpu.@"602"	const	no
+std.Target.powerpc.cpu.@"603"	const	no
+std.Target.powerpc.cpu.@"603e"	const	no
+std.Target.powerpc.cpu.@"603ev"	const	no
+std.Target.powerpc.cpu.@"604"	const	no
+std.Target.powerpc.cpu.@"604e"	const	no
+std.Target.powerpc.cpu.@"620"	const	no
+std.Target.powerpc.cpu.@"7400"	const	no
+std.Target.powerpc.cpu.@"7450"	const	no
+std.Target.powerpc.cpu.@"750"	const	no
+std.Target.powerpc.cpu.@"970"	const	no
+std.Target.powerpc.cpu.@"g4+"	const	no
 std.Target.powerpc.cpu.a2	const	no
 std.Target.powerpc.cpu.e500	const	no
 std.Target.powerpc.cpu.e500mc	const	no
@@ -9458,8 +9458,8 @@ std.Target.riscv	ns	no
 std.Target.riscv.CpuFeature	alias	no
 std.Target.riscv.CpuModel	alias	no
 std.Target.riscv.Feature	enum	no
-"std.Target.riscv.Feature.@""32bit"""	tag	no
-"std.Target.riscv.Feature.@""64bit"""	tag	no
+std.Target.riscv.Feature.@"32bit"	tag	no
+std.Target.riscv.Feature.@"64bit"	tag	no
 std.Target.riscv.Feature.a	tag	no
 std.Target.riscv.Feature.andes45	tag	no
 std.Target.riscv.Feature.auipc_addi_fusion	tag	no
@@ -10108,11 +10108,11 @@ std.Target.x86	ns	no
 std.Target.x86.CpuFeature	alias	no
 std.Target.x86.CpuModel	alias	no
 std.Target.x86.Feature	enum	no
-"std.Target.x86.Feature.@""16bit_mode"""	tag	no
-"std.Target.x86.Feature.@""32bit_mode"""	tag	no
-"std.Target.x86.Feature.@""3dnow"""	tag	no
-"std.Target.x86.Feature.@""3dnowa"""	tag	no
-"std.Target.x86.Feature.@""64bit"""	tag	no
+std.Target.x86.Feature.@"16bit_mode"	tag	no
+std.Target.x86.Feature.@"32bit_mode"	tag	no
+std.Target.x86.Feature.@"3dnow"	tag	no
+std.Target.x86.Feature.@"3dnowa"	tag	no
+std.Target.x86.Feature.@"64bit"	tag	no
 std.Target.x86.Feature.adx	tag	no
 std.Target.x86.Feature.aes	tag	no
 std.Target.x86.Feature.allow_light_256_bit	tag	no
@@ -10311,11 +10311,11 @@ std.Target.x86.Feature.xsaves	tag	no
 std.Target.x86.Feature.zu	tag	no
 std.Target.x86.all_features	const	no
 std.Target.x86.cpu	struct	no
-"std.Target.x86.cpu.@""i386"""	const	no
-"std.Target.x86.cpu.@""i486"""	const	no
-"std.Target.x86.cpu.@""i586"""	const	no
-"std.Target.x86.cpu.@""i686"""	const	no
-"std.Target.x86.cpu.@""i86"""	const	no
+std.Target.x86.cpu.@"i386"	const	no
+std.Target.x86.cpu.@"i486"	const	no
+std.Target.x86.cpu.@"i586"	const	no
+std.Target.x86.cpu.@"i686"	const	no
+std.Target.x86.cpu.@"i86"	const	no
 std.Target.x86.cpu.alderlake	const	no
 std.Target.x86.cpu.amdfam10	const	no
 std.Target.x86.cpu.arrowlake	const	no
@@ -10529,7 +10529,7 @@ std.Thread.UnsupportedImpl.join	fn	no
 std.Thread.UnsupportedImpl.spawn	fn	no
 std.Thread.UnsupportedImpl.unsupported	fn	no
 std.Thread.WasiThreadImpl	struct	no
-"std.Thread.WasiThreadImpl.@""thread-spawn"""	fn	no
+std.Thread.WasiThreadImpl.@"thread-spawn"	fn	no
 std.Thread.WasiThreadImpl.Instance	struct	yes
 std.Thread.WasiThreadImpl.Instance.call_back	field	yes
 std.Thread.WasiThreadImpl.Instance.original_stack_pointer	field	yes
@@ -11505,7 +11505,7 @@ std.builtin.CallModifier.never_inline	tag	yes
 std.builtin.CallModifier.never_tail	tag	yes
 std.builtin.CallModifier.no_suspend	tag	yes
 std.builtin.CallingConvention	union	yes
-"std.builtin.CallingConvention.@""inline"""	field	yes
+std.builtin.CallingConvention.@"inline"	field	yes
 std.builtin.CallingConvention.ArcInterruptOptions	struct	yes
 std.builtin.CallingConvention.ArcInterruptOptions.InterruptType	enum	no
 std.builtin.CallingConvention.ArcInterruptOptions.InterruptType.firq	tag	no
@@ -11785,12 +11785,12 @@ std.builtin.TestFn	struct	yes
 std.builtin.TestFn.func	field	no
 std.builtin.TestFn.name	field	no
 std.builtin.Type	union	yes
-"std.builtin.Type.@""anyframe"""	field	no
-"std.builtin.Type.@""enum"""	field	no
-"std.builtin.Type.@""fn"""	field	no
-"std.builtin.Type.@""opaque"""	field	no
-"std.builtin.Type.@""struct"""	field	no
-"std.builtin.Type.@""union"""	field	no
+std.builtin.Type.@"anyframe"	field	no
+std.builtin.Type.@"enum"	field	no
+std.builtin.Type.@"fn"	field	no
+std.builtin.Type.@"opaque"	field	no
+std.builtin.Type.@"struct"	field	no
+std.builtin.Type.@"union"	field	no
 std.builtin.Type.AnyFrame	struct	yes
 std.builtin.Type.AnyFrame.child	field	no
 std.builtin.Type.Array	struct	yes
@@ -11799,8 +11799,8 @@ std.builtin.Type.Array.len	field	no
 std.builtin.Type.Array.sentinel	fn	yes
 std.builtin.Type.Array.sentinel_ptr	field	yes
 std.builtin.Type.ContainerLayout	enum	yes
-"std.builtin.Type.ContainerLayout.@""extern"""	tag	no
-"std.builtin.Type.ContainerLayout.@""packed"""	tag	no
+std.builtin.Type.ContainerLayout.@"extern"	tag	no
+std.builtin.Type.ContainerLayout.@"packed"	tag	no
 std.builtin.Type.ContainerLayout.auto	tag	no
 std.builtin.Type.Declaration	struct	yes
 std.builtin.Type.Declaration.name	field	no
@@ -11825,11 +11825,11 @@ std.builtin.Type.Float	struct	yes
 std.builtin.Type.Float.bits	field	no
 std.builtin.Type.Fn	struct	yes
 std.builtin.Type.Fn.Attributes	struct	yes
-"std.builtin.Type.Fn.Attributes.@""callconv"""	field	no
+std.builtin.Type.Fn.Attributes.@"callconv"	field	no
 std.builtin.Type.Fn.Attributes.varargs	field	no
 std.builtin.Type.Fn.Param	struct	yes
 std.builtin.Type.Fn.Param.Attributes	struct	yes
-"std.builtin.Type.Fn.Param.Attributes.@""noalias"""	field	no
+std.builtin.Type.Fn.Param.Attributes.@"noalias"	field	no
 std.builtin.Type.Fn.Param.is_generic	field	no
 std.builtin.Type.Fn.Param.is_noalias	field	no
 std.builtin.Type.Fn.Param.type	field	no
@@ -11849,11 +11849,11 @@ std.builtin.Type.Optional	struct	yes
 std.builtin.Type.Optional.child	field	no
 std.builtin.Type.Pointer	struct	yes
 std.builtin.Type.Pointer.Attributes	struct	yes
-"std.builtin.Type.Pointer.Attributes.@""addrspace"""	field	no
-"std.builtin.Type.Pointer.Attributes.@""align"""	field	no
-"std.builtin.Type.Pointer.Attributes.@""allowzero"""	field	no
-"std.builtin.Type.Pointer.Attributes.@""const"""	field	no
-"std.builtin.Type.Pointer.Attributes.@""volatile"""	field	no
+std.builtin.Type.Pointer.Attributes.@"addrspace"	field	no
+std.builtin.Type.Pointer.Attributes.@"align"	field	no
+std.builtin.Type.Pointer.Attributes.@"allowzero"	field	no
+std.builtin.Type.Pointer.Attributes.@"const"	field	no
+std.builtin.Type.Pointer.Attributes.@"volatile"	field	no
 std.builtin.Type.Pointer.Size	enum	yes
 std.builtin.Type.Pointer.Size.c	tag	no
 std.builtin.Type.Pointer.Size.many	tag	no
@@ -11876,8 +11876,8 @@ std.builtin.Type.Struct.is_tuple	field	no
 std.builtin.Type.Struct.layout	field	no
 std.builtin.Type.StructField	struct	yes
 std.builtin.Type.StructField.Attributes	struct	yes
-"std.builtin.Type.StructField.Attributes.@""align"""	field	no
-"std.builtin.Type.StructField.Attributes.@""comptime"""	field	no
+std.builtin.Type.StructField.Attributes.@"align"	field	no
+std.builtin.Type.StructField.Attributes.@"comptime"	field	no
 std.builtin.Type.StructField.Attributes.default_value_ptr	field	no
 std.builtin.Type.StructField.alignment	field	yes
 std.builtin.Type.StructField.defaultValue	fn	yes
@@ -11892,7 +11892,7 @@ std.builtin.Type.Union.layout	field	no
 std.builtin.Type.Union.tag_type	field	no
 std.builtin.Type.UnionField	struct	yes
 std.builtin.Type.UnionField.Attributes	struct	yes
-"std.builtin.Type.UnionField.Attributes.@""align"""	field	no
+std.builtin.Type.UnionField.Attributes.@"align"	field	no
 std.builtin.Type.UnionField.alignment	field	yes
 std.builtin.Type.UnionField.name	field	no
 std.builtin.Type.UnionField.type	field	no
@@ -11975,7 +11975,7 @@ std.builtin.returnError	fn	no
 std.builtin.root	modref	no
 std.builtin.std	nsref	no
 std.c	ns	no
-"std.c.@""close$NOCANCEL"""	const	no
+std.c.@"close$NOCANCEL"	const	no
 std.c.AF	const	no
 std.c.AF_SUN	alias	no
 std.c.AI	const	no
@@ -12253,7 +12253,7 @@ std.c.copy_file_range	const	no
 std.c.cpu_set_t	const	no
 std.c.ctid_t	alias	no
 std.c.darwin	ns	no
-"std.c.darwin.@""close$NOCANCEL"""	fn	no
+std.c.darwin.@"close$NOCANCEL"	fn	no
 std.c.darwin.AF	alias	no
 std.c.darwin.CALENDAR_CLOCK	const	no
 std.c.darwin.COPYFILE	struct	no
@@ -12335,7 +12335,7 @@ std.c.darwin.DB_RECORDTYPE.X509_CERTIFICATE	tag	no
 std.c.darwin.DB_RECORDTYPE.X509_CRL	tag	no
 std.c.darwin.DB_RECORDTYPE._	tag	no
 std.c.darwin.E	enum	no
-"std.c.darwin.E.@""2BIG"""	tag	yes
+std.c.darwin.E.@"2BIG"	tag	yes
 std.c.darwin.E.ACCES	tag	yes
 std.c.darwin.E.ADDRINUSE	tag	yes
 std.c.darwin.E.ADDRNOTAVAIL	tag	yes
@@ -12570,19 +12570,19 @@ std.c.darwin.IPTOS.PREC_ROUTINE	const	no
 std.c.darwin.IPTOS.RELIABILITY	const	no
 std.c.darwin.IPTOS.THROUGHPUT	const	no
 std.c.darwin.IPV6	struct	no
-"std.c.darwin.IPV6.@""2292DSTOPTS"""	const	no
-"std.c.darwin.IPV6.@""2292HOPLIMIT"""	const	no
-"std.c.darwin.IPV6.@""2292HOPOPTS"""	const	no
-"std.c.darwin.IPV6.@""2292NEXTHOP"""	const	no
-"std.c.darwin.IPV6.@""2292PKTINFO"""	const	no
-"std.c.darwin.IPV6.@""2292PKTOPTIONS"""	const	no
-"std.c.darwin.IPV6.@""2292RTHDR"""	const	no
-"std.c.darwin.IPV6.@""3542DSTOPTS"""	const	no
-"std.c.darwin.IPV6.@""3542HOPLIMIT"""	const	no
-"std.c.darwin.IPV6.@""3542HOPOPTS"""	const	no
-"std.c.darwin.IPV6.@""3542NEXTHOP"""	const	no
-"std.c.darwin.IPV6.@""3542PKTINFO"""	const	no
-"std.c.darwin.IPV6.@""3542RTHDR"""	const	no
+std.c.darwin.IPV6.@"2292DSTOPTS"	const	no
+std.c.darwin.IPV6.@"2292HOPLIMIT"	const	no
+std.c.darwin.IPV6.@"2292HOPOPTS"	const	no
+std.c.darwin.IPV6.@"2292NEXTHOP"	const	no
+std.c.darwin.IPV6.@"2292PKTINFO"	const	no
+std.c.darwin.IPV6.@"2292PKTOPTIONS"	const	no
+std.c.darwin.IPV6.@"2292RTHDR"	const	no
+std.c.darwin.IPV6.@"3542DSTOPTS"	const	no
+std.c.darwin.IPV6.@"3542HOPLIMIT"	const	no
+std.c.darwin.IPV6.@"3542HOPOPTS"	const	no
+std.c.darwin.IPV6.@"3542NEXTHOP"	const	no
+std.c.darwin.IPV6.@"3542PKTINFO"	const	no
+std.c.darwin.IPV6.@"3542RTHDR"	const	no
 std.c.darwin.IPV6.AUTOFLOWLABEL	const	no
 std.c.darwin.IPV6.BINDV6ONLY	alias	no
 std.c.darwin.IPV6.BOUND_IF	const	no
@@ -12889,8 +12889,8 @@ std.c.darwin.clock_res_t	alias	no
 std.c.darwin.clock_serv_t	alias	no
 std.c.darwin.copyfile_state_t	const	no
 std.c.darwin.dispatch	ns	no
-"std.c.darwin.dispatch.@""resume"""	alias	no
-"std.c.darwin.dispatch.@""suspend"""	alias	no
+std.c.darwin.dispatch.@"resume"	alias	no
+std.c.darwin.dispatch.@"suspend"	alias	no
 std.c.darwin.dispatch.CURRENT_QUEUE_LABEL	alias	no
 std.c.darwin.dispatch.QUEUE_CONCURRENT	fn	no
 std.c.darwin.dispatch.QUEUE_CONCURRENT_INACTIVE	fn	no
@@ -12927,8 +12927,8 @@ std.c.darwin.dispatch._dispatch_source_type_timer	const	no
 std.c.darwin.dispatch._dispatch_source_type_vnode	const	no
 std.c.darwin.dispatch._dispatch_source_type_write	const	no
 std.c.darwin.dispatch._os_object_s	opaque	no
-"std.c.darwin.dispatch._os_object_s.@""resume"""	alias	no
-"std.c.darwin.dispatch._os_object_s.@""suspend"""	alias	no
+std.c.darwin.dispatch._os_object_s.@"resume"	alias	no
+std.c.darwin.dispatch._os_object_s.@"suspend"	alias	no
 std.c.darwin.dispatch._os_object_s.activate	alias	no
 std.c.darwin.dispatch._os_object_s.get_context	alias	no
 std.c.darwin.dispatch._os_object_s.release	alias	no
@@ -13549,7 +13549,7 @@ std.c.dn_expand	fn	no
 std.c.dragonfly	ns	no
 std.c.dragonfly.BADSIG	alias	no
 std.c.dragonfly.E	enum	no
-"std.c.dragonfly.E.@""2BIG"""	tag	no
+std.c.dragonfly.E.@"2BIG"	tag	no
 std.c.dragonfly.E.ACCES	tag	no
 std.c.dragonfly.E.ADDRINUSE	tag	no
 std.c.dragonfly.E.ADDRNOTAVAIL	tag	no
@@ -13738,13 +13738,13 @@ std.c.dragonfly.IPTOS.PREC_ROUTINE	alias	no
 std.c.dragonfly.IPTOS.RELIABILITY	const	no
 std.c.dragonfly.IPTOS.THROUGHPUT	const	no
 std.c.dragonfly.IPV6	struct	no
-"std.c.dragonfly.IPV6.@""2292DSTOPTS"""	const	no
-"std.c.dragonfly.IPV6.@""2292HOPLIMIT"""	const	no
-"std.c.dragonfly.IPV6.@""2292HOPOPTS"""	const	no
-"std.c.dragonfly.IPV6.@""2292NEXTHOP"""	const	no
-"std.c.dragonfly.IPV6.@""2292PKTINFO"""	const	no
-"std.c.dragonfly.IPV6.@""2292PKTOPTIONS"""	const	no
-"std.c.dragonfly.IPV6.@""2292RTHDR"""	const	no
+std.c.dragonfly.IPV6.@"2292DSTOPTS"	const	no
+std.c.dragonfly.IPV6.@"2292HOPLIMIT"	const	no
+std.c.dragonfly.IPV6.@"2292HOPOPTS"	const	no
+std.c.dragonfly.IPV6.@"2292NEXTHOP"	const	no
+std.c.dragonfly.IPV6.@"2292PKTINFO"	const	no
+std.c.dragonfly.IPV6.@"2292PKTOPTIONS"	const	no
+std.c.dragonfly.IPV6.@"2292RTHDR"	const	no
 std.c.dragonfly.IPV6.AUTOFLOWLABEL	const	no
 std.c.dragonfly.IPV6.BINDV6ONLY	alias	no
 std.c.dragonfly.IPV6.CHECKSUM	const	no
@@ -13884,7 +13884,7 @@ std.c.freeaddrinfo	fn	no
 std.c.freebsd	ns	no
 std.c.freebsd.CAP_RIGHTS_VERSION	const	no
 std.c.freebsd.E	enum	no
-"std.c.freebsd.E.@""2BIG"""	tag	no
+std.c.freebsd.E.@"2BIG"	tag	no
 std.c.freebsd.E.ACCES	tag	no
 std.c.freebsd.E.ADDRINUSE	tag	no
 std.c.freebsd.E.ADDRNOTAVAIL	tag	no
@@ -14097,13 +14097,13 @@ std.c.freebsd.IPTOS.PREC_ROUTINE	alias	no
 std.c.freebsd.IPTOS.RELIABILITY	const	no
 std.c.freebsd.IPTOS.THROUGHPUT	const	no
 std.c.freebsd.IPV6	struct	no
-"std.c.freebsd.IPV6.@""2292DSTOPTS"""	const	no
-"std.c.freebsd.IPV6.@""2292HOPLIMIT"""	const	no
-"std.c.freebsd.IPV6.@""2292HOPOPTS"""	const	no
-"std.c.freebsd.IPV6.@""2292NEXTHOP"""	const	no
-"std.c.freebsd.IPV6.@""2292PKTINFO"""	const	no
-"std.c.freebsd.IPV6.@""2292PKTOPTIONS"""	const	no
-"std.c.freebsd.IPV6.@""2292RTHDR"""	const	no
+std.c.freebsd.IPV6.@"2292DSTOPTS"	const	no
+std.c.freebsd.IPV6.@"2292HOPLIMIT"	const	no
+std.c.freebsd.IPV6.@"2292HOPOPTS"	const	no
+std.c.freebsd.IPV6.@"2292NEXTHOP"	const	no
+std.c.freebsd.IPV6.@"2292PKTINFO"	const	no
+std.c.freebsd.IPV6.@"2292PKTOPTIONS"	const	no
+std.c.freebsd.IPV6.@"2292RTHDR"	const	no
 std.c.freebsd.IPV6.AUTOFLOWLABEL	const	no
 std.c.freebsd.IPV6.BINDANY	const	no
 std.c.freebsd.IPV6.BINDV6ONLY	alias	no
@@ -14339,7 +14339,7 @@ std.c.haiku.DirEnt.pdev	field	yes
 std.c.haiku.DirEnt.pino	field	yes
 std.c.haiku.DirEnt.reclen	field	yes
 std.c.haiku.E	enum	no
-"std.c.haiku.E.@""2BIG"""	tag	no
+std.c.haiku.E.@"2BIG"	tag	no
 std.c.haiku.E.ACCES	tag	no
 std.c.haiku.E.ADDRINUSE	tag	no
 std.c.haiku.E.ADDRNOTAVAIL	tag	no
@@ -15041,7 +15041,7 @@ std.c.native_os	alias	no
 std.c.natural_t	alias	no
 std.c.netbsd	ns	no
 std.c.netbsd.E	enum	no
-"std.c.netbsd.E.@""2BIG"""	tag	no
+std.c.netbsd.E.@"2BIG"	tag	no
 std.c.netbsd.E.ACCES	tag	no
 std.c.netbsd.E.ADDRINUSE	tag	no
 std.c.netbsd.E.ADDRNOTAVAIL	tag	no
@@ -15227,13 +15227,13 @@ std.c.netbsd.IPTOS.PREC_ROUTINE	const	no
 std.c.netbsd.IPTOS.RELIABILITY	const	no
 std.c.netbsd.IPTOS.THROUGHPUT	const	no
 std.c.netbsd.IPV6	struct	no
-"std.c.netbsd.IPV6.@""2292DSTOPTS"""	const	no
-"std.c.netbsd.IPV6.@""2292HOPLIMIT"""	const	no
-"std.c.netbsd.IPV6.@""2292HOPOPTS"""	const	no
-"std.c.netbsd.IPV6.@""2292NEXTHOP"""	const	no
-"std.c.netbsd.IPV6.@""2292PKTINFO"""	const	no
-"std.c.netbsd.IPV6.@""2292PKTOPTIONS"""	const	no
-"std.c.netbsd.IPV6.@""2292RTHDR"""	const	no
+std.c.netbsd.IPV6.@"2292DSTOPTS"	const	no
+std.c.netbsd.IPV6.@"2292HOPLIMIT"	const	no
+std.c.netbsd.IPV6.@"2292HOPOPTS"	const	no
+std.c.netbsd.IPV6.@"2292NEXTHOP"	const	no
+std.c.netbsd.IPV6.@"2292PKTINFO"	const	no
+std.c.netbsd.IPV6.@"2292PKTOPTIONS"	const	no
+std.c.netbsd.IPV6.@"2292RTHDR"	const	no
 std.c.netbsd.IPV6.BINDANY	const	no
 std.c.netbsd.IPV6.CHECKSUM	const	no
 std.c.netbsd.IPV6.DEFAULT_MULTICAST_HOPS	const	no
@@ -15335,7 +15335,7 @@ std.c.openbsd.BI.SILENT	const	no
 std.c.openbsd.BI.UNSETENV	const	no
 std.c.openbsd.BI.VALUE	const	no
 std.c.openbsd.E	enum	no
-"std.c.openbsd.E.@""2BIG"""	tag	no
+std.c.openbsd.E.@"2BIG"	tag	no
 std.c.openbsd.E.ACCES	tag	no
 std.c.openbsd.E.ADDRINUSE	tag	no
 std.c.openbsd.E.ADDRNOTAVAIL	tag	no
@@ -15785,11 +15785,11 @@ std.c.preadv64	fn	no
 std.c.printf	fn	no
 std.c.priority	alias	no
 std.c.private	struct	yes
-"std.c.private.@""fstat$INODE64"""	fn	yes
-"std.c.private.@""fstatat$INODE64"""	fn	no
-"std.c.private.@""readdir$INODE64"""	fn	no
-"std.c.private.@""realpath$DARWIN_EXTSN"""	fn	yes
-"std.c.private.@""stat$INODE64"""	fn	no
+std.c.private.@"fstat$INODE64"	fn	yes
+std.c.private.@"fstatat$INODE64"	fn	no
+std.c.private.@"readdir$INODE64"	fn	no
+std.c.private.@"realpath$DARWIN_EXTSN"	fn	yes
+std.c.private.@"stat$INODE64"	fn	no
 std.c.private.___errno	fn	no
 std.c.private.__clock_getres50	fn	yes
 std.c.private.__clock_gettime50	fn	no
@@ -16362,7 +16362,7 @@ std.coff.FunctionDefinition.total_size	field	yes
 std.coff.FunctionDefinition.unused	field	no
 std.coff.Header	struct	no
 std.coff.Header.Flags	struct	no
-"std.coff.Header.Flags.@""32BIT_MACHINE"""	field	yes
+std.coff.Header.Flags.@"32BIT_MACHINE"	field	yes
 std.coff.Header.Flags.AGGRESSIVE_WS_TRIM	field	yes
 std.coff.Header.Flags.BYTES_REVERSED_HI	field	yes
 std.coff.Header.Flags.BYTES_REVERSED_LO	field	yes
@@ -16599,25 +16599,25 @@ std.coff.IMAGE.REL.PPC.SECTION	tag	yes
 std.coff.IMAGE.REL.PPC.TOKEN	tag	yes
 std.coff.IMAGE.REL.PPC._	tag	no
 std.coff.IMAGE.REL.SH	enum	yes
-"std.coff.IMAGE.REL.SH.@""3_ABSOLUTE"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT16"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT32"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT32_NB"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT4"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT4_LONG"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT4_WORD"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT8"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT8_LONG"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_DIRECT8_WORD"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_GPREL4_LONG"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_PCREL12_WORD"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_PCREL8_LONG"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_PCREL8_WORD"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_SECREL"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_SECTION"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_SIZEOF_SECTION"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_STARTOF_SECTION"""	tag	yes
-"std.coff.IMAGE.REL.SH.@""3_TOKEN"""	tag	yes
+std.coff.IMAGE.REL.SH.@"3_ABSOLUTE"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT16"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT32"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT32_NB"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT4"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT4_LONG"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT4_WORD"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT8"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT8_LONG"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_DIRECT8_WORD"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_GPREL4_LONG"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_PCREL12_WORD"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_PCREL8_LONG"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_PCREL8_WORD"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_SECREL"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_SECTION"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_SIZEOF_SECTION"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_STARTOF_SECTION"	tag	yes
+std.coff.IMAGE.REL.SH.@"3_TOKEN"	tag	yes
 std.coff.IMAGE.REL.SH.M_NOMODE	tag	yes
 std.coff.IMAGE.REL.SH.M_PAIR	tag	yes
 std.coff.IMAGE.REL.SH.M_PCRELPT	tag	yes
@@ -16686,31 +16686,31 @@ std.coff.ImportType.CONST	tag	yes
 std.coff.ImportType.DATA	tag	yes
 std.coff.ImportType._	tag	no
 std.coff.OptionalHeader	struct	no
-"std.coff.OptionalHeader.@""PE32+"""	struct	no
-"std.coff.OptionalHeader.@""PE32+"".checksum"	field	no
-"std.coff.OptionalHeader.@""PE32+"".dll_flags"	field	no
-"std.coff.OptionalHeader.@""PE32+"".file_alignment"	field	no
-"std.coff.OptionalHeader.@""PE32+"".image_base"	field	no
-"std.coff.OptionalHeader.@""PE32+"".loader_flags"	field	no
-"std.coff.OptionalHeader.@""PE32+"".major_image_version"	field	no
-"std.coff.OptionalHeader.@""PE32+"".major_operating_system_version"	field	no
-"std.coff.OptionalHeader.@""PE32+"".major_subsystem_version"	field	no
-"std.coff.OptionalHeader.@""PE32+"".minor_image_version"	field	no
-"std.coff.OptionalHeader.@""PE32+"".minor_operating_system_version"	field	no
-"std.coff.OptionalHeader.@""PE32+"".minor_subsystem_version"	field	no
-"std.coff.OptionalHeader.@""PE32+"".number_of_rva_and_sizes"	field	no
-"std.coff.OptionalHeader.@""PE32+"".section_alignment"	field	no
-"std.coff.OptionalHeader.@""PE32+"".size_of_headers"	field	no
-"std.coff.OptionalHeader.@""PE32+"".size_of_heap_commit"	field	no
-"std.coff.OptionalHeader.@""PE32+"".size_of_heap_reserve"	field	no
-"std.coff.OptionalHeader.@""PE32+"".size_of_image"	field	no
-"std.coff.OptionalHeader.@""PE32+"".size_of_stack_commit"	field	no
-"std.coff.OptionalHeader.@""PE32+"".size_of_stack_reserve"	field	no
-"std.coff.OptionalHeader.@""PE32+"".standard"	field	no
-"std.coff.OptionalHeader.@""PE32+"".subsystem"	field	no
-"std.coff.OptionalHeader.@""PE32+"".win32_version_value"	field	no
+std.coff.OptionalHeader.@"PE32+"	struct	no
+std.coff.OptionalHeader.@"PE32+".checksum	field	no
+std.coff.OptionalHeader.@"PE32+".dll_flags	field	no
+std.coff.OptionalHeader.@"PE32+".file_alignment	field	no
+std.coff.OptionalHeader.@"PE32+".image_base	field	no
+std.coff.OptionalHeader.@"PE32+".loader_flags	field	no
+std.coff.OptionalHeader.@"PE32+".major_image_version	field	no
+std.coff.OptionalHeader.@"PE32+".major_operating_system_version	field	no
+std.coff.OptionalHeader.@"PE32+".major_subsystem_version	field	no
+std.coff.OptionalHeader.@"PE32+".minor_image_version	field	no
+std.coff.OptionalHeader.@"PE32+".minor_operating_system_version	field	no
+std.coff.OptionalHeader.@"PE32+".minor_subsystem_version	field	no
+std.coff.OptionalHeader.@"PE32+".number_of_rva_and_sizes	field	no
+std.coff.OptionalHeader.@"PE32+".section_alignment	field	no
+std.coff.OptionalHeader.@"PE32+".size_of_headers	field	no
+std.coff.OptionalHeader.@"PE32+".size_of_heap_commit	field	no
+std.coff.OptionalHeader.@"PE32+".size_of_heap_reserve	field	no
+std.coff.OptionalHeader.@"PE32+".size_of_image	field	no
+std.coff.OptionalHeader.@"PE32+".size_of_stack_commit	field	no
+std.coff.OptionalHeader.@"PE32+".size_of_stack_reserve	field	no
+std.coff.OptionalHeader.@"PE32+".standard	field	no
+std.coff.OptionalHeader.@"PE32+".subsystem	field	no
+std.coff.OptionalHeader.@"PE32+".win32_version_value	field	no
 std.coff.OptionalHeader.Magic	enum	no
-"std.coff.OptionalHeader.Magic.@""PE32+"""	tag	no
+std.coff.OptionalHeader.Magic.@"PE32+"	tag	no
 std.coff.OptionalHeader.Magic.PE32	tag	no
 std.coff.OptionalHeader.Magic._	tag	no
 std.coff.OptionalHeader.PE32	struct	no
@@ -16761,20 +16761,20 @@ std.coff.SectionHeader	struct	no
 std.coff.SectionHeader.Flags	struct	no
 std.coff.SectionHeader.Flags.ALIGN	field	no
 std.coff.SectionHeader.Flags.Align	enum	no
-"std.coff.SectionHeader.Flags.Align.@""1024BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""128BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""16BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""1BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""2048BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""256BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""2BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""32BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""4096BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""4BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""512BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""64BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""8192BYTES"""	tag	no
-"std.coff.SectionHeader.Flags.Align.@""8BYTES"""	tag	no
+std.coff.SectionHeader.Flags.Align.@"1024BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"128BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"16BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"1BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"2048BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"256BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"2BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"32BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"4096BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"4BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"512BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"64BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"8192BYTES"	tag	no
+std.coff.SectionHeader.Flags.Align.@"8BYTES"	tag	no
 std.coff.SectionHeader.Flags.Align.NONE	tag	no
 std.coff.SectionHeader.Flags.Align._	tag	no
 std.coff.SectionHeader.Flags.Align.fromByteUnits	fn	no
@@ -22444,9 +22444,9 @@ std.dwarf.ACCESS.private	const	no
 std.dwarf.ACCESS.protected	const	no
 std.dwarf.ACCESS.public	const	no
 std.dwarf.AT	ns	no
-"std.dwarf.AT.@""inline"""	const	no
-"std.dwarf.AT.@""noreturn"""	const	no
-"std.dwarf.AT.@""type"""	const	no
+std.dwarf.AT.@"inline"	const	no
+std.dwarf.AT.@"noreturn"	const	no
+std.dwarf.AT.@"type"	const	no
 std.dwarf.AT.GNAT_descriptive_type	const	no
 std.dwarf.AT.GNU_addr_base	const	no
 std.dwarf.AT.GNU_all_call_sites	const	no
@@ -22648,7 +22648,7 @@ std.dwarf.AT.virtuality	const	no
 std.dwarf.AT.visibility	const	no
 std.dwarf.AT.vtable_elem_location	const	no
 std.dwarf.ATE	ns	no
-"std.dwarf.ATE.@""void"""	const	no
+std.dwarf.ATE.@"void"	const	no
 std.dwarf.ATE.ASCII	const	no
 std.dwarf.ATE.HP_VAX_complex_float	const	no
 std.dwarf.ATE.HP_VAX_complex_float_d	const	no
@@ -22719,7 +22719,7 @@ std.dwarf.CC.pass_by_reference	tag	no
 std.dwarf.CC.pass_by_value	tag	no
 std.dwarf.CC.program	tag	no
 std.dwarf.CFA	struct	no
-"std.dwarf.CFA.@""undefined"""	const	no
+std.dwarf.CFA.@"undefined"	const	no
 std.dwarf.CFA.GNU_args_size	const	no
 std.dwarf.CFA.GNU_negative_offset_extended	const	no
 std.dwarf.CFA.GNU_window_save	const	no
@@ -22828,8 +22828,8 @@ std.dwarf.FORM.strx3	const	no
 std.dwarf.FORM.strx4	const	no
 std.dwarf.FORM.udata	const	no
 std.dwarf.Format	enum	no
-"std.dwarf.Format.@""32"""	tag	no
-"std.dwarf.Format.@""64"""	tag	no
+std.dwarf.Format.@"32"	tag	no
+std.dwarf.Format.@"64"	tag	no
 std.dwarf.LANG	ns	no
 std.dwarf.LANG.Ada2005	const	no
 std.dwarf.LANG.Ada2012	const	no
@@ -22944,8 +22944,8 @@ std.dwarf.LNS.set_file	const	no
 std.dwarf.LNS.set_isa	const	no
 std.dwarf.LNS.set_prologue_end	const	no
 std.dwarf.OP	ns	no
-"std.dwarf.OP.@""and"""	const	no
-"std.dwarf.OP.@""or"""	const	no
+std.dwarf.OP.@"and"	const	no
+std.dwarf.OP.@"or"	const	no
 std.dwarf.OP.GNU_addr_index	const	no
 std.dwarf.OP.GNU_const_index	const	no
 std.dwarf.OP.GNU_const_type	const	no
@@ -23240,7 +23240,7 @@ std.dwarf.TAG.variant_part	const	no
 std.dwarf.TAG.volatile_type	const	no
 std.dwarf.TAG.with_stmt	const	no
 std.dwarf.UT	struct	no
-"std.dwarf.UT.@""type"""	const	no
+std.dwarf.UT.@"type"	const	no
 std.dwarf.UT.compile	const	no
 std.dwarf.UT.hi_user	const	no
 std.dwarf.UT.lo_user	const	no
@@ -23298,8 +23298,8 @@ std.elf.AT_UID	const	no
 std.elf.Addr	alias	yes
 std.elf.Auxv	const	no
 std.elf.CLASS	enum	no
-"std.elf.CLASS.@""32"""	tag	no
-"std.elf.CLASS.@""64"""	tag	no
+std.elf.CLASS.@"32"	tag	no
+std.elf.CLASS.@"64"	tag	no
 std.elf.CLASS.ElfN	fn	no
 std.elf.CLASS.NONE	tag	no
 std.elf.CLASS.NUM	const	no
@@ -23314,8 +23314,8 @@ std.elf.COMPRESS.ZSTD	tag	no
 std.elf.COMPRESS._	tag	no
 std.elf.Chdr	const	yes
 std.elf.DATA	enum	no
-"std.elf.DATA.@""2LSB"""	tag	no
-"std.elf.DATA.@""2MSB"""	tag	no
+std.elf.DATA.@"2LSB"	tag	no
+std.elf.DATA.@"2MSB"	tag	no
 std.elf.DATA.NONE	tag	no
 std.elf.DATA.NUM	const	no
 std.elf.DATA._	tag	no
@@ -23537,21 +23537,21 @@ std.elf.ELFDATA2MSB	const	yes
 std.elf.ELFDATANONE	const	yes
 std.elf.ELFDATANUM	alias	yes
 std.elf.EM	enum	yes
-"std.elf.EM.@""386"""	tag	yes
-"std.elf.EM.@""56800EF"""	tag	yes
-"std.elf.EM.@""56800EX"""	tag	yes
-"std.elf.EM.@""65816"""	tag	yes
-"std.elf.EM.@""68HC05"""	tag	yes
-"std.elf.EM.@""68HC08"""	tag	yes
-"std.elf.EM.@""68HC11"""	tag	yes
-"std.elf.EM.@""68HC12"""	tag	yes
-"std.elf.EM.@""68HC16"""	tag	yes
-"std.elf.EM.@""68K"""	tag	yes
-"std.elf.EM.@""78K0R"""	tag	yes
-"std.elf.EM.@""8051"""	tag	yes
-"std.elf.EM.@""860"""	tag	yes
-"std.elf.EM.@""88K"""	tag	yes
-"std.elf.EM.@""960"""	tag	yes
+std.elf.EM.@"386"	tag	yes
+std.elf.EM.@"56800EF"	tag	yes
+std.elf.EM.@"56800EX"	tag	yes
+std.elf.EM.@"65816"	tag	yes
+std.elf.EM.@"68HC05"	tag	yes
+std.elf.EM.@"68HC08"	tag	yes
+std.elf.EM.@"68HC11"	tag	yes
+std.elf.EM.@"68HC12"	tag	yes
+std.elf.EM.@"68HC16"	tag	yes
+std.elf.EM.@"68K"	tag	yes
+std.elf.EM.@"78K0R"	tag	yes
+std.elf.EM.@"8051"	tag	yes
+std.elf.EM.@"860"	tag	yes
+std.elf.EM.@"88K"	tag	yes
+std.elf.EM.@"960"	tag	yes
 std.elf.EM.AARCH64	tag	yes
 std.elf.EM.ADAPTEVA_EPIPHANY	tag	yes
 std.elf.EM.AIENGINE	tag	yes
@@ -23807,7 +23807,7 @@ std.elf.Elf32.Ehdr.type	field	no
 std.elf.Elf32.Ehdr.version	field	no
 std.elf.Elf32.Off	alias	no
 std.elf.Elf32.Phdr	struct	no
-"std.elf.Elf32.Phdr.@""align"""	field	no
+std.elf.Elf32.Phdr.@"align"	field	no
 std.elf.Elf32.Phdr.filesz	field	no
 std.elf.Elf32.Phdr.flags	field	no
 std.elf.Elf32.Phdr.memsz	field	no
@@ -23979,7 +23979,7 @@ std.elf.Elf64.Ehdr.type	field	no
 std.elf.Elf64.Ehdr.version	field	no
 std.elf.Elf64.Off	alias	no
 std.elf.Elf64.Phdr	struct	no
-"std.elf.Elf64.Phdr.@""align"""	field	no
+std.elf.Elf64.Phdr.@"align"	field	no
 std.elf.Elf64.Phdr.filesz	field	no
 std.elf.Elf64.Phdr.flags	field	no
 std.elf.Elf64.Phdr.memsz	field	no
@@ -24514,9 +24514,9 @@ std.elf.R_PPC64.TPREL34	tag	no
 std.elf.R_PPC64.TPREL64	tag	no
 std.elf.R_PPC64._	tag	no
 std.elf.R_RISCV	enum	yes
-"std.elf.R_RISCV.@""32"""	tag	no
-"std.elf.R_RISCV.@""32_PCREL"""	tag	no
-"std.elf.R_RISCV.@""64"""	tag	no
+std.elf.R_RISCV.@"32"	tag	no
+std.elf.R_RISCV.@"32_PCREL"	tag	no
+std.elf.R_RISCV.@"64"	tag	no
 std.elf.R_RISCV.ADD16	tag	no
 std.elf.R_RISCV.ADD32	tag	no
 std.elf.R_RISCV.ADD64	tag	no
@@ -24575,11 +24575,11 @@ std.elf.R_RISCV.TPREL_LO12_S	tag	no
 std.elf.R_RISCV.TPREL_S	tag	no
 std.elf.R_RISCV._	tag	no
 std.elf.R_X86_64	enum	yes
-"std.elf.R_X86_64.@""16"""	tag	yes
-"std.elf.R_X86_64.@""32"""	tag	yes
-"std.elf.R_X86_64.@""32S"""	tag	yes
-"std.elf.R_X86_64.@""64"""	tag	yes
-"std.elf.R_X86_64.@""8"""	tag	yes
+std.elf.R_X86_64.@"16"	tag	yes
+std.elf.R_X86_64.@"32"	tag	yes
+std.elf.R_X86_64.@"32S"	tag	yes
+std.elf.R_X86_64.@"64"	tag	yes
+std.elf.R_X86_64.@"8"	tag	yes
 std.elf.R_X86_64.COPY	tag	yes
 std.elf.R_X86_64.DTPMOD64	tag	yes
 std.elf.R_X86_64.DTPOFF32	tag	yes
@@ -26930,7 +26930,7 @@ std.http.Server.receiveHead	fn	no
 std.http.Server.std	nsref	no
 std.http.Server.testing	alias	no
 std.http.Status	enum	yes
-"std.http.Status.@""continue"""	tag	no
+std.http.Status.@"continue"	tag	no
 std.http.Status.Class	enum	no
 std.http.Status.Class.client_error	tag	no
 std.http.Status.Class.informational	tag	no
@@ -27005,8 +27005,8 @@ std.http.TransferEncoding	enum	yes
 std.http.TransferEncoding.chunked	tag	no
 std.http.TransferEncoding.none	tag	no
 std.http.Version	enum	no
-"std.http.Version.@""HTTP/1.0"""	tag	no
-"std.http.Version.@""HTTP/1.1"""	tag	no
+std.http.Version.@"HTTP/1.0"	tag	no
+std.http.Version.@"HTTP/1.1"	tag	no
 std.http.Writer	alias	no
 std.http.assert	alias	no
 std.http.builtin	modref	no
@@ -27829,7 +27829,7 @@ std.macho.entry_point_command.cmdsize	field	yes
 std.macho.entry_point_command.entryoff	field	yes
 std.macho.entry_point_command.stacksize	field	yes
 std.macho.fat_arch	struct	no
-"std.macho.fat_arch.@""align"""	field	no
+std.macho.fat_arch.@"align"	field	no
 std.macho.fat_arch.cpusubtype	field	no
 std.macho.fat_arch.cputype	field	no
 std.macho.fat_arch.offset	field	no
@@ -27913,7 +27913,7 @@ std.macho.rpath_command.cmd	field	yes
 std.macho.rpath_command.cmdsize	field	yes
 std.macho.rpath_command.path	field	yes
 std.macho.section	struct	yes
-"std.macho.section.@""align"""	field	yes
+std.macho.section.@"align"	field	yes
 std.macho.section.addr	field	yes
 std.macho.section.flags	field	yes
 std.macho.section.nreloc	field	yes
@@ -27925,8 +27925,8 @@ std.macho.section.sectname	field	yes
 std.macho.section.segname	field	yes
 std.macho.section.size	field	yes
 std.macho.section_64	struct	no
-"std.macho.section_64.@""align"""	field	yes
-"std.macho.section_64.@""type"""	fn	no
+std.macho.section_64.@"align"	field	yes
+std.macho.section_64.@"type"	fn	no
 std.macho.section_64.addr	field	yes
 std.macho.section_64.attrs	fn	no
 std.macho.section_64.flags	field	yes
@@ -28581,13 +28581,13 @@ std.mem	ns	no
 std.mem.AbsorbSentinelReturnType	fn	no
 std.mem.AlignedSlice	fn	yes
 std.mem.Alignment	enum	yes
-"std.mem.Alignment.@""1"""	tag	no
-"std.mem.Alignment.@""16"""	tag	no
-"std.mem.Alignment.@""2"""	tag	no
-"std.mem.Alignment.@""32"""	tag	no
-"std.mem.Alignment.@""4"""	tag	no
-"std.mem.Alignment.@""64"""	tag	no
-"std.mem.Alignment.@""8"""	tag	no
+std.mem.Alignment.@"1"	tag	no
+std.mem.Alignment.@"16"	tag	no
+std.mem.Alignment.@"2"	tag	no
+std.mem.Alignment.@"32"	tag	no
+std.mem.Alignment.@"4"	tag	no
+std.mem.Alignment.@"64"	tag	no
+std.mem.Alignment.@"8"	tag	no
 std.mem.Alignment._	tag	no
 std.mem.Alignment.backward	fn	yes
 std.mem.Alignment.check	fn	yes
@@ -28957,7 +28957,7 @@ std.os.emscripten.CLOCK	alias	no
 std.os.emscripten.CPU_COUNT	fn	no
 std.os.emscripten.CPU_SETSIZE	const	no
 std.os.emscripten.E	enum	no
-"std.os.emscripten.E.@""2BIG"""	tag	no
+std.os.emscripten.E.@"2BIG"	tag	no
 std.os.emscripten.E.ACCES	tag	no
 std.os.emscripten.E.ADDRINUSE	tag	no
 std.os.emscripten.E.ADDRNOTAVAIL	tag	no
@@ -29769,7 +29769,7 @@ std.os.linux.AT.SYMLINK_FOLLOW	const	yes
 std.os.linux.AT.SYMLINK_NOFOLLOW	const	yes
 std.os.linux.AUDIT	struct	no
 std.os.linux.AUDIT.ARCH	enum	no
-"std.os.linux.AUDIT.ARCH.@""64BIT"""	const	no
+std.os.linux.AUDIT.ARCH.@"64BIT"	const	no
 std.os.linux.AUDIT.ARCH.AARCH64	tag	no
 std.os.linux.AUDIT.ARCH.ALPHA	tag	no
 std.os.linux.AUDIT.ARCH.ARCOMPACT	tag	no
@@ -30576,12 +30576,12 @@ std.os.linux.BPF.btf.IntInfo.offset	field	no
 std.os.linux.BPF.btf.IntInfo.reserved_1	field	no
 std.os.linux.BPF.btf.IntInfo.reserved_2	field	no
 std.os.linux.BPF.btf.Kind	enum	yes
-"std.os.linux.BPF.btf.Kind.@""const"""	tag	no
-"std.os.linux.BPF.btf.Kind.@""enum"""	tag	no
-"std.os.linux.BPF.btf.Kind.@""struct"""	tag	no
-"std.os.linux.BPF.btf.Kind.@""union"""	tag	no
-"std.os.linux.BPF.btf.Kind.@""var"""	tag	no
-"std.os.linux.BPF.btf.Kind.@""volatile"""	tag	no
+std.os.linux.BPF.btf.Kind.@"const"	tag	no
+std.os.linux.BPF.btf.Kind.@"enum"	tag	no
+std.os.linux.BPF.btf.Kind.@"struct"	tag	no
+std.os.linux.BPF.btf.Kind.@"union"	tag	no
+std.os.linux.BPF.btf.Kind.@"var"	tag	no
+std.os.linux.BPF.btf.Kind.@"volatile"	tag	no
 std.os.linux.BPF.btf.Kind.array	tag	no
 std.os.linux.BPF.btf.Kind.datasec	tag	no
 std.os.linux.BPF.btf.Kind.decl_tag	tag	no
@@ -30846,14 +30846,14 @@ std.os.linux.ETH.HLEN	const	yes
 std.os.linux.ETH.MAX_MTU	const	yes
 std.os.linux.ETH.MIN_MTU	const	yes
 std.os.linux.ETH.P	struct	yes
-"std.os.linux.ETH.P.@""1588"""	const	yes
-"std.os.linux.ETH.P.@""8021AD"""	const	yes
-"std.os.linux.ETH.P.@""8021AH"""	const	yes
-"std.os.linux.ETH.P.@""80221"""	const	yes
-"std.os.linux.ETH.P.@""802_2"""	const	yes
-"std.os.linux.ETH.P.@""802_3"""	const	yes
-"std.os.linux.ETH.P.@""802_3_MIN"""	const	yes
-"std.os.linux.ETH.P.@""802_EX1"""	const	yes
+std.os.linux.ETH.P.@"1588"	const	yes
+std.os.linux.ETH.P.@"8021AD"	const	yes
+std.os.linux.ETH.P.@"8021AH"	const	yes
+std.os.linux.ETH.P.@"80221"	const	yes
+std.os.linux.ETH.P.@"802_2"	const	yes
+std.os.linux.ETH.P.@"802_3"	const	yes
+std.os.linux.ETH.P.@"802_3_MIN"	const	yes
+std.os.linux.ETH.P.@"802_EX1"	const	yes
 std.os.linux.ETH.P.AARP	const	yes
 std.os.linux.ETH.P.AF_IUCV	const	yes
 std.os.linux.ETH.P.ALL	const	yes
@@ -31559,12 +31559,12 @@ std.os.linux.IPTOS.THROUGHPUT	const	no
 std.os.linux.IPTOS.TOS	fn	no
 std.os.linux.IPTOS.TOS_MASK	const	no
 std.os.linux.IPV6	struct	yes
-"std.os.linux.IPV6.@""2292DSTOPTS"""	const	no
-"std.os.linux.IPV6.@""2292HOPLIMIT"""	const	no
-"std.os.linux.IPV6.@""2292HOPOPTS"""	const	no
-"std.os.linux.IPV6.@""2292PKTINFO"""	const	no
-"std.os.linux.IPV6.@""2292PKTOPTIONS"""	const	no
-"std.os.linux.IPV6.@""2292RTHDR"""	const	no
+std.os.linux.IPV6.@"2292DSTOPTS"	const	no
+std.os.linux.IPV6.@"2292HOPLIMIT"	const	no
+std.os.linux.IPV6.@"2292HOPOPTS"	const	no
+std.os.linux.IPV6.@"2292PKTINFO"	const	no
+std.os.linux.IPV6.@"2292PKTOPTIONS"	const	no
+std.os.linux.IPV6.@"2292RTHDR"	const	no
 std.os.linux.IPV6.ADDRFORM	const	no
 std.os.linux.IPV6.ADDR_PREFERENCES	const	no
 std.os.linux.IPV6.ADD_MEMBERSHIP	const	no
@@ -32619,7 +32619,7 @@ std.os.linux.SECCOMP.notif_addfd.newfd	field	no
 std.os.linux.SECCOMP.notif_addfd.newfd_flags	field	no
 std.os.linux.SECCOMP.notif_addfd.srcfd	field	no
 std.os.linux.SECCOMP.notif_resp	struct	yes
-"std.os.linux.SECCOMP.notif_resp.@""error"""	field	yes
+std.os.linux.SECCOMP.notif_resp.@"error"	field	yes
 std.os.linux.SECCOMP.notif_resp.flags	field	yes
 std.os.linux.SECCOMP.notif_resp.id	field	yes
 std.os.linux.SECCOMP.notif_resp.val	field	yes
@@ -37762,7 +37762,7 @@ std.os.linux.syscalls.MipsN64.waitid	tag	no
 std.os.linux.syscalls.MipsN64.write	tag	no
 std.os.linux.syscalls.MipsN64.writev	tag	no
 std.os.linux.syscalls.MipsO32	enum	no
-"std.os.linux.syscalls.MipsO32.@""break"""	tag	no
+std.os.linux.syscalls.MipsO32.@"break"	tag	no
 std.os.linux.syscalls.MipsO32.accept	tag	no
 std.os.linux.syscalls.MipsO32.accept4	tag	no
 std.os.linux.syscalls.MipsO32.access	tag	no
@@ -38546,7 +38546,7 @@ std.os.linux.syscalls.OpenRisc.waitid	tag	no
 std.os.linux.syscalls.OpenRisc.write	tag	no
 std.os.linux.syscalls.OpenRisc.writev	tag	no
 std.os.linux.syscalls.PowerPC	enum	no
-"std.os.linux.syscalls.PowerPC.@""break"""	tag	no
+std.os.linux.syscalls.PowerPC.@"break"	tag	no
 std.os.linux.syscalls.PowerPC.accept	tag	no
 std.os.linux.syscalls.PowerPC.accept4	tag	no
 std.os.linux.syscalls.PowerPC.access	tag	no
@@ -38998,7 +38998,7 @@ std.os.linux.syscalls.PowerPC.waitpid	tag	no
 std.os.linux.syscalls.PowerPC.write	tag	no
 std.os.linux.syscalls.PowerPC.writev	tag	no
 std.os.linux.syscalls.PowerPC64	enum	no
-"std.os.linux.syscalls.PowerPC64.@""break"""	tag	no
+std.os.linux.syscalls.PowerPC64.@"break"	tag	no
 std.os.linux.syscalls.PowerPC64.accept	tag	no
 std.os.linux.syscalls.PowerPC64.accept4	tag	no
 std.os.linux.syscalls.PowerPC64.access	tag	no
@@ -42060,7 +42060,7 @@ std.os.linux.syscalls.X64.waitid	tag	no
 std.os.linux.syscalls.X64.write	tag	no
 std.os.linux.syscalls.X64.writev	tag	no
 std.os.linux.syscalls.X86	enum	no
-"std.os.linux.syscalls.X86.@""break"""	tag	no
+std.os.linux.syscalls.X86.@"break"	tag	no
 std.os.linux.syscalls.X86.accept4	tag	no
 std.os.linux.syscalls.X86.access	tag	no
 std.os.linux.syscalls.X86.acct	tag	no
@@ -43135,7 +43135,7 @@ std.os.plan9.AccessMode.RDONLY	tag	no
 std.os.plan9.AccessMode.RDWR	tag	no
 std.os.plan9.AccessMode.WRONLY	tag	no
 std.os.plan9.E	enum	yes
-"std.os.plan9.E.@""2BIG"""	tag	no
+std.os.plan9.E.@"2BIG"	tag	no
 std.os.plan9.E.ACCES	tag	no
 std.os.plan9.E.ADDRINUSE	tag	no
 std.os.plan9.E.ADDRNOTAVAIL	tag	no
@@ -43533,7 +43533,7 @@ std.os.uefi.DevicePath.Media.ram_disk	field	no
 std.os.uefi.DevicePath.Media.relative_offset_range	field	no
 std.os.uefi.DevicePath.Media.vendor	field	no
 std.os.uefi.DevicePath.Messaging	union	no
-"std.os.uefi.DevicePath.Messaging.@""1394"""	field	no
+std.os.uefi.DevicePath.Messaging.@"1394"	field	no
 std.os.uefi.DevicePath.Messaging.AtapiDevicePath	struct	no
 std.os.uefi.DevicePath.Messaging.AtapiDevicePath.Rank	enum	no
 std.os.uefi.DevicePath.Messaging.AtapiDevicePath.Rank.primary	tag	no
@@ -43647,7 +43647,7 @@ std.os.uefi.DevicePath.Messaging.ScsiDevicePath.subtype	field	no
 std.os.uefi.DevicePath.Messaging.ScsiDevicePath.target_id	field	no
 std.os.uefi.DevicePath.Messaging.ScsiDevicePath.type	field	no
 std.os.uefi.DevicePath.Messaging.Subtype	enum	no
-"std.os.uefi.DevicePath.Messaging.Subtype.@""1394"""	tag	no
+std.os.uefi.DevicePath.Messaging.Subtype.@"1394"	tag	no
 std.os.uefi.DevicePath.Messaging.Subtype._	tag	no
 std.os.uefi.DevicePath.Messaging.Subtype.atapi	tag	no
 std.os.uefi.DevicePath.Messaging.Subtype.fibre_channel	tag	no
@@ -44145,7 +44145,7 @@ std.os.uefi.protocol.HiiPopup.PopupSelection.no	tag	no
 std.os.uefi.protocol.HiiPopup.PopupSelection.ok	tag	no
 std.os.uefi.protocol.HiiPopup.PopupSelection.yes	tag	no
 std.os.uefi.protocol.HiiPopup.PopupStyle	enum	no
-"std.os.uefi.protocol.HiiPopup.PopupStyle.@""error"""	tag	no
+std.os.uefi.protocol.HiiPopup.PopupStyle.@"error"	tag	no
 std.os.uefi.protocol.HiiPopup.PopupStyle.info	tag	no
 std.os.uefi.protocol.HiiPopup.PopupStyle.warning	tag	no
 std.os.uefi.protocol.HiiPopup.PopupType	enum	no
@@ -45360,7 +45360,7 @@ std.os.wasi.dirnamlen_t	alias	no
 std.os.wasi.environ_get	fn	no
 std.os.wasi.environ_sizes_get	fn	no
 std.os.wasi.errno_t	enum	no
-"std.os.wasi.errno_t.@""2BIG"""	tag	no
+std.os.wasi.errno_t.@"2BIG"	tag	no
 std.os.wasi.errno_t.ACCES	tag	no
 std.os.wasi.errno_t.ADDRINUSE	tag	no
 std.os.wasi.errno_t.ADDRNOTAVAIL	tag	no
@@ -45439,7 +45439,7 @@ std.os.wasi.errno_t.TXTBSY	tag	no
 std.os.wasi.errno_t.XDEV	tag	no
 std.os.wasi.errno_t._	tag	no
 std.os.wasi.event_t	struct	no
-"std.os.wasi.event_t.@""error"""	field	no
+std.os.wasi.event_t.@"error"	field	no
 std.os.wasi.event_t.fd_readwrite	field	no
 std.os.wasi.event_t.type	field	no
 std.os.wasi.event_t.userdata	field	no
@@ -45979,8 +45979,8 @@ std.os.windows.AFD.LISTEN_INFO.UseSAN	field	no
 std.os.windows.AFD.LISTEN_RESPONSE_INFO	struct	no
 std.os.windows.AFD.LISTEN_RESPONSE_INFO.Sequence	field	no
 std.os.windows.AFD.Mutability	enum	no
-"std.os.windows.AFD.Mutability.@""const"""	tag	no
-"std.os.windows.AFD.Mutability.@""var"""	tag	no
+std.os.windows.AFD.Mutability.@"const"	tag	no
+std.os.windows.AFD.Mutability.@"var"	tag	no
 std.os.windows.AFD.NO_FAST_IO	field	no
 std.os.windows.AFD.OPEN_PACKET	struct	no
 std.os.windows.AFD.OPEN_PACKET.AddressFamily	field	no
@@ -46225,7 +46225,7 @@ std.os.windows.CTL_CODE.FILE_ACCESS.READ	field	no
 std.os.windows.CTL_CODE.FILE_ACCESS.SPECIAL	alias	no
 std.os.windows.CTL_CODE.FILE_ACCESS.WRITE	field	no
 std.os.windows.CTL_CODE.FILE_DEVICE	enum	no
-"std.os.windows.CTL_CODE.FILE_DEVICE.@""8042_PORT"""	tag	no
+std.os.windows.CTL_CODE.FILE_DEVICE.@"8042_PORT"	tag	no
 std.os.windows.CTL_CODE.FILE_DEVICE.ACPI	tag	no
 std.os.windows.CTL_CODE.FILE_DEVICE.BATTERY	tag	no
 std.os.windows.CTL_CODE.FILE_DEVICE.BEEP	tag	no
@@ -46463,12 +46463,12 @@ std.os.windows.DNS.QUERY.NO_RECURSION	field	no
 std.os.windows.DNS.QUERY.NO_WIRE_QUERY	field	no
 std.os.windows.DNS.QUERY.PARSE_ALL_RECORDS	field	no
 std.os.windows.DNS.QUERY.REQUEST	struct	no
-"std.os.windows.DNS.QUERY.REQUEST.@""3"""	struct	no
-"std.os.windows.DNS.QUERY.REQUEST.@""3"".Base"	field	no
-"std.os.windows.DNS.QUERY.REQUEST.@""3"".IsNetworkQueryRequired"	field	no
-"std.os.windows.DNS.QUERY.REQUEST.@""3"".RequiredNetworkIndex"	field	no
-"std.os.windows.DNS.QUERY.REQUEST.@""3"".cCustomServers"	field	no
-"std.os.windows.DNS.QUERY.REQUEST.@""3"".pCustomServers"	field	no
+std.os.windows.DNS.QUERY.REQUEST.@"3"	struct	no
+std.os.windows.DNS.QUERY.REQUEST.@"3".Base	field	no
+std.os.windows.DNS.QUERY.REQUEST.@"3".IsNetworkQueryRequired	field	no
+std.os.windows.DNS.QUERY.REQUEST.@"3".RequiredNetworkIndex	field	no
+std.os.windows.DNS.QUERY.REQUEST.@"3".cCustomServers	field	no
+std.os.windows.DNS.QUERY.REQUEST.@"3".pCustomServers	field	no
 std.os.windows.DNS.QUERY.REQUEST.InterfaceIndex	field	no
 std.os.windows.DNS.QUERY.REQUEST.QueryName	field	no
 std.os.windows.DNS.QUERY.REQUEST.QueryOptions	field	no
@@ -47106,7 +47106,7 @@ std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.MemoryTypeMask	field	no
 std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.NumaNode	field	no
 std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.Reserved	field	no
 std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.TYPE	enum	no
-"std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.TYPE.@""64KPage"""	tag	no
+std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.TYPE.@"64KPage"	tag	no
 std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.TYPE.Custom	tag	no
 std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.TYPE.HugePage	tag	no
 std.os.windows.HEAP.RTL_PARAMETERS.SEGMENT.MEMORY_SOURCE.TYPE.LargePage	tag	no
@@ -47627,8 +47627,8 @@ std.os.windows.MAX_PATH	const	no
 std.os.windows.MAX_WOW64_SHARED_ENTRIES	const	no
 std.os.windows.MEM	struct	no
 std.os.windows.MEM.ALLOCATE	struct	no
-"std.os.windows.MEM.ALLOCATE.@""4MB_PAGES"""	field	no
-"std.os.windows.MEM.ALLOCATE.@""64K_PAGES"""	const	no
+std.os.windows.MEM.ALLOCATE.@"4MB_PAGES"	field	no
+std.os.windows.MEM.ALLOCATE.@"64K_PAGES"	const	no
 std.os.windows.MEM.ALLOCATE.COMMIT	field	no
 std.os.windows.MEM.ALLOCATE.LARGE_PAGES	field	no
 std.os.windows.MEM.ALLOCATE.PHYSICAL	field	no
@@ -49697,7 +49697,7 @@ std.os.windows.PEB_LDR_DATA.ShutdownInProgress	field	no
 std.os.windows.PEB_LDR_DATA.ShutdownThreadId	field	yes
 std.os.windows.PEB_LDR_DATA.SsHandle	field	no
 std.os.windows.PF	enum	yes
-"std.os.windows.PF.@""3DNOW_INSTRUCTIONS_AVAILABLE"""	tag	yes
+std.os.windows.PF.@"3DNOW_INSTRUCTIONS_AVAILABLE"	tag	yes
 std.os.windows.PF.ALPHA_BYTE_INSTRUCTIONS	tag	no
 std.os.windows.PF.ARM_64BIT_LOADSTORE_ATOMIC	tag	yes
 std.os.windows.PF.ARM_DIVIDE_INSTRUCTION_AVAILABLE	tag	yes
@@ -50031,7 +50031,7 @@ std.os.windows.RTL_USER_PROCESS_PARAMETERS.hStdOutput	field	no
 std.os.windows.RUNTIME_FUNCTION	const	no
 std.os.windows.RemoveDotDirsError	const	yes
 std.os.windows.SEC	struct	no
-"std.os.windows.SEC.@""64K_PAGES"""	field	no
+std.os.windows.SEC.@"64K_PAGES"	field	no
 std.os.windows.SEC.COMMIT	field	no
 std.os.windows.SEC.FILE	field	no
 std.os.windows.SEC.HUGE_PAGES	field	no
@@ -50397,7 +50397,7 @@ std.os.windows.TDI.ADDRESS.IP6.flowinfo	field	no
 std.os.windows.TDI.ADDRESS.IP6.scope_id	field	no
 std.os.windows.TDI.ADDRESS.IP6.sin_port	field	no
 std.os.windows.TDI.ADDRESS.TYPE	enum	no
-"std.os.windows.TDI.ADDRESS.TYPE.@""8022"""	tag	no
+std.os.windows.TDI.ADDRESS.TYPE.@"8022"	tag	no
 std.os.windows.TDI.ADDRESS.TYPE.APPLETALK	tag	yes
 std.os.windows.TDI.ADDRESS.TYPE.CCITT	tag	yes
 std.os.windows.TDI.ADDRESS.TYPE.CHAOS	tag	yes
@@ -52487,7 +52487,7 @@ std.os.windows.va_list	const	no
 std.os.windows.ws2_32	ns	no
 std.os.windows.ws2_32.ADDRESS_FAMILY	alias	no
 std.os.windows.ws2_32.AF	struct	no
-"std.os.windows.ws2_32.AF.@""12844"""	const	no
+std.os.windows.ws2_32.AF.@"12844"	const	no
 std.os.windows.ws2_32.AF.APPLETALK	const	no
 std.os.windows.ws2_32.AF.ATM	const	no
 std.os.windows.ws2_32.AF.BAN	const	no
@@ -52810,8 +52810,8 @@ std.pdb.LfMFuncId.name	field	no
 std.pdb.LfMFuncId.parent_type	field	no
 std.pdb.LfMFuncId.type	field	no
 std.pdb.LfRecordKind	enum	no
-"std.pdb.LfRecordKind.@""enum"""	tag	no
-"std.pdb.LfRecordKind.@""union"""	tag	no
+std.pdb.LfRecordKind.@"enum"	tag	no
+std.pdb.LfRecordKind.@"union"	tag	no
 std.pdb.LfRecordKind._	tag	no
 std.pdb.LfRecordKind.arglist	tag	no
 std.pdb.LfRecordKind.array	tag	no
@@ -52957,9 +52957,9 @@ std.pdb.SuperBlock.num_blocks	field	yes
 std.pdb.SuperBlock.num_directory_bytes	field	yes
 std.pdb.SuperBlock.unknown	field	no
 std.pdb.SymbolKind	enum	yes
-"std.pdb.SymbolKind.@""align"""	tag	no
-"std.pdb.SymbolKind.@""export"""	tag	no
-"std.pdb.SymbolKind.@""return"""	tag	no
+std.pdb.SymbolKind.@"align"	tag	no
+std.pdb.SymbolKind.@"export"	tag	no
+std.pdb.SymbolKind.@"return"	tag	no
 std.pdb.SymbolKind.annotation	tag	no
 std.pdb.SymbolKind.annotationref	tag	no
 std.pdb.SymbolKind.armswitchtable	tag	no
@@ -54861,10 +54861,10 @@ std.wasm.NameSubsection.module	tag	no
 std.wasm.NameSubsection.table	tag	no
 std.wasm.NameSubsection.type	tag	no
 std.wasm.Opcode	enum	yes
-"std.wasm.Opcode.@""else"""	tag	no
-"std.wasm.Opcode.@""if"""	tag	no
-"std.wasm.Opcode.@""return"""	tag	no
-"std.wasm.Opcode.@""unreachable"""	tag	no
+std.wasm.Opcode.@"else"	tag	no
+std.wasm.Opcode.@"if"	tag	no
+std.wasm.Opcode.@"return"	tag	no
+std.wasm.Opcode.@"unreachable"	tag	no
 std.wasm.Opcode._	tag	no
 std.wasm.Opcode.atomics_prefix	tag	no
 std.wasm.Opcode.block	tag	no
@@ -55046,7 +55046,7 @@ std.wasm.RefType	enum	yes
 std.wasm.RefType.externref	tag	no
 std.wasm.RefType.funcref	tag	no
 std.wasm.Section	enum	yes
-"std.wasm.Section.@""export"""	tag	no
+std.wasm.Section.@"export"	tag	no
 std.wasm.Section._	tag	no
 std.wasm.Section.code	tag	no
 std.wasm.Section.custom	tag	no
@@ -55432,7 +55432,7 @@ std.zig.Ast.Node.ContainerField	struct	no
 std.zig.Ast.Node.ContainerField.align_expr	field	no
 std.zig.Ast.Node.ContainerField.value_expr	field	no
 std.zig.Ast.Node.Data	union	no
-"std.zig.Ast.Node.Data.@""for"""	field	no
+std.zig.Ast.Node.Data.@"for"	field	no
 std.zig.Ast.Node.Data.extra_and_node	field	no
 std.zig.Ast.Node.Data.extra_and_opt_node	field	no
 std.zig.Ast.Node.Data.extra_range	field	no
@@ -55519,23 +55519,23 @@ std.zig.Ast.Node.SubRange	struct	no
 std.zig.Ast.Node.SubRange.end	field	yes
 std.zig.Ast.Node.SubRange.start	field	yes
 std.zig.Ast.Node.Tag	enum	yes
-"std.zig.Ast.Node.Tag.@""asm"""	tag	yes
-"std.zig.Ast.Node.Tag.@""break"""	tag	yes
-"std.zig.Ast.Node.Tag.@""catch"""	tag	yes
-"std.zig.Ast.Node.Tag.@""comptime"""	tag	yes
-"std.zig.Ast.Node.Tag.@""continue"""	tag	yes
-"std.zig.Ast.Node.Tag.@""defer"""	tag	yes
-"std.zig.Ast.Node.Tag.@""errdefer"""	tag	yes
-"std.zig.Ast.Node.Tag.@""for"""	tag	yes
-"std.zig.Ast.Node.Tag.@""if"""	tag	yes
-"std.zig.Ast.Node.Tag.@""nosuspend"""	tag	yes
-"std.zig.Ast.Node.Tag.@""orelse"""	tag	yes
-"std.zig.Ast.Node.Tag.@""resume"""	tag	yes
-"std.zig.Ast.Node.Tag.@""return"""	tag	yes
-"std.zig.Ast.Node.Tag.@""suspend"""	tag	yes
-"std.zig.Ast.Node.Tag.@""switch"""	tag	yes
-"std.zig.Ast.Node.Tag.@""try"""	tag	yes
-"std.zig.Ast.Node.Tag.@""while"""	tag	yes
+std.zig.Ast.Node.Tag.@"asm"	tag	yes
+std.zig.Ast.Node.Tag.@"break"	tag	yes
+std.zig.Ast.Node.Tag.@"catch"	tag	yes
+std.zig.Ast.Node.Tag.@"comptime"	tag	yes
+std.zig.Ast.Node.Tag.@"continue"	tag	yes
+std.zig.Ast.Node.Tag.@"defer"	tag	yes
+std.zig.Ast.Node.Tag.@"errdefer"	tag	yes
+std.zig.Ast.Node.Tag.@"for"	tag	yes
+std.zig.Ast.Node.Tag.@"if"	tag	yes
+std.zig.Ast.Node.Tag.@"nosuspend"	tag	yes
+std.zig.Ast.Node.Tag.@"orelse"	tag	yes
+std.zig.Ast.Node.Tag.@"resume"	tag	yes
+std.zig.Ast.Node.Tag.@"return"	tag	yes
+std.zig.Ast.Node.Tag.@"suspend"	tag	yes
+std.zig.Ast.Node.Tag.@"switch"	tag	yes
+std.zig.Ast.Node.Tag.@"try"	tag	yes
+std.zig.Ast.Node.Tag.@"while"	tag	yes
 std.zig.Ast.Node.Tag.add	tag	yes
 std.zig.Ast.Node.Tag.add_sat	tag	yes
 std.zig.Ast.Node.Tag.add_wrap	tag	yes
@@ -55904,7 +55904,7 @@ std.zig.Ast.Render.AutoIndentingStream.underlying_writer	field	no
 std.zig.Ast.Render.AutoIndentingStream.writeAll	fn	no
 std.zig.Ast.Render.AutoIndentingStream.writeByte	fn	no
 std.zig.Ast.Render.Container	enum	no
-"std.zig.Ast.Render.Container.@""enum"""	tag	no
+std.zig.Ast.Render.Container.@"enum"	tag	no
 std.zig.Ast.Render.Container.other	tag	no
 std.zig.Ast.Render.Container.tuple	tag	no
 std.zig.Ast.Render.Error	const	no
@@ -56340,7 +56340,7 @@ std.zig.AstGen.ContainerMemberResult	union	no
 std.zig.AstGen.ContainerMemberResult.decl	field	no
 std.zig.AstGen.ContainerMemberResult.field	field	no
 std.zig.AstGen.DeclarationName	union	no
-"std.zig.AstGen.DeclarationName.@""comptime"""	field	no
+std.zig.AstGen.DeclarationName.@"comptime"	field	no
 std.zig.AstGen.DeclarationName.decltest	field	no
 std.zig.AstGen.DeclarationName.named	field	no
 std.zig.AstGen.DeclarationName.named_test	field	no
@@ -56451,7 +56451,7 @@ std.zig.AstGen.LineColumn.[0]	field	no
 std.zig.AstGen.LineColumn.[1]	field	no
 std.zig.AstGen.ResultInfo	struct	no
 std.zig.AstGen.ResultInfo.Context	enum	no
-"std.zig.AstGen.ResultInfo.Context.@""return"""	tag	yes
+std.zig.AstGen.ResultInfo.Context.@"return"	tag	yes
 std.zig.AstGen.ResultInfo.Context.assignment	tag	yes
 std.zig.AstGen.ResultInfo.Context.const_init	tag	yes
 std.zig.AstGen.ResultInfo.Context.error_handling_expr	tag	yes
@@ -56498,10 +56498,10 @@ std.zig.AstGen.Scope.Defer.len	field	no
 std.zig.AstGen.Scope.Defer.parent	field	yes
 std.zig.AstGen.Scope.Defer.remapped_err_code	field	no
 std.zig.AstGen.Scope.IdCat	enum	yes
-"std.zig.AstGen.Scope.IdCat.@""function parameter"""	tag	no
-"std.zig.AstGen.Scope.IdCat.@""local constant"""	tag	no
-"std.zig.AstGen.Scope.IdCat.@""local variable"""	tag	no
-"std.zig.AstGen.Scope.IdCat.@""switch tag capture"""	tag	no
+std.zig.AstGen.Scope.IdCat.@"function parameter"	tag	no
+std.zig.AstGen.Scope.IdCat.@"local constant"	tag	no
+std.zig.AstGen.Scope.IdCat.@"local variable"	tag	no
+std.zig.AstGen.Scope.IdCat.@"switch tag capture"	tag	no
 std.zig.AstGen.Scope.IdCat.capture	tag	no
 std.zig.AstGen.Scope.LocalPtr	struct	yes
 std.zig.AstGen.Scope.LocalPtr.base	field	no
@@ -56585,8 +56585,8 @@ std.zig.AstGen.SourceCursor.offset	field	no
 std.zig.AstGen.StringIndexAdapter	alias	no
 std.zig.AstGen.StringIndexContext	alias	no
 std.zig.AstGen.SwitchNonErr	union	no
-"std.zig.AstGen.SwitchNonErr.@""catch"""	field	yes
-"std.zig.AstGen.SwitchNonErr.@""if"""	field	yes
+std.zig.AstGen.SwitchNonErr.@"catch"	field	yes
+std.zig.AstGen.SwitchNonErr.@"if"	field	yes
 std.zig.AstGen.SwitchNonErr.none	field	yes
 std.zig.AstGen.SwitchNonErr.peer_break_target	field	yes
 std.zig.AstGen.WipDecls	struct	no
@@ -57028,8 +57028,8 @@ std.zig.BuiltinFn.EvalToError.always	tag	yes
 std.zig.BuiltinFn.EvalToError.maybe	tag	yes
 std.zig.BuiltinFn.EvalToError.never	tag	yes
 std.zig.BuiltinFn.Tag	enum	no
-"std.zig.BuiltinFn.Tag.@""export"""	tag	no
-"std.zig.BuiltinFn.Tag.@""extern"""	tag	no
+std.zig.BuiltinFn.Tag.@"export"	tag	no
+std.zig.BuiltinFn.Tag.@"extern"	tag	no
 std.zig.BuiltinFn.Tag.Enum	tag	no
 std.zig.BuiltinFn.Tag.EnumLiteral	tag	no
 std.zig.BuiltinFn.Tag.FieldType	tag	no
@@ -57293,7 +57293,7 @@ std.zig.CompressDebugSections.none	tag	no
 std.zig.CompressDebugSections.zlib	tag	no
 std.zig.CompressDebugSections.zstd	tag	no
 std.zig.EmitArtifact	enum	yes
-"std.zig.EmitArtifact.@""asm"""	tag	no
+std.zig.EmitArtifact.@"asm"	tag	no
 std.zig.EmitArtifact.bin	tag	no
 std.zig.EmitArtifact.cacheName	fn	yes
 std.zig.EmitArtifact.compiler_rt_dyn_lib	tag	no
@@ -57625,10 +57625,10 @@ std.zig.Server.serveU32Message	fn	no
 std.zig.Server.serveU64Message	fn	no
 std.zig.Server.std	modref	no
 std.zig.SimpleComptimeReason	enum	no
-"std.zig.SimpleComptimeReason.@""addrspace"""	tag	no
-"std.zig.SimpleComptimeReason.@""align"""	tag	no
-"std.zig.SimpleComptimeReason.@""callconv"""	tag	no
-"std.zig.SimpleComptimeReason.@""linksection"""	tag	no
+std.zig.SimpleComptimeReason.@"addrspace"	tag	no
+std.zig.SimpleComptimeReason.@"align"	tag	no
+std.zig.SimpleComptimeReason.@"callconv"	tag	no
+std.zig.SimpleComptimeReason.@"linksection"	tag	no
 std.zig.SimpleComptimeReason.array_length	tag	no
 std.zig.SimpleComptimeReason.array_mul_factor	tag	no
 std.zig.SimpleComptimeReason.array_sentinel	tag	no
@@ -57997,13 +57997,13 @@ std.zig.Zir.Inst.CondBr.condition	field	no
 std.zig.Zir.Inst.CondBr.else_body_len	field	no
 std.zig.Zir.Inst.CondBr.then_body_len	field	no
 std.zig.Zir.Inst.Data	union	yes
-"std.zig.Zir.Inst.Data.@""break"""	field	no
-"std.zig.Zir.Inst.Data.@""defer"""	field	no
-"std.zig.Zir.Inst.Data.@""unreachable"""	field	no
+std.zig.Zir.Inst.Data.@"break"	field	no
+std.zig.Zir.Inst.Data.@"defer"	field	no
+std.zig.Zir.Inst.Data.@"unreachable"	field	no
 std.zig.Zir.Inst.Data.FieldEnum	enum	yes
-"std.zig.Zir.Inst.Data.FieldEnum.@""break"""	tag	no
-"std.zig.Zir.Inst.Data.FieldEnum.@""defer"""	tag	no
-"std.zig.Zir.Inst.Data.FieldEnum.@""unreachable"""	tag	no
+std.zig.Zir.Inst.Data.FieldEnum.@"break"	tag	no
+std.zig.Zir.Inst.Data.FieldEnum.@"defer"	tag	no
+std.zig.Zir.Inst.Data.FieldEnum.@"unreachable"	tag	no
 std.zig.Zir.Inst.Data.FieldEnum.bin	tag	no
 std.zig.Zir.Inst.Data.FieldEnum.dbg_stmt	tag	no
 std.zig.Zir.Inst.Data.FieldEnum.declaration	tag	no
@@ -58055,10 +58055,10 @@ std.zig.Zir.Inst.Declaration.Bodies.type_body	field	no
 std.zig.Zir.Inst.Declaration.Bodies.value_body	field	no
 std.zig.Zir.Inst.Declaration.Flags	struct	no
 std.zig.Zir.Inst.Declaration.Flags.Id	enum	no
-"std.zig.Zir.Inst.Declaration.Flags.Id.@""comptime"""	tag	no
-"std.zig.Zir.Inst.Declaration.Flags.Id.@""const"""	tag	no
-"std.zig.Zir.Inst.Declaration.Flags.Id.@""test"""	tag	no
-"std.zig.Zir.Inst.Declaration.Flags.Id.@""var"""	tag	no
+std.zig.Zir.Inst.Declaration.Flags.Id.@"comptime"	tag	no
+std.zig.Zir.Inst.Declaration.Flags.Id.@"const"	tag	no
+std.zig.Zir.Inst.Declaration.Flags.Id.@"test"	tag	no
+std.zig.Zir.Inst.Declaration.Flags.Id.@"var"	tag	no
 std.zig.Zir.Inst.Declaration.Flags.Id.const_simple	tag	no
 std.zig.Zir.Inst.Declaration.Flags.Id.const_typed	tag	no
 std.zig.Zir.Inst.Declaration.Flags.Id.decltest	tag	no
@@ -58098,22 +58098,22 @@ std.zig.Zir.Inst.Declaration.Flags.id	field	no
 std.zig.Zir.Inst.Declaration.Flags.src_column	field	no
 std.zig.Zir.Inst.Declaration.Flags.src_line	field	no
 std.zig.Zir.Inst.Declaration.Name	enum	no
-"std.zig.Zir.Inst.Declaration.Name.@""comptime"""	tag	no
+std.zig.Zir.Inst.Declaration.Name.@"comptime"	tag	no
 std.zig.Zir.Inst.Declaration.Name._	tag	yes
 std.zig.Zir.Inst.Declaration.Name.isNamedTest	fn	no
 std.zig.Zir.Inst.Declaration.Name.toString	fn	no
 std.zig.Zir.Inst.Declaration.Name.unnamed_test	tag	no
 std.zig.Zir.Inst.Declaration.Unwrapped	struct	no
 std.zig.Zir.Inst.Declaration.Unwrapped.Kind	enum	no
-"std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@""comptime"""	tag	no
-"std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@""const"""	tag	no
-"std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@""test"""	tag	no
-"std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@""var"""	tag	no
+std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@"comptime"	tag	no
+std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@"const"	tag	no
+std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@"test"	tag	no
+std.zig.Zir.Inst.Declaration.Unwrapped.Kind.@"var"	tag	no
 std.zig.Zir.Inst.Declaration.Unwrapped.Kind.decltest	tag	no
 std.zig.Zir.Inst.Declaration.Unwrapped.Kind.unnamed_test	tag	no
 std.zig.Zir.Inst.Declaration.Unwrapped.Linkage	enum	no
-"std.zig.Zir.Inst.Declaration.Unwrapped.Linkage.@""export"""	tag	no
-"std.zig.Zir.Inst.Declaration.Unwrapped.Linkage.@""extern"""	tag	no
+std.zig.Zir.Inst.Declaration.Unwrapped.Linkage.@"export"	tag	no
+std.zig.Zir.Inst.Declaration.Unwrapped.Linkage.@"extern"	tag	no
 std.zig.Zir.Inst.Declaration.Unwrapped.Linkage.normal	tag	no
 std.zig.Zir.Inst.Declaration.Unwrapped.addrspace_body	field	no
 std.zig.Zir.Inst.Declaration.Unwrapped.align_body	field	no
@@ -58165,7 +58165,7 @@ std.zig.Zir.Inst.Export	struct	no
 std.zig.Zir.Inst.Export.exported	field	no
 std.zig.Zir.Inst.Export.options	field	no
 std.zig.Zir.Inst.Extended	enum	yes
-"std.zig.Zir.Inst.Extended.@""asm"""	tag	yes
+std.zig.Zir.Inst.Extended.@"asm"	tag	yes
 std.zig.Zir.Inst.Extended.InstData	struct	no
 std.zig.Zir.Inst.Extended.InstData.opcode	field	no
 std.zig.Zir.Inst.Extended.InstData.operand	field	no
@@ -58653,12 +58653,12 @@ std.zig.Zir.Inst.SwitchBlock.ProngInfo.is_inline	field	no
 std.zig.Zir.Inst.SwitchBlock.bits	field	no
 std.zig.Zir.Inst.SwitchBlock.raw_operand	field	yes
 std.zig.Zir.Inst.Tag	enum	yes
-"std.zig.Zir.Inst.Tag.@""break"""	tag	yes
-"std.zig.Zir.Inst.Tag.@""defer"""	tag	yes
-"std.zig.Zir.Inst.Tag.@""export"""	tag	yes
-"std.zig.Zir.Inst.Tag.@""resume"""	tag	yes
-"std.zig.Zir.Inst.Tag.@""try"""	tag	yes
-"std.zig.Zir.Inst.Tag.@""unreachable"""	tag	yes
+std.zig.Zir.Inst.Tag.@"break"	tag	yes
+std.zig.Zir.Inst.Tag.@"defer"	tag	yes
+std.zig.Zir.Inst.Tag.@"export"	tag	yes
+std.zig.Zir.Inst.Tag.@"resume"	tag	yes
+std.zig.Zir.Inst.Tag.@"try"	tag	yes
+std.zig.Zir.Inst.Tag.@"unreachable"	tag	yes
 std.zig.Zir.Inst.Tag.abs	tag	yes
 std.zig.Zir.Inst.Tag.add	tag	yes
 std.zig.Zir.Inst.Tag.add_sat	tag	yes
@@ -58923,8 +58923,8 @@ std.zig.Zir.Inst.UnNode.node	field	no
 std.zig.Zir.Inst.UnNode.operand	field	no
 std.zig.Zir.Inst.UnionDecl	struct	yes
 std.zig.Zir.Inst.UnionDecl.Kind	enum	no
-"std.zig.Zir.Inst.UnionDecl.Kind.@""extern"""	tag	yes
-"std.zig.Zir.Inst.UnionDecl.Kind.@""packed"""	tag	yes
+std.zig.Zir.Inst.UnionDecl.Kind.@"extern"	tag	yes
+std.zig.Zir.Inst.UnionDecl.Kind.@"packed"	tag	yes
 std.zig.Zir.Inst.UnionDecl.Kind.auto	tag	yes
 std.zig.Zir.Inst.UnionDecl.Kind.hasArgType	fn	no
 std.zig.Zir.Inst.UnionDecl.Kind.layout	fn	no
@@ -59035,7 +59035,7 @@ std.zig.Zir.UnwrappedSwitchBlock.Case.Else.index	field	no
 std.zig.Zir.UnwrappedSwitchBlock.Case.Else.is_inline	field	no
 std.zig.Zir.UnwrappedSwitchBlock.Case.Else.is_simple_noreturn	field	no
 std.zig.Zir.UnwrappedSwitchBlock.Case.Index	struct	no
-"std.zig.Zir.UnwrappedSwitchBlock.Case.Index.@""else"""	const	no
+std.zig.Zir.UnwrappedSwitchBlock.Case.Index.@"else"	const	no
 std.zig.Zir.UnwrappedSwitchBlock.Case.Index.kind	field	no
 std.zig.Zir.UnwrappedSwitchBlock.Case.Index.value	field	no
 std.zig.Zir.UnwrappedSwitchBlock.Case.Iterator	struct	no
@@ -59277,7 +59277,7 @@ std.zig.assert	alias	no
 std.zig.binNameAlloc	fn	yes
 std.zig.c_translation	struct	no
 std.zig.c_translation.builtins	ns	no
-"std.zig.c_translation.builtins.@""unreachable"""	fn	no
+std.zig.c_translation.builtins.@"unreachable"	fn	no
 std.zig.c_translation.builtins.abs	fn	yes
 std.zig.c_translation.builtins.assume	fn	no
 std.zig.c_translation.builtins.bswap16	fn	no
@@ -59598,9 +59598,9 @@ std.zig.llvm.Builder.AtomicOrdering.release	tag	no
 std.zig.llvm.Builder.AtomicOrdering.seq_cst	tag	no
 std.zig.llvm.Builder.AtomicOrdering.unordered	tag	no
 std.zig.llvm.Builder.Attribute	union	no
-"std.zig.llvm.Builder.Attribute.@""align"""	field	no
-"std.zig.llvm.Builder.Attribute.@""noalias"""	field	no
-"std.zig.llvm.Builder.Attribute.@""noinline"""	field	no
+std.zig.llvm.Builder.Attribute.@"align"	field	no
+std.zig.llvm.Builder.Attribute.@"noalias"	field	no
+std.zig.llvm.Builder.Attribute.@"noinline"	field	no
 std.zig.llvm.Builder.Attribute.AllocKind	struct	no
 std.zig.llvm.Builder.Attribute.AllocKind._	field	no
 std.zig.llvm.Builder.Attribute.AllocKind.aligned	field	no
@@ -59657,9 +59657,9 @@ std.zig.llvm.Builder.Attribute.Index.getKind	fn	no
 std.zig.llvm.Builder.Attribute.Index.toAttribute	fn	no
 std.zig.llvm.Builder.Attribute.Index.toStorage	fn	no
 std.zig.llvm.Builder.Attribute.Kind	enum	no
-"std.zig.llvm.Builder.Attribute.Kind.@""align"""	tag	no
-"std.zig.llvm.Builder.Attribute.Kind.@""noalias"""	tag	no
-"std.zig.llvm.Builder.Attribute.Kind.@""noinline"""	tag	no
+std.zig.llvm.Builder.Attribute.Kind.@"align"	tag	no
+std.zig.llvm.Builder.Attribute.Kind.@"noalias"	tag	no
+std.zig.llvm.Builder.Attribute.Kind.@"noinline"	tag	no
 std.zig.llvm.Builder.Attribute.Kind._	tag	no
 std.zig.llvm.Builder.Attribute.Kind.alignstack	tag	no
 std.zig.llvm.Builder.Attribute.Kind.allocalign	tag	no
@@ -59872,8 +59872,8 @@ std.zig.llvm.Builder.Attributes.format	fn	no
 std.zig.llvm.Builder.Attributes.none	tag	no
 std.zig.llvm.Builder.Attributes.slice	fn	no
 std.zig.llvm.Builder.BinaryOpcode	enum	no
-"std.zig.llvm.Builder.BinaryOpcode.@""and"""	tag	no
-"std.zig.llvm.Builder.BinaryOpcode.@""or"""	tag	no
+std.zig.llvm.Builder.BinaryOpcode.@"and"	tag	no
+std.zig.llvm.Builder.BinaryOpcode.@"or"	tag	no
 std.zig.llvm.Builder.BinaryOpcode.add	tag	no
 std.zig.llvm.Builder.BinaryOpcode.ashr	tag	no
 std.zig.llvm.Builder.BinaryOpcode.lshr	tag	no
@@ -59984,8 +59984,8 @@ std.zig.llvm.Builder.CmpPredicate.icmp_ugt	tag	no
 std.zig.llvm.Builder.CmpPredicate.icmp_ule	tag	no
 std.zig.llvm.Builder.CmpPredicate.icmp_ult	tag	no
 std.zig.llvm.Builder.Constant	enum	no
-"std.zig.llvm.Builder.Constant.@""0"""	tag	no
-"std.zig.llvm.Builder.Constant.@""1"""	tag	no
+std.zig.llvm.Builder.Constant.@"0"	tag	no
+std.zig.llvm.Builder.Constant.@"1"	tag	no
 std.zig.llvm.Builder.Constant.Aggregate	struct	no
 std.zig.llvm.Builder.Constant.Aggregate.type	field	no
 std.zig.llvm.Builder.Constant.Assembly	struct	no
@@ -60051,27 +60051,27 @@ std.zig.llvm.Builder.Constant.Splat	struct	no
 std.zig.llvm.Builder.Constant.Splat.type	field	no
 std.zig.llvm.Builder.Constant.Splat.value	field	no
 std.zig.llvm.Builder.Constant.Tag	enum	no
-"std.zig.llvm.Builder.Constant.Tag.@""add nsw"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""add nuw"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm alignstack inteldialect unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm alignstack inteldialect"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm alignstack unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm alignstack"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm inteldialect unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm inteldialect"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect alignstack inteldialect unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect alignstack inteldialect"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect alignstack unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect alignstack"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect inteldialect unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect inteldialect"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm sideeffect"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm unwind"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""asm"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""getelementptr inbounds"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""sub nsw"""	tag	no
-"std.zig.llvm.Builder.Constant.Tag.@""sub nuw"""	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"add nsw"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"add nuw"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm alignstack inteldialect unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm alignstack inteldialect"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm alignstack unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm alignstack"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm inteldialect unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm inteldialect"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect alignstack inteldialect unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect alignstack inteldialect"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect alignstack unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect alignstack"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect inteldialect unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect inteldialect"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm sideeffect"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm unwind"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"asm"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"getelementptr inbounds"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"sub nsw"	tag	no
+std.zig.llvm.Builder.Constant.Tag.@"sub nuw"	tag	no
 std.zig.llvm.Builder.Constant.Tag.add	tag	no
 std.zig.llvm.Builder.Constant.Tag.addrspacecast	tag	no
 std.zig.llvm.Builder.Constant.Tag.array	tag	no
@@ -60217,8 +60217,8 @@ std.zig.llvm.Builder.Function.Instruction.Alloca.len	field	no
 std.zig.llvm.Builder.Function.Instruction.Alloca.type	field	no
 std.zig.llvm.Builder.Function.Instruction.AtomicRmw	struct	no
 std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation	enum	no
-"std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.@""and"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.@""or"""	tag	no
+std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.@"and"	tag	no
+std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.@"or"	tag	no
 std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.add	tag	no
 std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.fadd	tag	no
 std.zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation.fmax	tag	no
@@ -60240,7 +60240,7 @@ std.zig.llvm.Builder.Function.Instruction.Binary	struct	no
 std.zig.llvm.Builder.Function.Instruction.Binary.lhs	field	no
 std.zig.llvm.Builder.Function.Instruction.Binary.rhs	field	no
 std.zig.llvm.Builder.Function.Instruction.BrCond	struct	no
-"std.zig.llvm.Builder.Function.Instruction.BrCond.@""else"""	field	no
+std.zig.llvm.Builder.Function.Instruction.BrCond.@"else"	field	no
 std.zig.llvm.Builder.Function.Instruction.BrCond.Weights	enum	no
 std.zig.llvm.Builder.Function.Instruction.BrCond.Weights._	tag	no
 std.zig.llvm.Builder.Function.Instruction.BrCond.Weights.fromMetadata	fn	no
@@ -60345,89 +60345,89 @@ std.zig.llvm.Builder.Function.Instruction.Switch.default	field	no
 std.zig.llvm.Builder.Function.Instruction.Switch.val	field	no
 std.zig.llvm.Builder.Function.Instruction.Switch.weights	field	no
 std.zig.llvm.Builder.Function.Instruction.Tag	enum	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""add nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""add nuw nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""add nuw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""alloca inalloca"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""and"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""ashr exact"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""call fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""cmpxchg weak"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fadd fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp false"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast false"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast oeq"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast oge"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ogt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ole"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast olt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast one"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ord"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast true"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ueq"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast uge"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ugt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ule"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast ult"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast une"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp fast uno"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp oeq"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp oge"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ogt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ole"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp olt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp one"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ord"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp true"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ueq"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp uge"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ugt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ule"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp ult"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp une"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fcmp uno"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fdiv fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fmul fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fneg fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""frem fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""fsub fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""getelementptr inbounds"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp eq"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp ne"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp sge"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp sgt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp sle"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp slt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp uge"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp ugt"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp ule"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""icmp ult"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""load atomic"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""lshr exact"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""mul nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""mul nuw nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""mul nuw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""musttail call fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""musttail call"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""notail call fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""notail call"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""or"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""phi fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""ret void"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""sdiv exact"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""select fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""shl nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""shl nuw nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""shl nuw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""store atomic"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""sub nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""sub nuw nsw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""sub nuw"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""switch"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""tail call fast"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""tail call"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""udiv exact"""	tag	no
-"std.zig.llvm.Builder.Function.Instruction.Tag.@""unreachable"""	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"add nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"add nuw nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"add nuw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"alloca inalloca"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"and"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"ashr exact"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"call fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"cmpxchg weak"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fadd fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp false"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast false"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast oeq"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast oge"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ogt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ole"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast olt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast one"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ord"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast true"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ueq"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast uge"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ugt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ule"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast ult"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast une"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp fast uno"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp oeq"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp oge"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ogt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ole"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp olt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp one"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ord"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp true"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ueq"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp uge"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ugt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ule"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp ult"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp une"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fcmp uno"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fdiv fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fmul fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fneg fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"frem fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"fsub fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"getelementptr inbounds"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp eq"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp ne"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp sge"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp sgt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp sle"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp slt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp uge"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp ugt"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp ule"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"icmp ult"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"load atomic"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"lshr exact"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"mul nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"mul nuw nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"mul nuw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"musttail call fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"musttail call"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"notail call fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"notail call"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"or"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"phi fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"ret void"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"sdiv exact"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"select fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"shl nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"shl nuw nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"shl nuw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"store atomic"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"sub nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"sub nuw nsw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"sub nuw"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"switch"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"tail call fast"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"tail call"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"udiv exact"	tag	no
+std.zig.llvm.Builder.Function.Instruction.Tag.@"unreachable"	tag	no
 std.zig.llvm.Builder.Function.Instruction.Tag.add	tag	no
 std.zig.llvm.Builder.Function.Instruction.Tag.addrspacecast	tag	no
 std.zig.llvm.Builder.Function.Instruction.Tag.alloca	tag	no
@@ -60596,79 +60596,79 @@ std.zig.llvm.Builder.IntegerCondition.ugt	tag	no
 std.zig.llvm.Builder.IntegerCondition.ule	tag	no
 std.zig.llvm.Builder.IntegerCondition.ult	tag	no
 std.zig.llvm.Builder.Intrinsic	enum	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.dispatch.ptr"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.workgroup.id.x"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.workgroup.id.y"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.workgroup.id.z"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.workitem.id.x"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.workitem.id.y"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""amdgcn.workitem.id.z"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""arithmetic.fence"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""codeview.annotation"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""dbg.declare"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""dbg.value"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""expect.with.probability"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""is.constant"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""is.fpclass"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""load.relative"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""memcpy.inline"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""memset.inline"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.ctaid.x"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.ctaid.y"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.ctaid.z"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.ntid.x"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.ntid.y"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.ntid.z"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.tid.x"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.tid.y"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""nvvm.read.ptx.sreg.tid.z"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""ptr.annotation"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""sadd.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""sadd.with.overflow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""sdiv.fix"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""sdiv.fix.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""smul.fix"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""smul.fix.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""smul.with.overflow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""ssa.copy"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""sshl.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""ssub.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""ssub.with.overflow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""thread.pointer"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""threadlocal.address"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""type.checked.load"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""type.checked.load.relative"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""type.test"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""uadd.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""uadd.with.overflow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""udiv.fix"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""udiv.fix.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""umul.fix"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""umul.fix.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""umul.with.overflow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""ushl.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""usub.sat"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""usub.with.overflow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""var.annotation"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.extract"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.insert"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.add"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.and"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.fadd"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.fmax"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.fmaximum"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.fmin"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.fminimum"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.fmul"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.mul"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.or"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.smax"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.smin"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.umax"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.umin"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""vector.reduce.xor"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""wasm.memory.grow"""	tag	no
-"std.zig.llvm.Builder.Intrinsic.@""wasm.memory.size"""	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.dispatch.ptr"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.workgroup.id.x"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.workgroup.id.y"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.workgroup.id.z"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.workitem.id.x"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.workitem.id.y"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"amdgcn.workitem.id.z"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"arithmetic.fence"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"codeview.annotation"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"dbg.declare"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"dbg.value"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"expect.with.probability"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"is.constant"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"is.fpclass"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"load.relative"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"memcpy.inline"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"memset.inline"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.ctaid.x"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.ctaid.y"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.ctaid.z"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.ntid.x"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.ntid.y"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.ntid.z"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.tid.x"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.tid.y"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"nvvm.read.ptx.sreg.tid.z"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"ptr.annotation"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"sadd.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"sadd.with.overflow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"sdiv.fix"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"sdiv.fix.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"smul.fix"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"smul.fix.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"smul.with.overflow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"ssa.copy"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"sshl.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"ssub.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"ssub.with.overflow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"thread.pointer"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"threadlocal.address"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"type.checked.load"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"type.checked.load.relative"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"type.test"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"uadd.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"uadd.with.overflow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"udiv.fix"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"udiv.fix.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"umul.fix"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"umul.fix.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"umul.with.overflow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"ushl.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"usub.sat"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"usub.with.overflow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"var.annotation"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.extract"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.insert"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.add"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.and"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.fadd"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.fmax"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.fmaximum"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.fmin"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.fminimum"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.fmul"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.mul"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.or"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.smax"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.smin"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.umax"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.umin"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"vector.reduce.xor"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"wasm.memory.grow"	tag	no
+std.zig.llvm.Builder.Intrinsic.@"wasm.memory.size"	tag	no
 std.zig.llvm.Builder.Intrinsic.Signature	struct	no
 std.zig.llvm.Builder.Intrinsic.Signature.Parameter	struct	no
 std.zig.llvm.Builder.Intrinsic.Signature.Parameter.Kind	union	no
@@ -60777,7 +60777,7 @@ std.zig.llvm.Builder.MemoryAccessInfo.failure_ordering	field	no
 std.zig.llvm.Builder.MemoryAccessInfo.success_ordering	field	no
 std.zig.llvm.Builder.MemoryAccessInfo.sync_scope	field	no
 std.zig.llvm.Builder.MemoryAccessKind	enum	no
-"std.zig.llvm.Builder.MemoryAccessKind.@""volatile"""	tag	no
+std.zig.llvm.Builder.MemoryAccessKind.@"volatile"	tag	no
 std.zig.llvm.Builder.MemoryAccessKind.Prefixed	struct	no
 std.zig.llvm.Builder.MemoryAccessKind.Prefixed.format	fn	no
 std.zig.llvm.Builder.MemoryAccessKind.Prefixed.memory_access_kind	field	no
@@ -60870,7 +60870,7 @@ std.zig.llvm.Builder.Metadata.File.filename	field	no
 std.zig.llvm.Builder.Metadata.Formatter	struct	no
 std.zig.llvm.Builder.Metadata.Formatter.FormatData	struct	no
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node	union	no
-"std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node.@""inline"""	field	no
+std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node.@"inline"	field	no
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node.ValueData	struct	no
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node.ValueData.function	field	no
 std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node.ValueData.value	field	no
@@ -61006,15 +61006,15 @@ std.zig.llvm.Builder.Metadata.Subrange.lower_bound	field	no
 std.zig.llvm.Builder.Metadata.SubroutineType	struct	no
 std.zig.llvm.Builder.Metadata.SubroutineType.types_tuple	field	no
 std.zig.llvm.Builder.Metadata.Tag	enum	no
-"std.zig.llvm.Builder.Metadata.Tag.@""compile_unit optimized"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""global_var local"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram definition"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram local definition"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram local"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram optimized definition"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram optimized local definition"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram optimized local"""	tag	no
-"std.zig.llvm.Builder.Metadata.Tag.@""subprogram optimized"""	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"compile_unit optimized"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"global_var local"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram definition"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram local definition"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram local"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram optimized definition"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram optimized local definition"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram optimized local"	tag	no
+std.zig.llvm.Builder.Metadata.Tag.@"subprogram optimized"	tag	no
 std.zig.llvm.Builder.Metadata.Tag.basic_bool_type	tag	no
 std.zig.llvm.Builder.Metadata.Tag.basic_float_type	tag	no
 std.zig.llvm.Builder.Metadata.Tag.basic_signed_type	tag	no
@@ -61144,7 +61144,7 @@ std.zig.llvm.Builder.ThreadLocal.initialexec	tag	no
 std.zig.llvm.Builder.ThreadLocal.localdynamic	tag	no
 std.zig.llvm.Builder.ThreadLocal.localexec	tag	no
 std.zig.llvm.Builder.Type	enum	no
-"std.zig.llvm.Builder.Type.@""ptr addrspace(4)"""	tag	no
+std.zig.llvm.Builder.Type.@"ptr addrspace(4)"	tag	no
 std.zig.llvm.Builder.Type.Array	struct	no
 std.zig.llvm.Builder.Type.Array.child	field	no
 std.zig.llvm.Builder.Type.Array.len_hi	field	no
@@ -61191,7 +61191,7 @@ std.zig.llvm.Builder.Type.Simple.x86_fp80	tag	no
 std.zig.llvm.Builder.Type.Simple.x86_mmx	tag	no
 std.zig.llvm.Builder.Type.Structure	struct	no
 std.zig.llvm.Builder.Type.Structure.Kind	enum	no
-"std.zig.llvm.Builder.Type.Structure.Kind.@""packed"""	tag	no
+std.zig.llvm.Builder.Type.Structure.Kind.@"packed"	tag	no
 std.zig.llvm.Builder.Type.Structure.Kind.normal	tag	no
 std.zig.llvm.Builder.Type.Structure.fields_len	field	no
 std.zig.llvm.Builder.Type.Tag	enum	no
@@ -61286,8 +61286,8 @@ std.zig.llvm.Builder.UnnamedAddr.format	fn	no
 std.zig.llvm.Builder.UnnamedAddr.local_unnamed_addr	tag	no
 std.zig.llvm.Builder.UnnamedAddr.unnamed_addr	tag	no
 std.zig.llvm.Builder.Value	enum	no
-"std.zig.llvm.Builder.Value.@""0"""	tag	no
-"std.zig.llvm.Builder.Value.@""1"""	tag	no
+std.zig.llvm.Builder.Value.@"0"	tag	no
+std.zig.llvm.Builder.Value.@"1"	tag	no
 std.zig.llvm.Builder.Value.FormatData	struct	no
 std.zig.llvm.Builder.Value.FormatData.builder	field	no
 std.zig.llvm.Builder.Value.FormatData.flags	field	no
@@ -61337,8 +61337,8 @@ std.zig.llvm.Builder.Visibility.fromSymbolVisibility	fn	no
 std.zig.llvm.Builder.Visibility.hidden	tag	no
 std.zig.llvm.Builder.Visibility.protected	tag	no
 std.zig.llvm.Builder.WipFunction	struct	no
-"std.zig.llvm.Builder.WipFunction.@""switch"""	fn	no
-"std.zig.llvm.Builder.WipFunction.@""unreachable"""	fn	no
+std.zig.llvm.Builder.WipFunction.@"switch"	fn	no
+std.zig.llvm.Builder.WipFunction.@"unreachable"	fn	no
 std.zig.llvm.Builder.WipFunction.Block	struct	no
 std.zig.llvm.Builder.WipFunction.Block.Index	enum	no
 std.zig.llvm.Builder.WipFunction.Block.Index._	tag	no

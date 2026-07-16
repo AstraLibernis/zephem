@@ -1,9 +1,10 @@
-<!-- GENERATED from templates/data.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
+<!-- GENERATED from templates/data.tmpl.md by `zephem docs` — edit the template, not this file. -->
 # data/ — the dataset layer
 
-Toolchain: **Zig** does the extraction (parsing std source, reflecting it through the
-compiler), **Nushell** does the glue and the querying. No Python, no duckdb — the TSV
-files are the source of truth, and Nushell queries them natively.
+Toolchain: **Zig, end to end.** The three engines extract (parsing std source, reflecting it
+through the compiler); the `src/` layer does the glue and the querying (the `zephem` binary).
+No Nushell, no Python, no duckdb — the TSV files are the source of truth, queried by
+`zephem look`/`map` (or any tool: they're plain TSV).
 
 The snapshot lives in `std/`, pinned to **zig 0.16.0** (`std/PINNED`), split into two groups
 by *where each fact comes from*:
@@ -11,7 +12,7 @@ by *where each fact comes from*:
 | folder | what it holds | producer | trust |
 |---|---|---|---|
 | **[`std/extracted/`](std/extracted/)** | literal facts read straight from Zig — the parser's shape model (tree, attributes, edges) and the compiler's resolved view | `parse/` + `reflect/` | if a row is wrong, **Zig** said so |
-| **[`std/derived/`](std/derived/)** | joins, comparisons, and reshapes over the extracted files — TOC, consensus, canon, doc-coverage, signature shapes, call-card | `derive/` + `scripts/` | every row **traces back** to extracted rows; nothing invented |
+| **[`std/derived/`](std/derived/)** | joins, comparisons, and reshapes over the extracted files — TOC, consensus, canon, doc-coverage, signature shapes, call-card | `derive/` + `src/` | every row **traces back** to extracted rows; nothing invented |
 
 Each folder has its own README documenting every dataset it contains (columns, counts,
 and the self-check that guards it). The clean line: **extracted/ is what Zig says;
@@ -46,27 +47,26 @@ couldn't build them). **Nothing is computed twice.**
 
 ## Regenerate
 
-```nu
-nu scripts/build_std.nu          # parse → index → verify (extracted/{nodes,attrs,edges}, derived/index)
-nu scripts/build_depth.nu --commit   # reflect sweep → extracted/{resolved,poison,status} (slow; separate)
-nu scripts/build_consensus.nu    # and build_canon / build_doccov / build_sigshape / build_callcard → derived/
+```sh
+zig build std                # parse → index → verify (extracted/{nodes,attrs,edges}, derived/index)
+zephem depth --commit        # reflect sweep → extracted/{resolved,poison,status} (slow; separate)
+zig build overlays           # canon / consensus / doccov / sigshape / callcard → derived/
 ```
 
 Every step is deterministic (same Zig → byte-identical) and idempotent
 (`git diff --exit-code` clean), guarded by a `SHA256SUMS` manifest (main + per-slice
-sidecars) and a matching `verify_*.nu`.
+sidecars), each with its own `--check` rebuild proof.
 
-## Query examples (Nushell)
+## Query examples
 
-```nu
-# every source file, one subtree, or the kind breakdown (the map is in extracted/)
-open data/std/extracted/nodes.tsv | where kind == 'ns'
-open data/std/extracted/nodes.tsv | where path =~ '^std\.crypto\.'
-open data/std/extracted/nodes.tsv | group-by kind | items {|k,v| {kind:$k n:($v|length)}} | sort-by n -r
+```sh
+# search or browse the map with the zephem binary
+zephem map show std.crypto        # one subtree, straight from the table of contents
+zephem look parse int             # keyword search over name/path/sig/doc/resolved type
 
-# jump straight to one module via the table of contents (derived/)
-let b = (open data/std/derived/index.tsv | where path == 'std.mem' | first)
-open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span
+# the datasets are plain TSV — query with any tool
+awk -F'\t' '$2=="ns"' data/std/extracted/nodes.tsv                                          # every source file
+awk -F'\t' '{c[$2]++} END{for (k in c) print c[k], k}' data/std/extracted/nodes.tsv | sort -rn   # kind breakdown
 ```
 
 Per-dataset columns, purpose, and the self-check that guards each live in the folder READMEs:

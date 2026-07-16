@@ -1,4 +1,6 @@
-//! parse/build.zig — the parser: one walk over the source tree emitting the shape model.
+//! parse/build.zig — the parser engine: one walk over the source tree emitting the shape model.
+//! Imported as the `parse` module and driven in-process by `zephem std` via `run` (no `zig run`
+//! handoff). The walk/resolve logic is the heart of the read-it engine.
 //!
 //! One walk, node-centric: at each node we pull the Tree, and every Edge that node offers, then
 //! RESOLVE each edge's target to mark WHERE it points — inside its own container, elsewhere in the
@@ -64,7 +66,7 @@ const Factory = union(enum) { none, descend: Ast.Node.Index, delegate: []const u
 /// (drop the trailing `()`); otherwise drop the last dotted segment, treating a `.` inside a `@"…"`
 /// quoted name as part of the name, not a separator — so all three `parent` readers (here,
 /// `index.zig`, `verify_std.nu`) agree, incl. names like `Version.@"HTTP/1.1"`.
-fn parent(path: []const u8) []const u8 {
+pub fn parent(path: []const u8) []const u8 {
     if (std.mem.endsWith(u8, path, "()")) return path[0 .. path.len - 2];
     var inq = false;
     var last_dot: ?usize = null;
@@ -672,18 +674,16 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     try w.node(cp, "const", name, vis);
 }
 
-pub fn main(init: std.process.Init) !void {
-    var arena_state = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena_state.deinit();
-    const arena = arena_state.allocator();
-    const io = init.io;
+/// Scope tallies from edge resolution — returned so the caller can report without re-reading.
+pub const Stats = struct {
+    nodes: usize,
+    edges: usize,
+    scope: [@typeInfo(Scope).@"enum".fields.len]usize,
+};
 
-    const args = try init.minimal.args.toSlice(arena);
-    const root = if (args.len > 1) args[1] else "/usr/lib/zig/std/std.zig";
-    const nodes_out = if (args.len > 2) args[2] else "nodes.tsv";
-    const edges_out = if (args.len > 3) args[3] else "edges.tsv";
-    const attrs_out = if (args.len > 4) args[4] else "attrs.tsv";
-
+/// Walk `root` (a std.zig path) and write the three TSV streams. `arena` must outlive nothing past
+/// return (all working state is arena-scoped); pass a fresh arena per call.
+pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []const u8, edges_out: []const u8, attrs_out: []const u8) !Stats {
     const src = try std.Io.Dir.cwd().readFileAllocOptions(io, root, arena, .unlimited, .of(u8), 0);
     var ast = try Ast.parse(arena, src, .zig);
 
@@ -753,4 +753,6 @@ pub fn main(init: std.process.Init) !void {
         counts[@intFromEnum(Scope.unresolved)],
     });
     try s.flush();
+
+    return Stats{ .nodes = w.node_set.count(), .edges = w.edges.items.len, .scope = counts };
 }

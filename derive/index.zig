@@ -1,4 +1,6 @@
-//! index.zig — the "table of contents" for data/std/extracted/nodes.tsv.
+//! derive/index.zig — the transform engine's table of contents for extracted/nodes.tsv. Imported
+//! as the `derive` module and driven in-process by `zephem std` via `run`, which writes the index
+//! file directly. Reads no Zig — only the datasets.
 //!
 //! nodes.tsv (path · kind · name · vis) is emitted in pre-order DFS, so EVERY node's subtree is a
 //! single contiguous run of rows. This reads it and, for each container (a node that has children),
@@ -16,8 +18,6 @@
 //!
 //! Self-checking: the root's span must equal the whole file, and every container's span must equal
 //! 1 + Σ its direct children's spans — asserted before a row is written.
-//!
-//! Run: zig run derive/index.zig -- [nodes.tsv]   (default data/std/extracted/nodes.tsv)
 
 const std = @import("std");
 
@@ -44,15 +44,12 @@ fn depthOf(path: []const u8) u32 {
     return d;
 }
 
-pub fn main(init: std.process.Init) !void {
-    var arena_state = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena_state.deinit();
-    const arena = arena_state.allocator();
+pub const Stats = struct { containers: usize, rows: usize, max_depth: u32 };
 
-    const args = try init.minimal.args.toSlice(arena);
-    const in_path: []const u8 = if (args.len > 1) args[1] else "data/std/extracted/nodes.tsv";
-
-    const content = try std.Io.Dir.cwd().readFileAllocOptions(init.io, in_path, arena, .unlimited, .of(u8), 0);
+/// Read `in_path` (nodes.tsv) and write the table of contents to `out_path`. Self-checks the
+/// span recurrence (panics on violation — the data is our own and must be internally consistent).
+pub fn run(arena: std.mem.Allocator, io: std.Io, in_path: []const u8, out_path: []const u8) !Stats {
+    const content = try std.Io.Dir.cwd().readFileAllocOptions(io, in_path, arena, .unlimited, .of(u8), 0);
 
     var n: usize = 0;
     {
@@ -114,20 +111,20 @@ pub fn main(init: std.process.Init) !void {
         if (s != span[i]) std.debug.panic("span mismatch at {s}: {d} vs Σchildren {d}", .{ paths[i], span[i], s });
     }
 
+    const of = try std.Io.Dir.cwd().createFile(io, out_path, .{});
+    defer of.close(io);
     var wbuf: [1 << 16]u8 = undefined;
-    var fw = std.Io.File.stdout().writer(init.io, &wbuf);
+    var fw = of.writer(io, &wbuf);
     const w = &fw.interface;
     try w.print("path\tline\tspan\tdepth\tkind\tn_children\n", .{});
+    var max_depth: u32 = 0;
     i = 0;
     while (i < n) : (i += 1) {
         if (span[i] <= 1) continue;
+        if (depths[i] > max_depth) max_depth = depths[i];
         try w.print("{s}\t{d}\t{d}\t{d}\t{s}\t{d}\n", .{ paths[i], i + 2, span[i], depths[i], kinds[i], nch[i] });
     }
     try w.flush();
 
-    var ebuf: [256]u8 = undefined;
-    var ew = std.Io.File.stderr().writer(init.io, &ebuf);
-    const e = &ew.interface;
-    try e.print("index: {d} containers · root span {d} == {d} rows · recurrence ✓\n", .{ containers, span[0], n });
-    try e.flush();
+    return Stats{ .containers = containers, .rows = n, .max_depth = max_depth };
 }

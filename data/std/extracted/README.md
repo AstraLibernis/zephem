@@ -1,4 +1,4 @@
-<!-- GENERATED from templates/extracted.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
+<!-- GENERATED from templates/extracted.tmpl.md by `zephem docs` — edit the template, not this file. -->
 # extracted/ — literal facts from Zig
 
 Everything here is a **fact read straight out of Zig** — either from the source text
@@ -81,7 +81,7 @@ in a second pass against the walked node set. **54,666 edges**, five types:
 **48,094 of 54,666 edges (96% of the resolvable ones)** land on a
 node, primitive, or generic param; 2,020 stay unresolved.
 
-`verify_std.nu` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
+the backward check in `zephem std` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to
 a real node** — the links are valid.
 
@@ -110,7 +110,7 @@ factory containers, so poison is higher than the pub-only parser's was — each 
 `path · status · n_rows`. One row per container the sweep attempted; the verifier
 re-derives the buckets from this and reconciles them against `resolved`/`poison`.
 
-Verified by `verify_depth.nu` (conservation, registration vs the map, no duplicates).
+Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).
 The reflect sweep's wall time is machine-dependent (≈1 min on a 16-lane desktop,
 ≈13 min on a 3-core VM), so its rebuild harness is a separate task from `build_std`'s
 `--check` (see `PLAN.md`).

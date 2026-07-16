@@ -1,4 +1,4 @@
-<!-- GENERATED from templates/parse.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
+<!-- GENERATED from templates/parse.tmpl.md by `zephem docs` — edit the template, not this file. -->
 # zephem · parse — the faithful reader
 
 **`parse/` reads Zig as *text* and emits the shape model — three streams keyed by `path`.**
@@ -72,7 +72,7 @@ resolvable link rather than a copy).
 `std`'s children emerge `…BufSet, StaticStringMap, StaticStringMapWithEql, Deque…`, the
 non-alphabetical sequence in `std.zig`.
 
-**⑤ It proves itself.** `build.zig` emits forward; `../scripts/verify_std.nu` re-reads the three
+**⑤ It proves itself.** `build.zig` emits forward; the backward check in `zephem std` re-reads the three
 streams the other way and checks they reconcile: the Tree is **connected** (every non-root path's
 parent is a node), the kinds **partition**, every **attr keys onto a real node**, and every
 **`local`/`cross` edge resolves to a real node**. A dropped, doubled, or dangling row breaks a
@@ -93,8 +93,8 @@ root: `zig run` makes the entry's directory the module root, and an entry cannot
 
 ## 5. Running it
 
-```nu
-nu scripts/build_std.nu [--check]    # rebuild the three streams (+ the TOC via derive/), verify, record
+```sh
+zig build std        # or: zephem std [--check]  — rebuild the three streams (+ the TOC), verify, record
 ```
 
 ---
@@ -106,7 +106,7 @@ nu scripts/build_std.nu [--check]    # rebuild the three streams (+ the TOC via 
 - **[`../reflect/`](../reflect/)** — the **run-it** engine. `resolve.zig` reflects each
   container in an isolated subprocess to resolve real values/types → `resolved.tsv` (L5).
 - **`../derive/`** — **transforms datasets, reads no Zig.** `index.zig` builds the TOC
-  (`index.tsv`); the `../scripts/build_*.nu` overlays join Tree ⋈ reflect into the census
+  (`index.tsv`); the `src/` overlays (`zephem overlays`) join Tree ⋈ reflect into the census
   (`consensus.tsv`, `canon.tsv`, `callcard.tsv`, …).
 
 **Deferred edges** (preserved in git history, added back as their own layer once the base is

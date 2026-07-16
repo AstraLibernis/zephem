@@ -901,7 +901,7 @@ std.Io.Dispatch.AsyncClosure.entry	none	no	no
 std.Io.Dispatch.AsyncClosure.fromFiber	other	no	no
 std.Io.Dispatch.BatchOperationUserdata.fromErased	other	no	no
 std.Io.Dispatch.BatchOperationUserdata.toErased	other	no	no
-"std.Io.Dispatch.BatchWaiter.@""suspend"""	other	no	no
+std.Io.Dispatch.BatchWaiter.@"suspend"	other	no	no
 std.Io.Dispatch.BatchWaiter.signal	other	no	no
 std.Io.Dispatch.BatchWaiter.wake	other	no	no
 std.Io.Dispatch.Cancelable.acknowledge	other	yes	no
@@ -909,7 +909,7 @@ std.Io.Dispatch.Cancelable.async	other	no	no
 std.Io.Dispatch.Cancelable.enter	other	no	no
 std.Io.Dispatch.Cancelable.leave	other	no	no
 std.Io.Dispatch.Cancelable.requested	other	no	no
-"std.Io.Dispatch.Fiber.@""resume"""	other	no	no
+std.Io.Dispatch.Fiber.@"resume"	other	no	no
 std.Io.Dispatch.Fiber.CancelProtection.acknowledge	other	no	no
 std.Io.Dispatch.Fiber.CancelProtection.check	other	yes	no
 std.Io.Dispatch.Fiber.CancelProtection.recancel	other	no	no
@@ -2892,7 +2892,7 @@ std.Thread.UnsupportedImpl.getHandle	self	no	no
 std.Thread.UnsupportedImpl.join	self	no	no
 std.Thread.UnsupportedImpl.spawn	other	no	yes
 std.Thread.UnsupportedImpl.unsupported	other	no	yes
-"std.Thread.WasiThreadImpl.@""thread-spawn"""	other	no	no
+std.Thread.WasiThreadImpl.@"thread-spawn"	other	no	no
 std.Thread.WasiThreadImpl.__get_stack_pointer	none	no	no
 std.Thread.WasiThreadImpl.__set_stack_pointer	other	no	no
 std.Thread.WasiThreadImpl.__tls_align	none	no	no
@@ -3482,7 +3482,7 @@ std.c.chmod	other	no	no
 std.c.closedir	other	no	no
 std.c.closelog	none	no	no
 std.c.connect	other	no	no
-"std.c.darwin.@""close$NOCANCEL"""	other	no	no
+std.c.darwin.@"close$NOCANCEL"	other	no	no
 std.c.darwin.NSVersionOfRunTimeLibrary	other	no	no
 std.c.darwin.VM.MAKE_TAG	other	no	no
 std.c.darwin._NSGetExecutablePath	other	no	no
@@ -3830,11 +3830,11 @@ std.c.pread64	other	no	no
 std.c.preadv	other	no	no
 std.c.preadv64	other	no	no
 std.c.printf	other	no	no
-"std.c.private.@""fstat$INODE64"""	other	no	no
-"std.c.private.@""fstatat$INODE64"""	other	no	no
-"std.c.private.@""readdir$INODE64"""	other	no	no
-"std.c.private.@""realpath$DARWIN_EXTSN"""	other	no	no
-"std.c.private.@""stat$INODE64"""	other	no	no
+std.c.private.@"fstat$INODE64"	other	no	no
+std.c.private.@"fstatat$INODE64"	other	no	no
+std.c.private.@"readdir$INODE64"	other	no	no
+std.c.private.@"realpath$DARWIN_EXTSN"	other	no	no
+std.c.private.@"stat$INODE64"	other	no	no
 std.c.private.___errno	none	no	no
 std.c.private.__clock_getres50	other	no	no
 std.c.private.__clock_gettime50	other	no	no
@@ -7055,7 +7055,7 @@ std.macho.LoadCommandIterator.init	other	no	no
 std.macho.LoadCommandIterator.next	other	no	no
 std.macho.nlist_64.tentative	other	no	no
 std.macho.parseName	other	no	no
-"std.macho.section_64.@""type"""	other	no	no
+std.macho.section_64.@"type"	other	no	no
 std.macho.section_64.attrs	other	no	no
 std.macho.section_64.isCode	other	no	no
 std.macho.section_64.isDebug	other	no	no
@@ -10342,7 +10342,7 @@ std.zig.ZonGen.setNode	other	no	no
 std.zig.ZonGen.strLitAsString	other	no	no
 std.zig.ZonGen.strLitSizeHint	other	no	no
 std.zig.binNameAlloc	allocator	no	no
-"std.zig.c_translation.builtins.@""unreachable"""	none	no	no
+std.zig.c_translation.builtins.@"unreachable"	none	no	no
 std.zig.c_translation.builtins.abs	other	no	no
 std.zig.c_translation.builtins.assume	other	no	no
 std.zig.c_translation.builtins.bswap16	other	no	no
@@ -10732,8 +10732,8 @@ std.zig.llvm.Builder.Variable.Index.toValue	self	no	no
 std.zig.llvm.Builder.Variable.Index.typeOf	self	no	no
 std.zig.llvm.Builder.Visibility.format	self	no	no
 std.zig.llvm.Builder.Visibility.fromSymbolVisibility	other	no	no
-"std.zig.llvm.Builder.WipFunction.@""switch"""	self	no	no
-"std.zig.llvm.Builder.WipFunction.@""unreachable"""	self	no	no
+std.zig.llvm.Builder.WipFunction.@"switch"	self	no	no
+std.zig.llvm.Builder.WipFunction.@"unreachable"	self	no	no
 std.zig.llvm.Builder.WipFunction.Block.Index.ptr	self	no	no
 std.zig.llvm.Builder.WipFunction.Block.Index.ptrConst	self	no	no
 std.zig.llvm.Builder.WipFunction.Block.Index.toInst	self	no	no

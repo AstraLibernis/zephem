@@ -66,13 +66,13 @@ Everything below is self-verifying and byte-identical on rerun.
 | **examples** — `attrs.tsv` (`example`) | `parse/build.zig` | ✅ @@N_EXAMPLES@@ `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |
-| **consensus census** — `consensus.tsv` | `scripts/build_consensus.nu` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |
-| **canon dedup/dealias** — `canon.tsv` | `scripts/build_canon.nu` | ✅ @@N_CANON@@ paths in @@CANON_FAMILIES@@ alias/dup families (shared resolved `@typeName`); self-checked |
-| **doc coverage** — `doccov.tsv` | `scripts/build_doccov.nu` | ✅ @@DOC_PCT@@% of nodes documented (@@DOC_DOCUMENTED@@ carry `///` docs); per-kind, self-checked vs map + docs overlay |
-| **signature shapes** — `sigshape.tsv` | `scripts/build_sigshape.nu` | ✅ @@N_SIGSHAPE@@ signatures classed by first-param / Io / generic; self-checked vs the `sig` attrs |
-| **call-card** — `callcard.tsv` | `scripts/build_callcard.nu` | ✅ sigs ⋈ resolved merge, @@N_CALLCARD@@ callables: @@CC_BOTH@@ both / @@CC_REFLECT@@ reflect-only / @@CC_PARSER@@ parser-only |
-| **doc regeneration** | `scripts/build_arch.nu` | ✅ every markdown doc regenerated from `templates/` with live numbers from `data/std/`; byte-identical on `--check` |
-| **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `build_depth.nu --check` (full sweep, machine-dependent) |
+| **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |
+| **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ @@N_CANON@@ paths in @@CANON_FAMILIES@@ alias/dup families (shared resolved `@typeName`); self-checked |
+| **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ @@DOC_PCT@@% of nodes documented (@@DOC_DOCUMENTED@@ carry `///` docs); per-kind, self-checked vs map + docs overlay |
+| **signature shapes** — `sigshape.tsv` | `zephem overlays` | ✅ @@N_SIGSHAPE@@ signatures classed by first-param / Io / generic; self-checked vs the `sig` attrs |
+| **call-card** — `callcard.tsv` | `zephem overlays` | ✅ sigs ⋈ resolved merge, @@N_CALLCARD@@ callables: @@CC_BOTH@@ both / @@CC_REFLECT@@ reflect-only / @@CC_PARSER@@ parser-only |
+| **doc regeneration** | `zephem docs` | ✅ every markdown doc regenerated from `templates/` with live numbers from `data/std/`; byte-identical on `--check` |
+| **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `zephem depth --check` (full sweep, machine-dependent) |
 
 We can say *where* anything in std is, *how* it's shaped, and its resolved depth — completely
 and provably. That is the faithful skeleton, the compiler's resolved view, a consensus census
@@ -122,7 +122,7 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 - [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
 - [ ] **Trim reflect waste on `()` factory containers.** The tree now includes uninstantiated
-  factory containers (`<fn>()`), which `build_depth.nu` dutifully tries to reflect — they can't
+  factory containers (`<fn>()`), which `zephem depth` dutifully tries to reflect — they can't
   instantiate standalone, so all 207 of them land in poison. `build_depth` should **skip `()`
   targets** (their real members are Phase D: instantiate the generic, then reflect). Honest, not
   wrong — just wasted sweep time and inflated poison.
@@ -130,7 +130,7 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 ## Known hardening (from the 2026-06-19 adversarial audit)
 
 - **Timeouts can masquerade as poison** — ✅ **fixed.** The per-container reflect timeout exits
-  124; `scripts/build_depth.nu` now branches on that exit code and records a distinct
+  124; `zephem depth` now branches on that exit code and records a distinct
   `timeout after Ns` reason, so a speed-gated container can never be mislabelled as a real
   compile-error poison.
 - **Snapshot target triple is implicit** — *still open.* `PINNED` records only the Zig version,

@@ -43,16 +43,16 @@ the first un-evaluatable decl.
 
 ## The headline dataset: the full std map
 
-`nu scripts/build_std.nu` scans the active toolchain's `std` and writes the three streams to
+`zephem std` scans the active toolchain's `std` and writes the three streams to
 `data/std/extracted/`. On @@ZIG@@ that is **@@N_NODES@@ nodes across @@N_FILES@@ files**
 (@@N_PUB@@ public, @@N_PRIV@@ private), max nesting depth @@MAXDEPTH@@ — carrying @@N_ATTRS@@
 attributes and @@N_EDGES@@ typed edges.
 
-```nu
-open data/std/extracted/nodes.tsv | where kind == 'ns'                  # every std source file
-open data/std/extracted/nodes.tsv | where path =~ '^std\.crypto\.'      # the crypto subtree
-open data/std/extracted/nodes.tsv | where kind == 'fn' | length         # public+private fn count (@@N_FN@@)
-open data/std/extracted/edges.tsv | where type == 'has_type' and scope == 'cross'   # cross-container type refs
+```sh
+awk -F'\t' '$2=="ns"' data/std/extracted/nodes.tsv                        # every std source file
+grep -P '^std\.crypto\.' data/std/extracted/nodes.tsv                      # the crypto subtree
+awk -F'\t' '$2=="fn"' data/std/extracted/nodes.tsv | wc -l                # public+private fn count (@@N_FN@@)
+awk -F'\t' '$2=="has_type" && $4=="cross"' data/std/extracted/edges.tsv   # cross-container type refs
 ```
 
 ### It proves itself — no external oracle
@@ -60,7 +60,7 @@ open data/std/extracted/edges.tsv | where type == 'has_type' and scope == 'cross
 The build is **two passes that must agree**, bundled on purpose:
 
 - **forward** (`parse/build.zig`) reads the source into the three streams.
-- **backward** (`scripts/verify_std.nu`) re-reads them *the other way* and checks the shapes
+- **backward** (the backward check in `zephem std`) re-reads them *the other way* and checks the shapes
   reconcile.
 
 There is no `n_children` count to conserve — depth and parent are read straight off each
@@ -68,10 +68,10 @@ There is no `n_children` count to conserve — depth and parent are read straigh
 parent is itself a node), the kinds **partition** (every row classified once), every
 **attribute keys onto a real node**, and every **`local`/`cross` edge resolves to a real
 node** — the one invariant that makes the reference graph trustworthy. If the two passes
-disagree, `build_std.nu` exits non-zero and claims nothing.
+disagree, `zephem std` exits non-zero and claims nothing.
 
 ```
-$ nu scripts/build_std.nu
+$ zig build std
 [forward]  scanning .../std.zig  (@@ZIG@@, depth @@MAXDEPTH@@)
            rows: @@N_NODES_RAW@@   files: @@N_FILES@@   private: @@N_PRIV_RAW@@
 [index]    containers: @@N_INDEX_RAW@@   root span: @@N_NODES_RAW@@   max depth: @@MAXDEPTH@@
@@ -101,12 +101,12 @@ rows are emitted pre-order, **every subtree is a contiguous block**, so you neve
 `data/std/derived/index.tsv` is a tiny map (@@N_INDEX@@ containers) of `path · line · span`:
 look up a module, then read exactly its block.
 
-```nu
-let b = (open data/std/derived/index.tsv | where path == 'std.crypto' | first)  # line @@CRYPTO_LINE@@, span @@CRYPTO_SPAN@@
-open data/std/extracted/nodes.tsv | skip ($b.line - 2) | first $b.span            # just the crypto subtree
+```sh
+zephem map show std.crypto                          # just the crypto subtree, via the table of contents
+sed -n '@@CRYPTO_LINE@@,+@@CRYPTO_SPAN@@p' data/std/extracted/nodes.tsv   # or read the raw block (line @@CRYPTO_LINE@@, span @@CRYPTO_SPAN@@)
 ```
 
-The index self-checks: the root's span equals the whole file, and `verify_std.nu` re-derives
+The index self-checks: the root's span equals the whole file, and the backward check in `zephem std` re-derives
 every block from `nodes.tsv` so the map can't drift.
 
 Copy-pasteable query recipes (read one module, find by name, the kind breakdown) live with the
@@ -126,27 +126,27 @@ ship today, all self-verifying and byte-identical on rerun:
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On @@ZIG@@: @@N_INDEX@@ containers swept → **@@N_RES_CONT@@ resolved (@@N_RESOLVED@@
   rows) / @@N_POISON@@ genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
-  reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by `scripts/verify_depth.nu`.
+  reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
   strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
   reproducibility harness is a deliberately separate task (see PLAN.md).
 
 - **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from
-  `scripts/build_consensus.nu`. Rather than force the text view (`nodes.tsv`) and the reflected view
+  `zephem overlays`. Rather than force the text view (`nodes.tsv`) and the reflected view
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
   **every** path by which witness can see it: `read+run` (both independently agree — @@CON_RR@@),
   `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
   @@CON_RUNONLY@@), `read-only` (text read it but it can't run here: poison, private, or the `std`
   root — @@CON_READONLY@@). The two single-witness buckets **are** the differences; the agreement
   is independent evidence. One row per path in `nodes ∪ resolved` (@@N_CONSENSUS@@), **zero blanks**,
-  enforced by `scripts/verify_consensus.nu` and deterministic (`--check`).
+  enforced by `zephem overlays --check` and deterministic (`--check`).
 
-- **`data/std/derived/canon.tsv`** (dedup / dealias) — `path · canon` from `scripts/build_canon.nu`. The
+- **`data/std/derived/canon.tsv`** (dedup / dealias) — `path · canon` from `zephem overlays`. The
   compiler resolves every type to a canonical `@typeName`, so two paths that name the *same*
   underlying type collide on it. This overlay surfaces exactly those collisions — **@@N_CANON@@ paths in @@CANON_FAMILIES@@
   alias/dup families** (e.g. `std.BufMap` and `std.buf_map.BufMap` → `buf_map.BufMap`) — while
   excluding primitive / error-set / anonymous identities that collide by accident, not by aliasing.
-  Reads `resolved.tsv` alone; verified by `scripts/verify_canon.nu`, deterministic (`--check`).
+  Reads `resolved.tsv` alone; verified by `zephem overlays --check`, deterministic (`--check`).
 
 The deferred edge layers (body-level `calls`/`references`) and the roadmap for the remaining
 work (L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**.
@@ -169,9 +169,9 @@ Rule of thumb: **datasets are described once, in the folder READMEs; engines onc
 
 ## How the docs stay current
 
-`scripts/build_arch.nu` regenerates every markdown doc from the sources in
+`zephem docs` regenerates every markdown doc from the sources in
 [`templates/`](templates/), injecting each number live from `data/std/` — so the docs can't drift
-from the data, and `build_arch.nu --check` proves each one rebuilds byte-identical.
+from the data, and `zephem docs --check` proves each one rebuilds byte-identical.
 
 ## Where it started: `std.crypto` (archived)
 
@@ -200,11 +200,12 @@ The extractor is **three engines**, split by *what each reads*:
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.
 - **[`derive/`](derive/)** — the **transform** engine. Reads no Zig at all, only the datasets
   above, each as its own single-purpose overlay: `derive/index.zig` builds the table of contents
-  (`index.tsv`) over the Tree; `scripts/build_canon.nu` dedups/de-aliases resolved types into
-  alias/dup families (`canon.tsv`); and `scripts/build_consensus.nu` compares parse vs reflect,
+  (`index.tsv`) over the Tree; `zephem overlays` dedups/de-aliases resolved types into
+  alias/dup families (`canon.tsv`); and `zephem overlays` compares parse vs reflect,
   tagging where the two readers agree or differ (`consensus.tsv`).
 
-The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The dividing line:
+The backward checks, overlays, glue, and query are all Zig (in `src/`, driven by the `zephem`
+binary). The dividing line:
 **raw source facts go in the parser** (the tree, attributes, and declaration-level edges);
 **organisation is deferred to derive** (resolved cross-link graphs, purpose-groupings), and
 **body-level edges** (`calls`/`references`) are the parser's next layer. Phases and status:
@@ -212,12 +213,14 @@ The backward checks (`scripts/verify_*.nu`) and all glue/query are Nushell. The 
 
 ## Toolchain
 
-**Zig** (AST parsing) + **Nushell** (glue / query) only.
+**Zig, end to end.** Three engines — `parse/` (AST parsing), `reflect/` (compiler reflection),
+`derive/` (transforms) — plus the `src/` layer (orchestration, relational joins, overlays, query,
+doc generation). Built by `zig build`, run as the `zephem` binary. No Nushell, no Python, no duckdb.
 
 ## Reference
 
 - Zig std source: the active toolchain's `std`, located via `zig env` (its `.std_dir`);
-  `build_std.nu` reads it from there, so the snapshot tracks whatever Zig is on `PATH`.
+  `zephem std` reads it from there, so the snapshot tracks whatever Zig is on `PATH`.
 - Prior life: zephem began as `zcrypto`, an attempt to *learn* crypto, then a faithful map of
   it. Renamed and reframed 2026-06-17 — the tool is the extractor, not the crypto. The retired
   crypto pipeline and the retired human-readable docs were deleted and folded into one provenance

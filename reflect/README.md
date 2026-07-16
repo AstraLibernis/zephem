@@ -1,4 +1,4 @@
-<!-- GENERATED from templates/reflect.tmpl.md by scripts/build_arch.nu — edit the template, not this file. -->
+<!-- GENERATED from templates/reflect.tmpl.md by `zephem docs` — edit the template, not this file. -->
 # zephem · reflect — the run-it engine
 
 **`reflect/` asks the *compiler* what the parser can't see.** Where [`../parse/`](../parse/)
@@ -57,7 +57,7 @@ ride the *same* per-container pass (reflect once, emit more) rather than adding 
 ## 3. How it works — the extraction method
 
 **① Reflect one container per subprocess.** `resolve.zig` is a *template*: its `TARGET_PATH` /
-`TARGET` / `SKIP` lines are rewritten per container by the orchestrator (`../scripts/build_depth.nu`),
+`TARGET` / `SKIP` lines are rewritten per container by the orchestrator (`zephem depth`),
 compiled, and run. Its own container-`@import` means a poison decl fails *this* process only.
 
 **② Read the type with `@typeInfo`.** For the target type it walks `@typeInfo(T).…decls`, and for
@@ -80,13 +80,13 @@ them. Anonymous-type disambiguators (`__struct_NNNN`, a semantic-analysis counte
 between identical compiles) drop their digits; absolute toolchain paths in poison reasons render
 relative — without this, byte-for-byte reproducibility would false-fail.
 
-**⑥ It proves itself.** `../scripts/verify_depth.nu` re-reads the three files and reconciles them:
+**⑥ It proves itself.** the backward check in `zephem depth` re-reads the three files and reconciles them:
 Σ status row-counts == resolved rows, every attempted container is real in `index.tsv`, no path
 resolves twice, every poison reason is a real compiler error or a timeout.
 
 > Reproducibility is **separate from the commit on purpose** — the sweep is SLOW (machine-dependent:
 > ≈13 min on a 3-core VM, under a minute on a many-core desktop), so it is *never* wired into
-> `build_std.nu`'s `--check`, which must stay fast. See [`../docs/reproducibility.md`](../docs/reproducibility.md).
+> `zephem std`'s `--check`, which must stay fast. See [`../docs/reproducibility.md`](../docs/reproducibility.md).
 
 ## 4. The files
 
@@ -96,15 +96,15 @@ reflect/
 ```
 
 One file — the reflector. The orchestration (per-container rewrite, the parallel sweep, poison
-capture, the manifest) lives in `../scripts/build_depth.nu`, because it drives Zig rather than
+capture, the manifest) lives in `zephem depth`, because it drives Zig rather than
 being Zig. (`resolve.zig` left at its default `TARGET` is a runnable self-test: `zig run reflect/resolve.zig`.)
 
 ## 5. Running it
 
-```nu
-nu scripts/build_depth.nu --only std.crypto.hash.sha2   # one container (depth on demand)
-nu scripts/build_depth.nu --commit                       # full sweep → extracted/ + SHA256SUMS.depth
-nu scripts/build_depth.nu --check                        # prove the committed overlay rebuilds
+```sh
+zephem depth --only std.crypto.hash.sha2   # one container (depth on demand)
+zephem depth --commit                       # full sweep → extracted/ + SHA256SUMS.depth
+zephem depth --check                        # prove the committed overlay rebuilds
 ```
 
 ---
