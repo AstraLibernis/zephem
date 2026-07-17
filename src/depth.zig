@@ -13,6 +13,7 @@ const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const proc = @import("proc.zig");
 const rel = @import("relation.zig");
+const util = @import("util.zig");
 
 /// One container's verdict. Slices are page_allocator-owned (built on a worker thread).
 pub const One = struct {
@@ -120,7 +121,7 @@ fn reflectOne(cx: SweepCtx, i: usize) One {
 /// container reflected alone here produces byte-identical output regardless of which sweep drove it.
 fn soloReflect(a: std.mem.Allocator, io: std.Io, zig_exe: []const u8, template: []const u8, std_dir: []const u8, timeout_s: u32, path: []const u8, skip: []const []const u8, rfile: []const u8) One {
     const src = genSource(a, template, path, skip) catch return poisonOne(a, path, "gen failed");
-    writeFileRaw(a, io, rfile, src) catch return poisonOne(a, path, "scratch write failed");
+    util.writeFile(io, rfile, src) catch return poisonOne(a, path, "scratch write failed");
     const out = proc.runTimed(a, io, &.{ zig_exe, "run", rfile }, timeout_s) catch return poisonOne(a, path, "spawn failed");
 
     if (out.exit_code == 0) {
@@ -257,25 +258,8 @@ fn normReason(a: std.mem.Allocator, reason: []const u8, std_dir: []const u8, rfi
     return replaceAll(a, s1, std_prefix, "std/") catch s1;
 }
 
-fn replaceAll(a: std.mem.Allocator, hay: []const u8, needle: []const u8, with: []const u8) ![]const u8 {
-    if (needle.len == 0) return hay;
-    const count = std.mem.count(u8, hay, needle);
-    if (count == 0) return hay;
-    const out = try a.alloc(u8, hay.len - needle.len * count + with.len * count);
-    _ = std.mem.replace(u8, hay, needle, with, out);
-    return out;
-}
+const replaceAll = util.replaceAll;
 
 fn writeFileStr(c: Ctx, path: []const u8, bytes: []const u8) !void {
-    try writeFileRaw(c.a, c.io, path, bytes);
-}
-
-fn writeFileRaw(a: std.mem.Allocator, io: std.Io, path: []const u8, bytes: []const u8) !void {
-    _ = a;
-    const f = try std.Io.Dir.cwd().createFile(io, path, .{});
-    defer f.close(io);
-    var buf: [1 << 16]u8 = undefined;
-    var fw = f.writer(io, &buf);
-    try fw.interface.writeAll(bytes);
-    try fw.interface.flush();
+    return util.writeFile(c.io, path, bytes);
 }

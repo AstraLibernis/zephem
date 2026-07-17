@@ -26,7 +26,8 @@ edges.tsv : src · type · target · scope       Edges        — typed referenc
   sorted, never grouped). Public **and** private decls, tagged `vis`. Depth and parent are read
   off the dotted `path` — there is no `n_children` count to drift.
 - **Attributes** are open-ended in kind but bounded per node: `loc`, `value`, `doc`, `sig`,
-  `example`. Sparse — a row exists only where the fact is present.
+  `example`, `mod` (qualifiers), `errmember` (error-set members). Sparse — a row exists only
+  where the fact is present.
 - **Edges** are open-ended in count (a node may make many): `has_type`, `alias`, `error_set`,
   `imports`, `delegates` — each **resolved** to a `scope` recording where its target landed.
 
@@ -42,7 +43,7 @@ reproduces it, not the bytes.
 | stream | shape | what it is |
 |---|---|---|
 | `nodes.tsv` | Tree | @@N_NODES@@ nodes (@@N_PUB@@ pub / @@N_PRIV@@ priv), incl. fields, tags, and factory members (`<fn>()`) |
-| `attrs.tsv` | Attributes | @@N_ATTRS@@ facts — @@N_DOCS@@ docs · @@N_SIGS@@ sigs · @@N_VALUES@@ values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies |
+| `attrs.tsv` | Attributes | @@N_ATTRS@@ facts — @@N_DOCS@@ docs · @@N_SIGS@@ sigs · @@N_VALUES@@ values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies · @@N_MOD@@ modifiers · @@N_ERRMEMBER@@ error members |
 | `edges.tsv` | Edges | @@N_EDGES@@ typed references, @@E_RESOLVED_PCT@@% of the resolvable ones landing on a node/primitive |
 
 (The `index.tsv` table of contents is built *from* the Tree by the [`../derive/`](../derive/)
@@ -54,7 +55,7 @@ engine, not by the parser. Per-column detail lives in the folder README:
 **① Parse, don't reflect.** Built from `std.zig.Ast` — reads source as syntax, never evaluates
 comptime. Sees all of std; dies on nothing.
 
-**② One organism walk.** `build.zig` follows `@import` edges from the root, expanding each file
+**② One organism walk.** `walk.zig` follows `@import` edges from the root, expanding each file
 once, so the whole reachable namespace is one tree. It **descends type factories** — a `fn(…) type`
 with one top-level `return struct {…}` gets its produced type's members mapped under `<fn>()` (so
 `std.HashMap().get` exists) — and places each **selective re-export** (`pub const X = @import("f").Sel`)
@@ -71,7 +72,7 @@ resolvable link rather than a copy).
 `std`'s children emerge `…BufSet, StaticStringMap, StaticStringMapWithEql, Deque…`, the
 non-alphabetical sequence in `std.zig`.
 
-**⑤ It proves itself.** `build.zig` emits forward; the backward check in `zephem std` re-reads the three
+**⑤ It proves itself.** `walk.zig` emits forward; the backward check in `zephem std` re-reads the three
 streams the other way and checks they reconcile: the Tree is **connected** (every non-root path's
 parent is a node), the kinds **partition**, every **attr keys onto a real node**, and every
 **`local`/`cross` edge resolves to a real node**. A dropped, doubled, or dangling row breaks a
@@ -83,7 +84,7 @@ check and the build claims nothing.
 
 ```
 parse/
-  build.zig    # ENTRY: follow @import from the root ONCE, walk the organism, resolve edges
+  walk.zig       # ENTRY: follow @import from the root ONCE, walk the organism, resolve edges
                #        → nodes.tsv (Tree) · attrs.tsv (Attributes) · edges.tsv (Edges)
 ```
 

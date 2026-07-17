@@ -13,6 +13,7 @@ const std = @import("std");
 const Ctx = @import("../ctx.zig").Ctx;
 const rel = @import("../relation.zig");
 const parse = @import("parse");
+const util = @import("../util.zig");
 
 const known_kinds = [_][]const u8{ "ns", "nsref", "nserr", "modref", "struct", "enum", "union", "opaque", "fn", "const", "alias", "field", "tag" };
 const known_attrs = [_][]const u8{ "doc", "sig", "value", "loc", "example", "mod", "errmember" };
@@ -148,6 +149,4 @@ pub fn run(c: Ctx, data_dir: []const u8) !bool {
     return ok;
 }
 
-fn join(a: std.mem.Allocator, dir: []const u8, rel_path: []const u8) ![]const u8 {
-    return std.fs.path.join(a, &.{ dir, rel_path });
-}
+const join = util.join;

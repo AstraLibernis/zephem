@@ -7,6 +7,7 @@ const vars = @import("../vars.zig");
 const manifest = @import("../manifest.zig");
 const overlays = @import("../overlays.zig");
 const rel = @import("../relation.zig");
+const util = @import("../util.zig");
 
 const Overlay = struct {
     name: []const u8, // derived/<name>.tsv and SHA256SUMS.<name>
@@ -84,10 +85,5 @@ fn firstHash(c: Ctx, man_path: []const u8) ![]const u8 {
 }
 
 fn writeBytes(c: Ctx, path: []const u8, bytes: []const u8) !void {
-    const f = try std.Io.Dir.cwd().createFile(c.io, path, .{});
-    defer f.close(c.io);
-    var buf: [1 << 16]u8 = undefined;
-    var fw = f.writer(c.io, &buf);
-    try fw.interface.writeAll(bytes);
-    try fw.interface.flush();
+    return util.writeFile(c.io, path, bytes);
 }

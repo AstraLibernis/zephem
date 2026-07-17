@@ -47,9 +47,17 @@ never folded into the base.
 6. **pure-Zig toolchain** (2026-07-16, v0.2.0) — the orchestration/query/doc-gen glue, previously
    Nushell, was ported to Zig and the 22 `.nu` deleted. A real `build.zig` + single `zephem` binary
    (subcommands `std`/`depth`/`overlays`/`docs`/`lookup`/`look`/`map`/`test`) now builds everything;
-   the three engines stay in place (`parse/build.zig`, `reflect/resolve.zig`, `derive/index.zig`).
+   the three engines stay in place (`parse/walk.zig`, `reflect/resolve.zig`, `derive/index.zig`).
    The port fixed a latent Nushell bug: `open` CSV-strips quotes from real values (`"test"` → `test`),
    so the Zig reader is *more* faithful. No behaviour change to the datasets otherwise.
+7. **depth trim + batch experiment** (2026-07-17, v0.3.0) — `zephem depth` now **skips** the 207
+   uninstantiated `<fn>()` factory containers (a new `skipped` status; poison deflated 1134→927,
+   resolved unchanged). Also *tried and reverted* batching many containers per `zig run` — measured
+   SLOWER (std reflection is comptime-dominated, not invocation-dominated). See "Performance" below.
+8. **three quick-win facts** (2026-07-17, v0.4.0) — added the `mod` attribute (extern/export/inline/
+   noinline/threadlocal/comptime + `var`-vs-`const` — a mutable global was previously indistinguishable
+   from a const), the `errmember` attribute (named `error{…}` set members), and the **host triple** in
+   `PINNED`. All additive attrs / a PINNED line → nodes/edges/index + the reflect layer unchanged.
 
 ---
 
@@ -65,11 +73,11 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **the Tree** — `nodes.tsv` | `parse/build.zig` | ✅ the spine: full std, @@N_NODES@@ nodes (@@N_PUB@@ pub / @@N_PRIV@@ priv) / @@N_FILES@@ files, depth @@MAXDEPTH@@; connectivity-checked |
-| **Attributes** — `attrs.tsv` | `parse/build.zig` | ✅ @@N_ATTRS@@ facts keyed by `path`: @@N_SIGS@@ sigs · @@N_DOCS@@ `///` docs · @@N_VALUES@@ field/const values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies; each keys onto a real node |
-| **Edges** — `edges.tsv` | `parse/build.zig` | ✅ @@N_EDGES@@ typed refs (@@N_HASTYPE@@ has_type · @@N_ALIASEDGE@@ alias · @@N_ERRSET@@ error_set · @@N_IMPORTS@@ imports · @@N_DELEGATES@@ delegates), resolved to a scope; @@E_RESOLVED_PCT@@% of resolvable ones land on a node/primitive; local/cross verified to resolve |
-| **factory descent** — `nodes.tsv` | `parse/build.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); delegators record their target as a `delegates` edge |
-| **examples** — `attrs.tsv` (`example`) | `parse/build.zig` | ✅ @@N_EXAMPLES@@ `test {}` bodies, escaped to one row, anchored to the enclosing node |
+| **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, @@N_NODES@@ nodes (@@N_PUB@@ pub / @@N_PRIV@@ priv) / @@N_FILES@@ files, depth @@MAXDEPTH@@; connectivity-checked |
+| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ @@N_ATTRS@@ facts keyed by `path`: @@N_SIGS@@ sigs · @@N_DOCS@@ `///` docs · @@N_VALUES@@ field/const values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies · @@N_MOD@@ modifiers · @@N_ERRMEMBER@@ error members; each keys onto a real node |
+| **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ @@N_EDGES@@ typed refs (@@N_HASTYPE@@ has_type · @@N_ALIASEDGE@@ alias · @@N_ERRSET@@ error_set · @@N_IMPORTS@@ imports · @@N_DELEGATES@@ delegates), resolved to a scope; @@E_RESOLVED_PCT@@% of resolvable ones land on a node/primitive; local/cross verified to resolve |
+| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); delegators record their target as a `delegates` edge |
+| **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ @@N_EXAMPLES@@ `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run @@CON_RR@@ / run-only @@CON_RUNONLY@@ / read-only @@CON_READONLY@@; 0 blanks |
@@ -116,17 +124,19 @@ reference graph (following an edge to its canonical home across the whole progra
 purpose-groupings.
 
 **In the parser now:** the Tree (`nodes.tsv`, public + private), the Attributes (`attrs.tsv` —
-`loc`, `value`, `doc`, `sig`, `example`), and declaration-level Edges (`edges.tsv` — `has_type`,
+`loc`, `value`, `doc`, `sig`, `example`, `mod`, `errmember`), and declaration-level Edges (`edges.tsv` — `has_type`,
 `alias`, `error_set`, `imports`, `delegates`), each resolved to a `scope`. Type-factory members
 are descended under `<fn>()`; `@import` is followed into one organism.
 
 **Still to add to the parser (raw source facts):**
-1. **Error-set members** — `error{…}` is captured as an `error_set` edge, but its individual
-   members aren't yet emitted as their own nodes.
-2. **Opaque / multi-branch factories** — a `fn(…) type` built via `@Type` or comptime branching
+1. **Opaque / multi-branch factories** — a `fn(…) type` built via `@Type` or comptime branching
    is invisible to text; resolving its members needs instantiated reflection (Phase D).
-3. **Modifiers** — `extern`/`export`/`inline`/`threadlocal`/`var`-vs-`const` flags as an attribute.
-   (`loc` — source location — is already emitted.)
+2. **Facts still captured only as opaque text** — parameter names ⋈ types ⋈ defaults, and pointer
+   decorations (sentinel/const/volatile/align, optionality) sit inside the raw `sig` string or are
+   stripped by `extractBase` to a base identifier; decomposing them into queryable facts is the
+   next parse-side depth (see the audit's extraction-depth findings).
+
+(Shipped in v0.4.0: **modifiers** → the `mod` attr; **error-set members** → the `errmember` attr.)
 
 **Body-level edges — the parser's next layer (deferred) — the *usage graph*:**
 - **`calls` / `references`** — who calls or reads what *inside* a function body. A heavier walk
@@ -176,12 +186,13 @@ comptime operation; you can't defer it to runtime).
   124; `zephem depth` now branches on that exit code and records a distinct
   `timeout after Ns` reason, so a speed-gated container can never be mislabelled as a real
   compile-error poison.
-- **Snapshot target triple is implicit** — *still open.* `PINNED` records only the Zig version,
-  but some poison and resolved rows are x86_64-linux-specific. Fix: record the host triple in
-  `PINNED`; have `--check` warn if the host differs. Corroborated externally by the
-  [autodoc coverage comparison](docs/comparison/autodoc-vs-zephem.md): the decls autodoc reaches
-  but this snapshot omits are dominated by target-conditional `std.os`/`std.c` bindings for
-  non-native platforms (uefi/windows/darwin/bsd) — the same target scoping, seen from coverage.
+- **Snapshot target triple is implicit** — ✅ **fixed (v0.4.0).** `PINNED` now records the host
+  triple (`zig <ver>` + `target <triple>`); `staleness` warns on a host mismatch, not just a
+  version one. Some poison/resolved rows are x86_64-linux-specific, and the stamp now says so.
+  Corroborated externally by the [autodoc coverage comparison](docs/comparison/autodoc-vs-zephem.md):
+  the decls autodoc reaches but this snapshot omits are dominated by target-conditional
+  `std.os`/`std.c` bindings for non-native platforms (uefi/windows/darwin/bsd) — the same target
+  scoping, seen from coverage.
 
 ## External validation
 

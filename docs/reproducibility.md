@@ -3,6 +3,8 @@
 "Build it again, prove you got the same thing." This is enforced machinery, not an aspiration.
 Index: [PLAN.md](../PLAN.md) · engines: [parse](../parse/) · [reflect](../reflect/).
 
+> Hand-maintained (not generated from `templates/`) — edit this file directly.
+
 Datasets are **ephemeral by design** — derived, regenerable, never hand-authored. A committed
 snapshot is a *pinned cache* of compiler/source truth for one Zig version. So a snapshot you
 cannot provably rebuild is just hand-authored data with extra steps: reproducibility is a
@@ -34,8 +36,8 @@ A `--check` mode regenerates and asserts the result is **byte-identical**, three
 3. **Integrity** — the on-disk snapshot still matches its own manifest. Catches silent
    hand-edits.
 
-A drift in any fails the build loudly. A shared single build path (`regen` in `build_std.nu`,
-`sweep` in `build_depth.nu`) guarantees the normal build and `--check` cannot diverge.
+A drift in any fails the build loudly. A shared single build path (`regen` in `zephem std`,
+`sweep` in `zephem depth`) guarantees the normal build and `--check` cannot diverge.
 
 **Robust regeneration.** Parsing-not-reflection means no input kills the parse layers: an
 unreadable file becomes an `nserr` row, a moved file a different path — the snapshot is always
@@ -46,13 +48,13 @@ layer will render — see [PLAN.md](../PLAN.md)).
 
 ## Two harnesses — fast parses, slow depth (kept separate on purpose)
 
-- **Map + decls (parse): `nu scripts/build_std.nu --check`** — instant. Every build writes
-  `data/std/SHA256SUMS` (a `sha256sum -c`-compatible manifest, hashed in pure Nushell) over the
+- **Map + decls (parse): `zephem std --check`** — instant. Every build writes
+  `data/std/SHA256SUMS` (a `sha256sum -c`-compatible manifest, hashed in Zig (`std.crypto.hash.sha2`)) over the
   parse-based datasets; `--check` proves the three guarantees per dataset and exits non-zero on
   any drift. New parse datasets register by adding their name to one `NAMES` list.
 
-- **Depth (reflection): `nu scripts/build_depth.nu --check`** — slow, and deliberately **not**
-  wired into `build_std.nu`. `--commit` records `data/std/SHA256SUMS.depth` over the three L5
+- **Depth (reflection): `zephem depth --check`** — slow, and deliberately **not**
+  wired into `zephem std`. `--commit` records `data/std/SHA256SUMS.depth` over the three L5
   files (`status/resolved/poison.tsv`); `--check` proves the same three ways. It lives
   apart because the map is a parse (instant) while an L5 rebuild is a full reflection sweep —
   mixing them would wreck the fast map check. See [reflect/](../reflect/) for the layer itself.
@@ -109,7 +111,7 @@ cache is the big lever).
 
 The **cache is the ~10× lever, not parallelism.** Each `zig run` is already internally
 multithreaded and saturates the 3 physical cores, so the data-parallel lanes (one per CPU via
-`nproc`) measured only ≈1.3× on cold and ~nothing warm. Lanes are kept because they're free and
+`std.Thread.getCpuCount`) measured only ≈1.3× on cold and ~nothing warm. Lanes are kept because they're free and
 byte-identical (proven across `--jobs` 1/3/6), and they shave the genuinely-cold builds. The
 practical consequence: `--check`'s second sweep hits the cache the first populated, so it is far
 cheaper than two cold sweeps.

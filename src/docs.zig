@@ -6,6 +6,7 @@ const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const rel = @import("relation.zig");
+const util = @import("util.zig");
 
 const Page = struct { tmpl: []const u8, out: []const u8 };
 const pages = [_]Page{
@@ -271,13 +272,7 @@ fn intStr(a: std.mem.Allocator, n: usize) ![]const u8 {
     return std.fmt.allocPrint(a, "{d}", .{n});
 }
 
-fn replaceAll(a: std.mem.Allocator, hay: []const u8, needle: []const u8, with: []const u8) ![]const u8 {
-    const count = std.mem.count(u8, hay, needle);
-    if (count == 0) return hay;
-    const out = try a.alloc(u8, hay.len - needle.len * count + with.len * count);
-    _ = std.mem.replace(u8, hay, needle, with, out);
-    return out;
-}
+const replaceAll = util.replaceAll;
 
 fn load(c: Ctx, dir: []const u8, rel_path: []const u8) !rel.Table {
     return rel.load(c.a, c.io, try std.fs.path.join(c.a, &.{ dir, rel_path }));
@@ -286,10 +281,5 @@ fn load_raw(c: Ctx, dir: []const u8, rel_path: []const u8) ![]u8 {
     return std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ dir, rel_path }), c.a, .unlimited);
 }
 fn writeBytes(c: Ctx, path: []const u8, bytes: []const u8) !void {
-    const f = try std.Io.Dir.cwd().createFile(c.io, path, .{});
-    defer f.close(c.io);
-    var buf: [1 << 16]u8 = undefined;
-    var fw = f.writer(c.io, &buf);
-    try fw.interface.writeAll(bytes);
-    try fw.interface.flush();
+    return util.writeFile(c.io, path, bytes);
 }

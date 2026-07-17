@@ -61,7 +61,7 @@ awk -F'\t' '$2=="has_type" && $4=="cross"' data/std/extracted/edges.tsv   # cros
 
 The build is **two passes that must agree**, bundled on purpose:
 
-- **forward** (`parse/build.zig`) reads the source into the three streams.
+- **forward** (`parse/walk.zig`) reads the source into the three streams.
 - **backward** (the backward check in `zephem std`) re-reads them *the other way* and checks the shapes
   reconcile.
 
@@ -189,7 +189,7 @@ the general tool the project is built around now.
 The extractor is **three engines**, split by *what each reads*:
 
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
-  [parse/README.md](parse/README.md)). `parse/build.zig` follows `@import` from the root **once**
+  [parse/README.md](parse/README.md)). `parse/walk.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
   the Attributes (`attrs.tsv` — @@N_SIGS@@ signatures, @@N_DOCS@@ `///` docs, @@N_VALUES@@ field/const
   values, @@N_LOC@@ locations, @@N_EXAMPLES@@ test bodies, @@N_MOD@@ modifiers, @@N_ERRMEMBER@@ error

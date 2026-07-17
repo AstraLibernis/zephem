@@ -29,7 +29,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !void {
     }
 
     if (cmd == null) {
-        try out.writeAll("zmap — read the complete zephem std map (deterministic, no AI/DB)\n  map find <terms...>   keyword search over the whole map (path/name/sig/doc)\n  map show <path>       list a module/namespace subtree\n  map doc  <path>       signature + doc for one exact path\n");
+        try out.writeAll("zephem map — read the complete zephem std map (deterministic, no AI/DB)\n  map find <terms...>   keyword search over the whole map (path/name/sig/doc)\n  map show <path>       list a module/namespace subtree\n  map doc  <path>       signature + doc for one exact path\n");
         try out.flush();
         return;
     }
@@ -103,7 +103,7 @@ const Scored = struct { node: Node, rank: u8, priv: bool, plen: usize };
 
 fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const []const u8, limit: usize) !void {
     if (terms_raw.len == 0) {
-        try out.writeAll("usage: zmap find <terms...>\n");
+        try out.writeAll("usage: zephem map find <terms...>\n");
         return;
     }
     const a = c.a;
@@ -141,7 +141,7 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const 
 
 fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !void {
     if (prefix.len == 0) {
-        try out.writeAll("usage: zmap show <path>\n");
+        try out.writeAll("usage: zephem map show <path>\n");
         return;
     }
     var pub_n: usize = 0;
@@ -172,7 +172,7 @@ fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !void {
 
 fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !void {
     if (path.len == 0) {
-        try out.writeAll("usage: zmap doc <path>\n");
+        try out.writeAll("usage: zephem map doc <path>\n");
         return;
     }
     for (nodes) |n| {

@@ -4,6 +4,7 @@
 const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const rel = @import("relation.zig");
+const util = @import("util.zig");
 
 // ── shared helpers ───────────────────────────────────────────────────────────
 
@@ -29,11 +30,6 @@ pub fn normPath(a: std.mem.Allocator, p: []const u8) []const u8 {
         }
     }
     return out[0..n];
-}
-
-/// The path's parent — drop the last dotted segment (Nushell `split "." | drop 1`), "" for a root.
-fn dottedParent(p: []const u8) []const u8 {
-    return if (std.mem.lastIndexOfScalar(u8, p, '.')) |k| p[0..k] else "";
 }
 
 // ── canon: dedup/dealias families ────────────────────────────────────────────
@@ -146,7 +142,7 @@ pub fn consensus(c: Ctx, dir: []const u8) !rel.Table {
         const row = try a.alloc([]const u8, 3);
         row[0] = path;
         row[1] = origin;
-        row[2] = dottedParent(path);
+        row[2] = util.dottedParent(path);
         try rows.append(a, row);
     }
     const t = rel.Table{ .columns = &.{ "path", "origin", "owner" }, .rows = try rows.toOwnedSlice(a), .a = a };
@@ -317,6 +313,4 @@ fn sliceUntil(s: []const u8, ch: u8) []const u8 {
     return if (std.mem.indexOfScalar(u8, s, ch)) |k| s[0..k] else s;
 }
 
-fn join(a: std.mem.Allocator, dir: []const u8, rel_path: []const u8) ![]const u8 {
-    return std.fs.path.join(a, &.{ dir, rel_path });
-}
+const join = util.join;

@@ -1,7 +1,7 @@
 //! zephem — one binary, many subcommands. Pointed at Zig's std, it regenerates and self-checks
 //! the queryable map, and serves lookups over it. This dispatcher builds the ambient `Ctx`
 //! (allocator · io · env) and hands off to the subcommand. Everything is built BY Zig: `build.zig`
-//! exposes `zig build std/depth/overlays/docs/lookup/check` over this same binary.
+//! exposes `zig build std/depth/overlays/docs/lookup/check/depth-check/test/smoke` over this binary.
 const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const cmd_std = @import("cmd/std.zig");
@@ -57,16 +57,6 @@ fn runWithStdout(c: Ctx, comptime f: fn (Ctx, []const []const u8, *std.Io.Writer
     var ow = std.Io.File.stdout().writer(c.io, &buf);
     try f(c, args, &ow.interface);
     try ow.interface.flush();
-}
-
-/// Placeholder until each subcommand lands in its phase. Exits non-zero so a premature
-/// `zig build check` fails loudly rather than silently "passing".
-fn stub(c: Ctx, name: []const u8, _: []const []const u8) !void {
-    var buf: [256]u8 = undefined;
-    var w = std.Io.File.stderr().writer(c.io, &buf);
-    try w.interface.print("zephem: subcommand '{s}' not yet implemented\n", .{name});
-    try w.interface.flush();
-    std.process.exit(2);
 }
 
 fn fail(c: Ctx, msg: []const u8) !void {

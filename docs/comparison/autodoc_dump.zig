@@ -1,3 +1,9 @@
+//! ⚠ DATED, NON-BUILDING COMPARISON ARTIFACT — not part of the zephem toolchain and not built by
+//! `build.zig`. It `@import("Walk.zig")`/`@import("Decl.zig")` from Zig's autodoc tree (not vendored
+//! here) and hardcodes a std root; it was run once, against a pinned Zig, to produce the figures in
+//! `autodoc-vs-zephem.md`. Kept for provenance/reproduction of that note only — do not expect it to
+//! compile as-is.
+//!
 //! Drives autodoc's OWN Walk.zig + Decl.zig natively to dump the exact set of
 //! reachable pub-decl FQNs it would show for std, mirroring the browser UI's
 //! navigation (namespace_members with include_private=false, descending through

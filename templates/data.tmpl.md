@@ -20,7 +20,8 @@ alone.**
 
 At a glance — the parser's shape model is **@@N_NODES@@ nodes across @@N_FILES@@ files**
 (the tree), **@@N_ATTRS@@ attributes** (@@N_DOCS@@ docs, @@N_SIGS@@ sigs, @@N_VALUES@@ values,
-@@N_LOC@@ locations, @@N_EXAMPLES@@ test bodies), and **@@N_EDGES@@ typed edges**; reflect adds
+@@N_LOC@@ locations, @@N_EXAMPLES@@ test bodies, @@N_MOD@@ modifiers, @@N_ERRMEMBER@@ error members),
+and **@@N_EDGES@@ typed edges**; reflect adds
 @@N_RES_CONT@@ containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## Kind policy — who owns what, and which overlay counts it

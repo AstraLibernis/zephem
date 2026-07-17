@@ -11,6 +11,7 @@
 const std = @import("std");
 const Ctx = @import("../ctx.zig").Ctx;
 const rel = @import("../relation.zig");
+const util = @import("../util.zig");
 
 pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool {
     const a = c.a;
@@ -160,6 +161,4 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
     return ok;
 }
 
-fn join(a: std.mem.Allocator, dir: []const u8, rel_path: []const u8) ![]const u8 {
-    return std.fs.path.join(a, &.{ dir, rel_path });
-}
+const join = util.join;

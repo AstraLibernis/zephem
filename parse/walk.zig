@@ -1,4 +1,4 @@
-//! parse/build.zig — the parser engine: one walk over the source tree emitting the shape model.
+//! parse/walk.zig — the parser engine: one walk over the source tree emitting the shape model.
 //! Imported as the `parse` module and driven in-process by `zephem std` via `run` (no `zig run`
 //! handoff). The walk/resolve logic is the heart of the read-it engine.
 //!
@@ -23,7 +23,7 @@
 //! Factory descent IS handled: `fn F() type { return struct {…} }` walks the produced type's
 //! members under `F()`. (Cross-file @import following is still deferred — imports mark `module`.)
 //!
-//! Run: zig run parse/build.zig -- <root.zig> <nodes_out> <edges_out> <attrs_out>
+//! Driven by `zephem std` via `run(arena, io, root, nodes_out, edges_out, attrs_out)`.
 
 const std = @import("std");
 const Ast = std.zig.Ast;

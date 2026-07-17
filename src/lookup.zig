@@ -1,6 +1,6 @@
 //! lookup.zig — bake the denormalized "lookup" table that `zephem look` searches (port of
 //! `query/build_lookup.nu`). One row per map node, joining nodes + attrs + edges + the resolved
-//! and derived overlays into the fixed 15-column contract zlook reads by index:
+//! and derived overlays into the fixed 16-column contract zlook reads by index:
 //!
 //!   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail(loc) · 6 sig · 7 doc
 //!   8 rkind · 9 rdetail · 10 canon · 11 ftype · 12 fval · 13 delegate · 14 vis · 15 mod

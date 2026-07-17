@@ -5,7 +5,7 @@ description: >-
   standard-library API — a name, signature, resolved type, error set, struct field, or
   enum tag. Your training knowledge of Zig's fast-moving std is likely stale; zephem
   grounds every std API in a complete, self-verified, regenerable map of the ACTUAL std
-  via two lookup tools (zlook, zmap). Reach for it before writing any std call. For the
+  via two lookup commands (`zephem look`, `zephem map`). Reach for it before writing any std call. For the
   common LLM Zig *mistakes* (removed builtins, footguns) and the post-edit check, the
   companion `zcanon` skill covers that.
 ---
@@ -44,7 +44,7 @@ so the commands below run from any directory. The query surface is two subcomman
    name-first (no fuzzy model, no missed answers). **YOU are the semantic layer:** pick the
    mechanism words you'd expect in std's own names/docs ("delimiter", "alloc", "parse",
    "hash"), search, and if nothing lands, rethink the wording and search again. Use
-   `zmap show <module>` when you know the neighborhood but not the exact name.
+   `zephem map show <module>` when you know the neighborhood but not the exact name.
 
    Hits tagged **`[priv]`** are private decls — real, but *not* callable at the path shown
    from outside their source file (e.g. an internal `const Allocator = std.mem.Allocator`).

@@ -9,6 +9,7 @@ const manifest = @import("../manifest.zig");
 const depth = @import("../depth.zig");
 const verify = @import("../verify/depth.zig");
 const rel = @import("../relation.zig");
+const util = @import("../util.zig");
 
 const names = [_][]const u8{ "extracted/status.tsv", "extracted/resolved.tsv", "extracted/poison.tsv" };
 const scratch_root = ".zig-cache/zephem-depth";
@@ -181,8 +182,8 @@ fn buildKids(a: std.mem.Allocator, index: rel.Table) !Kids {
     const pi = index.col("path");
     for (index.rows) |r| {
         const path = r[pi];
-        const par = dottedParent(path);
-        const child = lastSeg(path);
+        const par = util.dottedParent(path);
+        const child = util.lastSeg(path);
         const gop = try kids.getOrPut(par);
         if (!gop.found_existing) gop.value_ptr.* = .empty;
         try gop.value_ptr.append(a, child);
@@ -198,13 +199,6 @@ fn skipsFor(a: std.mem.Allocator, targets: []const []const u8, kids: Kids) ![]co
     return out;
 }
 
-fn dottedParent(path: []const u8) []const u8 {
-    return if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[0..k] else "";
-}
-fn lastSeg(path: []const u8) []const u8 {
-    return if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[k + 1 ..] else path;
-}
-
 // ── misc ────────────────────────────────────────────────────────────────────
 
 fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
@@ -213,6 +207,4 @@ fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
     try manifest.writeManifest(c.io, &entries, out_path);
 }
 
-fn mark(b: bool) []const u8 {
-    return if (b) "✓" else "✗ DRIFT";
-}
+const mark = util.mark;

@@ -16,6 +16,7 @@ const parse = @import("parse");
 const derive_index = @import("derive");
 const verify = @import("../verify/std.zig");
 const rel = @import("../relation.zig");
+const util = @import("../util.zig");
 
 /// The datasets this build produces and hashes, as data-dir-relative names (manifest keys).
 const names = [_][]const u8{
@@ -161,9 +162,8 @@ fn proveReproducible(c: Ctx, root: []const u8, data_dir: []const u8, zver: []con
     }
 }
 
-fn mark(b: bool) []const u8 {
-    return if (b) "✓" else "✗ DRIFT";
-}
+const mark = util.mark;
+const join = util.join;
 
 fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
     var entries: [names.len]manifest.Entry = undefined;
@@ -171,15 +171,6 @@ fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
     try manifest.writeManifest(c.io, &entries, out_path);
 }
 
-fn join(a: std.mem.Allocator, dir: []const u8, rel_path: []const u8) ![]const u8 {
-    return std.fs.path.join(a, &.{ dir, rel_path });
-}
-
 fn writeFileStr(c: Ctx, path: []const u8, bytes: []const u8) !void {
-    const f = try std.Io.Dir.cwd().createFile(c.io, path, .{});
-    defer f.close(c.io);
-    var b: [256]u8 = undefined;
-    var fw = f.writer(c.io, &b);
-    try fw.interface.writeAll(bytes);
-    try fw.interface.flush();
+    return util.writeFile(c.io, path, bytes);
 }

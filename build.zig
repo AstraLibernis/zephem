@@ -11,7 +11,7 @@ pub fn build(b: *std.Build) void {
     // orchestration, relational lib, overlays, query, and docs live in src/. The parser and index
     // engines are imported as modules so `zephem std` drives them in-process. (reflect/resolve.zig
     // is NOT built here — it is a compile-per-container template the `depth` subcommand `zig run`s.)
-    const parse_mod = b.createModule(.{ .root_source_file = b.path("parse/build.zig"), .target = target, .optimize = optimize });
+    const parse_mod = b.createModule(.{ .root_source_file = b.path("parse/walk.zig"), .target = target, .optimize = optimize });
     const derive_mod = b.createModule(.{ .root_source_file = b.path("derive/index.zig"), .target = target, .optimize = optimize });
 
     const exe = b.addExecutable(.{
