@@ -29,7 +29,9 @@ edges.tsv : src · type · target · scope       Edges        — typed referenc
   import) · `field` · `tag`.
 - **Attributes** — a node's own facts: `loc` (source location), `value` (a field/const's
   written type & default), `doc` (`///` comment), `sig` (a fn's as-written signature),
-  `example` (a `test {}` body).
+  `example` (a `test {}` body), `mod` (qualifiers — `extern`/`export`/`inline`/`noinline`/
+  `threadlocal`/`comptime`, and `var` vs `const`), and `errmember` (the members of a named
+  `error{…}` set).
 - **Edges** — the typed references it makes (`has_type`, `alias`, `error_set`, `imports`,
   `delegates`), each **resolved** to a `scope` recording where its target landed — a node in
   its own container (`local`), one elsewhere (`cross`), a primitive, a module boundary, or
@@ -191,7 +193,8 @@ The extractor is **three engines**, split by *what each reads*:
   [parse/README.md](parse/README.md)). `parse/build.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
   the Attributes (`attrs.tsv` — 11,273 signatures, 13,721 `///` docs, 19,809 field/const
-  values, 63,493 locations, 1,433 test bodies), and the Edges (`edges.tsv` — 54,666
+  values, 63,493 locations, 1,433 test bodies, 1,257 modifiers, 494 error
+  members), and the Edges (`edges.tsv` — 54,666
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
   `return struct {…}` gets its members under `<fn>()`, e.g. `std.HashMap().get`) and gives each
   selective re-export a single canonical home. It reads source as text and never runs the compiler,
