@@ -44,6 +44,12 @@ never folded into the base.
    **follows `@import`** (one organism), **includes private decls** (`vis`), and **resolves each
    edge's reach** in a second pass. The `n_children` conservation law is retired; integrity is now
    referential (connected tree · attrs key on nodes · edges resolve to nodes).
+6. **pure-Zig toolchain** (2026-07-16, v0.2.0) — the orchestration/query/doc-gen glue, previously
+   Nushell, was ported to Zig and the 22 `.nu` deleted. A real `build.zig` + single `zephem` binary
+   (subcommands `std`/`depth`/`overlays`/`docs`/`lookup`/`look`/`map`/`test`) now builds everything;
+   the three engines stay in place (`parse/build.zig`, `reflect/resolve.zig`, `derive/index.zig`).
+   The port fixed a latent Nushell bug: `open` CSV-strips quotes from real values (`"test"` → `test`),
+   so the Zig reader is *more* faithful. No behaviour change to the datasets otherwise.
 
 ---
 
@@ -81,9 +87,24 @@ next, as separate layers.
 
 ## Remaining work
 
-1. **L4 — examples from tests** — extract and *run* `test {}` blocks (executing verification).
-   Highest value-per-effort.
-2. **L6 — version diff** — what changed between Zig versions; needs a second pinned snapshot.
+**Guiding constraint — map, don't author.** Every fact is extracted from Zig or computed from what
+was extracted; zephem never *writes* content. Usage examples come from the std authors' own `test {}`
+blocks — we harvest them, never generate them. Where an API has no demonstration in std, that gap is
+reported *as data* (an example-coverage overlay), never filled: writing a missing example is the
+developer's job, and a fabricated row would carry false authority and break the "if a row is wrong,
+Zig said so" contract.
+
+1. **L4 — usage examples, harvested + cross-linked.** The @@N_EXAMPLES@@ `test {}` bodies are already
+   captured (`attrs`, `example`), each anchored to its enclosing node. Two steps make them a real
+   usage layer, no authoring:
+   - **run them** (executing verification — a captured test that no longer compiles is stale signal);
+   - **cross-link** each test to *every* public decl it exercises (needs the body-level edges below),
+     so one `test sha256` documents `init`/`update`/`final` at once — multiplying coverage far past the
+     raw test count over the ~10.6k public-fn+type API surface.
+2. **Example-coverage overlay** (derive) — which of the public API surface has a demonstrated usage
+   and which doesn't. `doccov` for *examples*. Surfaces the honest gap; does not fill it.
+3. **L6 — version diff** — what changed between Zig versions; needs a second pinned snapshot.
+
 Each new dataset registers with a harness and ships its own backward check.
 
 ## The parser (shape model) vs organisation (derive)
@@ -107,10 +128,13 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 3. **Modifiers** — `extern`/`export`/`inline`/`threadlocal`/`var`-vs-`const` flags as an attribute.
    (`loc` — source location — is already emitted.)
 
-**Body-level edges — the parser's next layer (deferred):**
+**Body-level edges — the parser's next layer (deferred) — the *usage graph*:**
 - **`calls` / `references`** — who calls or reads what *inside* a function body. A heavier walk
   than the declaration-level edges above; the same shape (`src · type · target · scope`), added
-  once the declaration base is settled.
+  once the declaration base is settled. This is the piece that answers **"how is X used, and with
+  what?"** — composition across decls, which per-decl reflection (isolated, one container per
+  process) structurally cannot see. It's also what lets L4 cross-link each test to the APIs it
+  exercises.
 
 **True organize-later (derive — never in the parser):**
 - **The resolved reference graph** — chase each edge to a single canonical path across the program.
@@ -123,7 +147,7 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
 - [ ] **Trim reflect waste on `()` factory containers.** The tree now includes uninstantiated
   factory containers (`<fn>()`), which `zephem depth` dutifully tries to reflect — they can't
-  instantiate standalone, so all 207 of them land in poison. `build_depth` should **skip `()`
+  instantiate standalone, so all 207 of them land in poison. `zephem depth` should **skip `()`
   targets** (their real members are Phase D: instantiate the generic, then reflect). Honest, not
   wrong — just wasted sweep time and inflated poison.
 
