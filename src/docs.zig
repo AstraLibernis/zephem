@@ -122,7 +122,9 @@ fn computeSubs(c: Ctx) ![]const Sub {
     const con_rr = eqCount(consensus, "origin", "read+run");
 
     const canon_families = try distinctCount(a, canon, "canon");
-    const pinned = std.mem.trim(u8, try load_raw(c, dir, "PINNED"), " \t\r\n");
+    // PINNED's first line is the version stamp (`zig X.Y.Z`); the second is the target triple.
+    const pinned_raw = try load_raw(c, dir, "PINNED");
+    const pinned = std.mem.trim(u8, std.mem.sliceTo(pinned_raw, '\n'), " \t\r");
 
     var list: std.ArrayList(Sub) = .empty;
     const add = struct {
@@ -147,6 +149,8 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_VALUES@@", try commafy(a, a_val));
     try add(&list, a, "@@N_LOC@@", try commafy(a, a_loc));
     try add(&list, a, "@@N_EXAMPLES@@", try commafy(a, a_ex));
+    try add(&list, a, "@@N_MOD@@", try commafy(a, eqCount(attrs, "attr", "mod")));
+    try add(&list, a, "@@N_ERRMEMBER@@", try commafy(a, eqCount(attrs, "attr", "errmember")));
     try add(&list, a, "@@N_FIELDS@@", try commafy(a, fields));
     try add(&list, a, "@@N_EDGES@@", try commafy(a, edges.rows.len));
     try add(&list, a, "@@N_HASTYPE@@", try commafy(a, eqCount(edges, "type", "has_type")));

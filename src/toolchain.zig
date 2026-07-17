@@ -12,6 +12,7 @@ pub const Env = struct {
     zig_exe: []const u8,
     std_dir: []const u8,
     version: []const u8,
+    target: []const u8, // the resolved host triple (e.g. x86_64-linux…gnu.2.43) — the reflect layer is target-scoped
 };
 
 /// The zig executable to invoke (`$ZIG` override, else `zig` off PATH).
@@ -27,6 +28,7 @@ pub fn probe(c: Ctx) !Env {
         .zig_exe = scanField(out.stdout, "zig_exe") orelse zigExe(c),
         .std_dir = scanField(out.stdout, "std_dir") orelse return Error.StdDirMissing,
         .version = scanField(out.stdout, "version") orelse return Error.VersionMissing,
+        .target = scanField(out.stdout, "target") orelse "",
     };
 }
 
@@ -48,12 +50,18 @@ pub fn staleness(c: Ctx, data_dir: []const u8) !?[]const u8 {
     const raw = std.Io.Dir.cwd().readFileAlloc(c.io, pinned_path, c.a, .unlimited) catch {
         return try std.fmt.allocPrint(c.a, "⚠ zephem map at {s} has no PINNED stamp — regenerate with `zephem std`.", .{data_dir});
     };
-    // PINNED holds e.g. "zig 0.16.0\n"; keep just the version token.
-    const trimmed = std.mem.trim(u8, raw, " \t\r\n");
-    const pinned = if (std.mem.startsWith(u8, trimmed, "zig ")) trimmed[4..] else trimmed;
-    const live = version(c) catch return null; // can't probe → stay silent
-    if (!std.mem.eql(u8, pinned, live)) {
-        return try std.fmt.allocPrint(c.a, "⚠ zephem map is pinned to zig {s} but you're on {s} — regenerate: `zephem std && zephem lookup`.", .{ pinned, live });
+    // PINNED holds two lines: `zig <ver>` then `target <triple>` (older stamps have only the first).
+    var lines = std.mem.splitScalar(u8, std.mem.trim(u8, raw, "\n"), '\n');
+    const l0 = std.mem.trim(u8, lines.next() orelse "", " \t\r");
+    const l1 = std.mem.trim(u8, lines.next() orelse "", " \t\r");
+    const pinned_ver = if (std.mem.startsWith(u8, l0, "zig ")) l0[4..] else l0;
+    const pinned_target = if (std.mem.startsWith(u8, l1, "target ")) l1[7..] else "";
+    const live = probe(c) catch return null; // can't probe → stay silent
+    if (!std.mem.eql(u8, pinned_ver, live.version)) {
+        return try std.fmt.allocPrint(c.a, "⚠ zephem map is pinned to zig {s} but you're on {s} — regenerate: `zephem std && zephem lookup`.", .{ pinned_ver, live.version });
+    }
+    if (pinned_target.len != 0 and !std.mem.eql(u8, pinned_target, live.target)) {
+        return try std.fmt.allocPrint(c.a, "⚠ zephem map was reflected for target {s} but you're on {s} — resolved/poison rows are target-scoped; regenerate: `zephem std && zephem depth --commit`.", .{ pinned_target, live.target });
     }
     return null;
 }

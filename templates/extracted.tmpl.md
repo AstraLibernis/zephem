@@ -42,7 +42,7 @@ itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
 `path · attr · value`. Sparse: a row exists only where the fact is present. **@@N_ATTRS@@ rows**
-across five attributes:
+across seven attributes:
 
 | attr | value | count |
 |---|---|---|
@@ -51,6 +51,8 @@ across five attributes:
 | `doc` | the decl's `///` doc-comment, whitespace-collapsed | @@N_DOCS@@ |
 | `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | @@N_SIGS@@ |
 | `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | @@N_EXAMPLES@@ |
+| `mod` | a decl's qualifiers — `extern`/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | @@N_MOD@@ |
+| `errmember` | a member of a named `error{…}` set (one row per member) | @@N_ERRMEMBER@@ |
 
 ### `edges.tsv` — Edges (typed references, resolved)
 `src · type · target · scope`. Every reference a declaration makes, **with its reach resolved**

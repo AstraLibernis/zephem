@@ -10,7 +10,7 @@ const vars = @import("vars.zig");
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
 
-const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8 };
+const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8 };
 
 pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !void {
     // parse: <cmd> <positional...> [--limit N | -l N]
@@ -61,6 +61,8 @@ fn loadMap(c: Ctx) ![]Node {
     const attrs = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/attrs.tsv" }));
     var sig = std.StringHashMap([]const u8).init(a);
     var doc = std.StringHashMap([]const u8).init(a);
+    var mod = std.StringHashMap([]const u8).init(a);
+    var errm = std.StringHashMap([]const u8).init(a); // error-set members, comma-joined per path
     const ap = attrs.col("path");
     const aa = attrs.col("attr");
     const av = attrs.col("value");
@@ -71,6 +73,12 @@ fn loadMap(c: Ctx) ![]Node {
         } else if (std.mem.eql(u8, r[aa], "doc")) {
             const g = try doc.getOrPut(r[ap]);
             if (!g.found_existing) g.value_ptr.* = r[av];
+        } else if (std.mem.eql(u8, r[aa], "mod")) {
+            const g = try mod.getOrPut(r[ap]);
+            if (!g.found_existing) g.value_ptr.* = r[av];
+        } else if (std.mem.eql(u8, r[aa], "errmember")) {
+            const g = try errm.getOrPut(r[ap]);
+            g.value_ptr.* = if (!g.found_existing) r[av] else try std.fmt.allocPrint(a, "{s}, {s}", .{ g.value_ptr.*, r[av] });
         }
     }
     const np = nodes.col("path");
@@ -85,6 +93,8 @@ fn loadMap(c: Ctx) ![]Node {
         .vis = r[nv],
         .sig = sig.get(r[np]) orelse "",
         .doc = doc.get(r[np]) orelse "",
+        .mod = mod.get(r[np]) orelse "",
+        .errmembers = errm.get(r[np]) orelse "",
     };
     return out;
 }
@@ -169,7 +179,9 @@ fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !void {
         if (!std.mem.eql(u8, n.path, path)) continue;
         const tag: []const u8 = if (std.mem.eql(u8, n.vis, "priv")) "  [priv]" else "";
         try out.print("{s}  ({s}){s}\n", .{ n.path, n.kind, tag });
+        if (n.mod.len > 0) try out.print("  ⟨{s}⟩\n", .{n.mod});
         if (n.sig.len > 0) try out.print("  {s}\n", .{n.sig});
+        if (n.errmembers.len > 0) try out.print("  errors: {s}\n", .{n.errmembers});
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
         if (std.mem.eql(u8, n.vis, "priv")) try out.writeAll("\n  ⚠ private decl — not accessible as this path from outside its source file.\n");
         try out.writeAll("\n(from the zephem map — the source of truth; if it's stale, regenerate the map)\n");

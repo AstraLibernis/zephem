@@ -41,8 +41,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     }
 
     const data_dir = try vars.dataDir(c);
-    const root = try toolchain.stdRoot(c);
-    const zver = try toolchain.version(c);
+    const env = try toolchain.probe(c);
+    const root = try std.fs.path.join(c.a, &.{ env.std_dir, "std.zig" });
+    const zver = env.version;
 
     var buf: [4096]u8 = undefined;
     var ow = std.Io.File.stdout().writer(c.io, &buf);
@@ -57,7 +58,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // ── forward: regenerate ──────────────────────────────────────────────────
     try w.print("[forward]  scanning {s}  (zig {s}, depth {d})\n", .{ root, zver, depth });
     _ = try regen(c, root, data_dir);
-    try writeFileStr(c, try join(c.a, data_dir, "PINNED"), try std.fmt.allocPrint(c.a, "zig {s}\n", .{zver}));
+    // PINNED: first line the version (consumers read it), second the target triple (the reflect
+    // layer is target-scoped — a Windows decl poisons on linux, usize=u64 here, etc.).
+    try writeFileStr(c, try join(c.a, data_dir, "PINNED"), try std.fmt.allocPrint(c.a, "zig {s}\ntarget {s}\n", .{ zver, env.target }));
     try report(c, data_dir, w);
 
     // ── backward: verify ─────────────────────────────────────────────────────

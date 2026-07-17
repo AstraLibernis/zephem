@@ -170,6 +170,69 @@ fn fnSig(w: *W, ast: *const Ast, proto: *const Ast.full.FnProto) !?[]const u8 {
     return try collapse(w.arena, ast.source[start..end]);
 }
 
+/// Space-joined modifier keywords on a var/const decl — `extern`/`export` · `threadlocal` ·
+/// `comptime` · `var` (const is the default, omitted). "" when none, so the `mod` attr stays sparse.
+fn varMod(w: *W, ast: *const Ast, vd: Ast.full.VarDecl) ![]const u8 {
+    var parts: [4][]const u8 = undefined;
+    var n: usize = 0;
+    if (vd.extern_export_token) |t| {
+        parts[n] = ast.tokenSlice(t);
+        n += 1;
+    }
+    if (vd.threadlocal_token != null) {
+        parts[n] = "threadlocal";
+        n += 1;
+    }
+    if (vd.comptime_token != null) {
+        parts[n] = "comptime";
+        n += 1;
+    }
+    if (std.mem.eql(u8, ast.tokenSlice(vd.ast.mut_token), "var")) {
+        parts[n] = "var";
+        n += 1;
+    }
+    return if (n == 0) "" else std.mem.join(w.arena, " ", parts[0..n]);
+}
+
+/// A fn's leading qualifier — `extern` / `export` / `inline` — or "" (the `sig` attr starts at the
+/// `fn` keyword, so these, which precede it, would otherwise be lost).
+fn fnMod(ast: *const Ast, proto: *const Ast.full.FnProto) []const u8 {
+    return if (proto.extern_export_inline_token) |t| ast.tokenSlice(t) else "";
+}
+
+/// Emit each member of a named `error{A, B, C}` literal as an `errmember` attr on the decl. Members
+/// can carry `///` doc-comments and span lines, so within each comma-separated chunk we take the
+/// last non-comment line and pull its leading identifier (or `@"…"`) — never raw text (a value with
+/// an embedded newline would corrupt the TSV).
+fn emitErrMembers(w: *W, cp: []const u8, src: []const u8) !void {
+    const lb = std.mem.indexOfScalar(u8, src, '{') orelse return;
+    const rb = std.mem.lastIndexOfScalar(u8, src, '}') orelse return;
+    if (rb <= lb + 1) return; // empty `error{}`
+    var chunks = std.mem.splitScalar(u8, src[lb + 1 .. rb], ',');
+    while (chunks.next()) |chunk| {
+        var member: []const u8 = "";
+        var lines = std.mem.splitScalar(u8, chunk, '\n');
+        while (lines.next()) |ln| {
+            const t = std.mem.trim(u8, ln, " \t\r");
+            if (t.len == 0 or std.mem.startsWith(u8, t, "//")) continue; // skip blanks + doc/comments
+            member = leadingIdent(t);
+        }
+        if (member.len != 0) try w.attr(cp, "errmember", member);
+    }
+}
+
+/// The leading identifier of `t` — a `@"…"` quoted name, or the run of identifier chars — dropping
+/// any trailing comment/whitespace.
+fn leadingIdent(t: []const u8) []const u8 {
+    if (std.mem.startsWith(u8, t, "@\"")) {
+        const close = std.mem.indexOfScalarPos(u8, t, 2, '"') orelse return t;
+        return t[0 .. close + 1];
+    }
+    var j: usize = 0;
+    while (j < t.len and (std.ascii.isAlphanumeric(t[j]) or t[j] == '_')) j += 1;
+    return t[0..j];
+}
+
 fn importTarget(src: []const u8) ?[]const u8 {
     const t = std.mem.trim(u8, src, " \t\r\n");
     if (!std.mem.startsWith(u8, t, "@import(")) return null;
@@ -385,6 +448,7 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
     const own_doc = try docComment(w, ast, node);
     try declFacts(w, cp, try locOf(w, ast, node, rel), if (own_doc.len != 0) own_doc else fallback_doc);
     if (try fnSig(w, ast, proto)) |sg| try w.attr(cp, "sig", sg);
+    try w.attr(cp, "mod", fnMod(ast, proto)); // extern/export/inline (sparse; sig starts at `fn`)
     try fnEdges(w, ast, cp, node, proto);
     if (ast.nodeTag(node) != .fn_decl) return;
     switch (classifyFactory(ast, node, proto)) {
@@ -461,6 +525,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         const name = ast.tokenSlice(vd.ast.mut_token + 1);
         const vis = if (vd.visib_token != null) "pub" else "priv";
         const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
+        try w.attr(cp, "mod", try varMod(w, ast, vd)); // var/extern/export/threadlocal/comptime (sparse)
         // Declaration-site facts. Used for every kind EXCEPT a followed selective re-export,
         // whose loc/doc come from the target it resolves to (emitReexport owns them, falling
         // back to these only when the target can't be reached).
@@ -472,6 +537,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             continue;
         };
         const init_src = ast.getNodeSource(init);
+        if (ast.nodeTag(init) == .error_set_decl) try emitErrMembers(w, cp, init_src); // errmember attrs
         if (importTarget(init_src)) |tgt| {
             const sel = selectorOf(init_src);
             // `@import("f").foo()` — a CALL selector yields a computed value/type we can't resolve by

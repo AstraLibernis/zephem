@@ -46,7 +46,7 @@ the first un-evaluatable decl.
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to
 `data/std/extracted/`. On zig 0.16.0 that is **63,494 nodes across 340 files**
-(56,088 public, 7,406 private), max nesting depth 8 — carrying 109,729
+(56,088 public, 7,406 private), max nesting depth 8 — carrying 111,480
 attributes and 54,666 typed edges.
 
 ```sh
@@ -76,7 +76,7 @@ $ zig build std
 [forward]  scanning .../std.zig  (zig 0.16.0, depth 8)
            rows: 63494   files: 340   private: 7406
 [index]    containers: 4042   root span: 63494   max depth: 8
-[attrs]    109729 rows — doc 13721 · sig 11273 · value 19809 · example 1433
+[attrs]    111480 rows — doc 13721 · sig 11273 · value 19809 · example 1433
 [edges]    54666 rows — resolved 48094 / unresolved 2020
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass

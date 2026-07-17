@@ -40,7 +40,7 @@ never folded into the base.
 5. **the shape model** (2026-07) — the parser was rebuilt around the insight that every node has
    exactly three kinds of fact: the **Tree** (where it sits), its **Attributes** (facts it carries),
    and its **Edges** (typed references it makes). The old side-files (`sigs`/`docs`/`fields`/
-   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (109,729 facts) and
+   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (111,480 facts) and
    `edges.tsv` (54,666 resolved references) — keyed to `nodes.tsv` by `path`. The parser now
    **follows `@import`** (one organism), **includes private decls** (`vis`), and **resolves each
    edge's reach** in a second pass. The `n_children` conservation law is retired; integrity is now
@@ -67,7 +67,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | piece | built by | status |
 |---|---|---|
 | **the Tree** — `nodes.tsv` | `parse/build.zig` | ✅ the spine: full std, 63,494 nodes (56,088 pub / 7,406 priv) / 340 files, depth 8; connectivity-checked |
-| **Attributes** — `attrs.tsv` | `parse/build.zig` | ✅ 109,729 facts keyed by `path`: 11,273 sigs · 13,721 `///` docs · 19,809 field/const values · 63,493 locations · 1,433 test bodies; each keys onto a real node |
+| **Attributes** — `attrs.tsv` | `parse/build.zig` | ✅ 111,480 facts keyed by `path`: 11,273 sigs · 13,721 `///` docs · 19,809 field/const values · 63,493 locations · 1,433 test bodies; each keys onto a real node |
 | **Edges** — `edges.tsv` | `parse/build.zig` | ✅ 54,666 typed refs (47,983 has_type · 2,942 alias · 2,876 error_set · 828 imports · 37 delegates), resolved to a scope; 96% of resolvable ones land on a node/primitive; local/cross verified to resolve |
 | **factory descent** — `nodes.tsv` | `parse/build.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/build.zig` | ✅ 1,433 `test {}` bodies, escaped to one row, anchored to the enclosing node |

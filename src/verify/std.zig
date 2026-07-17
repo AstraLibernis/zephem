@@ -15,7 +15,7 @@ const rel = @import("../relation.zig");
 const parse = @import("parse");
 
 const known_kinds = [_][]const u8{ "ns", "nsref", "nserr", "modref", "struct", "enum", "union", "opaque", "fn", "const", "alias", "field", "tag" };
-const known_attrs = [_][]const u8{ "doc", "sig", "value", "loc", "example" };
+const known_attrs = [_][]const u8{ "doc", "sig", "value", "loc", "example", "mod", "errmember" };
 
 fn isKnown(set: []const []const u8, v: []const u8) bool {
     for (set) |k| if (std.mem.eql(u8, k, v)) return true;

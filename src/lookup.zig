@@ -3,7 +3,7 @@
 //! and derived overlays into the fixed 15-column contract zlook reads by index:
 //!
 //!   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail(loc) · 6 sig · 7 doc
-//!   8 rkind · 9 rdetail · 10 canon · 11 ftype · 12 fval · 13 delegate · 14 vis
+//!   8 rkind · 9 rdetail · 10 canon · 11 ftype · 12 fval · 13 delegate · 14 vis · 15 mod
 //!
 //! A pure left-join over the node set — same symbol universe as nodes.tsv, enriched. Assembled
 //! directly with hash maps (build each right side once, probe per node) rather than chained table
@@ -69,6 +69,7 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
     var canon_m = try mapCol(a, canon, "path", "canon");
     var htype = try edgeCol(a, edges, "has_type");
     var deleg = try edgeCol(a, edges, "delegates");
+    var modm = try attrCol(a, attrs, "mod");
 
     // resolved → (rkind, rdetail), first occurrence per path
     var rkind = std.StringHashMap([]const u8).init(a);
@@ -95,7 +96,7 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
         const path = r[np];
         const kind = r[nk];
         const is_fieldish = std.mem.eql(u8, kind, "field") or std.mem.eql(u8, kind, "tag");
-        const row = try a.alloc([]const u8, 15);
+        const row = try a.alloc([]const u8, 16);
         row[0] = path;
         row[1] = try depthStr(a, path);
         row[2] = kind;
@@ -111,12 +112,13 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
         row[12] = fval.get(path) orelse "";
         row[13] = deleg.get(path) orelse "";
         row[14] = r[nv];
+        row[15] = modm.get(path) orelse ""; // extern/export/inline/threadlocal/comptime/var
         rows[k] = row;
     }
     // A left-join over nodes must preserve exactly the node rows (1:1) — assert it, fail loud.
     std.debug.assert(rows.len == nodes.rows.len);
     return rel.Table{
-        .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis" },
+        .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis", "mod" },
         .rows = rows,
         .a = a,
     };

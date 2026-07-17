@@ -37,6 +37,7 @@ const COL_FTYPE = 11; // a field/tag's resolved type (edges[has_type])
 const COL_FVAL = 12; // a field default / enum tag value (attrs[value])
 const COL_DELEGATE = 13; // a delegating factory's target (edges[delegates])
 const COL_VIS = 14; // "pub" | "priv" — a private decl isn't callable at its path from outside its file
+const COL_MOD = 15; // extern/export/inline/threadlocal/comptime/var qualifiers (sparse)
 
 inline fn lo(c: u8) u8 {
     return if (c >= 'A' and c <= 'Z') c + 32 else c;
@@ -175,6 +176,8 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
     for (hits.items[0..shown]) |h| {
         const vis_tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ field(h.line, COL_PATH), field(h.line, COL_KIND), vis_tag });
+        const mod = field(h.line, COL_MOD);
+        if (mod.len > 0) try out.print("      ⟨{s}⟩\n", .{mod});
         const sig = field(h.line, COL_SIG);
         const res = field(h.line, COL_RDETAIL);
         const doc = field(h.line, COL_DOC);

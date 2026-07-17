@@ -20,7 +20,7 @@ derived/ is what zephem computes from it, and can be deleted and rebuilt from ex
 alone.**
 
 At a glance — the parser's shape model is **63,494 nodes across 340 files**
-(the tree), **109,729 attributes** (13,721 docs, 11,273 sigs, 19,809 values,
+(the tree), **111,480 attributes** (13,721 docs, 11,273 sigs, 19,809 values,
 63,493 locations, 1,433 test bodies), and **54,666 typed edges**; reflect adds
 2,908 containers resolved, and six derivatives key back to the tree at the same `path`.
 

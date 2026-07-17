@@ -43,7 +43,7 @@ reproduces it, not the bytes.
 | stream | shape | what it is |
 |---|---|---|
 | `nodes.tsv` | Tree | 63,494 nodes (56,088 pub / 7,406 priv), incl. fields, tags, and factory members (`<fn>()`) |
-| `attrs.tsv` | Attributes | 109,729 facts — 13,721 docs · 11,273 sigs · 19,809 values · 63,493 locations · 1,433 test bodies |
+| `attrs.tsv` | Attributes | 111,480 facts — 13,721 docs · 11,273 sigs · 19,809 values · 63,493 locations · 1,433 test bodies |
 | `edges.tsv` | Edges | 54,666 typed references, 96% of the resolvable ones landing on a node/primitive |
 
 (The `index.tsv` table of contents is built *from* the Tree by the [`../derive/`](../derive/)
