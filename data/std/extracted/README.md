@@ -101,7 +101,7 @@ On zig 0.16.0: **2,908 containers resolved (15,792 rows).**
 
 ### `poison.tsv` — what didn't resolve
 `path · reason`. Decls that failed to resolve, each with the compiler's exact reason
-(platform / foreign lib / `@compileError` / timeout). **1,134 genuine poison.**
+(platform / foreign lib / `@compileError` / timeout). **927 genuine poison.**
 The tree now includes private decls (many platform/foreign-lib) and uninstantiated `()`
 factory containers, so poison is higher than the pub-only parser's was — each is an honest
 "the compiler couldn't build this here", not a miss.

@@ -72,7 +72,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **factory descent** — `nodes.tsv` | `parse/build.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/build.zig` | ✅ 1,433 `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 4,042 containers, self-checked both ways |
-| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 2,908 resolved / 1,134 genuine poison, zero dups |
+| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 2,908 resolved / 927 genuine poison, zero dups |
 | **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 13,412 / run-only 2,304 / read-only 12,987; 0 blanks |
 | **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ 236 paths in 100 alias/dup families (shared resolved `@typeName`); self-checked |
 | **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 22% of nodes documented (13,721 carry `///` docs); per-kind, self-checked vs map + docs overlay |
@@ -146,11 +146,30 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 
 - [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
-- [ ] **Trim reflect waste on `()` factory containers.** The tree now includes uninstantiated
-  factory containers (`<fn>()`), which `zephem depth` dutifully tries to reflect — they can't
-  instantiate standalone, so all 207 of them land in poison. `zephem depth` should **skip `()`
-  targets** (their real members are Phase D: instantiate the generic, then reflect). Honest, not
-  wrong — just wasted sweep time and inflated poison.
+- [x] **Trim reflect waste on `()` factory containers** — ✅ **done** (2026-07-17). An
+  uninstantiated `<fn>()` factory can't reflect standalone, so all 207 of them
+  used to land in poison; `zephem depth` now **skips them structurally** (a new `skipped` status),
+  deflating poison to genuine compile-failures only. Provably safe — no `()` container ever
+  resolves. Their real members are Phase D (instantiate the generic, then reflect).
+
+## Performance — what makes the L5 sweep faster, and what doesn't
+
+The sweep is **4042 container reflections, one `zig run` (compile) each**, already
+data-parallel (one lane per CPU, ~11× on a 12-core box). Its cost is **per-container comptime
+evaluation** — irreducible, and the reason each container needs its own compile (reflection is a
+comptime operation; you can't defer it to runtime).
+
+- ✅ **The `()` skip** (above) removes the guaranteed-fail compiles. Small, correct.
+- ✅ **More cores** — near-linear. This is the real knob: ≈1 min on a 16-lane desktop vs ~7–13 min
+  on smaller boxes. The datasets are committed, so you only pay the sweep on a Zig **version bump**,
+  not routinely.
+- ✗ **Batching many containers per compile** — *tried and measured SLOWER* (2026-07-17). The cost is
+  comptime, not per-`zig run` overhead, so batching only concentrates the irreducible work into
+  fewer, larger, serial compiles; comptime-heavy modules (crypto) blow past the timeout and bisect
+  all the way down, paying solo cost **plus** the failed-batch recompiles, and it wrecks the
+  per-core load balancing. Reverted. Do not re-attempt.
+- ◐ **Incremental dev mode** (reuse prior verdicts, re-reflect only changed containers) — a large
+  win for iteration, but *not* the reproducible build, which must ask the compiler cold. Not built.
 
 ## Known hardening (from the 2026-06-19 adversarial audit)
 

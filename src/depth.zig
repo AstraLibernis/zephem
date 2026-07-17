@@ -17,11 +17,12 @@ const rel = @import("relation.zig");
 /// One container's verdict. Slices are page_allocator-owned (built on a worker thread).
 pub const One = struct {
     status: []const u8, // "path\tstatus\tn_rows"
-    resolved: []const []const u8, // resolved rows (normalized), empty if poison
+    resolved: []const []const u8, // resolved rows (normalized), empty if poison/skipped
     poison: ?[]const u8, // "path\treason", or null
+    skipped: bool = false, // structurally unreflectable (a `()` factory container) — not attempted
 };
 
-pub const Counts = struct { attempted: usize, resolved_containers: usize, resolved_rows: usize, poison: usize };
+pub const Counts = struct { attempted: usize, resolved_containers: usize, resolved_rows: usize, poison: usize, skipped: usize };
 
 const SweepCtx = struct {
     io: std.Io,
@@ -61,6 +62,9 @@ pub fn sweep(
         .targets = targets,
         .skips = skips,
     };
+    // One `zig run` per container, one lane per CPU. (A batched reflector was tried and measured
+    // SLOWER — std reflection is comptime-dominated, not invocation-dominated; batching concentrates
+    // the irreducible comptime work into fewer, larger, serial compiles. See PLAN.md.)
     const results = try proc.parMap(One, c.a, jobs, targets.len, sctx, reflectOne);
 
     // assemble in target order
@@ -71,10 +75,12 @@ pub fn sweep(
     try resolved.writer.writeAll("path\tkind\tdetail\n");
     try poison.writer.writeAll("path\treason\n");
 
-    var counts = Counts{ .attempted = targets.len, .resolved_containers = 0, .resolved_rows = 0, .poison = 0 };
+    var counts = Counts{ .attempted = targets.len, .resolved_containers = 0, .resolved_rows = 0, .poison = 0, .skipped = 0 };
     for (results) |one| {
         try status.writer.print("{s}\n", .{one.status});
-        if (one.poison) |p| {
+        if (one.skipped) {
+            counts.skipped += 1;
+        } else if (one.poison) |p| {
             try poison.writer.print("{s}\n", .{p});
             counts.poison += 1;
         } else {
@@ -99,32 +105,57 @@ fn reflectOne(cx: SweepCtx, i: usize) One {
     const path = cx.targets[i];
     const skip = cx.skips[i];
 
-    const src = genSource(a, cx.template, path, skip) catch return poisonOne(a, path, "gen failed");
-    const rfile = std.fmt.allocPrint(a, "{s}/r-{d}.zig", .{ cx.scratch_dir, i }) catch return poisonOne(a, path, "scratch alloc failed");
-    writeFileRaw(a, cx.io, rfile, src) catch return poisonOne(a, path, "scratch write failed");
+    // A `()` factory container is an UNINSTANTIATED generic — `@import("std").Foo()` can't be
+    // reflected standalone (the compiler needs the type args), so it would only ever poison.
+    // Skip it structurally (no compile, no wasted process) — its real members are Phase D
+    // (instantiate the generic, then reflect). Provably safe: no `()` container resolves.
+    if (std.mem.indexOf(u8, path, "()") != null) return skippedOne(a, path);
 
-    const out = proc.runTimed(a, cx.io, &.{ cx.zig_exe, "run", rfile }, cx.timeout_s) catch return poisonOne(a, path, "spawn failed");
+    const rfile = std.fmt.allocPrint(a, "{s}/r-{d}.zig", .{ cx.scratch_dir, i }) catch return poisonOne(a, path, "scratch alloc failed");
+    return soloReflect(a, cx.io, cx.zig_exe, cx.template, cx.std_dir, cx.timeout_s, path, skip, rfile);
+}
+
+/// Reflect ONE container via the solo `resolve.zig` template — the canonical path. Shared by the
+/// solo sweep and by the batch sweep's size-1 bisect base case / special-path fallback, so a
+/// container reflected alone here produces byte-identical output regardless of which sweep drove it.
+fn soloReflect(a: std.mem.Allocator, io: std.Io, zig_exe: []const u8, template: []const u8, std_dir: []const u8, timeout_s: u32, path: []const u8, skip: []const []const u8, rfile: []const u8) One {
+    const src = genSource(a, template, path, skip) catch return poisonOne(a, path, "gen failed");
+    writeFileRaw(a, io, rfile, src) catch return poisonOne(a, path, "scratch write failed");
+    const out = proc.runTimed(a, io, &.{ zig_exe, "run", rfile }, timeout_s) catch return poisonOne(a, path, "spawn failed");
 
     if (out.exit_code == 0) {
-        // WORKS — record the resolved rows (skip the header line).
-        var rows: std.ArrayList([]const u8) = .empty;
-        var lines = std.mem.splitScalar(u8, out.stdout, '\n');
-        _ = lines.next(); // header
-        while (lines.next()) |ln| {
-            if (ln.len == 0) continue;
-            rows.append(a, normRow(a, ln) catch ln) catch {};
-        }
-        const status = std.fmt.allocPrint(a, "{s}\tresolved\t{d}", .{ path, rows.items.len }) catch path;
-        return .{ .status = status, .resolved = rows.toOwnedSlice(a) catch &.{}, .poison = null };
+        const status = std.fmt.allocPrint(a, "{s}\tresolved\t{d}", .{ path, 0 }) catch path;
+        const rows = parseRows(a, out.stdout, true);
+        return .{ .status = std.fmt.allocPrint(a, "{s}\tresolved\t{d}", .{ path, rows.len }) catch status, .resolved = rows, .poison = null };
     }
-
-    // DOESN'T — poison. Timeout (124) is the one non-compiler case; tag it honestly.
     if (out.exit_code == 124) {
-        return poisonOne(a, path, std.fmt.allocPrint(a, "timeout after {d}s", .{cx.timeout_s}) catch "timeout");
+        return poisonOne(a, path, std.fmt.allocPrint(a, "timeout after {d}s", .{timeout_s}) catch "timeout");
     }
-    var reason = normReason(a, firstErrorLine(out.stderr), cx.std_dir, rfile);
+    var reason = normReason(a, firstErrorLine(out.stderr), std_dir, rfile);
     if (reason.len == 0) reason = std.fmt.allocPrint(a, "exit {d}", .{out.exit_code}) catch "exit";
     return poisonOne(a, path, reason);
+}
+
+/// Parse resolver stdout into normalized rows. `has_header` skips the leading `path\tkind\tdetail`.
+fn parseRows(a: std.mem.Allocator, stdout: []const u8, has_header: bool) []const []const u8 {
+    var rows: std.ArrayList([]const u8) = .empty;
+    var lines = std.mem.splitScalar(u8, stdout, '\n');
+    if (has_header) _ = lines.next();
+    while (lines.next()) |ln| {
+        if (ln.len == 0) continue;
+        rows.append(a, normRow(a, ln) catch ln) catch {};
+    }
+    return rows.toOwnedSlice(a) catch &.{};
+}
+
+/// A `()` factory container is structurally unreflectable standalone — recorded as skipped.
+fn skippedOne(a: std.mem.Allocator, path: []const u8) One {
+    return .{
+        .status = std.fmt.allocPrint(a, "{s}\tskipped\t0", .{path}) catch path,
+        .resolved = &.{},
+        .poison = null,
+        .skipped = true,
+    };
 }
 
 fn poisonOne(a: std.mem.Allocator, path: []const u8, reason: []const u8) One {

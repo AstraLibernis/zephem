@@ -77,7 +77,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     try w.print("[L5] reflecting {d} container(s) — {d} lanes, {d}s timeout each, poison isolated per process\n", .{ all_targets.len, jcount, timeout_s });
     const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount);
-    try w.print("[L5] resolved: {d} containers, {d} rows   poison: {d}   attempted: {d}\n", .{ counts.resolved_containers, counts.resolved_rows, counts.poison, counts.attempted });
+    try w.print("[L5] resolved: {d} containers, {d} rows   poison: {d}   skipped: {d} (uninstantiated `()` factories)   attempted: {d}\n", .{ counts.resolved_containers, counts.resolved_rows, counts.poison, counts.skipped, counts.attempted });
     try w.flush();
 
     if (!try verify.run(c, outdir, index_path, commit)) {

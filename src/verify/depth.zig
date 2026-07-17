@@ -37,6 +37,7 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
     var dups: usize = 0;
     var bad_status: usize = 0;
     var n_res: usize = 0;
+    var n_skip: usize = 0;
     var status_poison = std.StringHashMap(void).init(a);
     for (status.rows) |r| {
         const gop = try seen.getOrPut(r[sp]);
@@ -46,6 +47,8 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
             n_res += 1;
         } else if (std.mem.eql(u8, st, "poison")) {
             try status_poison.put(r[sp], {});
+        } else if (std.mem.eql(u8, st, "skipped")) {
+            n_skip += 1;
         } else bad_status += 1;
     }
     const n_poi = status_poison.count();
@@ -61,7 +64,7 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
             break;
         };
     }
-    try w.print("partition:    {d} attempted = {d} resolved + {d} poison\n", .{ status.rows.len, n_res, n_poi });
+    try w.print("partition:    {d} attempted = {d} resolved + {d} poison + {d} skipped\n", .{ status.rows.len, n_res, n_poi, n_skip });
     if (dups > 0) {
         try w.print("  ✗ {d} container(s) appear twice in status\n", .{dups});
         ok = false;
@@ -74,12 +77,12 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
         try w.writeAll("  ✗ poison status set ≠ poison.tsv paths\n");
         ok = false;
     }
-    if (n_res + n_poi != status.rows.len) {
+    if (n_res + n_poi + n_skip != status.rows.len) {
         try w.writeAll("  ✗ buckets don't sum to attempted\n");
         ok = false;
     }
-    if (dups == 0 and bad_status == 0 and !set_mismatch and n_res + n_poi == status.rows.len)
-        try w.writeAll("  ✓ every container is resolved or poison; the poison file agrees with the ledger\n");
+    if (dups == 0 and bad_status == 0 and !set_mismatch and n_res + n_poi + n_skip == status.rows.len)
+        try w.writeAll("  ✓ every container is resolved, poison, or skipped; the poison file agrees with the ledger\n");
 
     // 2. CONSERVATION
     var declared: usize = 0;

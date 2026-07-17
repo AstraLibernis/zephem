@@ -145,11 +145,30 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 
 - [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
-- [ ] **Trim reflect waste on `()` factory containers.** The tree now includes uninstantiated
-  factory containers (`<fn>()`), which `zephem depth` dutifully tries to reflect — they can't
-  instantiate standalone, so all 207 of them land in poison. `zephem depth` should **skip `()`
-  targets** (their real members are Phase D: instantiate the generic, then reflect). Honest, not
-  wrong — just wasted sweep time and inflated poison.
+- [x] **Trim reflect waste on `()` factory containers** — ✅ **done** (2026-07-17). An
+  uninstantiated `<fn>()` factory can't reflect standalone, so all 207 of them
+  used to land in poison; `zephem depth` now **skips them structurally** (a new `skipped` status),
+  deflating poison to genuine compile-failures only. Provably safe — no `()` container ever
+  resolves. Their real members are Phase D (instantiate the generic, then reflect).
+
+## Performance — what makes the L5 sweep faster, and what doesn't
+
+The sweep is **@@N_INDEX_RAW@@ container reflections, one `zig run` (compile) each**, already
+data-parallel (one lane per CPU, ~11× on a 12-core box). Its cost is **per-container comptime
+evaluation** — irreducible, and the reason each container needs its own compile (reflection is a
+comptime operation; you can't defer it to runtime).
+
+- ✅ **The `()` skip** (above) removes the guaranteed-fail compiles. Small, correct.
+- ✅ **More cores** — near-linear. This is the real knob: ≈1 min on a 16-lane desktop vs ~7–13 min
+  on smaller boxes. The datasets are committed, so you only pay the sweep on a Zig **version bump**,
+  not routinely.
+- ✗ **Batching many containers per compile** — *tried and measured SLOWER* (2026-07-17). The cost is
+  comptime, not per-`zig run` overhead, so batching only concentrates the irreducible work into
+  fewer, larger, serial compiles; comptime-heavy modules (crypto) blow past the timeout and bisect
+  all the way down, paying solo cost **plus** the failed-batch recompiles, and it wrecks the
+  per-core load balancing. Reverted. Do not re-attempt.
+- ◐ **Incremental dev mode** (reuse prior verdicts, re-reflect only changed containers) — a large
+  win for iteration, but *not* the reproducible build, which must ask the compiler cold. Not built.
 
 ## Known hardening (from the 2026-06-19 adversarial audit)
 

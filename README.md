@@ -126,7 +126,7 @@ ship today, all self-verifying and byte-identical on rerun:
 - **`data/std/extracted/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
   decl can't kill the sweep. On zig 0.16.0: 4,042 containers swept → **2,908 resolved (15,792
-  rows) / 1,134 genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
+  rows) / 927 genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
   reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
   strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
