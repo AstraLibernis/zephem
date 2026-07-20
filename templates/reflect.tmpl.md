@@ -11,8 +11,8 @@ reflecting program *fail to compile*. That single fact shapes the whole engine: 
 container per subprocess**, so a poison decl kills only its own process and the sweep marches on.
 This is the exact opposite trade-off from the parser — depth over totality, bought with isolation.
 
-These rows are **x86_64-linux-specific**: a decl gated to another target resolves as poison here.
-Pinned to **@@ZIG@@** (`../data/std/PINNED`).
+These rows are **@@TARGET@@-specific** (the host recorded in `../data/std/PINNED`): a decl gated
+to another target resolves as poison here. Pinned to **@@ZIG@@**.
 
 ---
 
@@ -32,15 +32,17 @@ path · kind · detail
 
 ## 2. What it produces (`../data/std/extracted/`)
 
-Every container in the map is swept; each is a binary outcome — it **resolved** or it's **poison**.
+Every container in the map is swept, with one of three outcomes — it **resolved**, it's **poison**
+(the compiler errored), or it's **skipped** (an uninstantiated `()` factory: no type args, so there
+is nothing to reflect yet).
 
 | dataset | purpose | shape |
 |---|---|---|
 | `resolved.tsv` | the resolved facts — const values, expanded generics, typed fn sigs. `kind ∈ type · const_int · const_bool · fn · const_other` | `path · kind · detail` |
 | `poison.tsv` | the containers that *didn't* resolve, each with the compiler's own first error line (platform / foreign lib / `@compileError` / timeout) | `path · reason` |
-| `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the resolved/poison split from it | `path · status · n_rows` |
+| `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the resolved/poison/skipped split from it | `path · status · n_rows` |
 
-On @@ZIG@@: **@@N_INDEX@@ containers swept → @@N_RES_CONT@@ resolved (@@N_RESOLVED@@ rows) / @@N_POISON@@ genuine poison.**
+On @@ZIG@@: **@@N_INDEX@@ containers swept → @@N_RES_CONT@@ resolved (@@N_RESOLVED@@ rows) / @@N_POISON@@ genuine poison / @@N_SKIPPED@@ skipped.**
 
 ### Planned — the same sweep, more facts
 

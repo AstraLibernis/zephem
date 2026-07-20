@@ -9,7 +9,7 @@ The transforms that combine or reshape these files live one level over in
 [`../derived/`](../derived/).
 
 Pinned to **@@ZIG@@** (`../PINNED`); a target-specific subset (see `resolved`/`poison`
-below) is x86_64-linux.
+below) is **@@TARGET@@** (the host recorded in `../PINNED`).
 
 ---
 
@@ -28,7 +28,7 @@ All three key on the same dotted `path`, so they re-join without a lookup table.
 ### `nodes.tsv` — the Tree (the headline dataset)
 The whole `std` namespace tree, one row per node. A node is a declaration (public **or**
 private), a struct/union **field**, an enum **tag**, or a **type-factory member** (a member
-of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.ArrayList().append`;
+of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.MultiArrayList().append`;
 the `()` marks "instantiate first"). **@@N_NODES@@ rows** (@@N_PUB@@ pub / @@N_PRIV@@ priv)
 across **@@N_FILES@@ files**, max depth **@@MAXDEPTH@@**.
 Columns: `path · kind · name · vis`  (`vis ∈ pub · priv`).
@@ -93,7 +93,7 @@ a real node** — the links are valid.
 `reflect/resolve.zig` reflects each container in its **own isolated subprocess**, so a
 poison decl can't kill the sweep. This is the compiler's resolved view — real types,
 expanded generics, evaluated const values — the one thing a pure parser cannot see.
-These rows are **x86_64-linux-specific**: a decl gated to another target resolves as
+These rows are **@@TARGET@@-specific**: a decl gated to another target resolves as
 poison here.
 
 ### `resolved.tsv` — resolved depth
@@ -113,5 +113,5 @@ re-derives the buckets from this and reconciles them against `resolved`/`poison`
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).
 The reflect sweep's wall time is machine-dependent (≈1 min on a 16-lane desktop,
-≈13 min on a 3-core VM), so its rebuild harness is a separate task from `build_std`'s
+≈13 min on a 3-core VM), so its rebuild harness is a separate task from `zephem std`'s
 `--check` (see `PLAN.md`).

@@ -61,7 +61,7 @@ so the commands below run from any directory. The query surface is two subcomman
 **The map is the single source of std truth** — no live-lookup fallback, by design (a
 shallow fallback would be *less* accurate, defeating the point). It is a **regenerable**
 snapshot pinned to a Zig version, so it's authoritative, not a guess. If it's stale — its
-`PINNED` zig differs from your installed zig, and the tools warn you — **regenerate it**,
+`PINNED` zig version or target triple differs from yours, and the tools warn you — **regenerate it**,
 never fall back to memory:
 ```sh
 cd $ZEPHEM_HOME && zephem std    # rebuild the map (self-verifies)

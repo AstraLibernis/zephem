@@ -43,6 +43,18 @@ comptime, so platform-gated and "poison" decls (e.g. `std.c.darwin`'s `assert(is
 are just harmless text. This is what lets it map **all** of std — a reflection walk dies on
 the first un-evaluatable decl.
 
+## Quickstart
+
+```sh
+zig build                        # → the `zephem` binary at zig-out/bin/zephem
+zephem std                       # map the active toolchain's std → data/std/extracted/
+zephem map doc std.fmt.parseInt  # query the map (reads the TSVs directly, no index needed)
+```
+
+Needs Zig **@@ZIG@@** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
+command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in
+each engine's README.
+
 ## The headline dataset: the full std map
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to
@@ -89,12 +101,9 @@ Zig are byte-identical (`git diff --exit-code` clean).
 
 The dataset proves itself without any external oracle (above). Separately — as a coverage
 sanity-check, not a correctness proof — [`docs/comparison/autodoc-vs-zephem.md`](docs/comparison/autodoc-vs-zephem.md)
-lines this snapshot up against Zig's own autodoc extraction (autodoc's `Walk.zig` driven
-natively): on the shared public-declaration surface the two reach a near-identical set, and
-zephem additionally carries fields, enum tags, private decls, the edge graph, and the
-resolved layer autodoc does not emit. That note is a *dated* comparison, not a regenerated
-artifact — it pins its inputs and ships the commands to re-derive every figure; autodoc's
-side is not rebuilt as part of zephem.
+lines this snapshot up against Zig's own autodoc extraction: on the shared public surface the
+two reach a near-identical set, and zephem additionally carries fields, enum tags, private
+decls, the edge graph, and the resolved layer. See that note for the method and figures.
 
 ### Reading it efficiently: the table of contents
 
@@ -117,7 +126,7 @@ data they query: **[data/README.md](data/README.md)**.
 ## Beyond the map: the other engines, keyed to it
 
 The shape model is the skeleton the parser emits. Deeper facts are produced by **separate
-engines** and join back at the same `path`, so every row anchors to a node that exists. Three
+engines** and join back at the same `path`, so every row anchors to a node that exists. They
 ship today, all self-verifying and byte-identical on rerun:
 
 > This is the tour. The canonical per-dataset reference — every extractor's columns, purpose, and
@@ -181,8 +190,9 @@ zephem began life (as `zcrypto`) pointed only at `std.crypto`, via **reflection*
 resolves real byte sizes and signatures but can't generalize (a reflection walk dies on the
 first platform-gated decl). That whole pipeline — tools, scripts, and datasets — is retired
 (deleted, with provenance in the archive tombstone
-[`docs/archive/README.md`](docs/archive/README.md)). The AST parser above replaced it as
-the general tool the project is built around now.
+[`docs/archive/README.md`](docs/archive/README.md); recover any file from git history). The
+AST parser above replaced it as the general tool the project is built around now — renamed and
+reframed **2026-06-17**, the tool is the extractor, not the crypto.
 
 ## How it's built
 
@@ -195,17 +205,17 @@ The extractor is **three engines**, split by *what each reads*:
   values, @@N_LOC@@ locations, @@N_EXAMPLES@@ test bodies, @@N_MOD@@ modifiers, @@N_ERRMEMBER@@ error
   members), and the Edges (`edges.tsv` — @@N_EDGES@@
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
-  `return struct {…}` gets its members under `<fn>()`, e.g. `std.HashMap().get`) and gives each
+  `return struct {…}` gets its members under `<fn>()`, e.g. `std.hash_map.HashMap().get`) and gives each
   selective re-export a single canonical home. It reads source as text and never runs the compiler,
   which is what lets it map all of std without dying on poison decls.
 - **[`reflect/`](reflect/)** — the **run-it** engine. `reflect/resolve.zig` does the one job
   parsing can't — subprocess-isolated reflection for the L5 resolved-depth overlay
   (`resolved.tsv`). Resolves real values; dies on poison, by nature.
-- **[`derive/`](derive/)** — the **transform** engine. Reads no Zig at all, only the datasets
-  above, each as its own single-purpose overlay: `derive/index.zig` builds the table of contents
-  (`index.tsv`) over the Tree; `zephem overlays` dedups/de-aliases resolved types into
-  alias/dup families (`canon.tsv`); and `zephem overlays` compares parse vs reflect,
-  tagging where the two readers agree or differ (`consensus.tsv`).
+- **[`derive/`](derive/)** — the **transform** layer. Reads no Zig at all, only the datasets
+  above. The directory holds one engine, `derive/index.zig`, which builds the table of contents
+  (`index.tsv`) over the Tree. The other overlays are the `zephem overlays` subcommand (in `src/`):
+  `canon.tsv` dedups/de-aliases resolved types into alias/dup families, `consensus.tsv` compares
+  parse vs reflect, plus the coverage/signature overlays.
 
 The backward checks, overlays, glue, and query are all Zig (in `src/`, driven by the `zephem`
 binary). The dividing line:
@@ -216,15 +226,13 @@ binary). The dividing line:
 
 ## Toolchain
 
-**Zig, end to end.** Three engines — `parse/` (AST parsing), `reflect/` (compiler reflection),
-`derive/` (transforms) — plus the `src/` layer (orchestration, relational joins, overlays, query,
-doc generation). Built by `zig build`, run as the `zephem` binary. No Nushell, no Python, no duckdb.
+**Zig, end to end.** The three engines above plus the `src/` layer (orchestration, relational
+joins, overlays, query, doc generation), built by `zig build` and run as the `zephem` binary.
+No Nushell, no Python, no duckdb.
 
 ## Reference
 
 - Zig std source: the active toolchain's `std`, located via `zig env` (its `.std_dir`);
   `zephem std` reads it from there, so the snapshot tracks whatever Zig is on `PATH`.
-- Prior life: zephem began as `zcrypto`, an attempt to *learn* crypto, then a faithful map of
-  it. Renamed and reframed 2026-06-17 — the tool is the extractor, not the crypto. The retired
-  crypto pipeline and the retired human-readable docs were deleted and folded into one provenance
-  note, [`docs/archive/README.md`](docs/archive/README.md) (recover any file from git history).
+- Prior life: see [Where it started](#where-it-started-stdcrypto-archived) above — the `zcrypto`
+  origin and the archive tombstone.

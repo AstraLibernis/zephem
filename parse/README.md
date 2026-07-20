@@ -59,7 +59,7 @@ comptime. Sees all of std; dies on nothing.
 **② One organism walk.** `walk.zig` follows `@import` edges from the root, expanding each file
 once, so the whole reachable namespace is one tree. It **descends type factories** — a `fn(…) type`
 with one top-level `return struct {…}` gets its produced type's members mapped under `<fn>()` (so
-`std.HashMap().get` exists) — and places each **selective re-export** (`pub const X = @import("f").Sel`)
+`std.hash_map.HashMap().get` exists) — and places each **selective re-export** (`pub const X = @import("f").Sel`)
 at a single canonical home under the alias, so a member is never duplicated.
 
 **③ Two-phase edge resolution.** Phase 1 walks the whole tree, emitting nodes and recording every
@@ -85,12 +85,13 @@ check and the build claims nothing.
 
 ```
 parse/
-  walk.zig       # ENTRY: follow @import from the root ONCE, walk the organism, resolve edges
+  walk.zig       # follow @import from the root ONCE, walk the organism, resolve edges
                #        → nodes.tsv (Tree) · attrs.tsv (Attributes) · edges.tsv (Edges)
 ```
 
-One flat file — one walk, one two-phase resolver, three writers. (`build` must sit at `parse/`
-root: `zig run` makes the entry's directory the module root, and an entry cannot `@import("../…")`.)
+One flat file — one walk, one two-phase resolver, three writers. `walk.zig` is imported as the
+`parse` module and driven in-process by `zephem std` (its `run()` fn is the entry point); there is
+no `zig run` handoff.
 
 ## 5. Running it
 

@@ -10,7 +10,7 @@ The transforms that combine or reshape these files live one level over in
 [`../derived/`](../derived/).
 
 Pinned to **zig 0.16.0** (`../PINNED`); a target-specific subset (see `resolved`/`poison`
-below) is x86_64-linux.
+below) is **x86_64-linux** (the host recorded in `../PINNED`).
 
 ---
 
@@ -29,7 +29,7 @@ All three key on the same dotted `path`, so they re-join without a lookup table.
 ### `nodes.tsv` — the Tree (the headline dataset)
 The whole `std` namespace tree, one row per node. A node is a declaration (public **or**
 private), a struct/union **field**, an enum **tag**, or a **type-factory member** (a member
-of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.ArrayList().append`;
+of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.MultiArrayList().append`;
 the `()` marks "instantiate first"). **63,494 rows** (56,088 pub / 7,406 priv)
 across **340 files**, max depth **8**.
 Columns: `path · kind · name · vis`  (`vis ∈ pub · priv`).
@@ -114,5 +114,5 @@ re-derives the buckets from this and reconciles them against `resolved`/`poison`
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).
 The reflect sweep's wall time is machine-dependent (≈1 min on a 16-lane desktop,
-≈13 min on a 3-core VM), so its rebuild harness is a separate task from `build_std`'s
+≈13 min on a 3-core VM), so its rebuild harness is a separate task from `zephem std`'s
 `--check` (see `PLAN.md`).

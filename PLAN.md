@@ -77,7 +77,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, 63,494 nodes (56,088 pub / 7,406 priv) / 340 files, depth 8; connectivity-checked |
 | **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 111,480 facts keyed by `path`: 11,273 sigs · 13,721 `///` docs · 19,809 field/const values · 63,493 locations · 1,433 test bodies · 1,257 modifiers · 494 error members; each keys onto a real node |
 | **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 54,666 typed refs (47,983 has_type · 2,942 alias · 2,876 error_set · 828 imports · 37 delegates), resolved to a scope; 96% of resolvable ones land on a node/primitive; local/cross verified to resolve |
-| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); delegators record their target as a `delegates` edge |
+| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,433 `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 4,042 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 2,908 resolved / 927 genuine poison, zero dups |

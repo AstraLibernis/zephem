@@ -19,9 +19,9 @@ Output is reproducible only because every non-deterministic input is eliminated 
 | source of churn | how it's killed |
 |---|---|
 | hashmap / dir iteration order | rows emitted in **source order** (pre-order DFS), never map order |
-| absolute toolchain paths | rendered **relative to the module root** (`relPath`); in L5 poison reasons, `/usr/lib/zig/std/…` → `std/…` and the scratch `r-<i>.zig` → `<gen>` |
+| absolute toolchain paths | rendered **relative to the module root** (`relOf`); in L5 poison reasons, `/usr/lib/zig/std/…` → `std/…` and the scratch `r-<i>.zig` → `<gen>` |
 | timestamps / PIDs / RNG | none ever written into a dataset |
-| anonymous comptime IDs (`__struct_NNNNN`) | the parse-based layers (L0–L2) never touch them; **L5 reflection does** — the digits drift between identical compiles, so `norm-row` strips them while keeping the stable `__struct`/`__enum`/`__union`/`__opaque` marker (this same churn killed the old crypto pipeline) |
+| anonymous comptime IDs (`__struct_NNNNN`) | the parse-based layers (L0–L2) never touch them; **L5 reflection does** — the digits drift between identical compiles, so `normRow` strips them while keeping the stable `__struct`/`__enum`/`__union`/`__opaque` marker (this same churn killed the old crypto pipeline) |
 
 ---
 
@@ -51,7 +51,7 @@ layer will render — see [PLAN.md](../PLAN.md)).
 - **Map + decls (parse): `zephem std --check`** — instant. Every build writes
   `data/std/SHA256SUMS` (a `sha256sum -c`-compatible manifest, hashed in Zig (`std.crypto.hash.sha2`)) over the
   parse-based datasets; `--check` proves the three guarantees per dataset and exits non-zero on
-  any drift. New parse datasets register by adding their name to one `NAMES` list.
+  any drift. New parse datasets register by adding their name to one `names` list.
 
 - **Depth (reflection): `zephem depth --check`** — slow, and deliberately **not**
   wired into `zephem std`. `--commit` records `data/std/SHA256SUMS.depth` over the three L5
@@ -71,13 +71,13 @@ between otherwise-identical compiles**.
 **Proven, then fixed (2026-06-19).** A control test — two sweeps of `std.Io` on identical
 source — disagreed *only* on those counters (`E__enum_5797` vs `5796`,
 `timespec__struct_14744` vs `14760`). Left raw, the intrinsic check would have false-failed on
-day one. `norm-row` strips the volatile digits (keeping `…timespec__struct`); the same pass
+day one. `normRow` strips the volatile digits (keeping `…timespec__struct`); the same pass
 relativizes absolute toolchain/scratch paths in poison reasons. After normalization the same
 two-sweep test is byte-identical. A full cold sweep then a warm sweep reproduced the committed
 snapshot byte-for-byte across all three files, with zero duplicate rows (every distinct resolved
 path accounted for).
 
-**Follow-up — `__opaque` (2026-06-19).** The original `norm-row` regex covered
+**Follow-up — `__opaque` (2026-06-19).** The original `normRow` regex covered
 `struct`/`union`/`enum` but not `opaque`; on the VM (warm cache) that gap stayed hidden because
 the counter landed identically. Rebuilding on a *different machine* surfaced it: 112 `resolved.tsv`
 lines drifted, all `…__opaque_NNNNN` (e.g. `Handle__opaque_34566` vs `__opaque_34608`) — exactly

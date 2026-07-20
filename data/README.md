@@ -34,7 +34,7 @@ documented rule below — so a kind is never double-counted or silently dropped.
 
 | kind / thing | owned by | in `index` | in `doccov` | in `consensus` | in `sigshape`/`callcard` |
 |---|---|---|---|---|---|
-| decl (`fn`/`const`/`struct`/`enum`/`union`/`opaque`/`alias`/`ns`) | parser (tree) | if it has children | ✅ all | ✅ (vs reflect) | fns only |
+| decl (`fn`/`const`/`struct`/`enum`/`union`/`opaque`/`alias`/`ns`; namespace refs `nsref`/`modref`/`nserr` follow the same tree rules) | parser (tree) | if it has children | ✅ all | ✅ (vs reflect) | fns only |
 | **`field` / `tag`** | parser (tree; type/value in `attrs`) | no (leaves) | ✅ all | **excluded** — reflect never resolves a field as its own path | no (not callables) |
 | **factory member** (`…()` path) | parser (as-written) · reflect owns *resolved* (Phase D) | if it has children | ✅ all | **excluded** — uninstantiated; nothing to resolve yet | ✅ as *parser-only* (written sig, no resolved type) |
 | **private decl** (`vis == priv`) | parser (tree) | if it has children | ✅ all | `read-only` unless reflect built it too | fns only |

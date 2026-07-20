@@ -76,7 +76,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, @@N_NODES@@ nodes (@@N_PUB@@ pub / @@N_PRIV@@ priv) / @@N_FILES@@ files, depth @@MAXDEPTH@@; connectivity-checked |
 | **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ @@N_ATTRS@@ facts keyed by `path`: @@N_SIGS@@ sigs · @@N_DOCS@@ `///` docs · @@N_VALUES@@ field/const values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies · @@N_MOD@@ modifiers · @@N_ERRMEMBER@@ error members; each keys onto a real node |
 | **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ @@N_EDGES@@ typed refs (@@N_HASTYPE@@ has_type · @@N_ALIASEDGE@@ alias · @@N_ERRSET@@ error_set · @@N_IMPORTS@@ imports · @@N_DELEGATES@@ delegates), resolved to a scope; @@E_RESOLVED_PCT@@% of resolvable ones land on a node/primitive; local/cross verified to resolve |
-| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.HashMap().get`); delegators record their target as a `delegates` edge |
+| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ @@N_EXAMPLES@@ `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, @@N_INDEX@@ containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ @@N_RES_CONT@@ resolved / @@N_POISON@@ genuine poison, zero dups |

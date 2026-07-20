@@ -126,6 +126,13 @@ fn computeSubs(c: Ctx) ![]const Sub {
     // PINNED's first line is the version stamp (`zig X.Y.Z`); the second is the target triple.
     const pinned_raw = try load_raw(c, dir, "PINNED");
     const pinned = std.mem.trim(u8, std.mem.sliceTo(pinned_raw, '\n'), " \t\r");
+    // PINNED's second line is `target <triple>`; @@TARGET@@ is its arch-os prefix (e.g. x86_64-linux).
+    const pinned_target = blk: {
+        const nl = std.mem.indexOfScalar(u8, pinned_raw, '\n') orelse break :blk "";
+        const line2 = std.mem.trim(u8, std.mem.sliceTo(pinned_raw[nl + 1 ..], '\n'), " \t\r");
+        const after = if (std.mem.startsWith(u8, line2, "target ")) line2["target ".len..] else line2;
+        break :blk std.mem.sliceTo(after, '.');
+    };
 
     var list: std.ArrayList(Sub) = .empty;
     const add = struct {
@@ -135,6 +142,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     }.f;
 
     try add(&list, a, "@@ZIG@@", pinned);
+    try add(&list, a, "@@TARGET@@", pinned_target);
     try add(&list, a, "@@N_NODES@@", try commafy(a, n));
     try add(&list, a, "@@N_PUB@@", try commafy(a, n - priv));
     try add(&list, a, "@@N_PRIV@@", try commafy(a, priv));
@@ -143,6 +151,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_RESOLVED@@", try commafy(a, resolved.rows.len));
     try add(&list, a, "@@N_RES_CONT@@", try commafy(a, eqCount(status, "status", "resolved")));
     try add(&list, a, "@@N_POISON@@", try commafy(a, poison.rows.len));
+    try add(&list, a, "@@N_SKIPPED@@", try commafy(a, eqCount(status, "status", "skipped")));
     try add(&list, a, "@@N_INDEX@@", try commafy(a, index.rows.len));
     try add(&list, a, "@@N_ATTRS@@", try commafy(a, attrs.rows.len));
     try add(&list, a, "@@N_SIGS@@", try commafy(a, a_sig));
