@@ -39,15 +39,14 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\  --out PATH   write somewhere other than $ZEPHEM_LOOKUP
         \\
     ;
-    try argv.helpRequested(c, args, usage);
+    if (try argv.helpRequested(c, args, usage)) return;
 
     var force = false;
     var out_override: ?[]const u8 = null;
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         if (std.mem.eql(u8, args[i], "--force")) force = true else if (std.mem.eql(u8, args[i], "--out")) {
-            i += 1;
-            if (i < args.len) out_override = args[i];
+            out_override = argv.value(c, args, &i, "--out", usage);
         } else argv.reject(c, args[i], usage);
     }
 

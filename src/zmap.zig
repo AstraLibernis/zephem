@@ -7,6 +7,7 @@
 const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
+const argv = @import("args.zig");
 const Outcome = @import("query.zig").Outcome;
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
@@ -14,6 +15,20 @@ const rel = @import("relation.zig");
 const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8 };
 
 pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
+    const usage =
+        \\zephem map — read the complete zephem std map (deterministic, no AI/DB)
+        \\
+        \\  map find <terms...>   keyword search over the whole map (path/name/sig/doc)
+        \\  map show <path>       list a module/namespace subtree
+        \\  map doc  <path>       signature + doc for one exact path
+        \\
+        \\  --limit N             cap `find` results (default 12)
+        \\
+        \\  exit: 0 found · 1 nothing matched · 2 usage · 3 map unavailable
+        \\
+    ;
+    if (try argv.helpRequested(c, args, usage)) return .hit;
+
     // parse: <cmd> <positional...> [--limit N | -l N]
     var limit: usize = 12;
     var cmd: ?[]const u8 = null;
@@ -21,21 +36,40 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         const arg = args[i];
-        if ((std.mem.eql(u8, arg, "--limit") or std.mem.eql(u8, arg, "-l")) and i + 1 < args.len) {
-            i += 1;
-            limit = std.fmt.parseInt(usize, args[i], 10) catch limit;
+        if (std.mem.eql(u8, arg, "--limit") or std.mem.eql(u8, arg, "-l")) {
+            limit = argv.intValue(c, usize, args, &i, arg, usage);
+        } else if (std.mem.startsWith(u8, arg, "-") and arg.len > 1) {
+            argv.reject(c, arg, usage);
         } else if (cmd == null) {
             cmd = arg;
         } else try pos.append(c.a, arg);
     }
 
     if (cmd == null) {
-        try out.writeAll("zephem map — read the complete zephem std map (deterministic, no AI/DB)\n  map find <terms...>   keyword search over the whole map (path/name/sig/doc)\n  map show <path>       list a module/namespace subtree\n  map doc  <path>       signature + doc for one exact path\n");
+        try out.writeAll(usage);
         try out.flush();
         return .usage;
     }
-    const nodes = try loadMap(c);
     const command = cmd.?;
+    // Validate the subcommand BEFORE loading the map: `map bogus` used to parse 63,494 nodes
+    // and 111,480 attrs, run the staleness probe, and only then decide the command was wrong —
+    // and returned 1 instead of 2 when the map was also broken.
+    if (!std.mem.eql(u8, command, "find") and !std.mem.eql(u8, command, "show") and !std.mem.eql(u8, command, "doc")) {
+        try out.print("unknown map command: {s}\n\n", .{command});
+        try out.writeAll(usage);
+        try out.flush();
+        return .usage;
+    }
+    // A missing or unreadable map is NOT a miss. It used to escape as an unhandled Zig error,
+    // printing a stack trace and exiting 1 — the code that means "ran fine, nothing matched".
+    const nodes = loadMap(c) catch |e| switch (e) {
+        error.FileNotFound, error.AccessDenied, error.NotDir => {
+            try out.print("zephem: the map is unavailable ({s}) — regenerate it: `zephem std`\n", .{@errorName(e)});
+            try out.flush();
+            return .unavailable;
+        },
+        else => return e,
+    };
     var outcome: Outcome = .hit;
     if (std.mem.eql(u8, command, "find")) {
         outcome = try cmdFind(c, out, nodes, pos.items, limit);
@@ -43,9 +77,6 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
         outcome = try cmdShow(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
     } else if (std.mem.eql(u8, command, "doc")) {
         outcome = try cmdDoc(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
-    } else {
-        try out.print("unknown map command: {s}\n", .{command});
-        outcome = .usage;
     }
     try out.flush();
     return outcome;

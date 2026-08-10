@@ -39,7 +39,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\  --depth N    parse depth (default 24)
         \\
     ;
-    try argv.helpRequested(c, args, usage);
+    if (try argv.helpRequested(c, args, usage)) return;
 
     var check = false;
     var depth: u32 = 24;
@@ -48,8 +48,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         if (std.mem.eql(u8, args[i], "--check")) {
             check = true;
         } else if (std.mem.eql(u8, args[i], "--depth")) {
-            i += 1;
-            if (i < args.len) depth = std.fmt.parseInt(u32, args[i], 10) catch depth;
+            depth = argv.intValue(c, u32, args, &i, "--depth", usage);
         } else argv.reject(c, args[i], usage);
     }
 

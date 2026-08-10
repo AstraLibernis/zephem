@@ -2,6 +2,7 @@
 //! through the two lookup subcommands: `look` (SIMD over the baked table) and `map` (reads the
 //! TSVs directly). Builds the lookup table first if it is missing.
 const std = @import("std");
+const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
 const lookup = @import("../lookup.zig");
@@ -9,7 +10,18 @@ const zlook = @import("../zlook.zig");
 const zmap = @import("../zmap.zig");
 const rel = @import("../relation.zig");
 
-pub fn run(c: Ctx, _: []const []const u8) !void {
+pub fn run(c: Ctx, args: []const []const u8) !void {
+    const usage =
+        \\usage: zephem test
+        \\
+        \\  run the query smoke battery (9 asserted std facts)
+        \\
+        \\  NOTE: bakes ~/.config/zephem/lookup.tsv if it is absent.
+        \\
+    ;
+    if (try argv.helpRequested(c, args, usage)) return;
+    for (args) |a| argv.reject(c, a, usage);
+
     const a = c.a;
     var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;

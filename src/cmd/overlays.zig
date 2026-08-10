@@ -31,7 +31,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\  names: canon · consensus · callcard · doccov · sigshape
         \\
     ;
-    try argv.helpRequested(c, args, usage);
+    if (try argv.helpRequested(c, args, usage)) return;
 
     var check = false;
     var only: ?[]const u8 = null;

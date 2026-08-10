@@ -32,32 +32,25 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\  run the L5 reflection sweep (SLOW — minutes; compiles once per container)
         \\
     ;
-    try argv.helpRequested(c, args, usage);
+    if (try argv.helpRequested(c, args, usage)) return;
 
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         const arg = args[i];
         if (std.mem.eql(u8, arg, "--commit")) commit = true else if (std.mem.eql(u8, arg, "--check")) check = true else if (std.mem.eql(u8, arg, "--only")) {
-            i += 1;
-            if (i < args.len) only = args[i];
+            only = argv.value(c, args, &i, "--only", usage);
         } else if (std.mem.eql(u8, arg, "--filter")) {
-            i += 1;
-            if (i < args.len) filter = args[i];
+            filter = argv.value(c, args, &i, "--filter", usage);
         } else if (std.mem.eql(u8, arg, "--list")) {
-            i += 1;
-            if (i < args.len) list = args[i];
+            list = argv.value(c, args, &i, "--list", usage);
         } else if (std.mem.eql(u8, arg, "--limit")) {
-            i += 1;
-            if (i < args.len) limit = std.fmt.parseInt(usize, args[i], 10) catch 0;
+            limit = argv.intValue(c, usize, args, &i, "--limit", usage);
         } else if (std.mem.eql(u8, arg, "--timeout")) {
-            i += 1;
-            if (i < args.len) timeout_s = std.fmt.parseInt(u32, args[i], 10) catch timeout_s;
+            timeout_s = argv.intValue(c, u32, args, &i, "--timeout", usage);
         } else if (std.mem.eql(u8, arg, "--jobs")) {
-            i += 1;
-            if (i < args.len) jobs = std.fmt.parseInt(usize, args[i], 10) catch 0;
+            jobs = argv.intValue(c, usize, args, &i, "--jobs", usage);
         } else if (std.mem.eql(u8, arg, "--out")) {
-            i += 1;
-            if (i < args.len) out = args[i];
+            out = argv.value(c, args, &i, "--out", usage);
         } else argv.reject(c, arg, usage);
     }
 

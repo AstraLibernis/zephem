@@ -31,7 +31,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\  --check      prove they regenerate unchanged; do not overwrite
         \\
     ;
-    try argv.helpRequested(c, args, usage);
+    if (try argv.helpRequested(c, args, usage)) return;
 
     var check = false;
     for (args) |arg| {

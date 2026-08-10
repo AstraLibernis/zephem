@@ -21,6 +21,7 @@ const std = @import("std");
 const Io = std.Io;
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
+const argv = @import("args.zig");
 const Outcome = @import("query.zig").Outcome;
 const V = @Vector(32, u8);
 
@@ -116,30 +117,85 @@ fn truncField(a: std.mem.Allocator, s: []const u8, max: usize) []const u8 {
     return std.fmt.allocPrint(a, "{s}…", .{s[0..end]}) catch s[0..end];
 }
 
-/// True when `s` opens a brace group that `max` bytes would cut into — an error set or a
-/// struct/enum body, where a truncated rendering is not merely shorter but WRONG: it reads as
-/// a complete, smaller set.
-fn wouldCutGroup(s: []const u8, max: usize) bool {
-    if (s.len <= max) return false;
-    const open = std.mem.findScalar(u8, s, '{') orelse return false;
-    return open < max;
+/// The first BALANCED brace group in `s`, or null. Returns the span including the braces.
+///
+/// The earlier version only checked that a `{` appeared before the cut, which was wrong twice
+/// over: it fired on 75 groups that closed well inside the limit and were never at risk, and it
+/// MISSED 53 error sets whose `{` happened to sit past byte 140 behind a long parameter list.
+/// Two identical error sets got opposite treatment based only on how long the prefix was.
+fn braceGroup(s: []const u8) ?struct { start: usize, end: usize } {
+    const open = std.mem.findScalar(u8, s, '{') orelse return null;
+    var depth: usize = 0;
+    var i = open;
+    while (i < s.len) : (i += 1) {
+        switch (s[i]) {
+            '{', '(', '[' => depth += 1,
+            '}', ')', ']' => {
+                depth -= 1;
+                if (depth == 0) return .{ .start = open, .end = i + 1 };
+            },
+            else => {},
+        }
+    }
+    return null; // unbalanced
 }
 
-/// Render a resolved type. A brace group is emitted WHOLE — its completeness is the entire
-/// point of recording it — with the member count stated so a long one is still readable at a
-/// glance. Anything else truncates normally.
-fn renderResolved(a: std.mem.Allocator, s: []const u8) []const u8 {
-    if (!wouldCutGroup(s, 140)) return truncField(a, s, 140);
-    var members: usize = 1;
-    for (s) |ch| {
-        if (ch == ',') members += 1;
+/// Members of a balanced group: TOP-LEVEL commas only, and an empty group has none.
+///
+/// The earlier version counted every comma in the WHOLE string, so it swept up the function's
+/// own parameter commas and any nested group's — wrong on 293 of the 445 rows it annotated.
+/// `std.crypto.tls.Client.init` and `std.crypto.tls.Client.InitError` are the SAME error set,
+/// and it printed them on adjacent lines as "49 members" and "47 members". Stating a confident
+/// wrong number under the words "shown in full" is worse than the unmarked cut it replaced.
+fn countMembers(group: []const u8) usize {
+    const inner = std.mem.trim(u8, group[1 .. group.len - 1], " ");
+    if (inner.len == 0) return 0;
+    var depth: usize = 0;
+    var n: usize = 1;
+    var trailing = true;
+    for (inner) |ch| {
+        switch (ch) {
+            '{', '(', '[' => depth += 1,
+            '}', ')', ']' => depth -|= 1,
+            ',' => if (depth == 0) {
+                n += 1;
+                trailing = true;
+            },
+            ' ', '\t' => {},
+            else => trailing = false,
+        }
     }
-    return std.fmt.allocPrint(a, "{s}   [{d} members, shown in full]", .{ s, members }) catch s;
+    return if (trailing) n - 1 else n; // a trailing comma is not a member
+}
+
+/// Render a resolved type.
+///
+/// An ERROR SET is emitted whole with a true member count — its completeness is the whole
+/// reason for recording it, and `zephem map doc` does not show `rdetail` at all, so this is the
+/// only place the full set is visible. Anything else truncates, marked.
+fn renderResolved(a: std.mem.Allocator, s: []const u8) []const u8 {
+    if (s.len <= 140) return s;
+    const g = braceGroup(s) orelse return truncField(a, s, 140);
+    // Only an error set gets the whole-emit. A comptime struct literal of hash constants is not
+    // a set of "members" and must not be annotated as one — 37 rows were.
+    const is_error_set = g.start >= 5 and std.mem.eql(u8, s[g.start - 5 .. g.start], "error");
+    if (!is_error_set) return truncField(a, s, 140);
+    return std.fmt.allocPrint(a, "{s}   [{d} members, shown in full]", .{ s, countMembers(s[g.start..g.end]) }) catch s;
 }
 
 pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     const a = c.a;
     const io = c.io;
+
+    const usage =
+        \\usage: zephem look <term...> [--limit N]
+        \\
+        \\  keyword search over the baked lookup table; every term must match (AND)
+        \\
+        \\  exit: 0 found · 1 nothing matched · 2 usage · 3 lookup table unavailable
+        \\
+    ;
+    if (try argv.helpRequested(c, args, usage)) return .hit;
 
     // ---- args: terms + --limit N ----
     var terms_raw: std.ArrayList([]const u8) = .empty;
@@ -147,15 +203,21 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     var ai: usize = 0;
     while (ai < args.len) : (ai += 1) {
         const arg = args[ai];
-        if ((std.mem.eql(u8, arg, "--limit") or std.mem.eql(u8, arg, "-l")) and ai + 1 < args.len) {
-            ai += 1;
-            limit = std.fmt.parseInt(usize, args[ai], 10) catch limit;
+        if (std.mem.eql(u8, arg, "--limit") or std.mem.eql(u8, arg, "-l")) {
+            limit = argv.intValue(c, usize, args, &ai, arg, usage);
+        } else if (std.mem.startsWith(u8, arg, "-") and arg.len > 1) {
+            // An unknown flag used to become a SEARCH TERM: `look -h` exited 0 having searched
+            // for the literal "-h" and returned 47 unrelated decls.
+            argv.reject(c, arg, usage);
+        } else if (arg.len == 0) {
+            // The empty string matches every row — 63,494 "hits" for a shell-expanded blank.
+            argv.reject(c, "<empty term>", usage);
         } else {
             try terms_raw.append(a, arg);
         }
     }
     if (terms_raw.items.len == 0) {
-        try out.print("usage: zlook <term...> [--limit N]   keyword search over the zephem lookup table\n", .{});
+        try out.writeAll(usage);
         try out.flush();
         return .usage;
     }
