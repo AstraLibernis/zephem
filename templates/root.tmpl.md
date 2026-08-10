@@ -51,6 +51,19 @@ zephem std                       # map the active toolchain's std → data/std/e
 zephem map doc std.fmt.parseInt  # query the map (reads the TSVs directly, no index needed)
 ```
 
+Every subcommand takes `-h`/`--help` and rejects unknown arguments. The query commands
+(`look`, `map`) signal their outcome in the **exit code**, so a script or agent can tell an
+answer from the absence of one:
+
+| exit | meaning |
+|---|---|
+| 0 | found — results on stdout |
+| 1 | ran correctly, nothing matched (stdout empty, like `grep`) |
+| 2 | usage error — bad flag, missing operand, unknown subcommand |
+| 3 | the map or lookup table is **unavailable** — not the same as a miss; regenerate it |
+
+Misses and errors go to stderr; stdout carries only results.
+
 Needs Zig **@@ZIG@@** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
 command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in
 each engine's README.

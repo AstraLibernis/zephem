@@ -3,6 +3,8 @@
 //! TSVs directly). Builds the lookup table first if it is missing.
 const std = @import("std");
 const argv = @import("../args.zig");
+const sigfmt = @import("../sig.zig");
+const Outcome = @import("../query.zig").Outcome;
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
 const lookup = @import("../lookup.zig");
@@ -51,6 +53,31 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     try expectMap(c, w, &fails, "map doc flags a private decl", &.{ "doc", "std.heap.ArenaAllocator.Allocator" }, &.{ "[priv]", "private decl" });
     try expectMap(c, w, &fails, "map show sections public vs private", &.{ "show", "std.heap.ArenaAllocator" }, &.{ "## public", "## private" });
 
+    // ── outcomes ── the previous battery discarded these with `_ =`, which is how "map could
+    // never return 3" shipped. A hit, a miss and their exit meanings are asserted facts now.
+    try expectOutcome(c, w, &fails, "look hit returns .hit", true, &.{"parseInt"}, .hit);
+    try expectOutcome(c, w, &fails, "look miss returns .miss", true, &.{"zzzznomatchzzz"}, .miss);
+    try expectOutcome(c, w, &fails, "map doc miss returns .miss", false, &.{ "doc", "std.mem.copy" }, .miss);
+    try expectOutcome(c, w, &fails, "map find hit returns .hit", false, &.{ "find", "ArrayList" }, .hit);
+
+    // ── the sig splitter ── pure function, deterministic. The raw string is the shape that
+    // produced downstream false positive B16: two parameters, prose commas counted as three.
+    {
+        const raw = "fn init( /// Must be threadsafe. Only used for the following functions: " ++
+            "/// * `Io.VTable.async` /// If these functions are avoided, then `Allocator.failing` " ++
+            "may be passed /// here. gpa: Allocator, options: InitOptions, ) Threaded";
+        const parts = sigfmt.split(c.a, raw);
+        try checkOne(w, &fails, "splitter: prose stripped from sig", parts.sig, "fn init( gpa: Allocator, options: InitOptions, ) Threaded");
+        try checkOne(w, &fails, "splitter: prose preserved", if (std.mem.find(u8, parts.doc, "Must be threadsafe") != null) "y" else "n", "y");
+        const clean = sigfmt.split(c.a, "fn f(a: u8) void");
+        try checkOne(w, &fails, "splitter: clean sig untouched", clean.sig, "fn f(a: u8) void");
+    }
+
+    // ── error-set member count ── the first version counted every comma in the string and was
+    // wrong on 66% of annotated rows; these pin the corrected behaviour to map facts
+    // (zig-0.16-pinned, like every other assertion in this battery).
+    try expectLook(c, w, &fails, "error set emitted whole with TRUE count", &.{ "Client.InitError", "--limit", "2" }, &.{ "[47 members, shown in full]", "WriteFailed}" });
+
     if (fails == 0) {
         try w.writeAll("--- all passed ---\n");
     } else {
@@ -64,6 +91,26 @@ fn expectLook(c: Ctx, w: *std.Io.Writer, fails: *usize, label: []const u8, args:
     var aw: std.Io.Writer.Allocating = .init(c.a);
     _ = try zlook.run(c, args, &aw.writer);
     try check(w, fails, label, aw.writer.buffered(), wants);
+}
+
+fn expectOutcome(c: Ctx, w: *std.Io.Writer, fails: *usize, label: []const u8, is_look: bool, args: []const []const u8, want: Outcome) !void {
+    var aw: std.Io.Writer.Allocating = .init(c.a);
+    const got = if (is_look) try zlook.run(c, args, &aw.writer) else try zmap.run(c, args, &aw.writer);
+    if (got == want) {
+        try w.print("PASS: {s}\n", .{label});
+    } else {
+        fails.* += 1;
+        try w.print("FAIL: {s} — got .{s}, want .{s}\n", .{ label, @tagName(got), @tagName(want) });
+    }
+}
+
+fn checkOne(w: *std.Io.Writer, fails: *usize, label: []const u8, got: []const u8, want: []const u8) !void {
+    if (std.mem.eql(u8, got, want)) {
+        try w.print("PASS: {s}\n", .{label});
+    } else {
+        fails.* += 1;
+        try w.print("FAIL: {s}\n  got : {s}\n  want: {s}\n", .{ label, got, want });
+    }
 }
 
 fn expectMap(c: Ctx, w: *std.Io.Writer, fails: *usize, label: []const u8, args: []const []const u8, wants: []const []const u8) !void {

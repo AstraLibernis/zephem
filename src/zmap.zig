@@ -8,6 +8,7 @@ const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const argv = @import("args.zig");
+const sigfmt = @import("sig.zig");
 const Outcome = @import("query.zig").Outcome;
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
@@ -55,17 +56,14 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     // and 111,480 attrs, run the staleness probe, and only then decide the command was wrong —
     // and returned 1 instead of 2 when the map was also broken.
     if (!std.mem.eql(u8, command, "find") and !std.mem.eql(u8, command, "show") and !std.mem.eql(u8, command, "doc")) {
-        try out.print("unknown map command: {s}\n\n", .{command});
-        try out.writeAll(usage);
-        try out.flush();
+        try argv.diag(c, "unknown map command: {s}\n\n{s}", .{ command, usage });
         return .usage;
     }
     // A missing or unreadable map is NOT a miss. It used to escape as an unhandled Zig error,
     // printing a stack trace and exiting 1 — the code that means "ran fine, nothing matched".
     const nodes = loadMap(c) catch |e| switch (e) {
         error.FileNotFound, error.AccessDenied, error.NotDir => {
-            try out.print("zephem: the map is unavailable ({s}) — regenerate it: `zephem std`\n", .{@errorName(e)});
-            try out.flush();
+            try argv.diag(c, "zephem: the map is unavailable ({s}) — regenerate it: `zephem std`\n", .{@errorName(e)});
             return .unavailable;
         },
         else => return e,
@@ -74,9 +72,9 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     if (std.mem.eql(u8, command, "find")) {
         outcome = try cmdFind(c, out, nodes, pos.items, limit);
     } else if (std.mem.eql(u8, command, "show")) {
-        outcome = try cmdShow(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
+        outcome = try cmdShow(c, out, nodes, if (pos.items.len > 0) pos.items[0] else "");
     } else if (std.mem.eql(u8, command, "doc")) {
-        outcome = try cmdDoc(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
+        outcome = try cmdDoc(c, out, nodes, if (pos.items.len > 0) pos.items[0] else "");
     }
     try out.flush();
     return outcome;
@@ -155,7 +153,7 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const 
         try hits.append(a, .{ .node = n, .rank = rank, .priv = priv, .plen = n.path.len });
     }
     if (hits.items.len == 0) {
-        try out.print("no map entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw)});
+        try argv.diag(c, "no map entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw)});
         return .miss;
     }
     std.mem.sort(Scored, hits.items, {}, lessThan);
@@ -169,13 +167,17 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const 
     for (hits.items[0..shown]) |h| {
         const tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ h.node.path, h.node.kind, tag });
-        if (h.node.sig.len > 0) try out.print("      {s}\n", .{h.node.sig});
+        if (h.node.sig.len > 0) {
+            const parts = sigfmt.split(c.a, h.node.sig);
+            try out.print("      {s}\n", .{parts.sig});
+            if (parts.doc.len > 0) try out.print("      ⌁ (params) {s}\n", .{trunc(c.a, parts.doc, 120)});
+        }
         if (h.node.doc.len > 0) try out.print("      ⌁ {s}\n", .{trunc(c.a, h.node.doc, 120)});
     }
     return .hit;
 }
 
-fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !Outcome {
+fn cmdShow(c: Ctx, out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !Outcome {
     if (prefix.len == 0) {
         try out.writeAll("usage: zephem map show <path>\n");
         return .usage;
@@ -188,7 +190,7 @@ fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !Outcom
         }
     }
     if (pub_n + priv_n == 0) {
-        try out.print("nothing under {s}\n", .{prefix});
+        try argv.diag(c, "nothing under {s}\n", .{prefix});
         return .miss;
     }
     try out.print("# map show {s}  ({d} decls: {d} pub · {d} priv)\n\n", .{ prefix, pub_n + priv_n, pub_n, priv_n });
@@ -207,7 +209,8 @@ fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !Outcom
     return .hit;
 }
 
-fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !Outcome {
+fn cmdDoc(c: Ctx, out: *std.Io.Writer, nodes: []const Node, path: []const u8) !Outcome {
+    const a = c.a;
     if (path.len == 0) {
         try out.writeAll("usage: zephem map doc <path>\n");
         return .usage;
@@ -217,14 +220,18 @@ fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !Outcome {
         const tag: []const u8 = if (std.mem.eql(u8, n.vis, "priv")) "  [priv]" else "";
         try out.print("{s}  ({s}){s}\n", .{ n.path, n.kind, tag });
         if (n.mod.len > 0) try out.print("  ⟨{s}⟩\n", .{n.mod});
-        if (n.sig.len > 0) try out.print("  {s}\n", .{n.sig});
+        if (n.sig.len > 0) {
+            const parts = sigfmt.split(a, n.sig);
+            try out.print("  {s}\n", .{parts.sig});
+            if (parts.doc.len > 0) try out.print("  ⌁ (params) {s}\n", .{parts.doc});
+        }
         if (n.errmembers.len > 0) try out.print("  errors: {s}\n", .{n.errmembers});
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
         if (std.mem.eql(u8, n.vis, "priv")) try out.writeAll("\n  ⚠ private decl — not accessible as this path from outside its source file.\n");
         try out.writeAll("\n(from the zephem map — the source of truth; if it's stale, regenerate the map)\n");
         return .hit;
     }
-    try out.print("{s} not in the map\n", .{path});
+    try argv.diag(c, "{s} not in the map\n", .{path});
     return .miss;
 }
 

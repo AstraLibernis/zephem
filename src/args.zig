@@ -66,6 +66,16 @@ pub fn intValue(c: Ctx, comptime T: type, args: []const []const u8, i: *usize, f
     };
 }
 
+/// A diagnostic line to STDERR. Misses, error-usage and unavailability are not results:
+/// `zephem look x > out.txt` used to write "no lookup entry matches: x" into the data file.
+/// A miss now leaves stdout empty, like grep.
+pub fn diag(c: Ctx, comptime fmt: []const u8, fmt_args: anytype) !void {
+    var buf: [4096]u8 = undefined;
+    var w = std.Io.File.stderr().writer(c.io, &buf);
+    try w.interface.print(fmt, fmt_args);
+    try w.interface.flush();
+}
+
 /// Reject an argument the subcommand did not consume. Exits 2 with usage.
 pub fn reject(c: Ctx, arg: []const u8, usage: []const u8) noreturn {
     var buf: [4096]u8 = undefined;

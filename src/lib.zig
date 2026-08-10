@@ -12,3 +12,5 @@ pub const proc = @import("proc.zig");
 pub const vars = @import("vars.zig");
 pub const toolchain = @import("toolchain.zig");
 pub const ctx = @import("ctx.zig");
+pub const sig = @import("sig.zig");
+pub const query = @import("query.zig");

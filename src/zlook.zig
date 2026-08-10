@@ -22,6 +22,7 @@ const Io = std.Io;
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const argv = @import("args.zig");
+const sigfmt = @import("sig.zig");
 const Outcome = @import("query.zig").Outcome;
 const V = @Vector(32, u8);
 
@@ -217,8 +218,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         }
     }
     if (terms_raw.items.len == 0) {
-        try out.writeAll(usage);
-        try out.flush();
+        try argv.diag(c, "{s}", .{usage});
         return .usage;
     }
     // lowercase the terms once (the haystack is matched case-insensitively in place).
@@ -233,8 +233,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     const path = try vars.lookupPath(c);
 
     const buf = std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited) catch {
-        try out.print("zlook: no lookup table at {s}\n  build it: run `zephem lookup` from the zephem repo (needs zephem's data/std)\n", .{path});
-        try out.flush();
+        try argv.diag(c, "zlook: no lookup table at {s}\n  build it: run `zephem lookup` from the zephem repo (needs zephem's data/std)\n", .{path});
         return .unavailable;
     };
 
@@ -256,8 +255,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         try hits.append(a, .{ .line = line, .rank = rank, .priv = priv, .plen = p.len });
     }
     if (total == 0) {
-        try out.print("no lookup entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw.items)});
-        try out.flush();
+        try argv.diag(c, "no lookup entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw.items)});
         return .miss;
     }
     std.mem.sort(Hit, hits.items, {}, lessThan);
@@ -282,7 +280,11 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         const ftype = field(h.line, COL_FTYPE);
         const fval = field(h.line, COL_FVAL);
         const del = field(h.line, COL_DELEGATE);
-        if (sig.len > 0) try out.print("      {s}\n", .{sig});
+        if (sig.len > 0) {
+            const parts = sigfmt.split(a, sig);
+            try out.print("      {s}\n", .{parts.sig});
+            if (parts.doc.len > 0) try out.print("      ⌁ (params) {s}\n", .{truncField(a, parts.doc, 120)});
+        }
         // a field/tag's payload: `: type = value`, `: type`, or `= value` (bare tag → nothing).
         if (ftype.len > 0 and fval.len > 0) {
             try out.print("      : {s} = {s}\n", .{ ftype, fval });

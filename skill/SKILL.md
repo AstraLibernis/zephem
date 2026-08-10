@@ -21,6 +21,11 @@ zephem is a single binary — build it once with `zig build` (it produces `zig-o
 and put it on your `PATH`. It **self-locates** its datasets from the repo (or `$ZEPHEM_DATA`),
 so the commands below run from any directory. The query surface is two subcommands:
 
+Both query commands signal their outcome in the exit code — read it, don't parse prose:
+**0** found · **1** nothing matched (stdout empty) · **2** usage error · **3** the map or
+lookup table is unavailable (NOT a miss — regenerate, never fall back to memory). Misses and
+errors go to stderr; stdout carries only results.
+
 - **`zephem look`** — SIMD-fast keyword search over a baked lookup table, one shot. Also searches
   the **resolved type/error-set** (e.g. find every fn that returns `OutOfMemory`):
   ```sh
