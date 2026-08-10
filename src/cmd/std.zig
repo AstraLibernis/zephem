@@ -8,6 +8,7 @@
 //! Everything runs in-process — no `zig run` handoff. The intermediate TSVs ARE the product, so
 //! they are still written to disk; only the orchestration moved from Nushell into Zig.
 const std = @import("std");
+const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
 const toolchain = @import("../toolchain.zig");
@@ -29,6 +30,17 @@ const names = [_][]const u8{
 const check_base = ".zig-cache/zephem-check";
 
 pub fn run(c: Ctx, args: []const []const u8) !void {
+    const usage =
+        \\usage: zephem std [--check] [--depth N]
+        \\
+        \\  regenerate the core std map (parse + index + verify + manifest)
+        \\
+        \\  --check      prove the map rebuilds; do not overwrite
+        \\  --depth N    parse depth (default 24)
+        \\
+    ;
+    try argv.helpRequested(c, args, usage);
+
     var check = false;
     var depth: u32 = 24;
     var i: usize = 0;
@@ -38,7 +50,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         } else if (std.mem.eql(u8, args[i], "--depth")) {
             i += 1;
             if (i < args.len) depth = std.fmt.parseInt(u32, args[i], 10) catch depth;
-        }
+        } else argv.reject(c, args[i], usage);
     }
 
     const data_dir = try vars.dataDir(c);

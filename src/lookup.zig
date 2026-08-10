@@ -3,18 +3,44 @@
 //! and derived overlays into the fixed 16-column contract zlook reads by index:
 //!
 //!   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail(loc) · 6 sig · 7 doc
+//!
+//! CONSUMER CONTRACT — column 6 (`sig`) may contain `///` prose.
+//! The signature is recorded as written, and Zig permits a doc comment INSIDE a parameter
+//! list, so 68 of 11,273 signatures carry documentation in the middle of them. Every one of
+//! those 68 contains a comma inside that prose — and a signature's commas are how a consumer
+//! counts parameters. `std.Io.Threaded.init` takes two arguments; counting commas straight
+//! through its doc text yields three. That is not hypothetical: it produced a false positive
+//! in a downstream linter.
+//!
+//! Anything parsing `sig` structurally MUST strip `///` runs first. The prose is deliberately
+//! left in place rather than moved: for 39 of the 68 the `doc` column is empty, so this is the
+//! only copy of that text. Splitting it out correctly needs a real parse — the prose contains
+//! its own colons and the parameter name sits between the prose and its `:` — and a
+//! half-working splitter mangles signatures, which is worse than leaving them intact.
 //!   8 rkind · 9 rdetail · 10 canon · 11 ftype · 12 fval · 13 delegate · 14 vis · 15 mod
 //!
 //! A pure left-join over the node set — same symbol universe as nodes.tsv, enriched. Assembled
 //! directly with hash maps (build each right side once, probe per node) rather than chained table
 //! joins — one O(n) pass instead of ten table rebuilds.
 const std = @import("std");
+const argv = @import("args.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
 
 pub fn run(c: Ctx, args: []const []const u8) !void {
+    const usage =
+        \\usage: zephem lookup [--force] [--out PATH]
+        \\
+        \\  bake the denormalized lookup table that `zephem look` searches
+        \\
+        \\  --force      bake even if the map's PINNED zig differs from yours
+        \\  --out PATH   write somewhere other than $ZEPHEM_LOOKUP
+        \\
+    ;
+    try argv.helpRequested(c, args, usage);
+
     var force = false;
     var out_override: ?[]const u8 = null;
     var i: usize = 0;
@@ -22,7 +48,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         if (std.mem.eql(u8, args[i], "--force")) force = true else if (std.mem.eql(u8, args[i], "--out")) {
             i += 1;
             if (i < args.len) out_override = args[i];
-        }
+        } else argv.reject(c, args[i], usage);
     }
 
     const a = c.a;

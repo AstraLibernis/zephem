@@ -3,6 +3,7 @@
 //! number is an `@@TOKEN@@` injected from the datasets, and each output leads with a generated
 //! banner. `--check` proves each doc rebuilds byte-identical.
 const std = @import("std");
+const argv = @import("args.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const rel = @import("relation.zig");
@@ -22,9 +23,19 @@ const pages = [_]Page{
 const Sub = struct { key: []const u8, val: []const u8 };
 
 pub fn run(c: Ctx, args: []const []const u8) !void {
+    const usage =
+        \\usage: zephem docs [--check]
+        \\
+        \\  regenerate the markdown docs from templates/
+        \\
+        \\  --check      prove they regenerate unchanged; do not overwrite
+        \\
+    ;
+    try argv.helpRequested(c, args, usage);
+
     var check = false;
     for (args) |arg| {
-        if (std.mem.eql(u8, arg, "--check")) check = true;
+        if (std.mem.eql(u8, arg, "--check")) check = true else argv.reject(c, arg, usage);
     }
     const a = c.a;
     var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));

@@ -12,6 +12,7 @@ const cmd_lookup = @import("lookup.zig");
 const cmd_test = @import("cmd/test.zig");
 const zlook = @import("zlook.zig");
 const zmap = @import("zmap.zig");
+const Outcome = @import("query.zig").Outcome;
 
 const usage =
     \\zephem <command> [args]
@@ -51,12 +52,20 @@ pub fn main(init: std.process.Init) !void {
     return fail(c, usage);
 }
 
-/// Run a query subcommand that writes to a caller-supplied writer, wiring it to stdout.
-fn runWithStdout(c: Ctx, comptime f: fn (Ctx, []const []const u8, *std.Io.Writer) anyerror!void, args: []const []const u8) !void {
+/// Run a query subcommand that writes to a caller-supplied writer, wiring it to stdout, and
+/// turn its outcome into an EXIT CODE.
+///
+/// Every query used to exit 0 — a hit, a miss, a garbage path, and "the lookup table does not
+/// exist at all" were indistinguishable to any caller. A consumer could not tell "no results"
+/// from "this tool is not working", which for a map that claims to be the sole source of std
+/// truth is the difference between an answer and a silent absence of one.
+///   0 hit · 1 miss · 2 usage · 3 map/table unavailable
+fn runWithStdout(c: Ctx, comptime f: fn (Ctx, []const []const u8, *std.Io.Writer) anyerror!Outcome, args: []const []const u8) !void {
     var buf: [1 << 16]u8 = undefined;
     var ow = std.Io.File.stdout().writer(c.io, &buf);
-    try f(c, args, &ow.interface);
+    const outcome = try f(c, args, &ow.interface);
     try ow.interface.flush();
+    if (outcome != .hit) std.process.exit(outcome.code());
 }
 
 fn fail(c: Ctx, msg: []const u8) !void {

@@ -21,6 +21,7 @@ const std = @import("std");
 const Io = std.Io;
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
+const Outcome = @import("query.zig").Outcome;
 const V = @Vector(32, u8);
 
 // lookup.tsv columns (built by query/build_lookup.nu), tab-separated:
@@ -97,11 +98,46 @@ fn lessThan(_: void, a: Hit, b: Hit) bool {
     return a.plen < b.plen;
 }
 
-fn truncField(s: []const u8, max: usize) []const u8 {
-    return if (s.len > max) s[0..max] else s;
+/// Cut `s` to at most `max` bytes on a CODEPOINT boundary, marking the cut with `…`.
+///
+/// The old form was `if (s.len > max) s[0..max] else s` — an unmarked raw byte slice. Two
+/// problems, one live and one latent. Live: 797 entries have a resolved type past the 140-byte
+/// cut, and the reader had no way to know. `std.Build.RunError` displayed 10 of its 41 error
+/// members, ending mid-identifier with no closing brace, looking for all the world like a
+/// complete error set. For a map whose whole claim is to be the source of std truth with no
+/// live-lookup fallback, showing a third of an error set unmarked is the worst failure it has.
+/// Latent: a raw byte slice can split a multibyte character in half.
+///
+/// Prefer `truncBalanced` for anything brace-delimited — see below.
+fn truncField(a: std.mem.Allocator, s: []const u8, max: usize) []const u8 {
+    if (s.len <= max) return s;
+    var end = max;
+    while (end > 0 and (s[end] & 0xC0) == 0x80) end -= 1; // back off continuation bytes
+    return std.fmt.allocPrint(a, "{s}…", .{s[0..end]}) catch s[0..end];
 }
 
-pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
+/// True when `s` opens a brace group that `max` bytes would cut into — an error set or a
+/// struct/enum body, where a truncated rendering is not merely shorter but WRONG: it reads as
+/// a complete, smaller set.
+fn wouldCutGroup(s: []const u8, max: usize) bool {
+    if (s.len <= max) return false;
+    const open = std.mem.findScalar(u8, s, '{') orelse return false;
+    return open < max;
+}
+
+/// Render a resolved type. A brace group is emitted WHOLE — its completeness is the entire
+/// point of recording it — with the member count stated so a long one is still readable at a
+/// glance. Anything else truncates normally.
+fn renderResolved(a: std.mem.Allocator, s: []const u8) []const u8 {
+    if (!wouldCutGroup(s, 140)) return truncField(a, s, 140);
+    var members: usize = 1;
+    for (s) |ch| {
+        if (ch == ',') members += 1;
+    }
+    return std.fmt.allocPrint(a, "{s}   [{d} members, shown in full]", .{ s, members }) catch s;
+}
+
+pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     const a = c.a;
     const io = c.io;
 
@@ -121,7 +157,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
     if (terms_raw.items.len == 0) {
         try out.print("usage: zlook <term...> [--limit N]   keyword search over the zephem lookup table\n", .{});
         try out.flush();
-        return;
+        return .usage;
     }
     // lowercase the terms once (the haystack is matched case-insensitively in place).
     const terms = try a.alloc([]const u8, terms_raw.items.len);
@@ -137,7 +173,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
     const buf = std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited) catch {
         try out.print("zlook: no lookup table at {s}\n  build it: run `zephem lookup` from the zephem repo (needs zephem's data/std)\n", .{path});
         try out.flush();
-        return;
+        return .unavailable;
     };
 
     // ---- scan: every term must appear in the row; rank name-first ----
@@ -160,7 +196,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
     if (total == 0) {
         try out.print("no lookup entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw.items)});
         try out.flush();
-        return;
+        return .miss;
     }
     std.mem.sort(Hit, hits.items, {}, lessThan);
 
@@ -194,9 +230,10 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !void {
             try out.print("      = {s}\n", .{fval});
         }
         if (del.len > 0) try out.print("      ⇒ {s}\n", .{del}); // delegates to
-        if (res.len > 0) try out.print("      → {s}\n", .{truncField(res, 140)});
-        if (doc.len > 0) try out.print("      ⌁ {s}\n", .{truncField(doc, 120)});
+        if (res.len > 0) try out.print("      → {s}\n", .{renderResolved(a, res)});
+        if (doc.len > 0) try out.print("      ⌁ {s}\n", .{truncField(a, doc, 120)});
     }
     try out.print("\n(from the zephem map — the source of truth; if stale, regenerate zephem)\n", .{});
     try out.flush();
+    return .hit;
 }

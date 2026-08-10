@@ -50,13 +50,13 @@ pub fn run(c: Ctx, _: []const []const u8) !void {
 
 fn expectLook(c: Ctx, w: *std.Io.Writer, fails: *usize, label: []const u8, args: []const []const u8, wants: []const []const u8) !void {
     var aw: std.Io.Writer.Allocating = .init(c.a);
-    try zlook.run(c, args, &aw.writer);
+    _ = try zlook.run(c, args, &aw.writer);
     try check(w, fails, label, aw.writer.buffered(), wants);
 }
 
 fn expectMap(c: Ctx, w: *std.Io.Writer, fails: *usize, label: []const u8, args: []const []const u8, wants: []const []const u8) !void {
     var aw: std.Io.Writer.Allocating = .init(c.a);
-    try zmap.run(c, args, &aw.writer);
+    _ = try zmap.run(c, args, &aw.writer);
     try check(w, fails, label, aw.writer.buffered(), wants);
 }
 

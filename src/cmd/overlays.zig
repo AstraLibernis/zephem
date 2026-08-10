@@ -2,6 +2,7 @@
 //! `scripts/build_{canon,consensus,callcard,doccov,sigshape}.nu`). Each overlay is a pure
 //! relational transform; `--check` proves each rebuilds to its recorded single-file manifest.
 const std = @import("std");
+const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
 const manifest = @import("../manifest.zig");
@@ -23,10 +24,29 @@ const all = [_]Overlay{
 };
 
 pub fn run(c: Ctx, args: []const []const u8) !void {
+    const usage =
+        \\usage: zephem overlays [--check] [<name>]
+        \\
+        \\  rebuild the derived overlays; <name> limits it to one
+        \\  names: canon · consensus · callcard · doccov · sigshape
+        \\
+    ;
+    try argv.helpRequested(c, args, usage);
+
     var check = false;
     var only: ?[]const u8 = null;
     for (args) |arg| {
-        if (std.mem.eql(u8, arg, "--check")) check = true else if (!std.mem.startsWith(u8, arg, "--")) only = arg;
+        if (std.mem.eql(u8, arg, "--check")) check = true else if (!std.mem.startsWith(u8, arg, "--")) only = arg else argv.reject(c, arg, usage);
+    }
+
+    // A name that matches no overlay used to skip every iteration, print nothing and exit 0 —
+    // reporting success having done nothing. A typo must fail, not silently no-op.
+    if (only) |o| {
+        var known = false;
+        for (all) |ov| {
+            if (std.mem.eql(u8, o, ov.name)) known = true;
+        }
+        if (!known) argv.reject(c, o, usage);
     }
 
     const a = c.a;

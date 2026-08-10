@@ -7,12 +7,13 @@
 const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
+const Outcome = @import("query.zig").Outcome;
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
 
 const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8 };
 
-pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !void {
+pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     // parse: <cmd> <positional...> [--limit N | -l N]
     var limit: usize = 12;
     var cmd: ?[]const u8 = null;
@@ -31,20 +32,23 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !void {
     if (cmd == null) {
         try out.writeAll("zephem map — read the complete zephem std map (deterministic, no AI/DB)\n  map find <terms...>   keyword search over the whole map (path/name/sig/doc)\n  map show <path>       list a module/namespace subtree\n  map doc  <path>       signature + doc for one exact path\n");
         try out.flush();
-        return;
+        return .usage;
     }
     const nodes = try loadMap(c);
     const command = cmd.?;
+    var outcome: Outcome = .hit;
     if (std.mem.eql(u8, command, "find")) {
-        try cmdFind(c, out, nodes, pos.items, limit);
+        outcome = try cmdFind(c, out, nodes, pos.items, limit);
     } else if (std.mem.eql(u8, command, "show")) {
-        try cmdShow(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
+        outcome = try cmdShow(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
     } else if (std.mem.eql(u8, command, "doc")) {
-        try cmdDoc(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
+        outcome = try cmdDoc(out, nodes, if (pos.items.len > 0) pos.items[0] else "");
     } else {
         try out.print("unknown map command: {s}\n", .{command});
+        outcome = .usage;
     }
     try out.flush();
+    return outcome;
 }
 
 fn loadMap(c: Ctx) ![]Node {
@@ -101,10 +105,10 @@ fn loadMap(c: Ctx) ![]Node {
 
 const Scored = struct { node: Node, rank: u8, priv: bool, plen: usize };
 
-fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const []const u8, limit: usize) !void {
+fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const []const u8, limit: usize) !Outcome {
     if (terms_raw.len == 0) {
         try out.writeAll("usage: zephem map find <terms...>\n");
-        return;
+        return .usage;
     }
     const a = c.a;
     const terms = try a.alloc([]const u8, terms_raw.len);
@@ -121,7 +125,7 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const 
     }
     if (hits.items.len == 0) {
         try out.print("no map entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw)});
-        return;
+        return .miss;
     }
     std.mem.sort(Scored, hits.items, {}, lessThan);
     const shown = @min(limit, hits.items.len);
@@ -135,14 +139,15 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, nodes: []const Node, terms_raw: []const 
         const tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ h.node.path, h.node.kind, tag });
         if (h.node.sig.len > 0) try out.print("      {s}\n", .{h.node.sig});
-        if (h.node.doc.len > 0) try out.print("      ⌁ {s}\n", .{trunc(h.node.doc, 120)});
+        if (h.node.doc.len > 0) try out.print("      ⌁ {s}\n", .{trunc(c.a, h.node.doc, 120)});
     }
+    return .hit;
 }
 
-fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !void {
+fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !Outcome {
     if (prefix.len == 0) {
         try out.writeAll("usage: zephem map show <path>\n");
-        return;
+        return .usage;
     }
     var pub_n: usize = 0;
     var priv_n: usize = 0;
@@ -153,7 +158,7 @@ fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !void {
     }
     if (pub_n + priv_n == 0) {
         try out.print("nothing under {s}\n", .{prefix});
-        return;
+        return .miss;
     }
     try out.print("# map show {s}  ({d} decls: {d} pub · {d} priv)\n\n", .{ prefix, pub_n + priv_n, pub_n, priv_n });
     if (pub_n > 0) {
@@ -168,12 +173,13 @@ fn cmdShow(out: *std.Io.Writer, nodes: []const Node, prefix: []const u8) !void {
             if (underPrefix(n.path, prefix) and !std.mem.eql(u8, n.vis, "pub")) try out.print("  {s}  {s}\n", .{ n.path, n.kind });
         }
     }
+    return .hit;
 }
 
-fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !void {
+fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !Outcome {
     if (path.len == 0) {
         try out.writeAll("usage: zephem map doc <path>\n");
-        return;
+        return .usage;
     }
     for (nodes) |n| {
         if (!std.mem.eql(u8, n.path, path)) continue;
@@ -185,9 +191,10 @@ fn cmdDoc(out: *std.Io.Writer, nodes: []const Node, path: []const u8) !void {
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
         if (std.mem.eql(u8, n.vis, "priv")) try out.writeAll("\n  ⚠ private decl — not accessible as this path from outside its source file.\n");
         try out.writeAll("\n(from the zephem map — the source of truth; if it's stale, regenerate the map)\n");
-        return;
+        return .hit;
     }
     try out.print("{s} not in the map\n", .{path});
+    return .miss;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -239,6 +246,11 @@ fn lower(a: std.mem.Allocator, s: []const u8) ![]const u8 {
     for (s, 0..) |c, i| d[i] = lo(c);
     return d;
 }
-fn trunc(s: []const u8, max: usize) []const u8 {
-    return if (s.len > max) s[0..max] else s;
+/// Cut on a CODEPOINT boundary and MARK the cut. An unmarked raw byte slice let a partial
+/// value read as a complete one, and could split a multibyte character. See zlook.truncField.
+fn trunc(a: std.mem.Allocator, s: []const u8, max: usize) []const u8 {
+    if (s.len <= max) return s;
+    var end = max;
+    while (end > 0 and (s[end] & 0xC0) == 0x80) end -= 1;
+    return std.fmt.allocPrint(a, "{s}…", .{s[0..end]}) catch s[0..end];
 }

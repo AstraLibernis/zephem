@@ -2,6 +2,7 @@
 //! `scripts/build_depth.nu`). Deliberately separate from `zephem std --check` — an L5 rebuild is a
 //! full reflection sweep and is slow/machine-dependent, so its reproducibility lives here.
 const std = @import("std");
+const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
 const toolchain = @import("../toolchain.zig");
@@ -24,6 +25,15 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     var out: ?[]const u8 = null;
     var commit = false;
     var check = false;
+    const usage =
+        \\usage: zephem depth [--commit] [--check] [--only P] [--filter S] [--list FILE]
+        \\                    [--limit N] [--timeout S] [--jobs N] [--out DIR]
+        \\
+        \\  run the L5 reflection sweep (SLOW — minutes; compiles once per container)
+        \\
+    ;
+    try argv.helpRequested(c, args, usage);
+
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         const arg = args[i];
@@ -48,7 +58,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         } else if (std.mem.eql(u8, arg, "--out")) {
             i += 1;
             if (i < args.len) out = args[i];
-        }
+        } else argv.reject(c, arg, usage);
     }
 
     const a = c.a;
