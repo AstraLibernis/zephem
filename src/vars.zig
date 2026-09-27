@@ -7,6 +7,7 @@
 //!   $ZEPHEM_DATA   → the datasets dir         (else: <repo>/data/std)
 //!   $ZEPHEM_LOOKUP → the baked lookup table    (else: $HOME/.config/zephem/lookup.tsv)
 const std = @import("std");
+const builtin = @import("builtin");
 const Ctx = @import("ctx.zig").Ctx;
 
 pub const Error = error{RepoRootNotFound};
@@ -33,10 +34,16 @@ pub fn dataDir(c: Ctx) ![]const u8 {
 }
 
 /// The baked lookup table zlook reads. `$ZEPHEM_LOOKUP` wins; else `$HOME/.config/zephem/lookup.tsv`.
+/// Windows only: `%USERPROFILE%` stands in for an unset `$HOME`, since Windows doesn't set it.
 pub fn lookupPath(c: Ctx) ![]const u8 {
     if (c.getEnv("ZEPHEM_LOOKUP")) |p| return p;
-    const home = c.getEnv("HOME") orelse ".";
+    const home = c.getEnv("HOME") orelse windowsHome(c) orelse ".";
     return std.fs.path.join(c.a, &.{ home, ".config", "zephem", "lookup.tsv" });
+}
+
+fn windowsHome(c: Ctx) ?[]const u8 {
+    if (builtin.os.tag != .windows) return null;
+    return c.getEnv("USERPROFILE");
 }
 
 /// A file under the datasets dir (e.g. `dataFile(c, "extracted/nodes.tsv")`).
