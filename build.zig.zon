@@ -14,5 +14,6 @@
         "reflect",
         "derive",
         "templates",
+        "LICENSE",
     },
 }
