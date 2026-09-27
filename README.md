@@ -250,3 +250,7 @@ No Nushell, no Python, no duckdb.
   `zephem std` reads it from there, so the snapshot tracks whatever Zig is on `PATH`.
 - Prior life: see [Where it started](#where-it-started-stdcrypto-archived) above — the `zcrypto`
   origin and the archive tombstone.
+
+## License
+
+MIT. See `LICENSE`.
