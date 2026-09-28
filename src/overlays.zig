@@ -14,7 +14,7 @@ const util = @import("util.zig");
 /// Strip Zig keyword-quoting: `@"type"` → `type` (so the parser's quoted path and the compiler's
 /// bare name compare equal). Fast path: only rewrite when a `@"` actually appears.
 pub fn normPath(a: std.mem.Allocator, p: []const u8) []const u8 {
-    if (std.mem.indexOf(u8, p, "@\"") == null) return p;
+    if (std.mem.find(u8, p, "@\"") == null) return p;
     var out = a.alloc(u8, p.len) catch return p;
     var n: usize = 0;
     var i: usize = 0;
@@ -41,7 +41,7 @@ pub fn normPath(a: std.mem.Allocator, p: []const u8) []const u8 {
 fn nominal(id: []const u8) bool {
     if (std.mem.startsWith(u8, id, "error{")) return false;
     inline for (.{ "__struct", "__enum", "__union", "__opaque" }) |m| {
-        if (std.mem.indexOf(u8, id, m) != null) return false;
+        if (std.mem.find(u8, id, m) != null) return false;
     }
     return !isPrimitiveId(id);
 }
@@ -114,7 +114,7 @@ pub fn consensus(c: Ctx, dir: []const u8) !rel.Table {
     var left: std.ArrayList(rel.Row) = .empty;
     for (nodes_raw.rows) |r| {
         if (std.mem.eql(u8, r[nk], "field") or std.mem.eql(u8, r[nk], "tag")) continue;
-        if (std.mem.indexOfScalar(u8, r[np_], '(') != null) continue;
+        if (std.mem.findScalar(u8, r[np_], '(') != null) continue;
         const row = try a.alloc([]const u8, 2);
         row[0] = r[np_]; // ppath
         row[1] = normPath(a, r[np_]); // np
@@ -296,11 +296,11 @@ pub fn sigshape(c: Ctx, dir: []const u8) !rel.Table {
             const fp = firstOf(plist);
             const name = std.mem.trim(u8, sliceUntil(fp, ':'), " \t");
             if (std.mem.eql(u8, name, "self") or std.mem.eql(u8, name, "this")) break :blk "self";
-            if (std.mem.indexOf(u8, fp, "Allocator") != null) break :blk "allocator";
+            if (std.mem.find(u8, fp, "Allocator") != null) break :blk "allocator";
             break :blk "other";
         };
-        const io = if (std.mem.indexOf(u8, sig, "Io") != null) "yes" else "no";
-        const generic = if (std.mem.indexOf(u8, plist, "comptime ") != null or std.mem.indexOf(u8, plist, "anytype") != null) "yes" else "no";
+        const io = if (std.mem.find(u8, sig, "Io") != null) "yes" else "no";
+        const generic = if (std.mem.find(u8, plist, "comptime ") != null or std.mem.find(u8, plist, "anytype") != null) "yes" else "no";
         const row = try a.alloc([]const u8, 4);
         row[0] = r[ap];
         row[1] = first_param;
@@ -313,7 +313,7 @@ pub fn sigshape(c: Ctx, dir: []const u8) !rel.Table {
 }
 
 fn sliceUntil(s: []const u8, ch: u8) []const u8 {
-    return if (std.mem.indexOfScalar(u8, s, ch)) |k| s[0..k] else s;
+    return if (std.mem.findScalar(u8, s, ch)) |k| s[0..k] else s;
 }
 
 const join = util.join;

@@ -208,8 +208,8 @@ fn fnMod(ast: *const Ast, proto: *const Ast.full.FnProto) []const u8 {
 /// last non-comment line and pull its leading identifier (or `@"…"`) — never raw text (a value with
 /// an embedded newline would corrupt the TSV).
 fn emitErrMembers(w: *W, cp: []const u8, src: []const u8) !void {
-    const lb = std.mem.indexOfScalar(u8, src, '{') orelse return;
-    const rb = std.mem.lastIndexOfScalar(u8, src, '}') orelse return;
+    const lb = std.mem.findScalar(u8, src, '{') orelse return;
+    const rb = std.mem.findScalarLast(u8, src, '}') orelse return;
     if (rb <= lb + 1) return; // empty `error{}`
     var chunks = std.mem.splitScalar(u8, src[lb + 1 .. rb], ',');
     while (chunks.next()) |chunk| {
@@ -228,7 +228,7 @@ fn emitErrMembers(w: *W, cp: []const u8, src: []const u8) !void {
 /// any trailing comment/whitespace.
 fn leadingIdent(t: []const u8) []const u8 {
     if (std.mem.startsWith(u8, t, "@\"")) {
-        const close = std.mem.indexOfScalarPos(u8, t, 2, '"') orelse return t;
+        const close = std.mem.findScalarPos(u8, t, 2, '"') orelse return t;
         return t[0 .. close + 1];
     }
     var j: usize = 0;
@@ -239,9 +239,9 @@ fn leadingIdent(t: []const u8) []const u8 {
 fn importTarget(src: []const u8) ?[]const u8 {
     const t = std.mem.trim(u8, src, " \t\r\n");
     if (!std.mem.startsWith(u8, t, "@import(")) return null;
-    const o = std.mem.indexOfScalar(u8, t, '"') orelse return null;
+    const o = std.mem.findScalar(u8, t, '"') orelse return null;
     const rest = t[o + 1 ..];
-    const c = std.mem.indexOfScalar(u8, rest, '"') orelse return null;
+    const c = std.mem.findScalar(u8, rest, '"') orelse return null;
     return rest[0..c];
 }
 
@@ -329,7 +329,7 @@ fn extractBase(s: []const u8) []const u8 {
 /// `meta.Int(.{…})` carry a brace but reference a real decl, so they must resolve, not bucket as inline.
 fn isInlineContainer(raw: []const u8) bool {
     const s = std.mem.trim(u8, raw, " \t\r\n");
-    if (std.mem.indexOfScalar(u8, s, '{') == null) return false;
+    if (std.mem.findScalar(u8, s, '{') == null) return false;
     var t = s;
     for ([_][]const u8{ "extern ", "packed " }) |q| {
         if (std.mem.startsWith(u8, t, q)) {
@@ -386,14 +386,14 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
     if (std.mem.eql(u8, base, "@This")) return Res{ .scope = .local, .target = container };
     if (base[0] == '@') return Res{ .scope = .unresolved, .target = raw };
 
-    const dotted = std.mem.indexOfScalar(u8, base, '.') != null;
+    const dotted = std.mem.findScalar(u8, base, '.') != null;
     if (!dotted and std.zig.primitives.isPrimitive(base)) return Res{ .scope = .primitive, .target = base };
     if (!dotted and (std.mem.eql(u8, base, "type") or std.mem.eql(u8, base, "anytype") or
         std.mem.eql(u8, base, "anyopaque") or std.mem.eql(u8, base, "anyerror") or std.mem.eql(u8, base, "noreturn")))
         return Res{ .scope = .primitive, .target = base };
 
     if (dotted) {
-        const head = base[0..std.mem.indexOfScalar(u8, base, '.').?];
+        const head = base[0..std.mem.findScalar(u8, base, '.').?];
         if (w.imports.get(head)) |tgt| return Res{ .scope = .module, .target = tgt };
     }
     if (resolveBare(w, container, base)) |p| {
@@ -404,7 +404,7 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
     // ALIAS-CHASING: base is `head.rest` and head resolves to an alias — follow it, then retry.
     // (`Allocator.Error` → `Allocator` is a private alias to `mem.Allocator` → `mem.Allocator.Error`.)
     if (dotted and fuel > 0) {
-        const dot = std.mem.indexOfScalar(u8, base, '.').?;
+        const dot = std.mem.findScalar(u8, base, '.').?;
         if (resolveBare(w, container, base[0..dot])) |ph| {
             if (w.aliases.get(ph)) |tgt| {
                 const chased = std.fmt.allocPrint(w.arena, "{s}{s}", .{ tgt, base[dot..] }) catch return Res{ .scope = .unresolved, .target = raw };
@@ -489,7 +489,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             const nt = ast.nodeData(m).opt_token_and_node[0];
             if (nt.unwrap()) |tok| if (ast.tokenTag(tok) == .identifier) {
                 const nm = ast.tokenSlice(tok);
-                const base = if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[k + 1 ..] else path;
+                const base = if (std.mem.findScalarLast(u8, path, '.')) |k| path[k + 1 ..] else path;
                 owner = if (std.mem.eql(u8, nm, base)) path else try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, nm });
             };
             try w.attr(owner, "example", try escapeTsv(w.arena, ast.getNodeSource(m)));
@@ -545,7 +545,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             const sel = selectorOf(init_src);
             // `@import("f").foo()` — a CALL selector yields a computed value/type we can't resolve by
             // parsing (it needs the compiler). Neither a namespace nor a plain re-export: a const.
-            if (std.mem.indexOfScalar(u8, sel, '(') != null) {
+            if (std.mem.findScalar(u8, sel, '(') != null) {
                 try declFacts(w, cp, decl_loc, decl_doc);
                 try w.node(cp, "const", name, vis);
                 continue;
@@ -645,7 +645,7 @@ fn relOf(w: *W, abs: []const u8) []const u8 {
 /// The selector after `@import("f").` — e.g. `@import("x.zig").Foo` → `Foo`.
 fn selectorOf(src: []const u8) []const u8 {
     const t = std.mem.trim(u8, src, " \t\r\n");
-    const close = std.mem.indexOfScalar(u8, t, ')') orelse return "";
+    const close = std.mem.findScalar(u8, t, ')') orelse return "";
     var s = std.mem.trim(u8, t[close + 1 ..], " \t\r\n");
     if (s.len > 0 and s[0] == '.') s = s[1..];
     return s;
@@ -679,7 +679,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
             try ww.aliases.put(c, t);
         }
     }.f;
-    if (std.mem.indexOfScalar(u8, sel, '.') != null or depth >= MAX_DEPTH) return leaf(w, cp, name, vis, sel, decl_loc, decl_doc);
+    if (std.mem.findScalar(u8, sel, '.') != null or depth >= MAX_DEPTH) return leaf(w, cp, name, vis, sel, decl_loc, decl_doc);
     const ast = parseChild(w, abs) orelse {
         try declFacts(w, cp, decl_loc, decl_doc);
         return w.node(cp, "nserr", name, vis);
@@ -707,7 +707,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     if (importTarget(isrc)) |t2| {
         const isrc_sel = selectorOf(isrc);
         // `@import("f").foo()` — a CALL selector is a computed const, not a followable namespace.
-        if (std.mem.indexOfScalar(u8, isrc_sel, '(') != null) {
+        if (std.mem.findScalar(u8, isrc_sel, '(') != null) {
             try declFacts(w, cp, tgt_loc, tgt_doc);
             return w.node(cp, "const", name, vis);
         }

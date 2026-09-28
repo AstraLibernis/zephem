@@ -113,7 +113,7 @@ fn reflectOne(cx: SweepCtx, i: usize) One {
     // reflected standalone (the compiler needs the type args), so it would only ever poison.
     // Skip it structurally (no compile, no wasted process) — its real members are Phase D
     // (instantiate the generic, then reflect). Provably safe: no `()` container resolves.
-    if (std.mem.indexOf(u8, path, "()") != null) return skippedOne(a, path);
+    if (std.mem.find(u8, path, "()") != null) return skippedOne(a, path);
 
     const rfile = std.fmt.allocPrint(a, "{s}/r-{d}.zig", .{ cx.scratch_dir, i }) catch return poisonOne(a, path, "scratch alloc failed");
     return soloReflect(a, cx.io, cx.zig_exe, cx.template, cx.std_dir, cx.timeout_s, path, skip, rfile);
@@ -244,7 +244,7 @@ fn matchAnonPrefix(s: []const u8) ?usize {
 fn firstErrorLine(stderr: []const u8) []const u8 {
     var lines = std.mem.splitScalar(u8, stderr, '\n');
     while (lines.next()) |ln| {
-        if (std.mem.indexOf(u8, ln, "error:") != null) return std.mem.trim(u8, ln, " \t\r");
+        if (std.mem.find(u8, ln, "error:") != null) return std.mem.trim(u8, ln, " \t\r");
     }
     var l2 = std.mem.splitScalar(u8, stderr, '\n');
     while (l2.next()) |ln| {

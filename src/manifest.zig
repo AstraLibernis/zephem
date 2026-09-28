@@ -46,7 +46,7 @@ pub fn parse(a: std.mem.Allocator, bytes: []const u8) ![]const Record {
     var lines = std.mem.splitScalar(u8, bytes, '\n');
     while (lines.next()) |line| {
         if (line.len == 0) continue;
-        const sp = std.mem.indexOfScalar(u8, line, ' ') orelse continue;
+        const sp = std.mem.findScalar(u8, line, ' ') orelse continue;
         const hex = line[0..sp];
         var rest = line[sp..];
         rest = std.mem.trimStart(u8, rest, " ");

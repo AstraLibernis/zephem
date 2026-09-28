@@ -73,8 +73,8 @@ pub fn staleness(c: Ctx, data_dir: []const u8) !?[]const u8 {
 fn scanField(text: []const u8, key: []const u8) ?[]const u8 {
     var needle_buf: [64]u8 = undefined;
     const needle = std.fmt.bufPrint(&needle_buf, ".{s} = \"", .{key}) catch return null;
-    const at = std.mem.indexOf(u8, text, needle) orelse return null;
+    const at = std.mem.find(u8, text, needle) orelse return null;
     const start = at + needle.len;
-    const end = std.mem.indexOfScalarPos(u8, text, start, '"') orelse return null;
+    const end = std.mem.findScalarPos(u8, text, start, '"') orelse return null;
     return text[start..end];
 }
