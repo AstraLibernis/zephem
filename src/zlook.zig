@@ -83,6 +83,12 @@ fn ciContains(hay: []const u8, needle: []const u8) bool {
     return false;
 }
 
+/// Case-insensitive whole-name equality (term pre-lowercased), ignoring a builtin's `@`.
+fn exactName(name: []const u8, term: []const u8) bool {
+    const n = if (name.len > 0 and name[0] == '@' and (term.len == 0 or term[0] != '@')) name[1..] else name;
+    return n.len == term.len and ciContains(n, term);
+}
+
 fn allContain(hay: []const u8, terms: []const []const u8) bool {
     for (terms) |t| if (!ciContains(hay, t)) return false;
     return true;
@@ -175,19 +181,51 @@ fn countMembers(group: []const u8) usize {
     return if (trailing) n - 1 else n; // a trailing comma is not a member
 }
 
-/// Render a resolved type.
+/// Render a resolved type for a SEARCH result: compact, because an agent reads every line.
 ///
-/// An ERROR SET is emitted whole with a true member count — its completeness is the whole
-/// reason for recording it, and `zephem map doc` does not show `rdetail` at all, so this is the
-/// only place the full set is visible. Anything else truncates, marked.
+/// An error set longer than the cut is FOLDED to its true member count — `error{…30 members}`
+/// — with the text around it kept, so the shape of the type stays readable. Folding is marked
+/// and counted, never silent, and `zephem map doc <path>` prints the set in full. (It used to be
+/// emitted whole here: the top hit for `look read file` alone was a 30-member line, and twelve
+/// hits ran to ~5 KB.) Anything else over the cut truncates, marked.
 fn renderResolved(a: std.mem.Allocator, s: []const u8) []const u8 {
     if (s.len <= 140) return s;
     const g = braceGroup(s) orelse return truncField(a, s, 140);
-    // Only an error set gets the whole-emit. A comptime struct literal of hash constants is not
-    // a set of "members" and must not be annotated as one — 37 rows were.
+    // Only an error set folds to a member count. A comptime struct literal of hash constants is
+    // not a set of "members" and must not be annotated as one.
     const is_error_set = g.start >= 5 and std.mem.eql(u8, s[g.start - 5 .. g.start], "error");
     if (!is_error_set) return truncField(a, s, 140);
-    return std.fmt.allocPrint(a, "{s}   [{d} members, shown in full]", .{ s, countMembers(s[g.start..g.end]) }) catch s;
+    const folded = std.fmt.allocPrint(a, "{s}{{…{d} members}}{s}", .{ s[0..g.start], countMembers(s[g.start..g.end]), s[g.end..] }) catch return s;
+    return truncField(a, folded, 160);
+}
+
+/// A task-shaped query (`print stdout`) often names things no SINGLE declaration mentions
+/// together: `Writer.print` and `File.stdout` are two decls. When the AND of all terms finds
+/// nothing, name the best public hits for each term alone — to stderr, so stdout stays empty
+/// and the exit code still says "miss". Still exact matching; nothing is guessed.
+fn perTerm(c: Ctx, buf: []const u8, terms: []const []const u8, raw: []const []const u8) !void {
+    const a = c.a;
+    try argv.diag(c, "  no single declaration mentions every term; the closest for each term alone:\n", .{});
+    for (terms, raw) |t, shown| {
+        var best: std.ArrayList(Hit) = .empty;
+        var it = std.mem.splitScalar(u8, buf, '\n');
+        _ = it.next(); // header
+        while (it.next()) |line| {
+            if (line.len == 0) continue;
+            const name = field(line, COL_NAME);
+            if (!ciContains(name, t)) continue; // name hits only: a doc mention is too weak here
+            if (std.mem.eql(u8, field(line, COL_VIS), "priv")) continue;
+            const rank: u8 = if (name.len == t.len) 0 else 1; // exact name first
+            try best.append(a, .{ .line = line, .rank = rank, .priv = false, .plen = field(line, COL_PATH).len });
+        }
+        std.mem.sort(Hit, best.items, {}, lessThan);
+        var names: std.ArrayList(u8) = .empty;
+        for (best.items[0..@min(4, best.items.len)], 0..) |h, i| {
+            if (i > 0) try names.appendSlice(a, ", ");
+            try names.appendSlice(a, field(h.line, COL_PATH));
+        }
+        try argv.diag(c, "    {s:<10} → {s}\n", .{ shown, if (names.items.len > 0) names.items else "(no declaration is named with it)" });
+    }
 }
 
 pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
@@ -257,13 +295,15 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         const p = field(line, COL_PATH);
         // A match through an alternative name (`ArrayList append` → `Aligned().append`) is as
         // good as a path match: it is the name the caller would actually write.
-        const rank: u8 = if (allContain(name, terms)) 0 else if (allContain(p, terms) or allContain(field(line, COL_AKA), terms)) 1 else 2;
+        // exact name (`args` → `Args`) · name contains every term · path/alternative name · elsewhere
+        const rank: u8 = if (terms.len == 1 and exactName(name, terms[0])) 0 else if (allContain(name, terms)) 1 else if (allContain(p, terms) or allContain(field(line, COL_AKA), terms)) 2 else 3;
         const priv = std.mem.eql(u8, field(line, COL_VIS), "priv");
         if (priv) npriv += 1;
         try hits.append(a, .{ .line = line, .rank = rank, .priv = priv, .plen = p.len });
     }
     if (total == 0) {
         try argv.diag(c, "no lookup entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw.items)});
+        if (terms.len > 1) try perTerm(c, buf, terms, terms_raw.items);
         return .miss;
     }
     std.mem.sort(Hit, hits.items, {}, lessThan);
@@ -307,7 +347,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         if (res.len > 0) try out.print("      → {s}\n", .{renderResolved(a, res)});
         if (doc.len > 0) try out.print("      ⌁ {s}\n", .{truncField(a, doc, 120)});
     }
-    try out.print("\n(from the zephem map — the source of truth; if stale, regenerate zephem)\n", .{});
+    try out.print("\n(from the zephem map — the source of truth; if stale, regenerate zephem. Full error sets: `zephem map doc <path>`)\n", .{});
     try out.flush();
     return .hit;
 }

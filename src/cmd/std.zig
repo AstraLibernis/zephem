@@ -18,6 +18,7 @@ const toolchain = @import("../toolchain.zig");
 const manifest = @import("../manifest.zig");
 const parse = @import("parse");
 const derive_index = @import("derive");
+const langref = @import("langref");
 const verify = @import("../verify/std.zig");
 const rel = @import("../relation.zig");
 const util = @import("../util.zig");
@@ -27,6 +28,7 @@ const names = [_][]const u8{
     "extracted/nodes.tsv",
     "extracted/attrs.tsv",
     "extracted/edges.tsv",
+    "extracted/builtins.tsv",
     "derived/index.tsv",
 };
 
@@ -59,20 +61,22 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const env = try toolchain.probe(c);
     const root = try std.fs.path.join(c.a, &.{ env.std_dir, "std.zig" });
     const zver = env.version;
+    const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env) };
 
     var buf: [4096]u8 = undefined;
     var ow = std.Io.File.stdout().writer(c.io, &buf);
     const w = &ow.interface;
 
     if (check) {
-        try proveReproducible(c, root, data_dir, zver, depth, w);
+        try proveReproducible(c, src, data_dir, zver, depth, w);
         try w.flush();
         return;
     }
 
     // ── forward: regenerate ──────────────────────────────────────────────────
     try w.print("[forward]  scanning {s}  (zig {s}, depth {d})\n", .{ root, zver, depth });
-    _ = try regen(c, root, data_dir);
+    if (src.langref == null) try w.writeAll("[builtins] ⚠ this toolchain ships no doc/langref.html — builtins get names and arity only\n");
+    _ = try regen(c, src, data_dir);
     // PINNED: first line the version (consumers read it), second the target triple (the reflect
     // layer is target-scoped — a Windows decl poisons on linux, usize=u64 here, etc.).
     try writeFileStr(c, try join(c.a, data_dir, "PINNED"), try std.fmt.allocPrint(c.a, "zig {s}\ntarget {s}\n", .{ zver, env.target }));
@@ -93,16 +97,29 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     try w.flush();
 }
 
-/// Regenerate the four datasets into `out_dir`. The single build path, shared by the normal build
+const Sources = struct { root: []const u8, builtin_fn: []const u8, langref: ?[]const u8 };
+
+/// `doc/langref.html` beside the toolchain's `lib/` (the layout of the official tarballs), or
+/// null when this install has no docs.
+fn langrefPath(c: Ctx, env: toolchain.Env) ?[]const u8 {
+    const lib = std.fs.path.dirname(env.std_dir) orelse return null;
+    const prefix = std.fs.path.dirname(lib) orelse return null;
+    const p = std.fs.path.join(c.a, &.{ prefix, "doc", "langref.html" }) catch return null;
+    std.Io.Dir.cwd().access(c.io, p, .{}) catch return null;
+    return p;
+}
+
+/// Regenerate the datasets into `out_dir`. The single build path, shared by the normal build
 /// and --check, so they cannot diverge.
-fn regen(c: Ctx, root: []const u8, out_dir: []const u8) !void {
+fn regen(c: Ctx, src: Sources, out_dir: []const u8) !void {
     try std.Io.Dir.cwd().createDirPath(c.io, try join(c.a, out_dir, "extracted"));
     try std.Io.Dir.cwd().createDirPath(c.io, try join(c.a, out_dir, "derived"));
     const nodes = try join(c.a, out_dir, "extracted/nodes.tsv");
     const edges = try join(c.a, out_dir, "extracted/edges.tsv");
     const attrs = try join(c.a, out_dir, "extracted/attrs.tsv");
     const index = try join(c.a, out_dir, "derived/index.tsv");
-    _ = try parse.run(c.a, c.io, root, nodes, edges, attrs);
+    _ = try parse.run(c.a, c.io, src.root, nodes, edges, attrs);
+    _ = try langref.run(c.a, c.io, src.builtin_fn, src.langref, try join(c.a, out_dir, "extracted/builtins.tsv"));
     _ = try derive_index.run(c.a, c.io, nodes, index);
 }
 
@@ -130,11 +147,22 @@ fn report(c: Ctx, data_dir: []const u8, w: *std.Io.Writer) !void {
         if (std.mem.eql(u8, av, "doc")) doc += 1 else if (std.mem.eql(u8, av, "sig")) sig += 1 else if (std.mem.eql(u8, av, "value")) value += 1 else if (std.mem.eql(u8, av, "example")) example += 1;
     }
     try w.print("[attrs]    {d} rows — doc {d} · sig {d} · value {d} · example {d}\n", .{ attrs.rows.len, doc, sig, value, example });
+
+    const bt = try rel.load(c.a, c.io, try join(c.a, data_dir, "extracted/builtins.tsv"));
+    const bs = bt.col("sig");
+    const be = bt.col("example");
+    var documented: usize = 0;
+    var examples: usize = 0;
+    for (bt.rows) |r| {
+        if (r[bs].len > 0) documented += 1;
+        if (r[be].len > 0) examples += 1;
+    }
+    try w.print("[builtins] {d} builtins — {d} documented in langref · {d} with an example\n", .{ bt.rows.len, documented, examples });
 }
 
 // ── --check: reproducibility ────────────────────────────────────────────────
 
-fn proveReproducible(c: Ctx, root: []const u8, data_dir: []const u8, zver: []const u8, depth: u32, w: *std.Io.Writer) !void {
+fn proveReproducible(c: Ctx, src: Sources, data_dir: []const u8, zver: []const u8, depth: u32, w: *std.Io.Writer) !void {
     try w.print("[check]    proving reproducibility  (zig {s}, depth {d})\n", .{ zver, depth });
 
     // committed hashes (before touching anything) + the recorded manifest
@@ -149,8 +177,8 @@ fn proveReproducible(c: Ctx, root: []const u8, data_dir: []const u8, zver: []con
     const dir_a = try join(c.a, check_base, "a");
     const dir_b = try join(c.a, check_base, "b");
     std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {};
-    _ = try regen(c, root, dir_a);
-    _ = try regen(c, root, dir_b);
+    _ = try regen(c, src, dir_a);
+    _ = try regen(c, src, dir_b);
 
     var ok = true;
     for (names, 0..) |name, k| {

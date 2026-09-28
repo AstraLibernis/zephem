@@ -86,6 +86,20 @@ the backward check in `zephem std` proves the shapes reconcile: every non-root p
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to
 a real node** — the links are valid.
 
+### `builtins.tsv` — the builtins (`@intCast`, `@memcpy`, …)
+`name · params · sig · doc · example`. Builtins are not std declarations, so the walk never
+sees them, yet they change between releases as much as std does. `parse/langref.zig` reads two
+witnesses that ship with the active toolchain: the compiler's own table
+(`std/zig/BuiltinFn.zig`, which decides what **exists** and each builtin's arity, `var` when
+variadic) and the language reference (`doc/langref.html`, for the signature, prose and first
+example). @@N_BUILTINS@@ builtins: @@N_BUILTINS_DOC@@ documented, @@N_BUILTINS_EX@@ with an example,
+and @@N_BUILTINS_UNDOC@@ the compiler has but langref does not document (their `sig`/`doc` stay
+empty; that absence is the fact).
+
+**Self-check:** the extraction fails if langref documents a builtin the compiler lacks, or if a
+documented signature's parameter count disagrees with the compiler's. The backward check re-reads
+the file: every row `@`-named once, an arity, and each signature a call of its own builtin.
+
 ---
 
 ## From reflection (`reflect/`) — what the compiler resolves

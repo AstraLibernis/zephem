@@ -17,7 +17,7 @@ const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
 const redirect = @import("redirect.zig");
 
-const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8 };
+const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8, example: []const u8 = "", arity: []const u8 = "" };
 const Map = struct { nodes: []const Node, redirects: redirect.Redirects };
 
 pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
@@ -124,7 +124,8 @@ fn loadMap(c: Ctx) !Map {
     const nk = nodes.col("kind");
     const nn = nodes.col("name");
     const nv = nodes.col("vis");
-    const out = try a.alloc(Node, nodes.rows.len);
+    const builtins = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/builtins.tsv" }));
+    const out = try a.alloc(Node, nodes.rows.len + builtins.rows.len);
     for (nodes.rows, 0..) |r, k| out[k] = .{
         .path = r[np],
         .kind = r[nk],
@@ -134,6 +135,24 @@ fn loadMap(c: Ctx) !Map {
         .doc = doc.get(r[np]) orelse "",
         .mod = mod.get(r[np]) orelse "",
         .errmembers = errm.get(r[np]) orelse "",
+    };
+    // Builtins join the map as `@name` rows of kind `builtin`, with langref's first example.
+    const bn = builtins.col("name");
+    const bs = builtins.col("sig");
+    const bd = builtins.col("doc");
+    const be = builtins.col("example");
+    const bp = builtins.col("params");
+    for (builtins.rows, nodes.rows.len..) |r, k| out[k] = .{
+        .path = r[bn],
+        .kind = "builtin",
+        .name = r[bn],
+        .vis = "pub",
+        .sig = r[bs],
+        .doc = r[bd],
+        .mod = "",
+        .errmembers = "",
+        .example = r[be],
+        .arity = r[bp],
     };
     return .{ .nodes = out, .redirects = try redirect.Redirects.build(a, nodes, edges) };
 }
@@ -157,7 +176,8 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
         const direct = allIn(terms, &.{ n.path, n.name, n.sig, n.doc });
         const alt: []const u8 = if (direct) "" else try aka.of(n.path);
         if (!direct and !allIn(terms, &.{ n.path, n.name, n.sig, n.doc, alt })) continue;
-        const rank: u8 = if (allIn(terms, &.{n.name})) 0 else if (allIn(terms, &.{n.path}) or allIn(terms, &.{alt})) 1 else 2;
+        // exact name · name contains every term · path/alternative name · elsewhere (as `look`)
+        const rank: u8 = if (terms.len == 1 and n.name.len == terms[0].len and ciContains(n.name, terms[0])) 0 else if (allIn(terms, &.{n.name})) 1 else if (allIn(terms, &.{n.path}) or allIn(terms, &.{alt})) 2 else 3;
         const priv = std.mem.eql(u8, n.vis, "priv");
         if (priv) npriv += 1;
         try hits.append(a, .{ .node = n, .rank = rank, .priv = priv, .plen = n.path.len });
@@ -262,7 +282,15 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: Map, path_in: []const u8) !Outcome {
             if (parts.doc.len > 0) try out.print("  ⌁ (params) {s}\n", .{parts.doc});
         }
         if (n.errmembers.len > 0) try out.print("  errors: {s}\n", .{n.errmembers});
+        // The compiler-resolved type, in full — the one place a whole inferred error set shows
+        // (`look` folds it to a count).
+        if (try resolvedOf(c, n.path)) |res| try out.print("  → {s}\n", .{res});
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
+        if (n.example.len > 0) try out.print("\n  example (from the language reference):\n{s}\n", .{try unescapeIndented(a, n.example)});
+        if (std.mem.eql(u8, n.kind, "builtin") and n.sig.len == 0) {
+            const args = if (std.mem.eql(u8, n.arity, "var")) "a variable number of" else n.arity;
+            try out.print("  takes {s} argument(s), per the compiler's builtin table\n\n  (the language reference does not document this builtin)\n", .{args});
+        }
         if (try map.redirects.resolve(n.path)) |res| {
             try out.writeAll("\n");
             try printHops(out, n.path, res.hops);
@@ -378,6 +406,42 @@ fn ciContains(hay: []const u8, needle: []const u8) bool {
         if (j == needle.len) return true;
     }
     return false;
+}
+
+/// The resolved type of `path` from resolved.tsv (the reflection layer), or null. Read on
+/// demand: only `map doc` needs it, for one path.
+fn resolvedOf(c: Ctx, path: []const u8) !?[]const u8 {
+    const dir = try vars.dataDir(c);
+    const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ dir, "extracted/resolved.tsv" }), c.a, .unlimited) catch return null;
+    var lines = std.mem.splitScalar(u8, bytes, '\n');
+    while (lines.next()) |line| {
+        if (!std.mem.startsWith(u8, line, path) or line.len <= path.len or line[path.len] != '\t') continue;
+        var f = std.mem.splitScalar(u8, line, '\t');
+        _ = f.next(); // path
+        _ = f.next(); // kind
+        const detail = f.next() orelse return null;
+        return if (detail.len > 0) detail else null;
+    }
+    return null;
+}
+
+/// A TSV-escaped code cell (`\n`, `\t`, `\\`) back to lines, each indented four spaces.
+fn unescapeIndented(a: std.mem.Allocator, s: []const u8) ![]const u8 {
+    var out: std.ArrayList(u8) = .empty;
+    try out.appendSlice(a, "    ");
+    var i: usize = 0;
+    while (i < s.len) : (i += 1) {
+        if (s[i] == '\\' and i + 1 < s.len) {
+            i += 1;
+            switch (s[i]) {
+                'n' => try out.appendSlice(a, "\n    "),
+                't' => try out.append(a, '\t'),
+                'r' => {},
+                else => try out.append(a, s[i]),
+            }
+        } else try out.append(a, s[i]);
+    }
+    return out.items;
 }
 
 fn lo(c: u8) u8 {

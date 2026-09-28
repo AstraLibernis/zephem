@@ -36,6 +36,11 @@ edges.tsv : src · type · target · scope       Edges        — typed referenc
   its own container (`local`), one elsewhere (`cross`), a primitive, a module boundary, or
   unresolved.
 
+Beside the tree, **`builtins.tsv`** covers the language's builtins (`@intCast`, `@memcpy`, …,
+@@N_BUILTINS@@ in all), taken from the compiler's own builtin table and the language reference
+that ship with the toolchain, and cross-checked against each other. `zephem look intCast` and
+`zephem map doc @intCast` find them like any declaration.
+
 ### Why parsing, not reflection
 
 zephem reads source with `std.zig.Ast` rather than `@typeInfo`. Parsing never evaluates
@@ -62,7 +67,11 @@ answer from the absence of one:
 | 2 | usage error — bad flag, missing operand, unknown subcommand |
 | 3 | the map or lookup table is **unavailable** — not the same as a miss; regenerate it |
 
-Misses and errors go to stderr; stdout carries only results. A `map doc`/`map show` miss also
+Misses and errors go to stderr; stdout carries only results. `look` keeps results short: an
+error set longer than a line folds to its true member count (`error{…30 members}`); `map doc`
+prints it whole. When no single declaration matches every term (`look print stdout`), the miss
+names the best hits for each term alone on stderr (`std.debug.print`, `std.Io.Writer.print` ·
+`std.Io.File.stdout`). A `map doc`/`map show` miss also
 names the closest real paths on stderr (`std.fmt.parseint` → `std.fmt.parseInt`); the exit code
 is still 1.
 

@@ -90,7 +90,18 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // ── error-set member count ── the first version counted every comma in the string and was
     // wrong on 66% of annotated rows; these pin the corrected behaviour to map facts
     // (zig-0.16-pinned, like every other assertion in this battery).
-    try expectLook(c, w, &fails, "error set emitted whole with TRUE count", &.{ "Client.InitError", "--limit", "2" }, &.{ "[47 members, shown in full]", "WriteFailed}" });
+    // `look` folds a long error set to its TRUE top-level count; `map doc` shows it whole.
+    try expectLook(c, w, &fails, "look folds an error set to its true count", &.{ "Client.InitError", "--limit", "2" }, &.{"error{…47 members}"});
+    try expectMap(c, w, &fails, "map doc shows the resolved error set whole", &.{ "doc", "std.crypto.tls.Client.InitError" }, &.{ "→ error{", "WriteFailed}" });
+
+    // ── builtins ── from the compiler's table + the language reference, both in the toolchain.
+    try expectLook(c, w, &fails, "look finds a builtin by name, exact first", &.{ "intCast", "--limit", "1" }, &.{ "@intCast  (builtin)", "@intCast(int: anytype) anytype" });
+    try expectMap(c, w, &fails, "map doc shows a builtin with its langref example", &.{ "doc", "@intCast" }, &.{ "Converts an integer", "example (from the language reference)", "@intCast(a)" });
+    try expectMap(c, w, &fails, "an undocumented builtin says so, with the compiler's arity", &.{ "doc", "@Frame" }, &.{ "takes 1 argument(s)", "does not document" });
+
+    // ── task-shaped queries ── no decl names both, so it is a miss (exit 1, stdout empty);
+    // the per-term hints go to stderr and are not asserted here.
+    try expectOutcome(c, w, &fails, "a no-single-decl query is still a miss", true, &.{ "print", "stdout" }, .miss);
 
     if (fails == 0) {
         try w.writeAll("--- all passed ---\n");
@@ -135,7 +146,7 @@ fn expectMap(c: Ctx, w: *std.Io.Writer, fails: *usize, label: []const u8, args: 
 
 fn check(w: *std.Io.Writer, fails: *usize, label: []const u8, output: []const u8, wants: []const []const u8) !void {
     for (wants) |want| {
-        if (std.mem.indexOf(u8, output, want) == null) {
+        if (std.mem.find(u8, output, want) == null) {
             try w.print("FAIL: {s} (expected substring: {s})\n", .{ label, want });
             fails.* += 1;
             return;

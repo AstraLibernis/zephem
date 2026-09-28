@@ -45,6 +45,7 @@ reproduces it, not the bytes.
 | `nodes.tsv` | Tree | @@N_NODES@@ nodes (@@N_PUB@@ pub / @@N_PRIV@@ priv), incl. fields, tags, and factory members (`<fn>()`) |
 | `attrs.tsv` | Attributes | @@N_ATTRS@@ facts — @@N_DOCS@@ docs · @@N_SIGS@@ sigs · @@N_VALUES@@ values · @@N_LOC@@ locations · @@N_EXAMPLES@@ test bodies · @@N_MOD@@ modifiers · @@N_ERRMEMBER@@ error members |
 | `edges.tsv` | Edges | @@N_EDGES@@ typed references, @@E_RESOLVED_PCT@@% of the resolvable ones landing on a node/primitive |
+| `builtins.tsv` | — | @@N_BUILTINS@@ builtins (`@intCast`, …) from `parse/langref.zig`: the compiler's builtin table + the language reference, cross-checked |
 
 (The `index.tsv` table of contents is built *from* the Tree by the [`../derive/`](../derive/)
 engine, not by the parser. Per-column detail lives in the folder README:

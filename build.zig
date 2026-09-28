@@ -19,6 +19,7 @@ pub fn build(b: *std.Build) void {
     // is NOT built here — it is a compile-per-container template the `depth` subcommand `zig run`s.)
     const parse_mod = b.createModule(.{ .root_source_file = b.path("parse/walk.zig"), .target = target, .optimize = optimize });
     const derive_mod = b.createModule(.{ .root_source_file = b.path("derive/index.zig"), .target = target, .optimize = optimize });
+    const langref_mod = b.createModule(.{ .root_source_file = b.path("parse/langref.zig"), .target = target, .optimize = optimize });
 
     const exe = b.addExecutable(.{
         .name = "zephem",
@@ -29,6 +30,7 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "parse", .module = parse_mod },
                 .{ .name = "derive", .module = derive_mod },
+                .{ .name = "langref", .module = langref_mod },
             },
         }),
     });
@@ -73,6 +75,16 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     const test_step = b.step("test", "run unit tests");
+    {
+        // The langref extractor is its own module (like the engines), so it is tested directly.
+        const t = b.addTest(.{ .root_module = b.createModule(.{
+            .root_source_file = b.path("src/test/langref_test.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{.{ .name = "langref", .module = langref_mod }},
+        }) });
+        test_step.dependOn(&b.addRunArtifact(t).step);
+    }
     inline for (.{
         "src/test/relation_test.zig",
         "src/test/manifest_test.zig",

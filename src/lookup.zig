@@ -25,7 +25,8 @@
 //!            (`std.array_list.Aligned().append` ← `std.ArrayList().append`); appended last so
 //!            readers that take a fixed number of leading columns are unaffected
 //!
-//! A pure left-join over the node set — same symbol universe as nodes.tsv, enriched. Assembled
+//! A pure left-join over the node set — same symbol universe as nodes.tsv, enriched — plus one
+//! row per builtin from builtins.tsv (kind `builtin`), so `look` finds `@intCast` too. Assembled
 //! directly with hash maps (build each right side once, probe per node) rather than chained table
 //! joins — one O(n) pass instead of ten table rebuilds.
 const std = @import("std");
@@ -99,6 +100,7 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
     const resolved = try load(c, dir, "extracted/resolved.tsv");
     const index = try load(c, dir, "derived/index.tsv");
     const canon = try load(c, dir, "derived/canon.tsv");
+    const builtins = try load(c, dir, "extracted/builtins.tsv");
 
     // right-hand maps (first occurrence wins — Nushell uniq-by path)
     var nchild = try mapCol(a, index, "path", "n_children");
@@ -133,7 +135,7 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
     const nk = nodes.col("kind");
     const nn = nodes.col("name");
     const nv = nodes.col("vis");
-    const rows = try a.alloc(rel.Row, nodes.rows.len);
+    const rows = try a.alloc(rel.Row, nodes.rows.len + builtins.rows.len);
     for (nodes.rows, 0..) |r, k| {
         const path = r[np];
         const kind = r[nk];
@@ -158,8 +160,22 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
         row[16] = try aka.of(path);
         rows[k] = row;
     }
-    // A left-join over nodes must preserve exactly the node rows (1:1) — assert it, fail loud.
-    std.debug.assert(rows.len == nodes.rows.len);
+    // Builtins (`@intCast`, …) follow the node rows: kind `builtin`, path = name, depth 0.
+    const bn = builtins.col("name");
+    const bs = builtins.col("sig");
+    const bd = builtins.col("doc");
+    for (builtins.rows, nodes.rows.len..) |r, k| {
+        const row = try a.alloc([]const u8, 17);
+        @memset(row, "");
+        row[0] = r[bn];
+        row[1] = "0";
+        row[2] = "builtin";
+        row[3] = r[bn];
+        row[6] = r[bs];
+        row[7] = r[bd];
+        row[14] = "pub";
+        rows[k] = row;
+    }
     return rel.Table{
         .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis", "mod", "aka" },
         .rows = rows,

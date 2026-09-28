@@ -116,7 +116,7 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
     var dishonest: usize = 0;
     for (poison.rows) |r| {
         const reason = r[pr];
-        if (std.mem.indexOf(u8, reason, "error:") == null and !std.mem.startsWith(u8, reason, "timeout after")) dishonest += 1;
+        if (std.mem.find(u8, reason, "error:") == null and !std.mem.startsWith(u8, reason, "timeout after")) dishonest += 1;
     }
     try w.print("honest-poison: {d} poison reason(s)\n", .{poison.rows.len});
     if (dishonest > 0) {

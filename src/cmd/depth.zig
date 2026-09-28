@@ -160,7 +160,7 @@ fn selectTargets(a: std.mem.Allocator, c: Ctx, index: rel.Table, only: ?[]const 
         var out: std.ArrayList([]const u8) = .empty;
         const pi = index.col("path");
         for (index.rows) |r| {
-            if (std.mem.indexOf(u8, r[pi], f) != null) try out.append(a, r[pi]);
+            if (std.mem.find(u8, r[pi], f) != null) try out.append(a, r[pi]);
         }
         targets = try out.toOwnedSlice(a);
     } else {

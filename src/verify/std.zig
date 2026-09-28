@@ -10,6 +10,8 @@
 //!   INDEX      every index entry is a real node; root span == total rows
 //!   ATTRS      every attr keys onto a real node; known attr kinds only
 //!   EDGES      every edge starts at a real node; every local/cross edge resolves to a real node
+//!   BUILTINS   one row per builtin, each `@`-named once, arity a count or `var`, and every
+//!              documented signature is a call of that same builtin
 //!
 //! Membership is a hash-set lookup (not a per-row scan) — the same discipline the Nushell used.
 const std = @import("std");
@@ -146,6 +148,30 @@ pub fn run(c: Ctx, data_dir: []const u8) !bool {
             try w.print("  ✗ {d} resolved edge(s) point at a MISSING node — a link lies\n", .{bad_link});
             ok = false;
         } else try w.writeAll("  ✓ every local/cross edge resolves to a real node — links are valid\n");
+    }
+
+    // 6. BUILTINS — read back the second way: the extractor already cross-checked langref
+    // against the compiler's table; this re-derives the row invariants from the file alone.
+    {
+        const bt = try rel.load(a, c.io, try join(a, data_dir, "extracted/builtins.tsv"));
+        const bn = bt.col("name");
+        const bp = bt.col("params");
+        const bs = bt.col("sig");
+        var seen = std.StringHashMap(void).init(a);
+        var bad: usize = 0;
+        for (bt.rows) |r| {
+            const name = r[bn];
+            const dup = (try seen.getOrPut(name)).found_existing;
+            const named = name.len > 1 and name[0] == '@';
+            const arity_ok = std.mem.eql(u8, r[bp], "var") or (std.fmt.parseInt(u8, r[bp], 10) catch null) != null;
+            const sig_ok = r[bs].len == 0 or (std.mem.startsWith(u8, r[bs], name) and r[bs].len > name.len and r[bs][name.len] == '(');
+            if (dup or !named or !arity_ok or !sig_ok) bad += 1;
+        }
+        try w.print("builtins:   {d} rows\n", .{bt.rows.len});
+        if (bt.rows.len == 0 or bad > 0) {
+            try w.print("  ✗ {d} malformed builtin row(s)\n", .{bad});
+            ok = false;
+        } else try w.writeAll("  ✓ every builtin named once, with an arity, its signature a call of itself\n");
     }
 
     if (ok) try w.writeAll("VERDICT: ✓ all integrity checks pass\n") else try w.writeAll("VERDICT: ✗ integrity FAILED\n");

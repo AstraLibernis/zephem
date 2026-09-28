@@ -55,7 +55,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         const banner = try std.fmt.allocPrint(a, "<!-- GENERATED from {s} by `zephem docs` — edit the template, not this file. -->\n", .{p.tmpl});
         const content = try std.mem.concat(a, u8, &.{ banner, md });
 
-        if (std.mem.indexOf(u8, content, "@@") != null) {
+        if (std.mem.find(u8, content, "@@") != null) {
             try w.print("arch: ✗ unfilled @@TOKEN@@ remains in {s} — template/generator out of sync\n", .{p.out});
             try w.flush();
             std.process.exit(1);
@@ -93,6 +93,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     const nodes = try load(c, dir, "extracted/nodes.tsv");
     const attrs = try load(c, dir, "extracted/attrs.tsv");
     const edges = try load(c, dir, "extracted/edges.tsv");
+    const builtins = try load(c, dir, "extracted/builtins.tsv");
     const index = try load(c, dir, "derived/index.tsv");
     const canon = try load(c, dir, "derived/canon.tsv");
     const consensus = try load(c, dir, "derived/consensus.tsv");
@@ -142,7 +143,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     const pinned = std.mem.trim(u8, std.mem.sliceTo(pinned_raw, '\n'), " \t\r");
     // PINNED's second line is `target <triple>`; @@TARGET@@ is its arch-os prefix (e.g. x86_64-linux).
     const pinned_target = blk: {
-        const nl = std.mem.indexOfScalar(u8, pinned_raw, '\n') orelse break :blk "";
+        const nl = std.mem.findScalar(u8, pinned_raw, '\n') orelse break :blk "";
         const line2 = std.mem.trim(u8, std.mem.sliceTo(pinned_raw[nl + 1 ..], '\n'), " \t\r");
         const after = if (std.mem.startsWith(u8, line2, "target ")) line2["target ".len..] else line2;
         break :blk std.mem.sliceTo(after, '.');
@@ -177,6 +178,10 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_ERRMEMBER@@", try commafy(a, eqCount(attrs, "attr", "errmember")));
     try add(&list, a, "@@N_FIELDS@@", try commafy(a, fields));
     try add(&list, a, "@@N_EDGES@@", try commafy(a, edges.rows.len));
+    try add(&list, a, "@@N_BUILTINS@@", try commafy(a, builtins.rows.len));
+    try add(&list, a, "@@N_BUILTINS_UNDOC@@", try commafy(a, eqCount(builtins, "sig", "")));
+    try add(&list, a, "@@N_BUILTINS_DOC@@", try commafy(a, builtins.rows.len - eqCount(builtins, "sig", "")));
+    try add(&list, a, "@@N_BUILTINS_EX@@", try commafy(a, builtins.rows.len - eqCount(builtins, "example", "")));
     try add(&list, a, "@@N_HASTYPE@@", try commafy(a, eqCount(edges, "type", "has_type")));
     try add(&list, a, "@@N_ALIASEDGE@@", try commafy(a, eqCount(edges, "type", "alias")));
     try add(&list, a, "@@N_ERRSET@@", try commafy(a, eqCount(edges, "type", "error_set")));
