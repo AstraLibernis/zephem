@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! depth.zig — the L5 reflection sweep engine (port of `scripts/build_depth.nu`). Reflection
 //! evaluates decls, so one platform-gated / @compileError container makes a reflecting program
 //! fail to compile. The defense is isolation: reflect ONE container per subprocess

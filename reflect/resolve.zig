@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! resolve.zig — the L5 (resolved depth) reflector for ONE container.
 //!
 //! Where parse/walk.zig *parses* source (total coverage, never dies), this program

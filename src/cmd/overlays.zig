@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! cmd/overlays.zig — the `zephem overlays` subcommand: rebuild the derived overlays (ports of
 //! `scripts/build_{canon,consensus,callcard,doccov,sigshape}.nu`). Each overlay is a pure
 //! relational transform; `--check` proves each rebuilds to its recorded single-file manifest.

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! build.zig — zephem builds by Zig. One `zephem` binary with subcommands; each named step
 //! below invokes it with the matching subcommand. `reflect/resolve.zig` is NOT built here —
 //! it is a compile-per-container template the `depth` subcommand rewrites and `zig run`s.

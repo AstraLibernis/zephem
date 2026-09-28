@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! cmd/depth.zig — the `zephem depth` subcommand: the L5 reflection sweep (port of
 //! `scripts/build_depth.nu`). Deliberately separate from `zephem std --check` — an L5 rebuild is a
 //! full reflection sweep and is slow/machine-dependent, so its reproducibility lives here.

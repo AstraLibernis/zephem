@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! cmd/std.zig — the `zephem std` subcommand: regenerate the core map, prove it (forward ==
 //! backward), and record the reproducibility manifest. Port of `scripts/build_std.nu`.
 //!

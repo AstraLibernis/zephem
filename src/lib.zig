@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! lib.zig — barrel module that re-exports zephem's internals under one name, so tests under
 //! src/test/ can `@import("zephem")` and reach any module (a test file can't `@import("../x.zig")`
 //! across the module boundary; a named module import is the sanctioned way in).

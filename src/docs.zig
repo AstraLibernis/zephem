@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! docs.zig — regenerate the markdown docs from templates + live data (port of
 //! `scripts/build_arch.nu`). Nothing is hand-authored: prose lives in `templates/*.tmpl.md`, every
 //! number is an `@@TOKEN@@` injected from the datasets, and each output leads with a generated

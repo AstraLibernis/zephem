@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! verify/depth.zig — prove the L5 overlay reconciles with the map, read a SECOND way (port of
 //! `scripts/verify_depth.nu`). Never trusts status.tsv on its own: re-reads the buckets + the map
 //! and checks they reconcile.

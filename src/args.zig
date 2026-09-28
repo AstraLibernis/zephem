@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! Argument validation shared by every subcommand.
 //!
 //! Each subcommand used to parse its flags with an `if / else if` chain and NO final `else`, so

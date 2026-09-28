@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! lookup.zig — bake the denormalized "lookup" table that `zephem look` searches (port of
 //! `query/build_lookup.nu`). One row per map node, joining nodes + attrs + edges + the resolved
 //! and derived overlays into the fixed 16-column contract zlook reads by index:

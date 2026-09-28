@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! verify/std.zig — the backward check: read the three streams a SECOND way and prove they
 //! reconcile (port of `scripts/verify_std.nu`). No external oracle — the data checks itself; a
 //! regeneration this rejects is rejected.

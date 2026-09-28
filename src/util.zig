@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! util.zig — small shared helpers that were duplicated across the src/ layer: path joins, raw
 //! file writes, substring replace, and the naive dotted-path parent/leaf.
 const std = @import("std");

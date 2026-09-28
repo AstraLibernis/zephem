@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! parse/walk.zig — the parser engine: one walk over the source tree emitting the shape model.
 //! Imported as the `parse` module and driven in-process by `zephem std` via `run` (no `zig run`
 //! handoff). The walk/resolve logic is the heart of the read-it engine.

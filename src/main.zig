@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! zephem — one binary, many subcommands. Pointed at Zig's std, it regenerates and self-checks
 //! the queryable map, and serves lookups over it. This dispatcher builds the ambient `Ctx`
 //! (allocator · io · env) and hands off to the subcommand. Everything is built BY Zig: `build.zig`

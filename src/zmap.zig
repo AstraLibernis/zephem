@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! zmap.zig — the `map` subcommand: read the zephem map directly (port of `query/zmap.nu`).
 //! Deterministic browse/discovery over the extracted TSVs — no baked table, no build step.
 //!

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! zlook.zig — the `look` subcommand: fast structured lookup over the denormalized zephem "lookup"
 //! table. In-process now (folded from the standalone `query/zlook.zig`); the SIMD search is
 //! unchanged, only the entry moved to `run(c, args, out)` writing to a caller-supplied writer.

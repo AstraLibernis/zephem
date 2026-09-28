@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! derive/index.zig — the transform engine's table of contents for extracted/nodes.tsv. Imported
 //! as the `derive` module and driven in-process by `zephem std` via `run`, which writes the index
 //! file directly. Reads no Zig — only the datasets.

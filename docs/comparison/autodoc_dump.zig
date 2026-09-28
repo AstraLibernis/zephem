@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! ⚠ DATED, NON-BUILDING COMPARISON ARTIFACT — not part of the zephem toolchain and not built by
 //! `build.zig`. It `@import("Walk.zig")`/`@import("Decl.zig")` from Zig's autodoc tree (not vendored
 //! here) and hardcodes a std root; it was run once, against a pinned Zig, to produce the figures in

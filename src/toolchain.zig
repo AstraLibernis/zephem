@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! toolchain.zig — the external dependency on the Zig compiler itself. Locates the active std
 //! and the compiler version by parsing `zig env` (ZON). This is the one place that may fail
 //! loudly with NO fake default: if `zig env` can't run or lacks `.std_dir`, that is a hard

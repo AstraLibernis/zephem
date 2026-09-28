@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! cmd/test.zig — the query-layer smoke battery (port of `query/test.nu`). Asserts real std facts
 //! through the two lookup subcommands: `look` (SIMD over the baked table) and `map` (reads the
 //! TSVs directly). Builds the lookup table first if it is missing.

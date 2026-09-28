@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! Separate `///` parameter-doc prose from a signature, at display time.
 //!
 //! Zig permits a doc comment INSIDE a parameter list, and the map records signatures as

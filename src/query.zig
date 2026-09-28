@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! Outcome of a read-only query, so the dispatcher can set a meaningful exit code.
 //!
 //! Every query path used to exit 0 — a hit, a miss, a garbage path, and "the lookup table does

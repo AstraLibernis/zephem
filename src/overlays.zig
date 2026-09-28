@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! overlays.zig — the derived overlays (ports of `scripts/build_{canon,consensus,callcard,doccov,
 //! sigshape}.nu`). Each is a pure relational transform over the committed extracted streams,
 //! producing one derived table. No Zig is read here — only the datasets.

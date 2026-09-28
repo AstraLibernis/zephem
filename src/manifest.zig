@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! manifest.zig — SHA256 + `sha256sum -c`-compatible manifests. The Zig replacement for
 //! Nushell's `hash sha256` and the `check-manifest`/`write-manifest` dance (`scripts/lib.nu`).
 //!

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! relation.zig — a tiny relational-TSV toolkit: the Zig replacement for the Nushell
 //! dataframe verbs the pipeline leaned on (`open`/`to tsv`/`select`/`rename`/`where`/
 //! `insert`/`uniq-by`/`group-by`/`sort-by`/`join --left`/`join --outer`).

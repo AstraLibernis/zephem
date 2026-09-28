@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! proc.zig — subprocess + parallelism helpers: the Zig replacement for `^nproc`, `par-each`,
 //! and `^timeout Ns zig run` (`scripts/build_depth.nu`). Phase 0 provides `ncpu` and a plain
 //! `capture` (for `zig env`); the timed sweep primitives (`runTimed`, `parMap`) are added in the

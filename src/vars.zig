@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 AstraLibernis
+
 //! vars.zig — the ONE per-repo config surface: where the repo, the datasets, and the baked
 //! lookup live, with env overrides. No hardcoded install paths; the repo root self-locates by
 //! walking up for the `build.zig.zon` marker (cwd stays fixed, so a relative root is enough).
