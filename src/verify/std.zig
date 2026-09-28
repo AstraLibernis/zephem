@@ -28,13 +28,32 @@ fn isKnown(set: []const []const u8, v: []const u8) bool {
     return false;
 }
 
-/// Run the five integrity checks against the datasets in `data_dir`. Returns true iff all pass;
+/// Run the integrity checks against the std datasets in `data_dir`. Returns true iff all pass;
 /// prints a per-check report to stderr.
 pub fn run(c: Ctx, data_dir: []const u8) !bool {
+    return runChecks(c, data_dir, true, false);
+}
+
+/// The same checks for a dependency map (`zephem deps`): the tree, attributes, edges and
+/// index — everything but the builtins, which exist only for std.
+/// The report is printed only if a check fails.
+pub fn runShape(c: Ctx, data_dir: []const u8) !bool {
+    return runChecks(c, data_dir, false, true);
+}
+
+fn runChecks(c: Ctx, data_dir: []const u8, with_builtins: bool, quiet: bool) !bool {
+    var er = std.Io.File.stderr().writer(c.io, try c.a.alloc(u8, 4096));
+    defer er.interface.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
+    if (!quiet) return checks(c, data_dir, with_builtins, &er.interface);
+    // quiet: collect the report, and show it only if something failed
+    var held: std.Io.Writer.Allocating = .init(c.a);
+    const ok = try checks(c, data_dir, with_builtins, &held.writer);
+    if (!ok) try er.interface.writeAll(held.written());
+    return ok;
+}
+
+fn checks(c: Ctx, data_dir: []const u8, with_builtins: bool, w: *std.Io.Writer) !bool {
     const a = c.a;
-    var er = std.Io.File.stderr().writer(c.io, try a.alloc(u8, 4096));
-    const w = &er.interface;
-    defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
     const nodes = try rel.load(a, c.io, try join(a, data_dir, "extracted/nodes.tsv"));
     const n = nodes.rows.len;
@@ -152,7 +171,7 @@ pub fn run(c: Ctx, data_dir: []const u8) !bool {
 
     // 6. BUILTINS — read back the second way: the extractor already cross-checked langref
     // against the compiler's table; this re-derives the row invariants from the file alone.
-    {
+    if (with_builtins) {
         const bt = try rel.load(a, c.io, try join(a, data_dir, "extracted/builtins.tsv"));
         const bn = bt.col("name");
         const bp = bt.col("params");

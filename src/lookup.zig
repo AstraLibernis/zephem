@@ -103,7 +103,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 }
 
 /// The lookup table's format. Bump it when a column is added, so every older bake is rebuilt.
-const format = "zephem-lookup 3";
+const format = "zephem-lookup 4";
 
 /// What a bake from `dir` must be stamped with: the format plus every dataset manifest. A
 /// regenerated map changes a manifest, so the stamp stops matching.
@@ -114,6 +114,11 @@ fn expectedStamp(c: Ctx, dir: []const u8) ![]const u8 {
     for (manifests) |m| {
         const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ dir, m }), c.a, .unlimited) catch "";
         try out.print(c.a, "## {s}\n{s}", .{ m, bytes });
+    }
+    // every dependency map, so mapping (or removing) one rebakes the table
+    for (try vars.depMaps(c)) |d| {
+        const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ d, "SHA256SUMS" }), c.a, .unlimited) catch "";
+        try out.print(c.a, "## dep {s}\n{s}", .{ d, bytes });
     }
     return out.items;
 }
@@ -160,13 +165,54 @@ const Built = struct { table: rel.Table, examples: []const u8 };
 /// Build the denormalized lookup table (and the examples file) for the datasets in `dir`.
 fn build(c: Ctx, dir: []const u8) !Built {
     const a = c.a;
+    var rows: std.ArrayList(rel.Row) = .empty;
+    var examples: std.ArrayList(u8) = .empty;
+    try examples.appendSlice(a, "path\tbody\n");
+
+    try mapRows(c, dir, &rows, &examples);
+
+    // Builtins (`@intCast`, …) follow std's rows: kind `builtin`, path = name, depth 0.
+    const builtins = try load(c, dir, "extracted/builtins.tsv");
+    const bn = builtins.col("name");
+    const bs = builtins.col("sig");
+    const bd = builtins.col("doc");
+    const bp = builtins.col("params");
+    const be = builtins.col("example");
+    for (builtins.rows) |r| {
+        if (r[be].len > 0) try examples.print(a, "{s}\t{s}\n", .{ r[bn], r[be] });
+        const row = try a.alloc([]const u8, ncols);
+        @memset(row, "");
+        row[0] = r[bn];
+        row[1] = "0";
+        row[2] = "builtin";
+        row[3] = r[bn];
+        row[6] = r[bs];
+        row[7] = r[bd];
+        row[14] = "pub";
+        row[19] = r[bp];
+        try rows.append(a, row);
+    }
+
+    // then every dependency map (`zephem deps`), each module's paths starting with its name
+    for (try vars.depMaps(c)) |d| try mapRows(c, d, &rows, &examples);
+
+    return .{ .table = rel.Table{
+        .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis", "mod", "aka", "redirect", "errmembers", "arity" },
+        .rows = rows.items,
+        .a = a,
+    }, .examples = examples.items };
+}
+
+/// One map's rows (std, or a dependency module): a left-join over its nodes. The compiler
+/// layers (resolved.tsv, canon.tsv) exist only for std; a map without them gets empty columns.
+fn mapRows(c: Ctx, dir: []const u8, rows: *std.ArrayList(rel.Row), examples: *std.ArrayList(u8)) !void {
+    const a = c.a;
     const nodes = try load(c, dir, "extracted/nodes.tsv");
     const attrs = try load(c, dir, "extracted/attrs.tsv");
     const edges = try load(c, dir, "extracted/edges.tsv");
-    const resolved = try load(c, dir, "extracted/resolved.tsv");
     const index = try load(c, dir, "derived/index.tsv");
-    const canon = try load(c, dir, "derived/canon.tsv");
-    const builtins = try load(c, dir, "extracted/builtins.tsv");
+    const resolved = try loadOr(c, dir, "extracted/resolved.tsv", &.{ "path", "kind", "detail" });
+    const canon = try loadOr(c, dir, "derived/canon.tsv", &.{ "path", "canon" });
 
     // right-hand maps (first occurrence wins — Nushell uniq-by path)
     var nchild = try mapCol(a, index, "path", "n_children");
@@ -180,8 +226,6 @@ fn build(c: Ctx, dir: []const u8) !Built {
     var modm = try attrCol(a, attrs, "mod");
     // error-set members, `, `-joined per path, and every example body by anchor path
     var errm = std.StringHashMap([]const u8).init(a);
-    var examples: std.ArrayList(u8) = .empty;
-    try examples.appendSlice(a, "path\tbody\n");
     {
         const ap = attrs.col("path");
         const aa = attrs.col("attr");
@@ -223,8 +267,7 @@ fn build(c: Ctx, dir: []const u8) !Built {
     const nk = nodes.col("kind");
     const nn = nodes.col("name");
     const nv = nodes.col("vis");
-    const rows = try a.alloc(rel.Row, nodes.rows.len + builtins.rows.len);
-    for (nodes.rows, 0..) |r, k| {
+    for (nodes.rows) |r| {
         const path = r[np];
         const kind = r[nk];
         const is_fieldish = std.mem.eql(u8, kind, "field") or std.mem.eql(u8, kind, "tag");
@@ -249,33 +292,16 @@ fn build(c: Ctx, dir: []const u8) !Built {
         row[17] = if (redirects.hop_of.get(path)) |h| try std.fmt.allocPrint(a, "{s}:{s}", .{ h.kind, h.target }) else "";
         row[18] = errm.get(path) orelse "";
         row[19] = "";
-        rows[k] = row;
+        try rows.append(a, row);
     }
-    // Builtins (`@intCast`, …) follow the node rows: kind `builtin`, path = name, depth 0.
-    const bn = builtins.col("name");
-    const bs = builtins.col("sig");
-    const bd = builtins.col("doc");
-    const bp = builtins.col("params");
-    const be = builtins.col("example");
-    for (builtins.rows, nodes.rows.len..) |r, k| {
-        if (r[be].len > 0) try examples.print(a, "{s}\t{s}\n", .{ r[bn], r[be] });
-        const row = try a.alloc([]const u8, ncols);
-        @memset(row, "");
-        row[0] = r[bn];
-        row[1] = "0";
-        row[2] = "builtin";
-        row[3] = r[bn];
-        row[6] = r[bs];
-        row[7] = r[bd];
-        row[14] = "pub";
-        row[19] = r[bp];
-        rows[k] = row;
-    }
-    return .{ .table = rel.Table{
-        .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis", "mod", "aka", "redirect", "errmembers", "arity" },
-        .rows = rows,
-        .a = a,
-    }, .examples = examples.items };
+}
+
+/// A table that may be absent (the std-only compiler layers): absent → empty, with `columns`.
+fn loadOr(c: Ctx, dir: []const u8, rel_path: []const u8, columns: []const []const u8) !rel.Table {
+    return load(c, dir, rel_path) catch |e| switch (e) {
+        error.FileNotFound => rel.Table{ .columns = columns, .rows = &.{}, .a = c.a },
+        else => e,
+    };
 }
 
 /// path-depth: dotted levels + factory-call levels — count('.') + count("()"), matching

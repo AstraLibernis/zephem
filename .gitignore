@@ -6,3 +6,5 @@ zig-cache/
 data/lookup.tsv
 data/examples.tsv
 data/lookup.stamp
+# `zephem deps` maps of third-party packages: derived from their source, never committed
+data/deps/

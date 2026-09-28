@@ -4,7 +4,8 @@
 the AI (or person) writing Zig against it. Zig's std changes fast, so a model's memory of it is
 usually a release or two out of date: `std.io.getStdOut`, `GeneralPurposeAllocator` and
 `std.fs.File` are all gone in @@ZIG@@. zephem answers from the source of the toolchain on your
-`PATH`, never from memory.
+`PATH`, never from memory. `zephem deps` does the same for your project's packages
+([below](#your-projects-dependencies)).
 
 ## Try it
 
@@ -137,7 +138,7 @@ Each hit that is reachable under other public names lists them on a `≡` line; 
 carries them in its `aka` column. Nothing is inferred: every hop is an edge from `edges.tsv`.
 
 Needs Zig **@@ZIG@@** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
-command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in
+command surface is `zephem <std|depth|overlays|deps|lookup|look|map|docs>` — details below and in
 each engine's README.
 
 **Everything zephem writes stays inside the checkout.** Both query commands (and zcanon) read
@@ -152,6 +153,29 @@ directory you run it in or, failing that, from where its binary lives, so it wor
 
 Cold, on a Ryzen 7 9800X3D (release build, one pinned core, benchfence-gated): `look` 4.6 ms,
 `map show` 4.3 ms, `map doc`/`map find` 6.8 ms, a miss with suggestions 10–11 ms.
+
+## Your project's dependencies
+
+std is not the only code a project calls. `zephem deps` maps a project's packages the same way:
+
+```sh
+cd myproject && zig build --fetch      # Zig 0.16 unpacks every package into ./zig-pkg/<hash>/
+zephem deps myproject                  # map each module those packages export
+zephem look clap parse                 # → clap.parse, clap.parseEx, …  (next to std's answers)
+zephem map doc clap.parse
+```
+
+It reads, and never runs: the project's `build.zig.zon` for its dependencies (including their own
+dependencies, and local `.path` packages), and each package's `build.zig` for the modules it
+exports (`b.addModule("name", .{ .root_source_file = b.path("…") })`). Nothing is fetched; an
+unfetched package is reported, with the command to fetch it. Each module is walked by the same
+parser, root named after the module (`clap.parse`), and must pass the same self-check as std's
+tree, attributes, references and index, or it is not kept. The maps go to `data/deps/` (git-ignored,
+third-party code); one version per package is kept, a newer fetch replacing the older map; `rm -rf
+data/deps` forgets them all. Dependency rows carry the source-level facts — signatures, docs,
+fields, references, the package's own tests as examples — but not the compiler-resolved layer,
+which is std-only (reflecting a package needs its build). Mapping zig-clap takes 3 ms; the next
+query rebakes the lookup table once (≈90 ms).
 
 ## The headline dataset: the full std map
 

@@ -45,6 +45,14 @@ uninstantiated factory members) are out of scope. **`callcard`/`sigshape`** are 
 signatures, so factory-member and private fns join in (as parser-only where the compiler
 couldn't build them). **Nothing is computed twice.**
 
+## Dependency maps (`data/deps/`, git-ignored)
+
+`zephem deps <project>` writes one map per module a project's packages export:
+`deps/<package-hash>/<module>/` holds `extracted/{nodes,attrs,edges}.tsv`, `derived/index.tsv`, a
+`SHA256SUMS`, and a `SOURCE` recording the package, its hash or path, the module's root file and
+the Zig version. Same columns as std's files; no reflection layer. The lookup table includes every
+map present, and rebakes itself when one is added, replaced or removed.
+
 ## Regenerate
 
 ```sh

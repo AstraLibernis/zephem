@@ -13,6 +13,7 @@ const cmd_overlays = @import("cmd/overlays.zig");
 const cmd_docs = @import("docs.zig");
 const cmd_lookup = @import("lookup.zig");
 const cmd_test = @import("cmd/test.zig");
+const cmd_deps = @import("cmd/deps.zig");
 const zlook = @import("zlook.zig");
 const zmap = @import("zmap.zig");
 const Outcome = @import("query.zig").Outcome;
@@ -25,6 +26,7 @@ const usage =
     \\  depth      run the L5 reflection sweep (slow)
     \\  overlays   rebuild the derived overlays
     \\  docs       regenerate the markdown docs from templates/
+    \\  deps       map a project's dependencies so look/map cover them
     \\  lookup     bake the denormalized lookup table zlook searches
     \\  look       keyword-search the map (SIMD)
     \\  map        browse the map: find / show / doc
@@ -52,6 +54,7 @@ pub fn main(init: std.process.Init) !void {
     if (std.mem.eql(u8, cmd, "overlays")) return cmd_overlays.run(c, rest);
     if (std.mem.eql(u8, cmd, "docs")) return cmd_docs.run(c, rest);
     if (std.mem.eql(u8, cmd, "lookup")) return cmd_lookup.run(c, rest);
+    if (std.mem.eql(u8, cmd, "deps")) return cmd_deps.run(c, rest);
     if (std.mem.eql(u8, cmd, "look")) return runWithStdout(c, zlook.run, rest);
     if (std.mem.eql(u8, cmd, "map")) return runWithStdout(c, zmap.run, rest);
     if (std.mem.eql(u8, cmd, "test")) return cmd_test.run(c, rest);

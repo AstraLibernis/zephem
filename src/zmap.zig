@@ -477,7 +477,10 @@ fn exampleFor(a: std.mem.Allocator, examples: Examples, n: Node) !?Example {
         if (std.mem.eql(u8, n.kind, "builtin")) return .{ .label = "example (from the language reference)", .body = own.items[0] };
         const best = shortest(own.items);
         const more = own.items.len - 1;
-        const label = if (more > 0) try std.fmt.allocPrint(a, "example (a std test of this declaration; {d} more in the map)", .{more}) else "example (a std test of this declaration)";
+        const label = if (more > 0)
+            try std.fmt.allocPrint(a, "example (a {s}test of this declaration; {d} more in the map)", .{ whose(n.path), more })
+        else
+            try std.fmt.allocPrint(a, "example (a {s}test of this declaration)", .{whose(n.path)});
         return .{ .label = label, .body = best };
     }
     if (!std.mem.eql(u8, n.kind, "fn")) return null;
@@ -502,8 +505,8 @@ fn exampleFor(a: std.mem.Allocator, examples: Examples, n: Node) !?Example {
         }
         if (hits.items.len == 0) continue;
         const more = hits.items.len - 1;
-        const label = try std.fmt.allocPrint(a, "usage (a std test in {s} that calls {s}{s})", .{
-            anc, call, if (more > 0) try std.fmt.allocPrint(a, "; {d} more", .{more}) else "",
+        const label = try std.fmt.allocPrint(a, "usage (a {s}test in {s} that calls {s}{s})", .{
+            whose(n.path), anc, call, if (more > 0) try std.fmt.allocPrint(a, "; {d} more", .{more}) else "",
         });
         return .{ .label = label, .body = shortest(if (clean.items.len > 0) clean.items else hits.items) };
     }
@@ -572,6 +575,11 @@ fn argCount(s: []const u8) ?usize {
 fn paramCount(sig: []const u8) ?usize {
     const open = std.mem.findScalar(u8, sig, '(') orelse return null;
     return argCount(sig[open..]);
+}
+
+/// "std " for std's own tests; nothing for a dependency's (its module name is in the path).
+fn whose(path: []const u8) []const u8 {
+    return if (std.mem.eql(u8, path, "std") or std.mem.startsWith(u8, path, "std.")) "std " else "";
 }
 
 fn shortest(xs: []const []const u8) []const u8 {

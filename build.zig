@@ -89,6 +89,7 @@ pub fn build(b: *std.Build) void {
         "src/test/relation_test.zig",
         "src/test/manifest_test.zig",
         "src/test/query_test.zig",
+        "src/test/pkg_test.zig",
     }) |tf| {
         const t = b.addTest(.{ .root_module = b.createModule(.{
             .root_source_file = b.path(tf),

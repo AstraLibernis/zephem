@@ -65,6 +65,42 @@ pub fn lookupPath(c: Ctx) ![]const u8 {
     return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "lookup.tsv" });
 }
 
+/// Where `zephem deps` writes dependency maps: `<repo>/data/deps/<package>/<module>/`, one
+/// map per module, each shaped like data/std (git-ignored: it is third-party code).
+pub fn depsDir(c: Ctx) ![]const u8 {
+    return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "deps" });
+}
+
+/// Every dependency map present (`data/deps/*/*/` holding a `SHA256SUMS`), sorted, so what the
+/// lookup table includes does not depend on directory order.
+pub fn depMaps(c: Ctx) ![]const []const u8 {
+    var out: std.ArrayList([]const u8) = .empty;
+    const root = try depsDir(c);
+    var top = std.Io.Dir.cwd().openDir(c.io, root, .{ .iterate = true }) catch return out.items;
+    defer top.close(c.io);
+    var it = top.iterate();
+    while (try it.next(c.io)) |pkg| {
+        if (pkg.kind != .directory) continue;
+        const pkg_dir = try std.fs.path.join(c.a, &.{ root, pkg.name });
+        var pd = std.Io.Dir.cwd().openDir(c.io, pkg_dir, .{ .iterate = true }) catch continue;
+        defer pd.close(c.io);
+        var mit = pd.iterate();
+        while (try mit.next(c.io)) |m| {
+            if (m.kind != .directory) continue;
+            const dir = try std.fs.path.join(c.a, &.{ pkg_dir, m.name });
+            const sums = try std.fs.path.join(c.a, &.{ dir, "SHA256SUMS" });
+            std.Io.Dir.cwd().access(c.io, sums, .{}) catch continue;
+            try out.append(c.a, dir);
+        }
+    }
+    std.mem.sort([]const u8, out.items, {}, struct {
+        fn lt(_: void, x: []const u8, y: []const u8) bool {
+            return std.mem.order(u8, x, y) == .lt;
+        }
+    }.lt);
+    return out.items;
+}
+
 /// A file baked next to the lookup table (`examples.tsv`, `lookup.stamp`): same directory,
 /// so a `$ZEPHEM_LOOKUP` override moves them together.
 pub fn besideLookup(c: Ctx, name: []const u8) ![]const u8 {

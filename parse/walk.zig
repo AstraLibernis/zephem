@@ -753,6 +753,15 @@ pub const Stats = struct {
 /// Walk `root` (a std.zig path) and write the three TSV streams. `arena` must outlive nothing past
 /// return (all working state is arena-scoped); pass a fresh arena per call.
 pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []const u8, edges_out: []const u8, attrs_out: []const u8) !Stats {
+    return runNamed(arena, io, root, std.fs.path.stem(root), nodes_out, edges_out, attrs_out, true);
+}
+
+/// `run`, with the root node named `root_name` instead of after its file. A package's module
+/// root is usually `src/root.zig` or similar; its paths must start with the MODULE name
+/// (`clap.parse`), the name code `@import`s it by.
+/// `report` prints the per-walk summary to stderr (std's regeneration shows it; `zephem deps`
+/// prints one line per module instead).
+pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_name: []const u8, nodes_out: []const u8, edges_out: []const u8, attrs_out: []const u8, report: bool) !Stats {
     const src = try std.Io.Dir.cwd().readFileAllocOptions(io, root, arena, .unlimited, .of(u8), 0);
     var ast = try Ast.parse(arena, src, .zig);
 
@@ -781,7 +790,6 @@ pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
-    const root_name = std.fs.path.stem(root);
     try w.node(root_name, "ns", root_name, "pub");
     const root_abs = std.fs.path.resolve(arena, &.{root}) catch root;
     try w.visited.put(root_abs, {});
@@ -812,6 +820,7 @@ pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []
     }
     try ew.flush();
 
+    if (!report) return .{ .nodes = w.node_set.count(), .edges = w.edges.items.len, .scope = counts };
     var sbuf: [512]u8 = undefined;
     var sfw = std.Io.File.stderr().writer(io, &sbuf);
     const s = &sfw.interface;

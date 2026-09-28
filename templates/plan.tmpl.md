@@ -64,6 +64,10 @@ never folded into the base.
    went from 146–241 s to 16.5 s ± 0.1 s cold. The same work found that zephem's own generated source
    broke on quoted identifiers (`@"PE32+"`), so 4 containers had been recorded as compiler poison;
    they now resolve.
+10. **dependency maps** (2026-09-28) — `zephem deps <project>` maps the modules a project's
+   packages export (read from `build.zig.zon` / `build.zig`, never run), each self-checked into
+   `data/deps/`; `look`/`map` search them next to std. Also: deprecated aliases are marked on the
+   `≡` line, and the README leads with what zephem is for.
 
 ---
 
@@ -159,7 +163,10 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 
 ## Standing items
 
-- [ ] Point the parser at non-std roots (already root-agnostic — needs a target list).
+- [x] **Point the parser at non-std roots** — ✅ **done (2026-09-28): `zephem deps`.** The target
+  list is read from the project: `build.zig.zon` dependencies (transitive, local paths included),
+  located in `zig-pkg/<hash>/`, and each package's `build.zig` `addModule` calls. Parse layer only;
+  the reflect layer stays std-only.
 - [ ] Decide: keep snapshots git-tracked, or gitignore them with regeneration as the contract.
 - [x] **Trim reflect waste on `()` factory containers** — ✅ **done** (2026-07-17). An
   uninstantiated `<fn>()` factory can't reflect standalone, so all 207 of them
