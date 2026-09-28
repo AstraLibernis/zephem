@@ -21,7 +21,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\
         \\  run the query smoke battery (9 asserted std facts)
         \\
-        \\  NOTE: bakes ~/.config/zephem/lookup.tsv if it is absent.
+        \\  NOTE: bakes data/lookup.tsv if it is absent.
         \\
     ;
     if (try argv.helpRequested(c, args, usage)) return;

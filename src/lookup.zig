@@ -76,6 +76,14 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     if (std.fs.path.dirname(out_path)) |d| try std.Io.Dir.cwd().createDirPath(c.io, d);
     try rel.writeFile(table, c.io, out_path);
     try w.print("lookup: {d} rows -> {s}\n", .{ table.rows.len, out_path });
+
+    // The table used to be baked outside the repo. Point out a leftover copy; never delete it
+    // ourselves, it is the user's file system.
+    if (vars.legacyLookupPath(c)) |old| {
+        if (std.Io.Dir.cwd().access(c.io, old, .{})) |_| {
+            try w.print("note: an old lookup table is still at {s}; zephem no longer uses it and it can be deleted.\n", .{old});
+        } else |_| {}
+    }
 }
 
 /// Build the denormalized lookup table for the datasets in `dir`.

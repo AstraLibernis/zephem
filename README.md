@@ -69,6 +69,13 @@ Needs Zig **zig 0.16.0** on `PATH` (the snapshot tracks whatever `zig` resolves 
 command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in
 each engine's README.
 
+**Everything zephem writes stays inside the checkout.** The search index `zephem look` and
+zcanon read is `data/lookup.tsv`: derived from the map, rebuilt by `zephem lookup` in about half
+a second, and git-ignored. Scratch work goes to `.zig-cache/`. Deleting the zephem folder
+removes all of it. (Before 2026-09-28 the index was written to `~/.config/zephem/lookup.tsv`;
+that old copy is no longer read and can be deleted.) zephem finds its checkout from the
+directory you run it in or, failing that, from where its binary lives, so it works from anywhere.
+
 ## The headline dataset: the full std map
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to

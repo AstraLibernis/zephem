@@ -8,15 +8,20 @@
 //! Precedence everywhere: explicit env override → derived-from-repo-root default.
 //!   $ZEPHEM_HOME   → repo root                (else: walk up for build.zig.zon)
 //!   $ZEPHEM_DATA   → the datasets dir         (else: <repo>/data/std)
-//!   $ZEPHEM_LOOKUP → the baked lookup table    (else: $HOME/.config/zephem/lookup.tsv)
+//!   $ZEPHEM_LOOKUP → the baked lookup table    (else: <repo>/data/lookup.tsv, git-ignored)
+//!
+//! Nothing zephem generates lives outside the repo: delete the checkout and it is all gone.
 const std = @import("std");
 const builtin = @import("builtin");
 const Ctx = @import("ctx.zig").Ctx;
 
 pub const Error = error{RepoRootNotFound};
 
-/// The repo root, as a path usable from the current cwd. `$ZEPHEM_HOME` wins; otherwise walk up
-/// from cwd looking for `build.zig.zon`, returning "." / ".." / "../.." as appropriate.
+/// The repo root. `$ZEPHEM_HOME` wins. Otherwise walk up from cwd for `build.zig.zon`, but
+/// only accept a directory that is actually a zephem checkout (it has `data/std/PINNED`):
+/// every Zig project has a `build.zig.zon`, and running zephem from inside another project
+/// used to adopt THAT project as the root. Failing that, use the checkout this binary was
+/// built in (`<repo>/zig-out/bin/zephem`), so zephem works from any directory.
 pub fn repoRoot(c: Ctx) ![]const u8 {
     if (c.getEnv("ZEPHEM_HOME")) |h| return h;
     var level: usize = 0;
@@ -24,10 +29,26 @@ pub fn repoRoot(c: Ctx) ![]const u8 {
         const prefix = try repeatDotDot(c.a, level);
         const marker = try std.fs.path.join(c.a, &.{ prefix, "build.zig.zon" });
         if (std.Io.Dir.cwd().access(c.io, marker, .{})) |_| {
-            return if (level == 0) "." else prefix;
+            const root = if (level == 0) "." else prefix;
+            if (isCheckout(c, root)) return root;
         } else |_| {}
     }
+    if (exeRoot(c)) |root| return root;
     return Error.RepoRootNotFound;
+}
+
+fn isCheckout(c: Ctx, root: []const u8) bool {
+    const pinned = std.fs.path.join(c.a, &.{ root, "data", "std", "PINNED" }) catch return false;
+    std.Io.Dir.cwd().access(c.io, pinned, .{}) catch return false;
+    return true;
+}
+
+fn exeRoot(c: Ctx) ?[]const u8 {
+    const self = std.process.executablePathAlloc(c.io, c.a) catch return null;
+    const bin = std.fs.path.dirname(self) orelse return null;
+    const out = std.fs.path.dirname(bin) orelse return null;
+    const root = std.fs.path.dirname(out) orelse return null;
+    return if (isCheckout(c, root)) root else null;
 }
 
 /// The datasets directory. `$ZEPHEM_DATA` wins; else `<repo>/data/std`.
@@ -36,12 +57,19 @@ pub fn dataDir(c: Ctx) ![]const u8 {
     return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "std" });
 }
 
-/// The baked lookup table zlook reads. `$ZEPHEM_LOOKUP` wins; else `$HOME/.config/zephem/lookup.tsv`.
-/// Windows only: `%USERPROFILE%` stands in for an unset `$HOME`, since Windows doesn't set it.
+/// The baked lookup table zlook reads. `$ZEPHEM_LOOKUP` wins; else `<repo>/data/lookup.tsv`.
+/// It is derived (about half a second to rebuild with `zephem lookup`), so it is git-ignored,
+/// but it lives in the checkout: deleting zephem deletes it.
 pub fn lookupPath(c: Ctx) ![]const u8 {
     if (c.getEnv("ZEPHEM_LOOKUP")) |p| return p;
-    const home = c.getEnv("HOME") orelse windowsHome(c) orelse ".";
-    return std.fs.path.join(c.a, &.{ home, ".config", "zephem", "lookup.tsv" });
+    return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "lookup.tsv" });
+}
+
+/// Where the lookup table used to be baked (`~/.config/zephem/lookup.tsv`), before it moved
+/// into the repo. Only used to tell the user the old copy can be deleted.
+pub fn legacyLookupPath(c: Ctx) ?[]const u8 {
+    const home = c.getEnv("HOME") orelse windowsHome(c) orelse return null;
+    return std.fs.path.join(c.a, &.{ home, ".config", "zephem", "lookup.tsv" }) catch null;
 }
 
 fn windowsHome(c: Ctx) ?[]const u8 {

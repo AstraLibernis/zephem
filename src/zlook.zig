@@ -18,7 +18,7 @@
 //!
 //! The first-byte scan is SIMD (`@Vector(32, u8)` → AVX2 `vpcmpeqb`), so it greps the
 //! ~2 MB table in single-digit ms. Reads `$ZEPHEM_LOOKUP` (default
-//! ~/.config/zephem/lookup.tsv). The map is the sole source of std truth; if its PINNED
+//! data/lookup.tsv). The map is the sole source of std truth; if its PINNED
 //! zig differs from yours, regenerate zephem then `query/build_lookup.nu` — never guess.
 const std = @import("std");
 const Io = std.Io;
@@ -29,7 +29,7 @@ const sigfmt = @import("sig.zig");
 const Outcome = @import("query.zig").Outcome;
 const V = @Vector(32, u8);
 
-// lookup.tsv columns (built by query/build_lookup.nu), tab-separated:
+// lookup.tsv columns (built by `zephem lookup`, src/lookup.zig), tab-separated:
 //   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail
 //   6 sig  · 7 doc   · 8 rkind · 9 rdetail · 10 canon
 //   11 ftype · 12 fval · 13 delegate · 14 vis
@@ -232,7 +232,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         terms[i] = d;
     }
 
-    // ---- locate lookup.tsv: $ZEPHEM_LOOKUP, else ~/.config/zephem/lookup.tsv ----
+    // ---- locate lookup.tsv: $ZEPHEM_LOOKUP, else <repo>/data/lookup.tsv ----
     const path = try vars.lookupPath(c);
 
     const buf = std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited) catch {
