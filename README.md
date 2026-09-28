@@ -54,7 +54,7 @@ the first un-evaluatable decl.
 ```sh
 zig build                        # → zig-out/bin/zephem (ReleaseSafe by default; -Doptimize=Debug to debug)
 zephem std                       # map the active toolchain's std → data/std/extracted/
-zephem map doc std.fmt.parseInt  # query the map (reads the TSVs directly, no index needed)
+zephem map doc std.fmt.parseInt  # query the map (builds its lookup table on first use)
 ```
 
 Every subcommand takes `-h`/`--help` and rejects unknown arguments. The query commands
@@ -98,12 +98,18 @@ Needs Zig **zig 0.16.0** on `PATH` (the snapshot tracks whatever `zig` resolves 
 command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in
 each engine's README.
 
-**Everything zephem writes stays inside the checkout.** The search index `zephem look` and
-zcanon read is `data/lookup.tsv`: derived from the map, rebuilt by `zephem lookup` in about half
-a second, and git-ignored. Scratch work goes to `.zig-cache/`. Deleting the zephem folder
+**Everything zephem writes stays inside the checkout.** Both query commands (and zcanon) read
+`data/lookup.tsv`, one pre-joined row per declaration, with `data/examples.tsv` and
+`data/lookup.stamp` beside it. All three are derived from the map and git-ignored. `look` and
+`map` rebuild them automatically (about 80 ms) when they are missing or older than the datasets,
+checked against the datasets' manifests, so a query never answers from a stale index; `zephem
+lookup` rebuilds them by hand. Scratch work goes to `.zig-cache/`. Deleting the zephem folder
 removes all of it. (Before 2026-09-28 the index was written to `~/.config/zephem/lookup.tsv`;
 that old copy is no longer read and can be deleted.) zephem finds its checkout from the
 directory you run it in or, failing that, from where its binary lives, so it works from anywhere.
+
+Cold, on a Ryzen 7 9800X3D (release build, one pinned core, benchfence-gated): `look` 4.6 ms,
+`map show` 4.3 ms, `map doc`/`map find` 6.8 ms, a miss with suggestions 10–11 ms.
 
 ## The headline dataset: the full std map
 

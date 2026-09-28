@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 AstraLibernis
 
-//! zmap.zig — the `map` subcommand: read the zephem map directly (port of `query/zmap.nu`).
-//! Deterministic browse/discovery over the extracted TSVs — no baked table, no build step.
+//! zmap.zig — the `map` subcommand: browse the zephem map (port of `query/zmap.nu`).
+//! Deterministic browse/discovery over the baked lookup table (`zephem lookup`, rebaked
+//! automatically when it is missing or older than the datasets) — one pre-joined file instead
+//! of re-joining ~17 MB of raw TSVs on every call (cold: ~60–75 ms → a few ms).
 //!
 //!   map find <terms...>   keyword search over path/name/sig/doc (ranked, private tagged [priv])
 //!   map show <path>       list a module/namespace subtree, public/private sectioned
@@ -17,15 +19,83 @@ const Outcome = query.Outcome;
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
 const redirect = @import("redirect.zig");
+const lookup = @import("lookup.zig");
 
-const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8, example: []const u8 = "", arity: []const u8 = "" };
+const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8, arity: []const u8, rdetail: []const u8, aka: []const u8 };
+/// The baked lookup table, searched in place. Nothing is parsed up front: parsing all 63k rows
+/// into structs and hash maps cost ~26 ms of a ~30 ms `map` call (reading the 9 MB file costs
+/// ~2). A row is found by searching for `\n<path>\t` and split only when it is printed or
+/// ranked — the way `look` has always worked.
 const Map = struct {
-    nodes: []const Node,
-    redirects: redirect.Redirects,
-    /// `test` bodies (TSV-escaped) by the path they are anchored to: a doctest (`test parseInt`)
-    /// on its decl, a `test "…"` on its enclosing namespace.
-    examples: std.StringHashMap(std.ArrayList([]const u8)),
+    a: std.mem.Allocator,
+    /// the whole file, header included; every data row starts right after a `\n`
+    bytes: []const u8,
+
+    /// The row whose path is exactly `path`, or null.
+    fn line(m: *const Map, path: []const u8) ?[]const u8 {
+        const needle = std.fmt.allocPrint(m.a, "\n{s}\t", .{path}) catch return null;
+        const i = std.mem.find(u8, m.bytes, needle) orelse return null;
+        const start = i + 1;
+        const end = std.mem.findScalarPos(u8, m.bytes, start, '\n') orelse m.bytes.len;
+        return m.bytes[start..end];
+    }
+
+    fn node(m: *const Map, path: []const u8) ?Node {
+        return parse(m.line(path) orelse return null);
+    }
+
+    // the two operations `redirect.resolve`/`redirect.rewrite` need
+    pub fn exists(m: *const Map, path: []const u8) bool {
+        return m.line(path) != null;
+    }
+    pub fn next(m: *const Map, path: []const u8) ?redirect.Hop {
+        const l = m.line(path) orelse return null;
+        return redirect.Redirects.parseHop(cell(l, 17));
+    }
+
+    /// Every data row, in the table's order (the map's pre-order, then the builtins).
+    fn rows(m: *const Map) std.mem.SplitIterator(u8, .scalar) {
+        var it = std.mem.splitScalar(u8, m.bytes, '\n');
+        _ = it.next(); // header
+        return it;
+    }
 };
+
+/// The Nth tab-separated cell of a row ("" if absent).
+fn cell(row: []const u8, n: usize) []const u8 {
+    var it = std.mem.splitScalar(u8, row, '\t');
+    var i: usize = 0;
+    while (it.next()) |f| : (i += 1) if (i == n) return f;
+    return "";
+}
+
+fn parse(row: []const u8) Node {
+    var f: [ncols][]const u8 = @splat("");
+    var it = std.mem.splitScalar(u8, row, '\t');
+    var k: usize = 0;
+    while (it.next()) |x| : (k += 1) {
+        if (k == ncols) break;
+        f[k] = x;
+    }
+    return .{
+        .path = f[0],
+        .kind = f[2],
+        .name = f[3],
+        .sig = f[6],
+        .doc = f[7],
+        .rdetail = f[9],
+        .vis = f[14],
+        .mod = f[15],
+        .aka = f[16],
+        .errmembers = f[18],
+        .arity = f[19],
+    };
+}
+
+/// `test` bodies (TSV-escaped) by the path they are anchored to: a doctest (`test parseInt`) on
+/// its decl, a `test "…"` on its enclosing namespace, a builtin's langref example on `@name`.
+/// Read only by `map doc`, from examples.tsv.
+const Examples = std.StringHashMap(std.ArrayList([]const u8));
 
 pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     const usage =
@@ -82,11 +152,11 @@ pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     };
     var outcome: Outcome = .hit;
     if (std.mem.eql(u8, command, "find")) {
-        outcome = try cmdFind(c, out, map, pos.items, limit);
+        outcome = try cmdFind(c, out, &map, pos.items, limit);
     } else if (std.mem.eql(u8, command, "show")) {
-        outcome = try cmdShow(c, out, map, if (pos.items.len > 0) pos.items[0] else "");
+        outcome = try cmdShow(c, out, &map, if (pos.items.len > 0) pos.items[0] else "");
     } else if (std.mem.eql(u8, command, "doc")) {
-        outcome = try cmdDoc(c, out, map, if (pos.items.len > 0) pos.items[0] else "");
+        outcome = try cmdDoc(c, out, &map, if (pos.items.len > 0) pos.items[0] else "");
     }
     try out.flush();
     return outcome;
@@ -102,76 +172,30 @@ fn loadMap(c: Ctx) !Map {
         ew.interface.print("{s}\n", .{warn}) catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
         ew.interface.flush() catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
     }
-    const nodes = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/nodes.tsv" }));
-    const attrs = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/attrs.tsv" }));
-    const edges = try redirect.loadEdges(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/edges.tsv" }));
-    var sig = std.StringHashMap([]const u8).init(a);
-    var doc = std.StringHashMap([]const u8).init(a);
-    var mod = std.StringHashMap([]const u8).init(a);
-    var errm = std.StringHashMap([]const u8).init(a); // error-set members, comma-joined per path
-    var examples = std.StringHashMap(std.ArrayList([]const u8)).init(a);
-    const ap = attrs.col("path");
-    const aa = attrs.col("attr");
-    const av = attrs.col("value");
-    for (attrs.rows) |r| {
-        if (std.mem.eql(u8, r[aa], "sig")) {
-            const g = try sig.getOrPut(r[ap]);
-            if (!g.found_existing) g.value_ptr.* = r[av];
-        } else if (std.mem.eql(u8, r[aa], "doc")) {
-            const g = try doc.getOrPut(r[ap]);
-            if (!g.found_existing) g.value_ptr.* = r[av];
-        } else if (std.mem.eql(u8, r[aa], "mod")) {
-            const g = try mod.getOrPut(r[ap]);
-            if (!g.found_existing) g.value_ptr.* = r[av];
-        } else if (std.mem.eql(u8, r[aa], "example")) {
-            const g = try examples.getOrPut(r[ap]);
-            if (!g.found_existing) g.value_ptr.* = .empty;
-            try g.value_ptr.append(a, r[av]);
-        } else if (std.mem.eql(u8, r[aa], "errmember")) {
-            const g = try errm.getOrPut(r[ap]);
-            g.value_ptr.* = if (!g.found_existing) r[av] else try std.fmt.allocPrint(a, "{s}, {s}", .{ g.value_ptr.*, r[av] });
-        }
+    if (try lookup.ensure(c) == .rebuilt) try argv.diag(c, "(rebuilt the lookup table: it was missing or older than the map)\n", .{});
+    return .{ .a = a, .bytes = try std.Io.Dir.cwd().readFileAlloc(c.io, try vars.lookupPath(c), a, .unlimited) };
+}
+
+/// lookup.tsv's width (src/lookup.zig documents each column).
+const ncols = 20;
+
+fn loadExamples(c: Ctx) !Examples {
+    var ex = Examples.init(c.a);
+    const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try vars.besideLookup(c, "examples.tsv"), c.a, .unlimited) catch return ex;
+    var lines = std.mem.splitScalar(u8, bytes, '\n');
+    _ = lines.next(); // header
+    while (lines.next()) |line| {
+        const tab = std.mem.findScalar(u8, line, '\t') orelse continue;
+        const g = try ex.getOrPut(line[0..tab]);
+        if (!g.found_existing) g.value_ptr.* = .empty;
+        try g.value_ptr.append(c.a, line[tab + 1 ..]);
     }
-    const np = nodes.col("path");
-    const nk = nodes.col("kind");
-    const nn = nodes.col("name");
-    const nv = nodes.col("vis");
-    const builtins = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/builtins.tsv" }));
-    const out = try a.alloc(Node, nodes.rows.len + builtins.rows.len);
-    for (nodes.rows, 0..) |r, k| out[k] = .{
-        .path = r[np],
-        .kind = r[nk],
-        .name = r[nn],
-        .vis = r[nv],
-        .sig = sig.get(r[np]) orelse "",
-        .doc = doc.get(r[np]) orelse "",
-        .mod = mod.get(r[np]) orelse "",
-        .errmembers = errm.get(r[np]) orelse "",
-    };
-    // Builtins join the map as `@name` rows of kind `builtin`, with langref's first example.
-    const bn = builtins.col("name");
-    const bs = builtins.col("sig");
-    const bd = builtins.col("doc");
-    const be = builtins.col("example");
-    const bp = builtins.col("params");
-    for (builtins.rows, nodes.rows.len..) |r, k| out[k] = .{
-        .path = r[bn],
-        .kind = "builtin",
-        .name = r[bn],
-        .vis = "pub",
-        .sig = r[bs],
-        .doc = r[bd],
-        .mod = "",
-        .errmembers = "",
-        .example = r[be],
-        .arity = r[bp],
-    };
-    return .{ .nodes = out, .redirects = try redirect.Redirects.build(a, nodes, edges), .examples = examples };
+    return ex;
 }
 
 const Scored = struct { node: Node, rank: u8, priv: bool, plen: usize, plat: bool = false };
 
-fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8, limit: usize) !Outcome {
+fn cmdFind(c: Ctx, out: *std.Io.Writer, map: *const Map, terms_raw: []const []const u8, limit: usize) !Outcome {
     if (terms_raw.len == 0) {
         try out.writeAll("usage: zephem map find <terms...>\n");
         return .usage;
@@ -180,14 +204,17 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
     const terms = try a.alloc([]const u8, terms_raw.len);
     for (terms_raw, 0..) |t, i| terms[i] = try lower(a, t);
 
-    var aka = try redirect.Aka.init(&map.redirects);
     var hits: std.ArrayList(Scored) = .empty;
     var npriv: usize = 0;
     var nplat: usize = 0;
-    for (map.nodes) |n| {
-        // The alternative names are only worth computing for a node the direct fields missed.
+    var it = map.rows();
+    while (it.next()) |row| {
+        // A row can only match if every term is somewhere in its bytes: test that first
+        // (SIMD), and split just the rows that pass.
+        if (row.len == 0 or !query.allContain(row, terms)) continue;
+        const n = parse(row);
         const direct = allIn(terms, &.{ n.path, n.name, n.sig, n.doc });
-        const alt: []const u8 = if (direct) "" else try aka.of(n.path);
+        const alt: []const u8 = if (direct) "" else n.aka;
         if (!direct and !allIn(terms, &.{ n.path, n.name, n.sig, n.doc, alt })) continue;
         // exact name · name contains every term · path/alternative name · elsewhere (as `look`)
         const rank: u8 = if (terms.len == 1 and n.name.len == terms[0].len and ciContains(n.name, terms[0])) 0 else if (allIn(terms, &.{n.name})) 1 else if (allIn(terms, &.{n.path}) or allIn(terms, &.{alt})) 2 else 3;
@@ -212,7 +239,7 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
     for (hits.items[0..shown]) |h| {
         const tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ h.node.path, h.node.kind, tag });
-        const alt = try aka.of(h.node.path);
+        const alt = h.node.aka;
         if (alt.len > 0) try out.print("      ≡ {s}\n", .{trunc(c.a, alt, 160)});
         if (h.node.sig.len > 0) {
             const parts = sigfmt.split(c.a, h.node.sig);
@@ -224,21 +251,25 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
     return .hit;
 }
 
-fn cmdShow(c: Ctx, out: *std.Io.Writer, map: Map, prefix_in: []const u8) !Outcome {
+fn cmdShow(c: Ctx, out: *std.Io.Writer, map: *const Map, prefix_in: []const u8) !Outcome {
     if (prefix_in.len == 0) {
         try out.writeAll("usage: zephem map show <path>\n");
         return .usage;
     }
     // `std.ArrayList.foo`-style input: reroute through the redirecting prefix.
-    const prefix = if (map.redirects.exists.contains(prefix_in)) prefix_in else (try map.redirects.rewrite(prefix_in)) orelse prefix_in;
+    const prefix = if (map.exists(prefix_in)) prefix_in else (try redirect.rewrite(c.a, map, prefix_in)) orelse prefix_in;
     if (prefix.ptr != prefix_in.ptr) try out.print("# {s} is {s}\n", .{ prefix_in, prefix });
-    const nodes = map.nodes;
+    // the subtree's rows, found by their path prefix and parsed only once matched
+    var nodes: std.ArrayList(Node) = .empty;
     var pub_n: usize = 0;
     var priv_n: usize = 0;
-    for (nodes) |n| {
-        if (underPrefix(n.path, prefix)) {
-            if (std.mem.eql(u8, n.vis, "pub")) pub_n += 1 else priv_n += 1;
-        }
+    var it = map.rows();
+    while (it.next()) |row| {
+        if (!std.mem.startsWith(u8, row, prefix)) continue;
+        const n = parse(row);
+        if (!underPrefix(n.path, prefix)) continue;
+        try nodes.append(c.a, n);
+        if (std.mem.eql(u8, n.vis, "pub")) pub_n += 1 else priv_n += 1;
     }
     if (pub_n + priv_n == 0) {
         try argv.diag(c, "nothing under {s}\n", .{prefix});
@@ -248,20 +279,20 @@ fn cmdShow(c: Ctx, out: *std.Io.Writer, map: Map, prefix_in: []const u8) !Outcom
     try out.print("# map show {s}  ({d} decls: {d} pub · {d} priv)\n\n", .{ prefix, pub_n + priv_n, pub_n, priv_n });
     if (pub_n > 0) {
         try out.print("## public ({d})\n", .{pub_n});
-        for (nodes) |n| {
-            if (underPrefix(n.path, prefix) and std.mem.eql(u8, n.vis, "pub")) try out.print("  {s}  {s}\n", .{ n.path, n.kind });
+        for (nodes.items) |n| {
+            if (std.mem.eql(u8, n.vis, "pub")) try out.print("  {s}  {s}\n", .{ n.path, n.kind });
         }
     }
     if (priv_n > 0) {
         try out.print("\n## private ({d}) — not callable at these paths from outside their source file\n", .{priv_n});
-        for (nodes) |n| {
-            if (underPrefix(n.path, prefix) and !std.mem.eql(u8, n.vis, "pub")) try out.print("  {s}  {s}\n", .{ n.path, n.kind });
+        for (nodes.items) |n| {
+            if (!std.mem.eql(u8, n.vis, "pub")) try out.print("  {s}  {s}\n", .{ n.path, n.kind });
         }
     }
     // A name with nothing under it that aliases or delegates to something else (`std.ArrayList`
     // → `std.array_list.Aligned()`): its members live at the target, so list them there.
     if (pub_n + priv_n == 1) {
-        if (try map.redirects.resolve(prefix)) |res| {
+        if (try redirect.resolve(c.a, map, prefix)) |res| {
             try out.print("\n", .{});
             try printHops(out, prefix, res.hops);
             if (!std.mem.eql(u8, res.members, prefix)) return cmdShow(c, out, map, res.members);
@@ -276,7 +307,7 @@ fn printHops(out: *std.Io.Writer, from: []const u8, hops: []const redirect.Hop) 
     try out.writeAll("\n\n");
 }
 
-fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: Map, path_in: []const u8) !Outcome {
+fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: *const Map, path_in: []const u8) !Outcome {
     const a = c.a;
     if (path_in.len == 0) {
         try out.writeAll("usage: zephem map doc <path>\n");
@@ -284,10 +315,9 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: Map, path_in: []const u8) !Outcome {
     }
     // `std.ArrayList.append` is how people write it; the member lives at
     // `std.array_list.Aligned().append`. Follow the recorded edges and say so.
-    const path = if (map.redirects.exists.contains(path_in)) path_in else (try map.redirects.rewrite(path_in)) orelse path_in;
+    const path = if (map.exists(path_in)) path_in else (try redirect.rewrite(a, map, path_in)) orelse path_in;
     if (path.ptr != path_in.ptr) try out.print("# {s} is {s}\n\n", .{ path_in, path });
-    for (map.nodes) |n| {
-        if (!std.mem.eql(u8, n.path, path)) continue;
+    if (map.node(path)) |n| {
         const tag: []const u8 = if (std.mem.eql(u8, n.vis, "priv")) "  [priv]" else "";
         try out.print("{s}  ({s}){s}\n", .{ n.path, n.kind, tag });
         if (n.mod.len > 0) try out.print("  ⟨{s}⟩\n", .{n.mod});
@@ -299,17 +329,17 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: Map, path_in: []const u8) !Outcome {
         if (n.errmembers.len > 0) try out.print("  errors: {s}\n", .{n.errmembers});
         // The compiler-resolved type, in full — the one place a whole inferred error set shows
         // (`look` folds it to a count).
-        if (try resolvedOf(c, n.path)) |res| try out.print("  → {s}\n", .{res});
+        if (n.rdetail.len > 0) try out.print("  → {s}\n", .{n.rdetail});
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
-        if (n.example.len > 0) try out.print("\n  example (from the language reference):\n{s}\n", .{try unescapeIndented(a, n.example)});
-        if (try exampleFor(a, map, n)) |ex| {
+        const examples = try loadExamples(c);
+        if (try exampleFor(a, examples, n)) |ex| {
             try out.print("\n  {s}:\n{s}\n", .{ ex.label, try clipLines(a, try unescapeIndented(a, ex.body), 25) });
         }
         if (std.mem.eql(u8, n.kind, "builtin") and n.sig.len == 0) {
             const args = if (std.mem.eql(u8, n.arity, "var")) "a variable number of" else n.arity;
             try out.print("  takes {s} argument(s), per the compiler's builtin table\n\n  (the language reference does not document this builtin)\n", .{args});
         }
-        if (try map.redirects.resolve(n.path)) |res| {
+        if (try redirect.resolve(a, map, n.path)) |res| {
             try out.writeAll("\n");
             try printHops(out, n.path, res.hops);
             try out.print("  members: zephem map show {s}\n", .{n.path});
@@ -327,13 +357,18 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: Map, path_in: []const u8) !Outcome {
 /// and the exit code still says "miss". Two sources, both exact facts about the map: the same
 /// path in a different case (`std.fmt.parseint`), and decls whose last segment matches
 /// case-insensitively (`std.parseInt` → `std.fmt.parseInt`). Public decls only.
-fn suggest(c: Ctx, map: Map, path: []const u8) !void {
+fn suggest(c: Ctx, map: *const Map, path: []const u8) !void {
     const a = c.a;
     const want = try lower(a, path);
     const last = want[if (std.mem.findScalarLast(u8, want, '.')) |d| d + 1 else 0..];
     var same_case: std.ArrayList([]const u8) = .empty;
     var same_name: std.ArrayList([]const u8) = .empty;
-    for (map.nodes) |n| {
+    var it = map.rows();
+    while (it.next()) |row| {
+        // cheap prefilter on the path cell before splitting the row
+        const tab = std.mem.findScalar(u8, row, '\t') orelse continue;
+        if (!ciContains(row[0..tab], last)) continue;
+        const n = parse(row);
         if (!std.mem.eql(u8, n.vis, "pub")) continue;
         if (n.path.len == want.len and ciContains(n.path, want)) {
             try same_case.append(a, n.path);
@@ -437,8 +472,9 @@ const Example = struct { label: []const u8, body: []const u8 };
 ///      non-identifier character) — labelled with where it came from, since it is a test that
 ///      uses the function, not one written for it.
 /// The shortest candidate is shown (the most focused), with a count of the rest.
-fn exampleFor(a: std.mem.Allocator, map: Map, n: Node) !?Example {
-    if (map.examples.get(n.path)) |own| {
+fn exampleFor(a: std.mem.Allocator, examples: Examples, n: Node) !?Example {
+    if (examples.get(n.path)) |own| {
+        if (std.mem.eql(u8, n.kind, "builtin")) return .{ .label = "example (from the language reference)", .body = own.items[0] };
         const best = shortest(own.items);
         const more = own.items.len - 1;
         const label = if (more > 0) try std.fmt.allocPrint(a, "example (a std test of this declaration; {d} more in the map)", .{more}) else "example (a std test of this declaration)";
@@ -453,7 +489,7 @@ fn exampleFor(a: std.mem.Allocator, map: Map, n: Node) !?Example {
     var anc = n.path;
     while (std.mem.findScalarLast(u8, anc, '.')) |d| {
         anc = anc[0..d];
-        const list = map.examples.get(anc) orelse continue;
+        const list = examples.get(anc) orelse continue;
         // Prefer tests where EVERY same-named call fits: a test that also calls a different
         // `append` (another type's) shows the reader both and teaches the wrong one first.
         var hits: std.ArrayList([]const u8) = .empty;
@@ -559,23 +595,6 @@ fn clipLines(a: std.mem.Allocator, s: []const u8, max: usize) ![]const u8 {
         }
     }
     return s;
-}
-
-/// The resolved type of `path` from resolved.tsv (the reflection layer), or null. Read on
-/// demand: only `map doc` needs it, for one path.
-fn resolvedOf(c: Ctx, path: []const u8) !?[]const u8 {
-    const dir = try vars.dataDir(c);
-    const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ dir, "extracted/resolved.tsv" }), c.a, .unlimited) catch return null;
-    var lines = std.mem.splitScalar(u8, bytes, '\n');
-    while (lines.next()) |line| {
-        if (!std.mem.startsWith(u8, line, path) or line.len <= path.len or line[path.len] != '\t') continue;
-        var f = std.mem.splitScalar(u8, line, '\t');
-        _ = f.next(); // path
-        _ = f.next(); // kind
-        const detail = f.next() orelse return null;
-        return if (detail.len > 0) detail else null;
-    }
-    return null;
 }
 
 /// A TSV-escaped code cell (`\n`, `\t`, `\\`) back to lines, each indented four spaces.

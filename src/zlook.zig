@@ -24,11 +24,11 @@ const std = @import("std");
 const Io = std.Io;
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
+const lookup = @import("lookup.zig");
 const argv = @import("args.zig");
 const sigfmt = @import("sig.zig");
 const query = @import("query.zig");
 const Outcome = query.Outcome;
-const V = @Vector(32, u8);
 
 // lookup.tsv columns (built by `zephem lookup`, src/lookup.zig), tab-separated:
 //   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail
@@ -50,50 +50,9 @@ const COL_AKA = 16; // other public names reaching this node via alias/delegates
 inline fn lo(c: u8) u8 {
     return if (c >= 'A' and c <= 'Z') c + 32 else c;
 }
-inline fn matchAt(hay: []const u8, pos: usize, needle: []const u8) bool {
-    var j: usize = 1;
-    while (j < needle.len and lo(hay[pos + j]) == needle[j]) j += 1;
-    return j == needle.len;
-}
-
-/// Case-insensitive substring (needle pre-lowercased). SIMD first-byte scan: load
-/// 32 bytes, compare to both cases of needle[0] (vpcmpeqb), verify each hit.
-fn ciContains(hay: []const u8, needle: []const u8) bool {
-    if (needle.len == 0) return true;
-    if (hay.len < needle.len) return false;
-    const f = needle[0];
-    const fu: u8 = if (f >= 'a' and f <= 'z') f - 32 else f;
-    const last = hay.len - needle.len;
-    const sl: V = @splat(f);
-    const su: V = @splat(fu);
-    var i: usize = 0;
-    while (i + 32 <= hay.len) : (i += 32) {
-        const chunk: V = hay[i..][0..32].*;
-        const ml: u32 = @bitCast(chunk == sl);
-        const mu: u32 = @bitCast(chunk == su);
-        var mask: u32 = ml | mu;
-        while (mask != 0) {
-            const pos = i + @ctz(mask);
-            if (pos <= last and matchAt(hay, pos, needle)) return true;
-            mask &= mask - 1;
-        }
-    }
-    while (i <= last) : (i += 1) {
-        if (lo(hay[i]) == f and matchAt(hay, i, needle)) return true;
-    }
-    return false;
-}
-
-/// Case-insensitive whole-name equality (term pre-lowercased), ignoring a builtin's `@`.
-fn exactName(name: []const u8, term: []const u8) bool {
-    const n = if (name.len > 0 and name[0] == '@' and (term.len == 0 or term[0] != '@')) name[1..] else name;
-    return n.len == term.len and ciContains(n, term);
-}
-
-fn allContain(hay: []const u8, terms: []const []const u8) bool {
-    for (terms) |t| if (!ciContains(hay, t)) return false;
-    return true;
-}
+const ciContains = query.ciContains;
+const allContain = query.allContain;
+const exactName = query.exactName;
 
 /// The Nth tab-separated field of a row (or "" if absent).
 fn field(line: []const u8, n: usize) []const u8 {
@@ -277,8 +236,12 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         terms[i] = d;
     }
 
-    // ---- locate lookup.tsv: $ZEPHEM_LOOKUP, else <repo>/data/lookup.tsv ----
+    // ---- locate lookup.tsv: $ZEPHEM_LOOKUP, else <repo>/data/lookup.tsv — rebaked first if it
+    // is missing or older than the datasets, so a search never answers from a stale index ----
     const path = try vars.lookupPath(c);
+    if (lookup.ensure(c)) |state| {
+        if (state == .rebuilt) try argv.diag(c, "(rebuilt the lookup table: it was missing or older than the map)\n", .{});
+    } else |_| {}
 
     const buf = std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited) catch {
         try argv.diag(c, "zlook: no lookup table at {s}\n  build it: run `zephem lookup` from the zephem repo (needs zephem's data/std)\n", .{path});

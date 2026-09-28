@@ -47,3 +47,55 @@ pub fn platformDemoted(path: []const u8, terms: []const []const u8) bool {
     for (terms) |t| if (std.ascii.eqlIgnoreCase(segment, t)) return false;
     return true;
 }
+
+// ── case-insensitive search, shared by `look` and `map` ─────────────────────────
+
+const V = @Vector(32, u8);
+
+inline fn lo(c: u8) u8 {
+    return if (c >= 'A' and c <= 'Z') c + 32 else c;
+}
+inline fn matchAt(hay: []const u8, pos: usize, needle: []const u8) bool {
+    var j: usize = 1;
+    while (j < needle.len and lo(hay[pos + j]) == needle[j]) j += 1;
+    return j == needle.len;
+}
+
+/// Case-insensitive substring (needle pre-lowercased). SIMD first-byte scan: load
+/// 32 bytes, compare to both cases of needle[0] (vpcmpeqb), verify each hit.
+pub fn ciContains(hay: []const u8, needle: []const u8) bool {
+    if (needle.len == 0) return true;
+    if (hay.len < needle.len) return false;
+    const f = needle[0];
+    const fu: u8 = if (f >= 'a' and f <= 'z') f - 32 else f;
+    const last = hay.len - needle.len;
+    const sl: V = @splat(f);
+    const su: V = @splat(fu);
+    var i: usize = 0;
+    while (i + 32 <= hay.len) : (i += 32) {
+        const chunk: V = hay[i..][0..32].*;
+        const ml: u32 = @bitCast(chunk == sl);
+        const mu: u32 = @bitCast(chunk == su);
+        var mask: u32 = ml | mu;
+        while (mask != 0) {
+            const pos = i + @ctz(mask);
+            if (pos <= last and matchAt(hay, pos, needle)) return true;
+            mask &= mask - 1;
+        }
+    }
+    while (i <= last) : (i += 1) {
+        if (lo(hay[i]) == f and matchAt(hay, i, needle)) return true;
+    }
+    return false;
+}
+
+/// Case-insensitive whole-name equality (term pre-lowercased), ignoring a builtin's `@`.
+pub fn exactName(name: []const u8, term: []const u8) bool {
+    const n = if (name.len > 0 and name[0] == '@' and (term.len == 0 or term[0] != '@')) name[1..] else name;
+    return n.len == term.len and ciContains(n, term);
+}
+
+pub fn allContain(hay: []const u8, terms: []const []const u8) bool {
+    for (terms) |t| if (!ciContains(hay, t)) return false;
+    return true;
+}

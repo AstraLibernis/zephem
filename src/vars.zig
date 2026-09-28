@@ -65,6 +65,13 @@ pub fn lookupPath(c: Ctx) ![]const u8 {
     return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "lookup.tsv" });
 }
 
+/// A file baked next to the lookup table (`examples.tsv`, `lookup.stamp`): same directory,
+/// so a `$ZEPHEM_LOOKUP` override moves them together.
+pub fn besideLookup(c: Ctx, name: []const u8) ![]const u8 {
+    const lp = try lookupPath(c);
+    return std.fs.path.join(c.a, &.{ std.fs.path.dirname(lp) orelse ".", name });
+}
+
 /// Where the lookup table used to be baked (`~/.config/zephem/lookup.tsv`), before it moved
 /// into the repo. Only used to tell the user the old copy can be deleted.
 pub fn legacyLookupPath(c: Ctx) ?[]const u8 {

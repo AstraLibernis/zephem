@@ -24,24 +24,36 @@ pub const Hop = struct { kind: []const u8, target: []const u8 };
 pub const Redirects = struct {
     a: std.mem.Allocator,
     /// src → its one redirect (first `alias`/`delegates` edge that resolved to a node)
-    next: std.StringHashMap(Hop),
+    hop_of: std.StringHashMap(Hop),
     /// paths that exist in nodes.tsv
-    exists: std.StringHashMap(void),
+    paths: std.StringHashMap(void),
     /// vis per path, to keep private redirects out of `aka`
     vis: std.StringHashMap([]const u8),
+
+    /// Empty, to be filled row by row (the query side fills it from lookup.tsv, where each
+    /// node's first hop was baked into the `redirect` column by `build` below).
+    pub fn init(a: std.mem.Allocator) Redirects {
+        return .{ .a = a, .hop_of = .init(a), .paths = .init(a), .vis = .init(a) };
+    }
+
+    /// A baked `redirect` cell (`alias:std.x.Y` / `delegates:std.x.Y`, or empty) back to a hop.
+    pub fn parseHop(cell: []const u8) ?Hop {
+        const colon = std.mem.findScalar(u8, cell, ':') orelse return null;
+        return .{ .kind = cell[0..colon], .target = cell[colon + 1 ..] };
+    }
 
     /// Build from nodes.tsv + edges.tsv.
     pub fn build(a: std.mem.Allocator, nodes: rel.Table, edges: rel.Table) !Redirects {
         var r: Redirects = .{
             .a = a,
-            .next = .init(a),
-            .exists = .init(a),
+            .hop_of = .init(a),
+            .paths = .init(a),
             .vis = .init(a),
         };
         const np = nodes.col("path");
         const nv = nodes.col("vis");
         for (nodes.rows) |row| {
-            try r.exists.put(row[np], {});
+            try r.paths.put(row[np], {});
             try r.vis.put(row[np], row[nv]);
         }
         const es = edges.col("src");
@@ -53,45 +65,19 @@ pub const Redirects = struct {
             if (!std.mem.eql(u8, t, "alias") and !std.mem.eql(u8, t, "delegates")) continue;
             const scope = row[esc];
             if (!std.mem.eql(u8, scope, "local") and !std.mem.eql(u8, scope, "cross")) continue;
-            if (!r.exists.contains(row[eg])) continue;
-            const gop = try r.next.getOrPut(row[es]);
+            if (!r.paths.contains(row[eg])) continue;
+            const gop = try r.hop_of.getOrPut(row[es]);
             if (!gop.found_existing) gop.value_ptr.* = .{ .kind = t, .target = row[eg] };
         }
         return r;
     }
 
-    /// Where `path`'s members live, and the hops taken to get there. Null when `path` has no
-    /// redirect. The members prefix is `T()` when the final target is a factory whose members
-    /// the parser descended, otherwise `T` itself.
-    pub fn resolve(r: *const Redirects, path: []const u8) !?struct { members: []const u8, hops: []const Hop } {
-        var hops: std.ArrayList(Hop) = .empty;
-        var cur = path;
-        while (hops.items.len < max_hops) {
-            const h = r.next.get(cur) orelse break;
-            try hops.append(r.a, h);
-            cur = h.target;
-        }
-        if (hops.items.len == 0) return null;
-        const call = try std.fmt.allocPrint(r.a, "{s}()", .{cur});
-        const members = if (r.exists.contains(call)) call else cur;
-        return .{ .members = members, .hops = hops.items };
+    pub fn exists(r: *const Redirects, path: []const u8) bool {
+        return r.paths.contains(path);
     }
 
-    /// Rewrite a path a user would type through its redirects: `std.ArrayList.append` or
-    /// `std.ArrayList().append` → `std.array_list.Aligned().append`. Tries the longest
-    /// redirecting prefix first. Null when no prefix redirects or the rewrite is not a node.
-    pub fn rewrite(r: *const Redirects, path: []const u8) !?[]const u8 {
-        var end = path.len;
-        while (end > 0) {
-            const dot = std.mem.findScalarLast(u8, path[0..end], '.') orelse break;
-            end = dot;
-            var head = path[0..end];
-            if (std.mem.endsWith(u8, head, "()")) head = head[0 .. head.len - 2];
-            const res = (try r.resolve(head)) orelse continue;
-            const candidate = try std.fmt.allocPrint(r.a, "{s}{s}", .{ res.members, path[dot..] });
-            if (r.exists.contains(candidate)) return candidate;
-        }
-        return null;
+    pub fn next(r: *const Redirects, path: []const u8) ?Hop {
+        return r.hop_of.get(path);
     }
 
     /// Every public name that reaches `target` through redirects, transitively
@@ -120,7 +106,7 @@ pub const Redirects = struct {
     /// target → the names that redirect straight to it.
     pub fn reverseMap(r: *const Redirects) !std.StringHashMap(std.ArrayList([]const u8)) {
         var m = std.StringHashMap(std.ArrayList([]const u8)).init(r.a);
-        var it = r.next.iterator();
+        var it = r.hop_of.iterator();
         while (it.next()) |e| {
             const gop = try m.getOrPut(e.value_ptr.target);
             if (!gop.found_existing) gop.value_ptr.* = .empty;
@@ -130,22 +116,42 @@ pub const Redirects = struct {
     }
 };
 
-/// Load only the `alias`/`delegates` rows of edges.tsv — all `Redirects.build` reads, and a
-/// small fraction of the file, so the query commands skip splitting the other ~50k rows.
-pub fn loadEdges(a: std.mem.Allocator, io: std.Io, path: []const u8) !rel.Table {
-    const bytes = try std.Io.Dir.cwd().readFileAlloc(io, path, a, .unlimited);
-    var kept: std.ArrayList(u8) = .empty;
-    var lines = std.mem.splitScalar(u8, bytes, '\n');
-    if (lines.next()) |header| {
-        try kept.appendSlice(a, header);
-        try kept.append(a, '\n');
+pub const Resolved = struct { members: []const u8, hops: []const Hop };
+
+/// Where `path`'s members live, and the hops taken to get there. Null when `path` has no
+/// redirect. The members prefix is `T()` when the final target is a factory whose members the
+/// parser descended, otherwise `T` itself. `src` is anything with `exists(path) bool` and
+/// `next(path) ?Hop` — the in-memory `Redirects` at bake time, the byte-searched lookup table
+/// at query time.
+pub fn resolve(a: std.mem.Allocator, src: anytype, path: []const u8) !?Resolved {
+    var hops: std.ArrayList(Hop) = .empty;
+    var cur = path;
+    while (hops.items.len < max_hops) {
+        const h = src.next(cur) orelse break;
+        try hops.append(a, h);
+        cur = h.target;
     }
-    while (lines.next()) |line| {
-        if (std.mem.find(u8, line, "\talias\t") == null and std.mem.find(u8, line, "\tdelegates\t") == null) continue;
-        try kept.appendSlice(a, line);
-        try kept.append(a, '\n');
+    if (hops.items.len == 0) return null;
+    const call = try std.fmt.allocPrint(a, "{s}()", .{cur});
+    const members = if (src.exists(call)) call else cur;
+    return .{ .members = members, .hops = hops.items };
+}
+
+/// Rewrite a path a user would type through its redirects: `std.ArrayList.append` or
+/// `std.ArrayList().append` → `std.array_list.Aligned().append`. Tries the longest redirecting
+/// prefix first. Null when no prefix redirects or the rewrite is not a node.
+pub fn rewrite(a: std.mem.Allocator, src: anytype, path: []const u8) !?[]const u8 {
+    var end = path.len;
+    while (end > 0) {
+        const dot = std.mem.findScalarLast(u8, path[0..end], '.') orelse break;
+        end = dot;
+        var head = path[0..end];
+        if (std.mem.endsWith(u8, head, "()")) head = head[0 .. head.len - 2];
+        const res = (try resolve(a, src, head)) orelse continue;
+        const candidate = try std.fmt.allocPrint(a, "{s}{s}", .{ res.members, path[dot..] });
+        if (src.exists(candidate)) return candidate;
     }
-    return rel.loadBytes(a, kept.items);
+    return null;
 }
 
 /// The alternative names a node is reachable by, comma-joined, or "" — e.g. for

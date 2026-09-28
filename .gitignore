@@ -2,5 +2,7 @@ zig-out/
 zig-cache/
 .zig-cache/
 *.duckdb
-# derived by `zephem lookup`; rebuilt in ~0.5 s, never committed
+# derived from the map by `zephem lookup` (and automatically by look/map); never committed
 data/lookup.tsv
+data/examples.tsv
+data/lookup.stamp

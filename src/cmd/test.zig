@@ -21,7 +21,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\
         \\  run the query smoke battery (asserted std facts)
         \\
-        \\  NOTE: bakes data/lookup.tsv if it is absent.
+        \\  NOTE: rebakes data/lookup.tsv if it is absent or older than the datasets.
         \\
     ;
     if (try argv.helpRequested(c, args, usage)) return;
@@ -32,14 +32,8 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
-    // ensure the baked lookup table exists (zlook's input)
-    const lpath = try vars.lookupPath(c);
-    if (std.Io.Dir.cwd().access(c.io, lpath, .{})) |_| {} else |_| {
-        try w.writeAll("building lookup.tsv ...\n");
-        const table = try lookup.build(c, try vars.dataDir(c));
-        if (std.fs.path.dirname(lpath)) |d| try std.Io.Dir.cwd().createDirPath(c.io, d);
-        try rel.writeFile(table, c.io, lpath);
-    }
+    // the baked lookup table (both query commands read it) must match the datasets
+    if (try lookup.ensure(c) == .rebuilt) try w.writeAll("rebuilt the lookup table from the datasets\n");
 
     var fails: usize = 0;
 
