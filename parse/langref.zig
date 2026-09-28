@@ -202,7 +202,7 @@ fn text(a: std.mem.Allocator, html: []const u8, mode: Mode) ![]const u8 {
         }
         if (ch == '&') {
             const ents = [_]struct { []const u8, []const u8 }{
-                .{ "&quot;", "\"" }, .{ "&amp;", "&" }, .{ "&lt;", "<" }, .{ "&gt;", ">" },
+                .{ "&quot;", "\"" }, .{ "&amp;", "&" },  .{ "&lt;", "<" },   .{ "&gt;", ">" },
                 .{ "&#39;", "'" },   .{ "&apos;", "'" }, .{ "&nbsp;", " " },
             };
             const hit = for (ents) |e| {

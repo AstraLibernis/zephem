@@ -35,7 +35,7 @@ const usage =
 ;
 
 pub fn main(init: std.process.Init) !void {
-    var arena_state = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    var arena_state = std.heap.ArenaAllocator.init(std.heap.page_allocator); // zsnag:ok — R009: the arena's backing allocator, not a general one
     defer arena_state.deinit();
     const arena = arena_state.allocator();
 

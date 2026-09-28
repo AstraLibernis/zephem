@@ -26,7 +26,8 @@ const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const argv = @import("args.zig");
 const sigfmt = @import("sig.zig");
-const Outcome = @import("query.zig").Outcome;
+const query = @import("query.zig");
+const Outcome = query.Outcome;
 const V = @Vector(32, u8);
 
 // lookup.tsv columns (built by `zephem lookup`, src/lookup.zig), tab-separated:
@@ -102,12 +103,14 @@ fn field(line: []const u8, n: usize) []const u8 {
     return "";
 }
 
-const Hit = struct { line: []const u8, rank: u8, priv: bool, plen: usize };
+const Hit = struct { line: []const u8, rank: u8, priv: bool, plen: usize, plat: bool = false };
 
 fn lessThan(_: void, a: Hit, b: Hit) bool {
     // Public before private at EVERY tier: a private helper whose name happens to contain the
     // terms is not callable from outside its file, so it must not outrank real API.
     if (a.priv != b.priv) return !a.priv;
+    // then portable API before platform bindings (std.c/std.os) — see query.platformDemoted
+    if (a.plat != b.plat) return !a.plat;
     if (a.rank != b.rank) return a.rank < b.rank;
     return a.plen < b.plen;
 }
@@ -216,7 +219,8 @@ fn perTerm(c: Ctx, buf: []const u8, terms: []const []const u8, raw: []const []co
             if (!ciContains(name, t)) continue; // name hits only: a doc mention is too weak here
             if (std.mem.eql(u8, field(line, COL_VIS), "priv")) continue;
             const rank: u8 = if (name.len == t.len) 0 else 1; // exact name first
-            try best.append(a, .{ .line = line, .rank = rank, .priv = false, .plen = field(line, COL_PATH).len });
+            const path = field(line, COL_PATH);
+            try best.append(a, .{ .line = line, .rank = rank, .priv = false, .plen = path.len, .plat = query.platformDemoted(path, terms) });
         }
         std.mem.sort(Hit, best.items, {}, lessThan);
         var names: std.ArrayList(u8) = .empty;
@@ -285,6 +289,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     var hits: std.ArrayList(Hit) = .empty;
     var total: usize = 0;
     var npriv: usize = 0;
+    var nplat: usize = 0;
     var it = std.mem.splitScalar(u8, buf, '\n');
     _ = it.next(); // header
     while (it.next()) |line| {
@@ -299,7 +304,9 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         const rank: u8 = if (terms.len == 1 and exactName(name, terms[0])) 0 else if (allContain(name, terms)) 1 else if (allContain(p, terms) or allContain(field(line, COL_AKA), terms)) 2 else 3;
         const priv = std.mem.eql(u8, field(line, COL_VIS), "priv");
         if (priv) npriv += 1;
-        try hits.append(a, .{ .line = line, .rank = rank, .priv = priv, .plen = p.len });
+        const plat = query.platformDemoted(p, terms);
+        if (plat) nplat += 1;
+        try hits.append(a, .{ .line = line, .rank = rank, .priv = priv, .plen = p.len, .plat = plat });
     }
     if (total == 0) {
         try argv.diag(c, "no lookup entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw.items)});
@@ -309,14 +316,14 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     std.mem.sort(Hit, hits.items, {}, lessThan);
 
     const shown = @min(limit, hits.items.len);
-    const query = try std.mem.join(a, " ", terms_raw.items);
-    if (npriv > 0) {
-        // Private decls are demoted (shown last) and tagged, never hidden — they aren't
-        // callable at their path from outside their file, so they shouldn't outrank real API.
-        try out.print("# zlook: {s}  ({d} shown of {d} hits · {d} private, tagged [priv])\n\n", .{ query, shown, total, npriv });
-    } else {
-        try out.print("# zlook: {s}  ({d} shown of {d} hits)\n\n", .{ query, shown, total });
-    }
+    const q = try std.mem.join(a, " ", terms_raw.items);
+    // Private decls and platform bindings are demoted (ranked after the portable public API)
+    // and counted here, never hidden.
+    try out.print("# zlook: {s}  ({d} shown of {d} hits{s}{s})\n\n", .{
+        q, shown, total,
+        if (npriv > 0) try std.fmt.allocPrint(a, " · {d} private, tagged [priv]", .{npriv}) else "",
+        if (nplat > 0) try std.fmt.allocPrint(a, " · {d} in std.c/std.os, ranked after the portable API", .{nplat}) else "",
+    });
     for (hits.items[0..shown]) |h| {
         const vis_tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ field(h.line, COL_PATH), field(h.line, COL_KIND), vis_tag });

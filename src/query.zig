@@ -23,3 +23,27 @@ pub const Outcome = enum(u8) {
         return @intFromEnum(o);
     }
 };
+
+/// Is `path` platform-specific binding code the caller did not ask for?
+///
+/// `std.c.*` (libc and per-OS C bindings) and `std.os.*` (linux, windows, uefi, wasi, …) hold
+/// thousands of decls — syscall numbers, ioctl constants, per-OS struct fields — that match
+/// ordinary words (`args`, `sleep`, `copy`) and crowd out the portable API. Such hits are
+/// ranked after it and counted in the header, never hidden. A query that names the platform
+/// (`linux mmap`, `darwin`, `wasi args`) opts back in: a term EQUAL to the segment after
+/// `std.os`/`std.c` (`linux` in `std.os.linux.mmap`) keeps its normal rank. Equal, not
+/// contained: in `std.c.COPYFILE` that segment is the decl itself, and `copy` must not opt in.
+///
+/// `terms` are pre-lowercased.
+pub fn platformDemoted(path: []const u8, terms: []const []const u8) bool {
+    const is_c = std.mem.startsWith(u8, path, "std.c.") or std.mem.eql(u8, path, "std.c");
+    const is_os = std.mem.startsWith(u8, path, "std.os.") or std.mem.eql(u8, path, "std.os");
+    if (!is_c and !is_os) return false;
+    // the platform part: `std.os.linux` / `std.c.darwin` — the first segment after the prefix
+    const head_len = if (is_c) "std.c".len else "std.os".len;
+    const seg_end = if (path.len > head_len + 1) std.mem.findScalarPos(u8, path, head_len + 1, '.') orelse path.len else path.len;
+    const platform = path[0..seg_end];
+    const segment = platform[head_len + @intFromBool(platform.len > head_len) ..];
+    for (terms) |t| if (std.ascii.eqlIgnoreCase(segment, t)) return false;
+    return true;
+}

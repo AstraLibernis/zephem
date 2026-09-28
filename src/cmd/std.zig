@@ -176,7 +176,7 @@ fn proveReproducible(c: Ctx, src: Sources, data_dir: []const u8, zver: []const u
 
     const dir_a = try join(c.a, check_base, "a");
     const dir_b = try join(c.a, check_base, "b");
-    std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {};
+    std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {}; // zsnag:ok — best-effort scratch cleanup; regen overwrites every file it later reads
     _ = try regen(c, src, dir_a);
     _ = try regen(c, src, dir_b);
 
@@ -193,7 +193,7 @@ fn proveReproducible(c: Ctx, src: Sources, data_dir: []const u8, zver: []const u
             name, mark(intrinsic), mark(regression), mark(integrity),
         });
     }
-    std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {};
+    std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {}; // zsnag:ok — best-effort scratch cleanup after the check; nothing reads it again
 
     if (ok) {
         try w.writeAll("reproducible: ✓ two fresh rebuilds agree, reproduce the manifest, and the snapshot matches it\n");

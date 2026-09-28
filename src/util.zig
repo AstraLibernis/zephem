@@ -36,12 +36,12 @@ pub fn replaceAll(a: std.mem.Allocator, hay: []const u8, needle: []const u8, wit
 /// paths (no index container has a `.` inside `@"…"`), but don't "fix" one into the other — they
 /// answer different questions (Nushell-parity grouping vs the tree's true parent).
 pub fn dottedParent(path: []const u8) []const u8 {
-    return if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[0..k] else "";
+    return if (std.mem.findScalarLast(u8, path, '.')) |k| path[0..k] else "";
 }
 
 /// The last dotted segment (the leaf name), paired with `dottedParent`.
 pub fn lastSeg(path: []const u8) []const u8 {
-    return if (std.mem.lastIndexOfScalar(u8, path, '.')) |k| path[k + 1 ..] else path;
+    return if (std.mem.findScalarLast(u8, path, '.')) |k| path[k + 1 ..] else path;
 }
 
 /// A ✓ / ✗ marker for the reproducibility `--check` reports.

@@ -12,13 +12,20 @@ const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const argv = @import("args.zig");
 const sigfmt = @import("sig.zig");
-const Outcome = @import("query.zig").Outcome;
+const query = @import("query.zig");
+const Outcome = query.Outcome;
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
 const redirect = @import("redirect.zig");
 
 const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8, example: []const u8 = "", arity: []const u8 = "" };
-const Map = struct { nodes: []const Node, redirects: redirect.Redirects };
+const Map = struct {
+    nodes: []const Node,
+    redirects: redirect.Redirects,
+    /// `test` bodies (TSV-escaped) by the path they are anchored to: a doctest (`test parseInt`)
+    /// on its decl, a `test "…"` on its enclosing namespace.
+    examples: std.StringHashMap(std.ArrayList([]const u8)),
+};
 
 pub fn run(c: Ctx, args: []const []const u8, out: *std.Io.Writer) !Outcome {
     const usage =
@@ -92,8 +99,8 @@ fn loadMap(c: Ctx) !Map {
     if (toolchain.staleness(c, dir) catch null) |warn| {
         var eb: [512]u8 = undefined;
         var ew = std.Io.File.stderr().writer(c.io, &eb);
-        ew.interface.print("{s}\n", .{warn}) catch {};
-        ew.interface.flush() catch {};
+        ew.interface.print("{s}\n", .{warn}) catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
+        ew.interface.flush() catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
     }
     const nodes = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/nodes.tsv" }));
     const attrs = try rel.load(a, c.io, try std.fs.path.join(a, &.{ dir, "extracted/attrs.tsv" }));
@@ -102,6 +109,7 @@ fn loadMap(c: Ctx) !Map {
     var doc = std.StringHashMap([]const u8).init(a);
     var mod = std.StringHashMap([]const u8).init(a);
     var errm = std.StringHashMap([]const u8).init(a); // error-set members, comma-joined per path
+    var examples = std.StringHashMap(std.ArrayList([]const u8)).init(a);
     const ap = attrs.col("path");
     const aa = attrs.col("attr");
     const av = attrs.col("value");
@@ -115,6 +123,10 @@ fn loadMap(c: Ctx) !Map {
         } else if (std.mem.eql(u8, r[aa], "mod")) {
             const g = try mod.getOrPut(r[ap]);
             if (!g.found_existing) g.value_ptr.* = r[av];
+        } else if (std.mem.eql(u8, r[aa], "example")) {
+            const g = try examples.getOrPut(r[ap]);
+            if (!g.found_existing) g.value_ptr.* = .empty;
+            try g.value_ptr.append(a, r[av]);
         } else if (std.mem.eql(u8, r[aa], "errmember")) {
             const g = try errm.getOrPut(r[ap]);
             g.value_ptr.* = if (!g.found_existing) r[av] else try std.fmt.allocPrint(a, "{s}, {s}", .{ g.value_ptr.*, r[av] });
@@ -154,10 +166,10 @@ fn loadMap(c: Ctx) !Map {
         .example = r[be],
         .arity = r[bp],
     };
-    return .{ .nodes = out, .redirects = try redirect.Redirects.build(a, nodes, edges) };
+    return .{ .nodes = out, .redirects = try redirect.Redirects.build(a, nodes, edges), .examples = examples };
 }
 
-const Scored = struct { node: Node, rank: u8, priv: bool, plen: usize };
+const Scored = struct { node: Node, rank: u8, priv: bool, plen: usize, plat: bool = false };
 
 fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8, limit: usize) !Outcome {
     if (terms_raw.len == 0) {
@@ -171,6 +183,7 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
     var aka = try redirect.Aka.init(&map.redirects);
     var hits: std.ArrayList(Scored) = .empty;
     var npriv: usize = 0;
+    var nplat: usize = 0;
     for (map.nodes) |n| {
         // The alternative names are only worth computing for a node the direct fields missed.
         const direct = allIn(terms, &.{ n.path, n.name, n.sig, n.doc });
@@ -180,7 +193,9 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
         const rank: u8 = if (terms.len == 1 and n.name.len == terms[0].len and ciContains(n.name, terms[0])) 0 else if (allIn(terms, &.{n.name})) 1 else if (allIn(terms, &.{n.path}) or allIn(terms, &.{alt})) 2 else 3;
         const priv = std.mem.eql(u8, n.vis, "priv");
         if (priv) npriv += 1;
-        try hits.append(a, .{ .node = n, .rank = rank, .priv = priv, .plen = n.path.len });
+        const plat = query.platformDemoted(n.path, terms);
+        if (plat) nplat += 1;
+        try hits.append(a, .{ .node = n, .rank = rank, .priv = priv, .plen = n.path.len, .plat = plat });
     }
     if (hits.items.len == 0) {
         try argv.diag(c, "no map entry matches: {s}\n", .{try std.mem.join(a, " ", terms_raw)});
@@ -188,12 +203,12 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: Map, terms_raw: []const []const u8,
     }
     std.mem.sort(Scored, hits.items, {}, lessThan);
     const shown = @min(limit, hits.items.len);
-    const query = try std.mem.join(a, " ", terms_raw);
-    if (npriv > 0) {
-        try out.print("# map find: {s}  (top {d} of {d} hits · {d} private, tagged [priv])\n\n", .{ query, shown, hits.items.len, npriv });
-    } else {
-        try out.print("# map find: {s}  (top {d} of {d} hits)\n\n", .{ query, shown, hits.items.len });
-    }
+    const q = try std.mem.join(a, " ", terms_raw);
+    try out.print("# map find: {s}  (top {d} of {d} hits{s}{s})\n\n", .{
+        q, shown, hits.items.len,
+        if (npriv > 0) try std.fmt.allocPrint(a, " · {d} private, tagged [priv]", .{npriv}) else "",
+        if (nplat > 0) try std.fmt.allocPrint(a, " · {d} in std.c/std.os, ranked after the portable API", .{nplat}) else "",
+    });
     for (hits.items[0..shown]) |h| {
         const tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ h.node.path, h.node.kind, tag });
@@ -287,6 +302,9 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: Map, path_in: []const u8) !Outcome {
         if (try resolvedOf(c, n.path)) |res| try out.print("  → {s}\n", .{res});
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
         if (n.example.len > 0) try out.print("\n  example (from the language reference):\n{s}\n", .{try unescapeIndented(a, n.example)});
+        if (try exampleFor(a, map, n)) |ex| {
+            try out.print("\n  {s}:\n{s}\n", .{ ex.label, try clipLines(a, try unescapeIndented(a, ex.body), 25) });
+        }
         if (std.mem.eql(u8, n.kind, "builtin") and n.sig.len == 0) {
             const args = if (std.mem.eql(u8, n.arity, "var")) "a variable number of" else n.arity;
             try out.print("  takes {s} argument(s), per the compiler's builtin table\n\n  (the language reference does not document this builtin)\n", .{args});
@@ -360,6 +378,8 @@ const Near = struct {
         const sx = shared(self.query, x);
         const sy = shared(self.query, y);
         if (sx != sy) return sx > sy;
+        const px = query.platformDemoted(x, &.{});
+        if (px != query.platformDemoted(y, &.{})) return !px;
         const ex = self.exact(x);
         if (ex != self.exact(y)) return ex;
         if (x.len != y.len) return x.len < y.len;
@@ -371,6 +391,7 @@ const Near = struct {
 
 fn lessThan(_: void, a: Scored, b: Scored) bool {
     if (a.priv != b.priv) return !a.priv; // public before private at every tier (see zlook)
+    if (a.plat != b.plat) return !a.plat; // then portable before std.c/std.os (see query.zig)
     if (a.rank != b.rank) return a.rank < b.rank;
     return a.plen < b.plen;
 }
@@ -406,6 +427,138 @@ fn ciContains(hay: []const u8, needle: []const u8) bool {
         if (j == needle.len) return true;
     }
     return false;
+}
+
+const Example = struct { label: []const u8, body: []const u8 };
+
+/// Usage harvested from std's own tests — never written by zephem. In order:
+///   1. a doctest of this exact decl (`test parseInt {…}` → `std.fmt.parseInt`);
+///   2. for a fn, the nearest enclosing namespace's `test` that CALLS it (`name(` after a
+///      non-identifier character) — labelled with where it came from, since it is a test that
+///      uses the function, not one written for it.
+/// The shortest candidate is shown (the most focused), with a count of the rest.
+fn exampleFor(a: std.mem.Allocator, map: Map, n: Node) !?Example {
+    if (map.examples.get(n.path)) |own| {
+        const best = shortest(own.items);
+        const more = own.items.len - 1;
+        const label = if (more > 0) try std.fmt.allocPrint(a, "example (a std test of this declaration; {d} more in the map)", .{more}) else "example (a std test of this declaration)";
+        return .{ .label = label, .body = best };
+    }
+    if (!std.mem.eql(u8, n.kind, "fn")) return null;
+    const call = try std.fmt.allocPrint(a, "{s}(", .{n.name});
+    // A same-named call is only this function if its argument count fits the signature: all the
+    // parameters, or all but `self` for a method call. `Managed(u32).append(2)` is a different
+    // `append` from `Aligned(T).append(gpa, item)` and must not be shown as its usage.
+    const params = paramCount(sigfmt.split(a, n.sig).sig) orelse return null;
+    var anc = n.path;
+    while (std.mem.findScalarLast(u8, anc, '.')) |d| {
+        anc = anc[0..d];
+        const list = map.examples.get(anc) orelse continue;
+        // Prefer tests where EVERY same-named call fits: a test that also calls a different
+        // `append` (another type's) shows the reader both and teaches the wrong one first.
+        var hits: std.ArrayList([]const u8) = .empty;
+        var clean: std.ArrayList([]const u8) = .empty;
+        for (list.items) |body| {
+            const t = tally(body, call, params);
+            if (t.fit == 0) continue;
+            try hits.append(a, body);
+            if (t.misfit == 0) try clean.append(a, body);
+        }
+        if (hits.items.len == 0) continue;
+        const more = hits.items.len - 1;
+        const label = try std.fmt.allocPrint(a, "usage (a std test in {s} that calls {s}{s})", .{
+            anc, call, if (more > 0) try std.fmt.allocPrint(a, "; {d} more", .{more}) else "",
+        });
+        return .{ .label = label, .body = shortest(if (clean.items.len > 0) clean.items else hits.items) };
+    }
+    return null;
+}
+
+/// Calls of `call` (`name(`) in `body` as a whole identifier (`list.append(`, ` append(`, not
+/// `prepend(`), split by whether the argument count fits: `params`, or `params - 1` for a
+/// method call.
+fn tally(body: []const u8, call: []const u8, params: usize) struct { fit: usize, misfit: usize } {
+    var fit: usize = 0;
+    var misfit: usize = 0;
+    var pos: usize = 0;
+    while (std.mem.findPos(u8, body, pos, call)) |i| {
+        pos = i + 1;
+        if (i > 0) {
+            const prev = body[i - 1];
+            if (std.ascii.isAlphanumeric(prev) or prev == '_' or prev == '@') continue;
+        }
+        const args = argCount(body[i + call.len - 1 ..]) orelse continue;
+        if (args == params or args + 1 == params) fit += 1 else misfit += 1;
+    }
+    return .{ .fit = fit, .misfit = misfit };
+}
+
+/// Top-level arguments of the call whose `(` starts `s`, skipping string and character
+/// literals (a `","` must not count). Null if the parenthesis never closes.
+fn argCount(s: []const u8) ?usize {
+    var depth: usize = 0;
+    var n: usize = 0;
+    var seg = false;
+    var i: usize = 0;
+    while (i < s.len) : (i += 1) {
+        const ch = s[i];
+        switch (ch) {
+            '"', '\'' => {
+                i += 1;
+                while (i < s.len and s[i] != ch) : (i += 1) {
+                    if (s[i] == '\\') i += 1; // the TSV cell's own escapes pair up the same way
+                }
+                seg = true;
+            },
+            '(', '[', '{' => {
+                depth += 1;
+                if (depth > 1) seg = true;
+            },
+            ')', ']', '}' => {
+                depth -= 1;
+                if (depth == 0) return n + @intFromBool(seg);
+            },
+            ',' => if (depth == 1) {
+                if (seg) n += 1;
+                seg = false;
+            },
+            ' ' => {},
+            '\\' => i += 1, // an escaped newline/tab inside the TSV cell is whitespace
+            else => if (depth == 1) {
+                seg = true;
+            },
+        }
+    }
+    return null;
+}
+
+/// Parameters of a written signature `fn name(a: A, b: B) R` — the same counting, on the sig.
+fn paramCount(sig: []const u8) ?usize {
+    const open = std.mem.findScalar(u8, sig, '(') orelse return null;
+    return argCount(sig[open..]);
+}
+
+fn shortest(xs: []const []const u8) []const u8 {
+    var best = xs[0];
+    for (xs[1..]) |x| if (x.len < best.len) {
+        best = x;
+    };
+    return best;
+}
+
+/// At most `max` lines, the cut marked with how much was left out.
+fn clipLines(a: std.mem.Allocator, s: []const u8, max: usize) ![]const u8 {
+    var n: usize = 0;
+    var i: usize = 0;
+    while (i < s.len) : (i += 1) {
+        if (s[i] != '\n') continue;
+        n += 1;
+        if (n == max) {
+            const rest = std.mem.count(u8, s[i + 1 ..], "\n") + 1;
+            return std.fmt.allocPrint(a, "{s}\n    … ({d} more lines)", .{ s[0..i], rest });
+        }
+    }
+    return s;
 }
 
 /// The resolved type of `path` from resolved.tsv (the reflection layer), or null. Read on

@@ -69,7 +69,11 @@ answer from the absence of one:
 
 Misses and errors go to stderr; stdout carries only results. `look` keeps results short: an
 error set longer than a line folds to its true member count (`error{…30 members}`); `map doc`
-prints it whole. When no single declaration matches every term (`look print stdout`), the miss
+prints it whole. Hits from platform bindings (`std.c.*`, `std.os.*`) rank after the portable
+API and are counted in the header, unless the query names the platform (`look linux mmap`).
+`map doc` also shows usage taken from std's own tests: the declaration's doctest
+(`test parseInt {…}`) when it has one, otherwise the shortest test in its namespace that calls
+it with an argument count matching its signature, labelled with where it came from. When no single declaration matches every term (`look print stdout`), the miss
 names the best hits for each term alone on stderr (`std.debug.print`, `std.Io.Writer.print` ·
 `std.Io.File.stdout`). A `map doc`/`map show` miss also
 names the closest real paths on stderr (`std.fmt.parseint` → `std.fmt.parseInt`); the exit code

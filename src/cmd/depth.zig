@@ -67,7 +67,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
-    defer w.flush() catch {};
+    defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
     // the direct-child names of each container, for the SKIP set (dotted split-drop-last, exactly
     // as the Nushell built it — quote edge cases included).

@@ -169,7 +169,7 @@ fn fnSig(w: *W, ast: *const Ast, proto: *const Ast.full.FnProto) !?[]const u8 {
     const starts = ast.tokens.items(.start);
     const last = ast.lastToken(ret);
     const start = starts[proto.ast.fn_token];
-    const end = starts[last] + @as(u32, @intCast(ast.tokenSlice(last).len));
+    const end = starts[last] + @as(u32, @intCast(ast.tokenSlice(last).len)); // zsnag:ok — R007: a token is shorter than the source, and Ast offsets are u32
     return try collapse(w.arena, ast.source[start..end]);
 }
 
@@ -253,7 +253,7 @@ fn parseChild(w: *W, abs: []const u8) ?*Ast {
     const a = w.arena.create(Ast) catch return null;
     a.* = Ast.parse(w.arena, src, .zig) catch return null;
     if (a.errors.len != 0) return null;
-    w.ast_cache.put(abs, a) catch {};
+    w.ast_cache.put(abs, a) catch {}; // zsnag:ok — a failed cache insert only means this file is re-parsed later, same output
     return a;
 }
 
@@ -816,9 +816,9 @@ pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []
     var sfw = std.Io.File.stderr().writer(io, &sbuf);
     const s = &sfw.interface;
     try s.print("[parse] {s}\n  nodes: {d}   edges: {d}\n  scope: local {d} · cross {d} · primitive {d} · module {d} · generic {d} · inline {d} · unresolved {d}\n", .{
-        root, w.node_set.count(), w.edges.items.len,
-        counts[@intFromEnum(Scope.local)], counts[@intFromEnum(Scope.cross)], counts[@intFromEnum(Scope.primitive)],
-        counts[@intFromEnum(Scope.module)], counts[@intFromEnum(Scope.generic)], counts[@intFromEnum(Scope.@"inline")],
+        root,                                   w.node_set.count(),                  w.edges.items.len,
+        counts[@intFromEnum(Scope.local)],      counts[@intFromEnum(Scope.cross)],   counts[@intFromEnum(Scope.primitive)],
+        counts[@intFromEnum(Scope.module)],     counts[@intFromEnum(Scope.generic)], counts[@intFromEnum(Scope.@"inline")],
         counts[@intFromEnum(Scope.unresolved)],
     });
     try s.flush();

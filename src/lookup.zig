@@ -62,7 +62,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const dir = try vars.dataDir(c);
     var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 1024));
     const w = &ow.interface;
-    defer w.flush() catch {};
+    defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
     // A baked lookup is read later WITHOUT the datasets present, so a stale one can't be caught at
     // read time — refuse to bake from a map whose pinned zig differs from the installed zig.

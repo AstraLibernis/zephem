@@ -34,7 +34,7 @@ pub fn run(c: Ctx, data_dir: []const u8) !bool {
     const a = c.a;
     var er = std.Io.File.stderr().writer(c.io, try a.alloc(u8, 4096));
     const w = &er.interface;
-    defer w.flush() catch {};
+    defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
     const nodes = try rel.load(a, c.io, try join(a, data_dir, "extracted/nodes.tsv"));
     const n = nodes.rows.len;

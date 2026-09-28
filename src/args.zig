@@ -49,9 +49,9 @@ pub fn value(c: Ctx, args: []const []const u8, i: *usize, flag: []const u8, usag
 fn missingValue(c: Ctx, flag: []const u8, usage: []const u8) noreturn {
     var buf: [4096]u8 = undefined;
     var w = std.Io.File.stderr().writer(c.io, &buf);
-    w.interface.print("zephem: {s} requires a value\n\n", .{flag}) catch {};
-    w.interface.writeAll(usage) catch {};
-    w.interface.flush() catch {};
+    w.interface.print("zephem: {s} requires a value\n\n", .{flag}) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
+    w.interface.writeAll(usage) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
+    w.interface.flush() catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
     std.process.exit(2);
 }
 
@@ -62,9 +62,9 @@ pub fn intValue(c: Ctx, comptime T: type, args: []const []const u8, i: *usize, f
     return std.fmt.parseInt(T, raw, 10) catch {
         var buf: [4096]u8 = undefined;
         var w = std.Io.File.stderr().writer(c.io, &buf);
-        w.interface.print("zephem: {s} expects a number, got: {s}\n\n", .{ flag, raw }) catch {};
-        w.interface.writeAll(usage) catch {};
-        w.interface.flush() catch {};
+        w.interface.print("zephem: {s} expects a number, got: {s}\n\n", .{ flag, raw }) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
+        w.interface.writeAll(usage) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
+        w.interface.flush() catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
         std.process.exit(2);
     };
 }
@@ -83,8 +83,8 @@ pub fn diag(c: Ctx, comptime fmt: []const u8, fmt_args: anytype) !void {
 pub fn reject(c: Ctx, arg: []const u8, usage: []const u8) noreturn {
     var buf: [4096]u8 = undefined;
     var w = std.Io.File.stderr().writer(c.io, &buf);
-    w.interface.print("zephem: unrecognised argument: {s}\n\n", .{arg}) catch {};
-    w.interface.writeAll(usage) catch {};
-    w.interface.flush() catch {};
+    w.interface.print("zephem: unrecognised argument: {s}\n\n", .{arg}) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
+    w.interface.writeAll(usage) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
+    w.interface.flush() catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
     std.process.exit(2);
 }

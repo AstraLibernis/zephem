@@ -39,7 +39,7 @@ pub fn capture(a: std.mem.Allocator, io: std.Io, argv: []const []const u8) !Outp
 /// 124 — the coreutils `timeout` convention, so the depth sweep can tag it distinctly from a real
 /// compile error. `a` MUST be thread-safe (the sweep runs many of these concurrently).
 pub fn runTimed(a: std.mem.Allocator, io: std.Io, argv: []const []const u8, timeout_s: u32) !Output {
-    const dur = std.Io.Clock.Duration{ .raw = std.Io.Duration.fromSeconds(@intCast(timeout_s)), .clock = .awake };
+    const dur = std.Io.Clock.Duration{ .raw = std.Io.Duration.fromSeconds(@intCast(timeout_s)), .clock = .awake }; // zsnag:ok — R007: u32 seconds always fit the signed parameter
     const deadline = (std.Io.Timeout{ .duration = dur }).toDeadline(io);
     const r = std.process.run(a, io, .{ .argv = argv, .timeout = deadline }) catch |err| switch (err) {
         error.Timeout => return .{ .exit_code = 124, .stdout = "", .stderr = "" },

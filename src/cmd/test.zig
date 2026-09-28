@@ -30,7 +30,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const a = c.a;
     var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
-    defer w.flush() catch {};
+    defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
     // ensure the baked lookup table exists (zlook's input)
     const lpath = try vars.lookupPath(c);
@@ -98,6 +98,15 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     try expectLook(c, w, &fails, "look finds a builtin by name, exact first", &.{ "intCast", "--limit", "1" }, &.{ "@intCast  (builtin)", "@intCast(int: anytype) anytype" });
     try expectMap(c, w, &fails, "map doc shows a builtin with its langref example", &.{ "doc", "@intCast" }, &.{ "Converts an integer", "example (from the language reference)", "@intCast(a)" });
     try expectMap(c, w, &fails, "an undocumented builtin says so, with the compiler's arity", &.{ "doc", "@Frame" }, &.{ "takes 1 argument(s)", "does not document" });
+
+    // ── examples ── harvested from std's own tests, never written. A doctest of the decl
+    // first; else a namespace test that calls it with an argument count fitting its signature.
+    try expectMap(c, w, &fails, "map doc shows the decl's own doctest", &.{ "doc", "std.fmt.parseInt" }, &.{ "example (a std test of this declaration)", "test parseInt {" });
+    try expectMap(c, w, &fails, "map doc usage matches the signature, not another append", &.{ "doc", "std.ArrayList.append" }, &.{ "usage (a std test in std.array_list that calls append(", ".append(gpa, " });
+
+    // ── platform bindings ── std.c/std.os rank after the portable API unless named.
+    try expectLook(c, w, &fails, "look ranks portable API before std.c/std.os", &.{ "sleep", "--limit", "1" }, &.{ "std.Io.sleep", "in std.c/std.os, ranked after the portable API" });
+    try expectLook(c, w, &fails, "naming the platform opts back in", &.{ "linux", "mmap", "--limit", "1" }, &.{"std.os.linux.mmap"});
 
     // ── task-shaped queries ── no decl names both, so it is a miss (exit 1, stdout empty);
     // the per-term hints go to stderr and are not asserted here.
