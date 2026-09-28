@@ -46,7 +46,7 @@ the first un-evaluatable decl.
 ## Quickstart
 
 ```sh
-zig build                        # → the `zephem` binary at zig-out/bin/zephem
+zig build                        # → zig-out/bin/zephem (ReleaseSafe by default; -Doptimize=Debug to debug)
 zephem std                       # map the active toolchain's std → data/std/extracted/
 zephem map doc std.fmt.parseInt  # query the map (reads the TSVs directly, no index needed)
 ```
@@ -62,11 +62,34 @@ answer from the absence of one:
 | 2 | usage error — bad flag, missing operand, unknown subcommand |
 | 3 | the map or lookup table is **unavailable** — not the same as a miss; regenerate it |
 
-Misses and errors go to stderr; stdout carries only results.
+Misses and errors go to stderr; stdout carries only results. A `map doc`/`map show` miss also
+names the closest real paths on stderr (`std.fmt.parseint` → `std.fmt.parseInt`); the exit code
+is still 1.
+
+**Thin names are followed to their members.** Many everyday std names are an alias or a one-line
+wrapper around something else: `std.ArrayList` is `fn ArrayList(T) type`, returning
+`array_list.Aligned(T, null)`, so its members live under `std.array_list.Aligned().…`. The queries
+follow the `alias` and `delegates` edges the parser recorded, and print each hop:
+
+```sh
+zephem map show std.ArrayList          # std.ArrayList ─delegates→ std.array_list.Aligned, then its members
+zephem map doc std.ArrayList.append    # resolves to std.array_list.Aligned().append
+zephem look StringHashMap get          # alias → delegates → std.hash_map.HashMap().get
+```
+
+Each hit that is reachable under other public names lists them on a `≡` line; the lookup table
+carries them in its `aka` column. Nothing is inferred: every hop is an edge from `edges.tsv`.
 
 Needs Zig **@@ZIG@@** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
 command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in
 each engine's README.
+
+**Everything zephem writes stays inside the checkout.** The search index `zephem look` and
+zcanon read is `data/lookup.tsv`: derived from the map, rebuilt by `zephem lookup` in about half
+a second, and git-ignored. Scratch work goes to `.zig-cache/`. Deleting the zephem folder
+removes all of it. (Before 2026-09-28 the index was written to `~/.config/zephem/lookup.tsv`;
+that old copy is no longer read and can be deleted.) zephem finds its checkout from the
+directory you run it in or, failing that, from where its binary lives, so it works from anywhere.
 
 ## The headline dataset: the full std map
 
@@ -249,3 +272,15 @@ No Nushell, no Python, no duckdb.
   `zephem std` reads it from there, so the snapshot tracks whatever Zig is on `PATH`.
 - Prior life: see [Where it started](#where-it-started-stdcrypto-archived) above — the `zcrypto`
   origin and the archive tombstone.
+
+## License
+
+GPL-3.0-or-later · Copyright (C) 2026 AstraLibernis
+
+zephem is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. See `LICENSE`.
+
+**Exception: the datasets.** Everything under `data/std/` is extracted from the Zig standard library, which is MIT-licensed (Expat, Copyright (c) Zig contributors; see [`data/ZIG-LICENSE`](data/ZIG-LICENSE)). The datasets are released under the same MIT terms, so they can be used anywhere the Zig source can.
+
+Versions up to and including commit `95e1ed8` were released under the MIT License; copies obtained under those terms keep them.
+
+Contributions are welcome under the [Developer Certificate of Origin](https://developercertificate.org/): sign off each commit with `git commit -s`. You keep the copyright on your contribution.

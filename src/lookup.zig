@@ -3,7 +3,7 @@
 
 //! lookup.zig — bake the denormalized "lookup" table that `zephem look` searches (port of
 //! `query/build_lookup.nu`). One row per map node, joining nodes + attrs + edges + the resolved
-//! and derived overlays into the fixed 16-column contract zlook reads by index:
+//! and derived overlays into the fixed 17-column contract zlook reads by index:
 //!
 //!   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail(loc) · 6 sig · 7 doc
 //!
@@ -21,6 +21,9 @@
 //! its own colons and the parameter name sits between the prose and its `:` — and a
 //! half-working splitter mangles signatures, which is worse than leaving them intact.
 //!   8 rkind · 9 rdetail · 10 canon · 11 ftype · 12 fval · 13 delegate · 14 vis · 15 mod
+//!   16 aka — other public names that reach this node through alias/delegates edges
+//!            (`std.array_list.Aligned().append` ← `std.ArrayList().append`); appended last so
+//!            readers that take a fixed number of leading columns are unaffected
 //!
 //! A pure left-join over the node set — same symbol universe as nodes.tsv, enriched. Assembled
 //! directly with hash maps (build each right side once, probe per node) rather than chained table
@@ -31,6 +34,7 @@ const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const toolchain = @import("toolchain.zig");
 const rel = @import("relation.zig");
+const redirect = @import("redirect.zig");
 
 pub fn run(c: Ctx, args: []const []const u8) !void {
     const usage =
@@ -106,6 +110,8 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
     var htype = try edgeCol(a, edges, "has_type");
     var deleg = try edgeCol(a, edges, "delegates");
     var modm = try attrCol(a, attrs, "mod");
+    const redirects = try redirect.Redirects.build(a, nodes, edges);
+    var aka = try redirect.Aka.init(&redirects);
 
     // resolved → (rkind, rdetail), first occurrence per path
     var rkind = std.StringHashMap([]const u8).init(a);
@@ -132,7 +138,7 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
         const path = r[np];
         const kind = r[nk];
         const is_fieldish = std.mem.eql(u8, kind, "field") or std.mem.eql(u8, kind, "tag");
-        const row = try a.alloc([]const u8, 16);
+        const row = try a.alloc([]const u8, 17);
         row[0] = path;
         row[1] = try depthStr(a, path);
         row[2] = kind;
@@ -149,12 +155,13 @@ pub fn build(c: Ctx, dir: []const u8) !rel.Table {
         row[13] = deleg.get(path) orelse "";
         row[14] = r[nv];
         row[15] = modm.get(path) orelse ""; // extern/export/inline/threadlocal/comptime/var
+        row[16] = try aka.of(path);
         rows[k] = row;
     }
     // A left-join over nodes must preserve exactly the node rows (1:1) — assert it, fail loud.
     std.debug.assert(rows.len == nodes.rows.len);
     return rel.Table{
-        .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis", "mod" },
+        .columns = &.{ "path", "depth", "kind", "name", "n_children", "detail", "sig", "doc", "rkind", "rdetail", "canon", "ftype", "fval", "delegate", "vis", "mod", "aka" },
         .rows = rows,
         .a = a,
     };

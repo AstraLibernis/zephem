@@ -32,7 +32,7 @@ const V = @Vector(32, u8);
 // lookup.tsv columns (built by `zephem lookup`, src/lookup.zig), tab-separated:
 //   0 path · 1 depth · 2 kind · 3 name · 4 n_children · 5 detail
 //   6 sig  · 7 doc   · 8 rkind · 9 rdetail · 10 canon
-//   11 ftype · 12 fval · 13 delegate · 14 vis
+//   11 ftype · 12 fval · 13 delegate · 14 vis · 15 mod · 16 aka
 const COL_PATH = 0;
 const COL_KIND = 2;
 const COL_NAME = 3;
@@ -44,6 +44,7 @@ const COL_FVAL = 12; // a field default / enum tag value (attrs[value])
 const COL_DELEGATE = 13; // a delegating factory's target (edges[delegates])
 const COL_VIS = 14; // "pub" | "priv" — a private decl isn't callable at its path from outside its file
 const COL_MOD = 15; // extern/export/inline/threadlocal/comptime/var qualifiers (sparse)
+const COL_AKA = 16; // other public names reaching this node via alias/delegates (sparse)
 
 inline fn lo(c: u8) u8 {
     return if (c >= 'A' and c <= 'Z') c + 32 else c;
@@ -98,8 +99,10 @@ fn field(line: []const u8, n: usize) []const u8 {
 const Hit = struct { line: []const u8, rank: u8, priv: bool, plen: usize };
 
 fn lessThan(_: void, a: Hit, b: Hit) bool {
+    // Public before private at EVERY tier: a private helper whose name happens to contain the
+    // terms is not callable from outside its file, so it must not outrank real API.
+    if (a.priv != b.priv) return !a.priv;
     if (a.rank != b.rank) return a.rank < b.rank;
-    if (a.priv != b.priv) return !a.priv; // public before private, at the same match tier
     return a.plen < b.plen;
 }
 
@@ -252,7 +255,9 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         total += 1;
         const name = field(line, COL_NAME);
         const p = field(line, COL_PATH);
-        const rank: u8 = if (allContain(name, terms)) 0 else if (allContain(p, terms)) 1 else 2;
+        // A match through an alternative name (`ArrayList append` → `Aligned().append`) is as
+        // good as a path match: it is the name the caller would actually write.
+        const rank: u8 = if (allContain(name, terms)) 0 else if (allContain(p, terms) or allContain(field(line, COL_AKA), terms)) 1 else 2;
         const priv = std.mem.eql(u8, field(line, COL_VIS), "priv");
         if (priv) npriv += 1;
         try hits.append(a, .{ .line = line, .rank = rank, .priv = priv, .plen = p.len });
@@ -275,6 +280,8 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     for (hits.items[0..shown]) |h| {
         const vis_tag: []const u8 = if (h.priv) "  [priv]" else "";
         try out.print("  {s}  ({s}){s}\n", .{ field(h.line, COL_PATH), field(h.line, COL_KIND), vis_tag });
+        const aka = field(h.line, COL_AKA);
+        if (aka.len > 0) try out.print("      ≡ {s}\n", .{truncField(a, aka, 160)});
         const mod = field(h.line, COL_MOD);
         if (mod.len > 0) try out.print("      ⟨{s}⟩\n", .{mod});
         const sig = field(h.line, COL_SIG);

@@ -47,7 +47,7 @@ the first un-evaluatable decl.
 ## Quickstart
 
 ```sh
-zig build                        # → the `zephem` binary at zig-out/bin/zephem
+zig build                        # → zig-out/bin/zephem (ReleaseSafe by default; -Doptimize=Debug to debug)
 zephem std                       # map the active toolchain's std → data/std/extracted/
 zephem map doc std.fmt.parseInt  # query the map (reads the TSVs directly, no index needed)
 ```
@@ -63,7 +63,23 @@ answer from the absence of one:
 | 2 | usage error — bad flag, missing operand, unknown subcommand |
 | 3 | the map or lookup table is **unavailable** — not the same as a miss; regenerate it |
 
-Misses and errors go to stderr; stdout carries only results.
+Misses and errors go to stderr; stdout carries only results. A `map doc`/`map show` miss also
+names the closest real paths on stderr (`std.fmt.parseint` → `std.fmt.parseInt`); the exit code
+is still 1.
+
+**Thin names are followed to their members.** Many everyday std names are an alias or a one-line
+wrapper around something else: `std.ArrayList` is `fn ArrayList(T) type`, returning
+`array_list.Aligned(T, null)`, so its members live under `std.array_list.Aligned().…`. The queries
+follow the `alias` and `delegates` edges the parser recorded, and print each hop:
+
+```sh
+zephem map show std.ArrayList          # std.ArrayList ─delegates→ std.array_list.Aligned, then its members
+zephem map doc std.ArrayList.append    # resolves to std.array_list.Aligned().append
+zephem look StringHashMap get          # alias → delegates → std.hash_map.HashMap().get
+```
+
+Each hit that is reachable under other public names lists them on a `≡` line; the lookup table
+carries them in its `aka` column. Nothing is inferred: every hop is an edge from `edges.tsv`.
 
 Needs Zig **zig 0.16.0** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
 command surface is `zephem <std|depth|overlays|lookup|look|map|docs>` — details below and in

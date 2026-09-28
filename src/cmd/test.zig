@@ -19,7 +19,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const usage =
         \\usage: zephem test
         \\
-        \\  run the query smoke battery (9 asserted std facts)
+        \\  run the query smoke battery (asserted std facts)
         \\
         \\  NOTE: bakes data/lookup.tsv if it is absent.
         \\
@@ -56,12 +56,23 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     try expectMap(c, w, &fails, "map doc flags a private decl", &.{ "doc", "std.heap.ArenaAllocator.Allocator" }, &.{ "[priv]", "private decl" });
     try expectMap(c, w, &fails, "map show sections public vs private", &.{ "show", "std.heap.ArenaAllocator" }, &.{ "## public", "## private" });
 
+    // ── redirects ── `std.ArrayList` is a thin fn over `array_list.Aligned`; `std.StringHashMap`
+    // is an alias of `hash_map.StringHashMap`, which delegates to `hash_map.HashMap`. Before these
+    // were followed, `map show std.ArrayList` listed one row and `look ArrayList append` never
+    // reached the real `append`.
+    try expectLook(c, w, &fails, "look reaches a member through a delegating name", &.{ "ArrayList", "append", "--limit", "2" }, &.{ "std.array_list.Aligned().append", "≡ std.ArrayList().append" });
+    try expectMap(c, w, &fails, "map show follows delegates to the members", &.{ "show", "std.ArrayList" }, &.{ "─delegates→ std.array_list.Aligned", "std.array_list.Aligned().append" });
+    try expectMap(c, w, &fails, "map doc rewrites the path people type", &.{ "doc", "std.ArrayList.append" }, &.{ "is std.array_list.Aligned().append", "fn append(" });
+    try expectMap(c, w, &fails, "map doc follows alias then delegates", &.{ "doc", "std.StringHashMap().get" }, &.{"std.hash_map.HashMap().get"});
+    try expectMap(c, w, &fails, "map find matches through the alternative name", &.{ "find", "StringHashMap", "getPtr" }, &.{"std.hash_map.HashMap().getPtr"});
+
     // ── outcomes ── the previous battery discarded these with `_ =`, which is how "map could
     // never return 3" shipped. A hit, a miss and their exit meanings are asserted facts now.
     try expectOutcome(c, w, &fails, "look hit returns .hit", true, &.{"parseInt"}, .hit);
     try expectOutcome(c, w, &fails, "look miss returns .miss", true, &.{"zzzznomatchzzz"}, .miss);
     try expectOutcome(c, w, &fails, "map doc miss returns .miss", false, &.{ "doc", "std.mem.copy" }, .miss);
     try expectOutcome(c, w, &fails, "map find hit returns .hit", false, &.{ "find", "ArrayList" }, .hit);
+    try expectOutcome(c, w, &fails, "a wrong-case path is still a miss", false, &.{ "doc", "std.fmt.parseint" }, .miss);
 
     // ── the sig splitter ── pure function, deterministic. The raw string is the shape that
     // produced downstream false positive B16: two parameters, prose commas counted as three.
