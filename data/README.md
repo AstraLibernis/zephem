@@ -79,3 +79,10 @@ The original `std.crypto` reflection pipeline (datasets, scripts, src) was retir
 its files deleted — **no archived `.tsv` lingers to be mistaken for current data.** Provenance and
 git-recovery instructions live in the archive tombstone,
 [`../docs/archive/README.md`](../docs/archive/README.md).
+
+## License of the datasets
+
+The datasets under `std/` are extracted from the Zig standard library and contain its
+declarations, signatures and doc comments, which are MIT-licensed (Expat, Copyright (c) Zig
+contributors; see [`ZIG-LICENSE`](ZIG-LICENSE)). The datasets, including the columns zephem derives,
+are released under the same MIT terms. zephem's code is GPL-3.0-or-later; the datasets are not.

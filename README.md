@@ -253,4 +253,12 @@ No Nushell, no Python, no duckdb.
 
 ## License
 
-MIT. See `LICENSE`.
+GPL-3.0-or-later · Copyright (C) 2026 AstraLibernis
+
+zephem is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. See `LICENSE`.
+
+**Exception: the datasets.** Everything under `data/std/` is extracted from the Zig standard library, which is MIT-licensed (Expat, Copyright (c) Zig contributors; see [`data/ZIG-LICENSE`](data/ZIG-LICENSE)). The datasets are released under the same MIT terms, so they can be used anywhere the Zig source can.
+
+Versions up to and including commit `95e1ed8` were released under the MIT License; copies obtained under those terms keep them.
+
+Contributions are welcome under the [Developer Certificate of Origin](https://developercertificate.org/): sign off each commit with `git commit -s`. You keep the copyright on your contribution.
