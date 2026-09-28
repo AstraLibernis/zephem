@@ -168,7 +168,7 @@ fn loadMap(c: Ctx) !Map {
     // staleness warning → stderr (keeps the result writer clean)
     if (toolchain.staleness(c, dir) catch null) |warn| {
         var eb: [512]u8 = undefined;
-        var ew = std.Io.File.stderr().writer(c.io, &eb);
+        var ew = std.Io.File.stderr().writerStreaming(c.io, &eb);
         ew.interface.print("{s}\n", .{warn}) catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
         ew.interface.flush() catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
     }

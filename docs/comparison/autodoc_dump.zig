@@ -61,7 +61,7 @@ pub fn main() !void {
     try visited.put(@intFromEnum(root_decl), {});
 
     var stdout_buf: [1 << 16]u8 = undefined;
-    var fw = std.Io.File.stdout().writer(io, &stdout_buf);
+    var fw = std.Io.File.stdout().writerStreaming(io, &stdout_buf);
     const w = &fw.interface;
 
     var printed: usize = 0;

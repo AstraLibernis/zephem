@@ -560,7 +560,7 @@ fn runSet(a: std.mem.Allocator, s: SweepCtx, set: []const usize, g: usize, depth
     try w.writer.writeAll(
         \\pub fn main(init: std.process.Init) !void {
         \\    var wbuf: [1 << 16]u8 = undefined;
-        \\    var fw = std.Io.File.stdout().writer(init.io, &wbuf);
+        \\    var fw = std.Io.File.stdout().writerStreaming(init.io, &wbuf);
         \\    const w = &fw.interface;
         \\
     );

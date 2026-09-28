@@ -25,7 +25,7 @@ pub fn helpRequested(c: Ctx, args: []const []const u8, usage: []const u8) !bool 
     for (args) |a| {
         if (!isHelp(a)) continue;
         var buf: [4096]u8 = undefined;
-        var w = std.Io.File.stdout().writer(c.io, &buf);
+        var w = std.Io.File.stdout().writerStreaming(c.io, &buf);
         try w.interface.writeAll(usage);
         try w.interface.flush();
         return true;
@@ -48,7 +48,7 @@ pub fn value(c: Ctx, args: []const []const u8, i: *usize, flag: []const u8, usag
 
 fn missingValue(c: Ctx, flag: []const u8, usage: []const u8) noreturn {
     var buf: [4096]u8 = undefined;
-    var w = std.Io.File.stderr().writer(c.io, &buf);
+    var w = std.Io.File.stderr().writerStreaming(c.io, &buf);
     w.interface.print("zephem: {s} requires a value\n\n", .{flag}) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
     w.interface.writeAll(usage) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
     w.interface.flush() catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
@@ -61,7 +61,7 @@ pub fn intValue(c: Ctx, comptime T: type, args: []const []const u8, i: *usize, f
     const raw = value(c, args, i, flag, usage);
     return std.fmt.parseInt(T, raw, 10) catch {
         var buf: [4096]u8 = undefined;
-        var w = std.Io.File.stderr().writer(c.io, &buf);
+        var w = std.Io.File.stderr().writerStreaming(c.io, &buf);
         w.interface.print("zephem: {s} expects a number, got: {s}\n\n", .{ flag, raw }) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
         w.interface.writeAll(usage) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
         w.interface.flush() catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
@@ -74,7 +74,7 @@ pub fn intValue(c: Ctx, comptime T: type, args: []const []const u8, i: *usize, f
 /// A miss now leaves stdout empty, like grep.
 pub fn diag(c: Ctx, comptime fmt: []const u8, fmt_args: anytype) !void {
     var buf: [4096]u8 = undefined;
-    var w = std.Io.File.stderr().writer(c.io, &buf);
+    var w = std.Io.File.stderr().writerStreaming(c.io, &buf);
     try w.interface.print(fmt, fmt_args);
     try w.interface.flush();
 }
@@ -82,7 +82,7 @@ pub fn diag(c: Ctx, comptime fmt: []const u8, fmt_args: anytype) !void {
 /// Reject an argument the subcommand did not consume. Exits 2 with usage.
 pub fn reject(c: Ctx, arg: []const u8, usage: []const u8) noreturn {
     var buf: [4096]u8 = undefined;
-    var w = std.Io.File.stderr().writer(c.io, &buf);
+    var w = std.Io.File.stderr().writerStreaming(c.io, &buf);
     w.interface.print("zephem: unrecognised argument: {s}\n\n", .{arg}) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
     w.interface.writeAll(usage) catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report
     w.interface.flush() catch {}; // zsnag:ok — stderr before exit(2); if it cannot be written there is nowhere left to report

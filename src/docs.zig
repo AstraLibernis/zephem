@@ -41,7 +41,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         if (std.mem.eql(u8, arg, "--check")) check = true else argv.reject(c, arg, usage);
     }
     const a = c.a;
-    var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));
+    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

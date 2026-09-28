@@ -125,7 +125,7 @@ fn emitScalar(w: *std.Io.Writer, comptime path: []const u8, val: anytype) !void 
 
 pub fn main(init: std.process.Init) !void {
     var wbuf: [1 << 16]u8 = undefined;
-    var fw = std.Io.File.stdout().writer(init.io, &wbuf);
+    var fw = std.Io.File.stdout().writerStreaming(init.io, &wbuf);
     const w = &fw.interface;
 
     try w.print("path\tkind\tdetail\n", .{});

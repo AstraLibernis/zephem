@@ -18,7 +18,7 @@ const util = @import("../util.zig");
 
 pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool {
     const a = c.a;
-    var er = std.Io.File.stderr().writer(c.io, try a.alloc(u8, 4096));
+    var er = std.Io.File.stderr().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &er.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

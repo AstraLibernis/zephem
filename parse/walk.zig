@@ -822,7 +822,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
 
     if (!report) return .{ .nodes = w.node_set.count(), .edges = w.edges.items.len, .scope = counts };
     var sbuf: [512]u8 = undefined;
-    var sfw = std.Io.File.stderr().writer(io, &sbuf);
+    var sfw = std.Io.File.stderr().writerStreaming(io, &sbuf);
     const s = &sfw.interface;
     try s.print("[parse] {s}\n  nodes: {d}   edges: {d}\n  scope: local {d} · cross {d} · primitive {d} · module {d} · generic {d} · inline {d} · unresolved {d}\n", .{
         root,                                   w.node_set.count(),                  w.edges.items.len,

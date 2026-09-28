@@ -42,7 +42,7 @@ pub fn runShape(c: Ctx, data_dir: []const u8) !bool {
 }
 
 fn runChecks(c: Ctx, data_dir: []const u8, with_builtins: bool, quiet: bool) !bool {
-    var er = std.Io.File.stderr().writer(c.io, try c.a.alloc(u8, 4096));
+    var er = std.Io.File.stderr().writerStreaming(c.io, try c.a.alloc(u8, 4096));
     defer er.interface.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
     if (!quiet) return checks(c, data_dir, with_builtins, &er.interface);
     // quiet: collect the report, and show it only if something failed

@@ -56,7 +56,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const dir = try vars.dataDir(c);
     try std.Io.Dir.cwd().createDirPath(c.io, try std.fs.path.join(a, &.{ dir, "derived" }));
 
-    var ow = std.Io.File.stdout().writer(c.io, try a.alloc(u8, 4096));
+    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

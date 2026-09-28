@@ -64,7 +64,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env) };
 
     var buf: [4096]u8 = undefined;
-    var ow = std.Io.File.stdout().writer(c.io, &buf);
+    var ow = std.Io.File.stdout().writerStreaming(c.io, &buf);
     const w = &ow.interface;
 
     if (check) {
