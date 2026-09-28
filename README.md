@@ -190,21 +190,21 @@ ship today, all self-verifying and byte-identical on rerun:
 > [`derived/`](data/std/derived/); engine internals in [`parse/`](parse/) and [`reflect/`](reflect/).
 
 - **`data/std/extracted/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
-  `reflect/resolve.zig`, which reflects each container in its own isolated subprocess so a poison
-  decl can't kill the sweep. On zig 0.16.0: 4,042 containers swept → **2,908 resolved (15,792
-  rows) / 927 genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
+  `reflect/resolve.zig`, driven by `zephem depth`: containers are probed in batches to find the
+  ones that fail to compile, the rest reflected ~50 per binary, so a poison decl never kills the
+  sweep. On zig 0.16.0: 4,042 containers swept → **2,912 resolved (15,796
+  rows) / 923 genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
   reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
-  *Not yet wired into `--check`* — an L5 rebuild is a full reflection sweep whose wall time is
-  strongly machine-dependent (≈1 min on a 16-lane desktop, ≈13 min on a 3-core VM), so its
-  reproducibility harness is a deliberately separate task (see PLAN.md).
+  Its reproducibility harness is `zephem depth --check`, separate from `zephem std --check`: an
+  L5 rebuild compiles every container (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each), batched — see PLAN.md).
 
 - **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from
   `zephem overlays`. Rather than force the text view (`nodes.tsv`) and the reflected view
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
-  **every** path by which witness can see it: `read+run` (both independently agree — 13,412),
+  **every** path by which witness can see it: `read+run` (both independently agree — 13,416),
   `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
   2,304), `read-only` (text read it but it can't run here: poison, private, or the `std`
-  root — 12,987). The two single-witness buckets **are** the differences; the agreement
+  root — 12,983). The two single-witness buckets **are** the differences; the agreement
   is independent evidence. One row per path in `nodes ∪ resolved` (28,703), **zero blanks**,
   enforced by `zephem overlays --check` and deterministic (`--check`).
 

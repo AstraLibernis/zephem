@@ -57,9 +57,14 @@ ride the *same* per-container pass (reflect once, emit more) rather than adding 
 
 ## 3. How it works — the extraction method
 
-**① Reflect one container per subprocess.** `resolve.zig` is a *template*: its `TARGET_PATH` /
-`TARGET` / `SKIP` lines are rewritten per container by the orchestrator (`zephem depth`),
-compiled, and run. Its own container-`@import` means a poison decl fails *this* process only.
+**① Batches, with a solo base case.** `resolve.zig` is a *template*. `zephem depth` reuses its
+reflection helpers in generated files: first ~50 `export fn` probes per object file, analysis only,
+to find the containers that fail (each failing probe reports its own error, attributed by line
+range; a batch with an error inside std is split in half); then ~50 clean containers per binary,
+each introduced by a `#zephem-target` line. Any batch that cannot be settled splits down to one
+container, handled the original way: the template's `TARGET_PATH` / `TARGET` / `SKIP` lines
+rewritten for it, compiled and run alone (`--solo` runs every container that way). Both paths
+produce byte-identical datasets.
 
 **② Read the type with `@typeInfo`.** For the target type it walks `@typeInfo(T).…decls`, and for
 each public decl reads `@TypeOf`/`@field`/`@typeName` — emitting a resolved value (`const_int`,
@@ -72,21 +77,23 @@ containers (they reflect on their own turn — `SKIP` prevents double-emission).
 the whole verdict; a timeout gets its own honest reason (`timeout after Ns`) so it never
 masquerades as a compile error.
 
-**④ Data-parallel sweep.** The full overlay is the sweep over every container in `index.tsv` — the
-same op over independent items — so it runs one lane per CPU, each in its own scratch file +
-subprocess, results sorted back to target order so the bytes match a serial sweep exactly.
+**④ Data-parallel sweep.** The batches are independent, so they run one lane per CPU, each in its
+own scratch file + subprocess; results are placed back in target order, so the bytes match a serial
+sweep exactly.
 
 **⑤ Reproducible — with two volatiles normalized out.** `--check` runs two fresh sweeps and diffs
 them. Anonymous-type disambiguators (`__struct_NNNN`, a semantic-analysis counter that drifts
 between identical compiles) drop their digits; absolute toolchain paths in poison reasons render
-relative — without this, byte-for-byte reproducibility would false-fail.
+relative, and a location inside the generated file drops its line and column (`<gen>: error: …`,
+which also makes a batched reason equal the solo one) — without this, byte-for-byte
+reproducibility would false-fail.
 
 **⑥ It proves itself.** the backward check in `zephem depth` re-reads the three files and reconciles them:
 Σ status row-counts == resolved rows, every attempted container is real in `index.tsv`, no path
 resolves twice, every poison reason is a real compiler error or a timeout.
 
-> Reproducibility is **separate from the commit on purpose** — the sweep is SLOW (machine-dependent:
-> ≈13 min on a 3-core VM, under a minute on a many-core desktop), so it is *never* wired into
+> Reproducibility is **separate from the commit on purpose** — a sweep compiles every container
+> (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each); the old one-per-process sweep took minutes), so it is *never* wired into
 > `zephem std`'s `--check`, which must stay fast. See [`../docs/reproducibility.md`](../docs/reproducibility.md).
 
 ## 4. The files

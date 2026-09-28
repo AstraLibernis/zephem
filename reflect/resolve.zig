@@ -22,8 +22,13 @@
 //! poison kills only this subprocess. The orchestrator (scripts/build_depth.nu) records
 //! the failure as `path · reason` and moves on — depth on demand, poison contained.
 //!
-//! The two TARGET lines below are rewritten per-container by the orchestrator. Left at
-//! their defaults this file is a runnable self-test:  `zig run reflect/resolve.zig`.
+//! The TARGET lines below are rewritten per-container by the orchestrator. Left at their
+//! defaults this file is a runnable self-test:  `zig run reflect/resolve.zig`.
+//!
+//! The batched sweep (src/depth.zig) reuses everything above `main` and generates its own
+//! entry points: many `export fn` probes in one object (analysis only, no binary) to find the
+//! containers that fail, then one `main` reflecting ~50 clean containers, each introduced by a
+//! `#zephem-target\t<i>` line so the rows can be split back out.
 
 const std = @import("std");
 
@@ -56,8 +61,10 @@ fn quoteId(comptime name: []const u8) []const u8 {
 }
 
 /// True if `name` is one of this container's direct child containers (don't descend into it).
-fn inSkip(comptime name: []const u8) bool {
-    inline for (SKIP) |s| {
+/// The list is a parameter, not the global `SKIP`, so one generated file can reflect many containers
+/// (the batched sweep in src/depth.zig), each with its own skip list.
+fn inSkip(comptime skip_list: []const []const u8, comptime name: []const u8) bool {
+    inline for (skip_list) |s| {
         if (comptime std.mem.eql(u8, name, s)) return true;
     }
     return false;
@@ -82,7 +89,7 @@ fn isContainer(comptime T: type) bool {
 /// levels — but only into types that are NOT themselves map containers: at the top level a
 /// child container is in SKIP (it reflects itself); deeper, generic/alias internals are never
 /// map containers, so they descend freely. `top` gates the SKIP check to direct children.
-fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime descend: u8, comptime top: bool) !void {
+fn emit(w: *std.Io.Writer, comptime skip_list: []const []const u8, comptime path: []const u8, comptime T: type, comptime descend: u8, comptime top: bool) !void {
     @setEvalBranchQuota(2_000_000); // big namespaces (std, os.linux) blow past the 1000 default
     const decls = comptime declsOf(T) orelse return;
     inline for (decls) |d| {
@@ -92,9 +99,9 @@ fn emit(w: *std.Io.Writer, comptime path: []const u8, comptime T: type, comptime
 
         if (FT == type) {
             try w.print("{s}\ttype\t{s}\n", .{ child, @typeName(field) });
-            const skip = top and comptime inSkip(d.name);
+            const skip = top and comptime inSkip(skip_list, d.name);
             if (descend > 0 and comptime isContainer(field) and !skip) {
-                try emit(w, child, field, descend - 1, false);
+                try emit(w, skip_list, child, field, descend - 1, false);
             }
             continue;
         }
@@ -124,7 +131,7 @@ pub fn main(init: std.process.Init) !void {
     try w.print("path\tkind\tdetail\n", .{});
     // comptime branch: a type reflects as a container; a value emits its single resolved fact.
     if (comptime @TypeOf(TARGET) == type) {
-        try emit(w, TARGET_PATH, TARGET, DESCEND, true);
+        try emit(w, &SKIP, TARGET_PATH, TARGET, DESCEND, true);
     } else {
         try emitScalar(w, TARGET_PATH, TARGET);
     }

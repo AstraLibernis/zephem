@@ -53,11 +53,17 @@ never folded into the base.
 7. **depth trim + batch experiment** (2026-07-17, v0.3.0) — `zephem depth` now **skips** the 207
    uninstantiated `<fn>()` factory containers (a new `skipped` status; poison deflated 1134→927,
    resolved unchanged). Also *tried and reverted* batching many containers per `zig run` — measured
-   SLOWER (std reflection is comptime-dominated, not invocation-dominated). See "Performance" below.
+   SLOWER at the time; superseded by item 9. See "Performance" below.
 8. **three quick-win facts** (2026-07-17, v0.4.0) — added the `mod` attribute (extern/export/inline/
    noinline/threadlocal/comptime + `var`-vs-`const` — a mutable global was previously indistinguishable
    from a const), the `errmember` attribute (named `error{…}` set members), and the **host triple** in
    `PINNED`. All additive attrs / a PINNED line → nodes/edges/index + the reflect layer unchanged.
+9. **batched sweep** (2026-09-28) — `zephem depth` probes containers ~50 per object file
+   (analysis only) to find the ones that fail, then reflects the clean ones ~50 per binary. Output
+   is byte-identical to the one-container-per-process sweep (kept as `--solo`), and a full sweep
+   went from 146–241 s to 16.5 s ± 0.1 s cold. The same work found that zephem's own generated source
+   broke on quoted identifiers (`@"PE32+"`), so 4 containers had been recorded as compiler poison;
+   they now resolve.
 
 ---
 
@@ -163,25 +169,47 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 
 ## Performance — what makes the L5 sweep faster, and what doesn't
 
-The sweep is **@@N_INDEX_RAW@@ container reflections, one `zig run` (compile) each**, already
-data-parallel (one lane per CPU, ~11× on a 12-core box). Its cost is **per-container comptime
-evaluation** — irreducible, and the reason each container needs its own compile (reflection is a
-comptime operation; you can't defer it to runtime).
+The sweep reflects **@@N_INDEX_RAW@@ containers**. Measured cold (benchfence, release build, one
+pinned core, the compiler cache wiped before every sample): a `zig run` of one container costs
+**169 ms**, and **~140 ms of that is analysing std's startup code** (`start.zig`,
+`std.process.Init`, `Io`) before it reaches the container; a container that fails to compile still
+costs 144 ms. The per-container reflection itself is small: **5.0 ms per container** when 50 share
+one binary, with byte-identical rows. So the old one-process-per-container sweep was paying that
+fixed cost 4,000 times — and adding lanes did not help (8, 16 and 24 lanes all measured the same:
+the CPU was already full).
 
+- ✅ **Probe-then-run batching** (2026-09-28, `src/depth.zig`) — ~50 containers per object file,
+  analysis only (`build-obj -fno-emit-bin`), finds the failing ones: an error inside the generated
+  file is attributed to its container by line range; an error inside std (which can be shared and
+  reported once) makes the batch split in half. The clean containers are then reflected ~50 per
+  binary, each introduced by a marker line. Any batch that still fails (a link-only error, a
+  timeout) splits in half down to the solo path, so the solo path is the base case of both.
+  Proven byte-identical to `--solo` over the full sweep (all three files), and `--check` passes.
+  **about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each)**; the solo sweep took 146–241 s on the same machine (2 runs).
+  Of the batched time, ~⅔ is the probe phase — mostly batches split because of std-located errors.
 - ✅ **The `()` skip** (above) removes the guaranteed-fail compiles. Small, correct.
-- ✅ **More cores** — near-linear. This is the real knob: ≈1 min on a 16-lane desktop vs ~7–13 min
-  on smaller boxes. The datasets are committed, so you only pay the sweep on a Zig **version bump**,
-  not routinely.
-- ✗ **Batching many containers per compile** — *tried and measured SLOWER* (2026-07-17). The cost is
-  comptime, not per-`zig run` overhead, so batching only concentrates the irreducible work into
-  fewer, larger, serial compiles; comptime-heavy modules (crypto) blow past the timeout and bisect
-  all the way down, paying solo cost **plus** the failed-batch recompiles, and it wrecks the
-  per-core load balancing. Reverted. Do not re-attempt.
+- ◐ **Peel std-error culprits instead of halving** — the probe phase's remaining cost. Tried
+  2026-09-28 and backed out untested: the first version lost the reference trace when a `note:`
+  line sat between an error and its trace, and re-probed the same batch forever.
+- ✗ **Batching blindly** (2026-07-17) — every batch held a failing container (~23% fail), so every
+  batch bisected and paid solo cost plus the failed recompiles. Probing first is what fixed it.
+- ✗ **Reporting the rows through `@compileError`** (no binary at all) — slower: comptime string
+  formatting in the interpreter (992 ms vs 351 ms on the largest container).
+- ✗ **`-fstrip` / `-fsingle-threaded`** — ~40% cheaper, but they change `builtin` values and so
+  change the reflected data (`std.debug` reflects differently). Rejected: the map describes a
+  normal build.
 - ◐ **Incremental dev mode** (reuse prior verdicts, re-reflect only changed containers) — a large
   win for iteration, but *not* the reproducible build, which must ask the compiler cold. Not built.
 
 ## Known hardening (from the 2026-06-19 adversarial audit)
 
+- **Generated source broke on quoted identifiers** — ✅ **fixed (2026-09-28).** A path like
+  `std.coff.OptionalHeader.@"PE32+"` was pasted raw into a string literal and the SKIP list, a syntax
+  error recorded as compiler poison for 4 containers. Paths are now escaped Zig strings and SKIP
+  entries bare names (what `@typeInfo` compares against).
+- **Poison reasons carried the generated file's line numbers** — ✅ **fixed (2026-09-28).**
+  `<gen>:29:55` became `<gen>:32:55` when a licence header was added to the template, breaking
+  `depth --check` with no change in what was poisoned. They now read `<gen>: error: …`.
 - **Timeouts can masquerade as poison** — ✅ **fixed.** The per-container reflect timeout exits
   124; `zephem depth` now branches on that exit code and records a distinct
   `timeout after Ns` reason, so a speed-gated container can never be mislabelled as a real

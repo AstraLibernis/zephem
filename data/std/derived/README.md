@@ -31,9 +31,9 @@ Self-checked both ways: `index.zig` asserts root span == total rows and every sp
 `path · origin · owner`, from `zephem overlays` over `nodes.tsv` (text view) and
 `resolved.tsv` (reflected view). Rather than force the two to match 1:1 and call every
 non-match a miss, it **compares** them and tags every path by which witness sees it:
-`read+run` (both agree — 13,412), `run-only` (only when reflected, e.g. a generic
+`read+run` (both agree — 13,416), `run-only` (only when reflected, e.g. a generic
 member like `Sha256.digest_length` — 2,304), `read-only` (text read it but it
-can't run here: poison, or the `std` root — 12,987). One row per path in
+can't run here: poison, or the `std` root — 12,983). One row per path in
 `nodes ∪ resolved` (28,703), **zero blanks**. Verified by `zephem overlays --check`.
 
 ### `canon.tsv` — dedup / dealias families

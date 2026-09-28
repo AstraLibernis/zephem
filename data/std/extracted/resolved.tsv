@@ -4137,6 +4137,9 @@ std.coff.ImportNameType	type	coff.ImportNameType
 std.coff.Relocation	type	coff.Relocation
 std.coff.IMAGE	type	coff.IMAGE
 std.coff.Header.Flags	type	coff.Header.Flags
+std.coff.OptionalHeader.Magic	type	coff.OptionalHeader.Magic
+std.coff.OptionalHeader.PE32	type	coff.OptionalHeader.PE32
+std.coff.OptionalHeader.@"PE32+"	type	coff.OptionalHeader.PE32+
 std.coff.ImportLookupEntry32.ByName	type	coff.ImportLookupEntry32.ByName
 std.coff.ImportLookupEntry32.ByOrdinal	type	coff.ImportLookupEntry32.ByOrdinal
 std.coff.ImportLookupEntry32.getImportByName	fn	fn (u32) ?coff.ImportLookupEntry32.ByName
@@ -12684,6 +12687,7 @@ std.os.windows.DNS.QUERY.REQUEST	type	os.windows.DNS.QUERY.REQUEST
 std.os.windows.DNS.QUERY.RESULT	type	os.windows.DNS.QUERY.RESULT
 std.os.windows.DNS.QUERY.CANCEL	type	os.windows.DNS.QUERY.CANCEL
 std.os.windows.DNS.QUERY.COMPLETION_ROUTINE	type	fn (?*anyopaque, *os.windows.DNS.QUERY.RESULT) callconv(.{ .x86_64_win = .{ .incoming_stack_alignment = null } }) void
+std.os.windows.DNS.QUERY.REQUEST.@"3"	type	os.windows.DNS.QUERY.REQUEST.3
 std.os.windows.DNS.RECORD.FLAGS	type	os.windows.DNS.RECORD.FLAGS
 std.os.windows.SYSTEM.INFORMATION_CLASS	type	os.windows.SYSTEM.INFORMATION_CLASS
 std.os.windows.SYSTEM.BASIC_INFORMATION	type	os.windows.SYSTEM.BASIC_INFORMATION

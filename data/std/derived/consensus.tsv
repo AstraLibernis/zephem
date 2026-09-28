@@ -9843,9 +9843,9 @@ std.coff.ImportLookupEntry64.mask	read-only	std.coff.ImportLookupEntry64
 std.coff.ImportNameType	read+run	std.coff
 std.coff.ImportType	read+run	std.coff
 std.coff.OptionalHeader	read+run	std.coff
-std.coff.OptionalHeader.@"PE32+"	read-only	std.coff.OptionalHeader
-std.coff.OptionalHeader.Magic	read-only	std.coff.OptionalHeader
-std.coff.OptionalHeader.PE32	read-only	std.coff.OptionalHeader
+std.coff.OptionalHeader.@"PE32+"	read+run	std.coff.OptionalHeader
+std.coff.OptionalHeader.Magic	read+run	std.coff.OptionalHeader
+std.coff.OptionalHeader.PE32	read+run	std.coff.OptionalHeader
 std.coff.Relocation	read+run	std.coff
 std.coff.SectionDefinition	read+run	std.coff
 std.coff.SectionHeader	read+run	std.coff
@@ -22617,7 +22617,7 @@ std.os.windows.DNS.QUERY	read+run	std.os.windows.DNS
 std.os.windows.DNS.QUERY.CANCEL	read+run	std.os.windows.DNS.QUERY
 std.os.windows.DNS.QUERY.COMPLETION_ROUTINE	read+run	std.os.windows.DNS.QUERY
 std.os.windows.DNS.QUERY.REQUEST	read+run	std.os.windows.DNS.QUERY
-std.os.windows.DNS.QUERY.REQUEST.@"3"	read-only	std.os.windows.DNS.QUERY.REQUEST
+std.os.windows.DNS.QUERY.REQUEST.@"3"	read+run	std.os.windows.DNS.QUERY.REQUEST
 std.os.windows.DNS.QUERY.RESULT	read+run	std.os.windows.DNS.QUERY
 std.os.windows.DNS.QUERY.STANDARD	read+run	std.os.windows.DNS.QUERY
 std.os.windows.DNS.RECORD	read+run	std.os.windows.DNS

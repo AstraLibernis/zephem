@@ -126,6 +126,5 @@ factory containers, so poison is higher than the pub-only parser's was — each 
 re-derives the buckets from this and reconciles them against `resolved`/`poison`.
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).
-The reflect sweep's wall time is machine-dependent (≈1 min on a 16-lane desktop,
-≈13 min on a 3-core VM), so its rebuild harness is a separate task from `zephem std`'s
-`--check` (see `PLAN.md`).
+The reflect sweep compiles every container (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each)), so its rebuild harness is
+`zephem depth --check`, separate from `zephem std`'s `--check` (see `PLAN.md`).

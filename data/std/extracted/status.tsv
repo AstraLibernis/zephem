@@ -979,10 +979,10 @@ std.coff.Header	resolved	1
 std.coff.Header.Flags	resolved	0
 std.coff.DllFlags	resolved	0
 std.coff.Subsystem	resolved	0
-std.coff.OptionalHeader	poison	0
+std.coff.OptionalHeader	resolved	3
 std.coff.OptionalHeader.Magic	resolved	0
 std.coff.OptionalHeader.PE32	resolved	0
-std.coff.OptionalHeader.@"PE32+"	poison	0
+std.coff.OptionalHeader.@"PE32+"	resolved	0
 std.coff.ImageDataDirectory	resolved	0
 std.coff.BaseRelocationDirectoryEntry	resolved	0
 std.coff.BaseRelocation	resolved	0
@@ -2910,8 +2910,8 @@ std.os.windows.DNS.CUSTOM_SERVER.TYPE	resolved	0
 std.os.windows.DNS.CUSTOM_SERVER.FLAGS	resolved	0
 std.os.windows.DNS.TYPE	resolved	2
 std.os.windows.DNS.QUERY	resolved	5
-std.os.windows.DNS.QUERY.REQUEST	poison	0
-std.os.windows.DNS.QUERY.REQUEST.@"3"	poison	0
+std.os.windows.DNS.QUERY.REQUEST	resolved	1
+std.os.windows.DNS.QUERY.REQUEST.@"3"	resolved	0
 std.os.windows.DNS.QUERY.RESULT	resolved	0
 std.os.windows.DNS.QUERY.CANCEL	resolved	0
 std.os.windows.DNS.FREE_TYPE	resolved	0

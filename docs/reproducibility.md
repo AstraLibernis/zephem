@@ -92,7 +92,23 @@ first build, post-upgrade, a different machine), which is precisely the case the
 protects: cache makes local re-runs fast and trivially identical; normalization makes the
 snapshot reproducible when the cache can't save you.
 
-### Timings — *machine-dependent; a relative reference, not a benchmark*
+### Timings — the batched sweep (2026-09-28)
+
+*(desktop: Ryzen 7 9800X3D, 8 cores / 16 threads, 24 GiB cgroup; Zig 0.16.0; release build)*
+
+| sweep | wall time | how measured |
+|---|---|---|
+| full L5 sweep, batched, **cold** | **16.5 s ± 0.1 s** | hyperfine, 10 runs, compiler cache + scratch wiped before each |
+| `zephem depth --check` (two batched sweeps) | ≈ 33 s | 1 run |
+| full L5 sweep, one process per container (`--solo`) | 146–241 s | 2 plain wall-clock runs |
+
+Batching removed the fixed cost that dominated: ~140 ms of analysing std's startup code in every
+`zig run`, paid once per container before, once per ~50 containers now. Per container, cold
+(benchfence, one pinned core): 169 ms solo, 5.0 ms in a batch of 50. The Zig cache now matters
+little — a warm batched sweep measured about 4 s faster than a cold one, all of it in the run
+phase (failing probes are never cached).
+
+### Timings — the one-process-per-container sweep (before 2026-09-28)
 
 These numbers scale with the host's core count and single-thread speed — read them as
 ballpark, not a contract. The cold sweep that takes ~13 min on a small VM finishes in well

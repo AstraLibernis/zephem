@@ -28,11 +28,16 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     var out: ?[]const u8 = null;
     var commit = false;
     var check = false;
+    var mode: depth.Mode = .batched;
     const usage =
-        \\usage: zephem depth [--commit] [--check] [--only P] [--filter S] [--list FILE]
-        \\                    [--limit N] [--timeout S] [--jobs N] [--out DIR]
+        \\usage: zephem depth [--commit] [--check] [--solo] [--only P] [--filter S]
+        \\                    [--list FILE] [--limit N] [--timeout S] [--jobs N] [--out DIR]
         \\
-        \\  run the L5 reflection sweep (SLOW — minutes; compiles once per container)
+        \\  run the L5 reflection sweep: containers are probed ~50 per object file, then the
+        \\  clean ones reflected ~50 per binary (see src/depth.zig)
+        \\
+        \\  --solo     the reference sweep: one `zig run` per container (minutes); produces
+        \\             byte-identical datasets, kept to re-prove the batched one
         \\
     ;
     if (try argv.helpRequested(c, args, usage)) return;
@@ -40,7 +45,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     var i: usize = 0;
     while (i < args.len) : (i += 1) {
         const arg = args[i];
-        if (std.mem.eql(u8, arg, "--commit")) commit = true else if (std.mem.eql(u8, arg, "--check")) check = true else if (std.mem.eql(u8, arg, "--only")) {
+        if (std.mem.eql(u8, arg, "--commit")) commit = true else if (std.mem.eql(u8, arg, "--check")) check = true else if (std.mem.eql(u8, arg, "--solo")) mode = .solo else if (std.mem.eql(u8, arg, "--only")) {
             only = argv.value(c, args, &i, "--only", usage);
         } else if (std.mem.eql(u8, arg, "--filter")) {
             filter = argv.value(c, args, &i, "--filter", usage);
@@ -74,7 +79,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const kids = try buildKids(a, index);
 
     if (check) {
-        try proveReproducible(c, index, kids, env, template, data_dir, timeout_s, jcount, w);
+        try proveReproducible(c, index, kids, env, template, data_dir, timeout_s, jcount, mode, w);
         return;
     }
 
@@ -82,9 +87,10 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const skips = try skipsFor(a, all_targets, kids);
     const outdir = if (commit) data_dir else (out orelse try std.fs.path.join(a, &.{ scratch_root, "out" }));
 
-    try w.print("[L5] reflecting {d} container(s) — {d} lanes, {d}s timeout each, poison isolated per process\n", .{ all_targets.len, jcount, timeout_s });
-    const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount);
+    try w.print("[L5] reflecting {d} container(s) — {s}, {d} lanes, {d}s timeout per compile\n", .{ all_targets.len, @tagName(mode), jcount, timeout_s });
+    const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount, mode);
     try w.print("[L5] resolved: {d} containers, {d} rows   poison: {d}   skipped: {d} (uninstantiated `()` factories)   attempted: {d}\n", .{ counts.resolved_containers, counts.resolved_rows, counts.poison, counts.skipped, counts.attempted });
+    if (mode == .batched) try w.print("[L5] probe {d} ms ({d} compiles) · run {d} ms ({d} compiles) · {d} solo\n", .{ counts.probe_ms, counts.probe_compiles, counts.run_ms, counts.run_compiles, counts.solo_compiles });
     try w.flush();
 
     if (!try verify.run(c, outdir, index_path, commit)) {
@@ -99,7 +105,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     }
 }
 
-fn proveReproducible(c: Ctx, index: rel.Table, kids: Kids, env: toolchain.Env, template: []const u8, data_dir: []const u8, timeout_s: u32, jcount: usize, w: *std.Io.Writer) !void {
+fn proveReproducible(c: Ctx, index: rel.Table, kids: Kids, env: toolchain.Env, template: []const u8, data_dir: []const u8, timeout_s: u32, jcount: usize, mode: depth.Mode, w: *std.Io.Writer) !void {
     const a = c.a;
     const man_path = try std.fs.path.join(a, &.{ data_dir, "SHA256SUMS.depth" });
     const man_bytes = std.Io.Dir.cwd().readFileAlloc(c.io, man_path, a, .unlimited) catch {
@@ -107,7 +113,7 @@ fn proveReproducible(c: Ctx, index: rel.Table, kids: Kids, env: toolchain.Env, t
         std.process.exit(1);
     };
     const recorded = try manifest.parse(a, man_bytes);
-    try w.print("[L5 check] proving the depth overlay rebuilds — two full reflection sweeps, {d} lanes each\n", .{jcount});
+    try w.print("[L5 check] proving the depth overlay rebuilds — two full {s} sweeps, {d} lanes each\n", .{ @tagName(mode), jcount });
 
     var committed: [names.len][manifest.hex_len]u8 = undefined;
     for (names, 0..) |name, k| committed[k] = try manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ data_dir, name }));
@@ -116,8 +122,8 @@ fn proveReproducible(c: Ctx, index: rel.Table, kids: Kids, env: toolchain.Env, t
     const skips = try skipsFor(a, targets, kids);
     const dir_a = try std.fs.path.join(a, &.{ scratch_root, "check-a" });
     const dir_b = try std.fs.path.join(a, &.{ scratch_root, "check-b" });
-    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sa" }), dir_a, timeout_s, jcount);
-    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sb" }), dir_b, timeout_s, jcount);
+    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sa" }), dir_a, timeout_s, jcount, mode);
+    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sb" }), dir_b, timeout_s, jcount, mode);
 
     var ok = true;
     for (names, 0..) |name, k| {
