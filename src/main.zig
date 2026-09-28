@@ -16,6 +16,7 @@ const cmd_test = @import("cmd/test.zig");
 const zlook = @import("zlook.zig");
 const zmap = @import("zmap.zig");
 const Outcome = @import("query.zig").Outcome;
+const argv = @import("args.zig");
 
 const usage =
     \\zephem <command> [args]
@@ -29,6 +30,8 @@ const usage =
     \\  map        browse the map: find / show / doc
     \\  test       run the query smoke battery
     \\
+    \\  every command takes -h/--help
+    \\
 ;
 
 pub fn main(init: std.process.Init) !void {
@@ -41,6 +44,7 @@ pub fn main(init: std.process.Init) !void {
 
     if (args.len < 2) return fail(c, usage);
     const cmd = args[1];
+    if (argv.isHelp(cmd) or std.mem.eql(u8, cmd, "help")) return help(c);
     const rest = args[2..];
 
     if (std.mem.eql(u8, cmd, "std")) return cmd_std.run(c, rest);
@@ -69,6 +73,15 @@ fn runWithStdout(c: Ctx, comptime f: fn (Ctx, []const []const u8, *std.Io.Writer
     const outcome = try f(c, args, &ow.interface);
     try ow.interface.flush();
     if (outcome != .hit) std.process.exit(outcome.code());
+}
+
+/// Asked-for help is a success: usage to stdout, exit 0. Only a missing or unknown command is
+/// a usage error (stderr, exit 2).
+fn help(c: Ctx) !void {
+    var buf: [1024]u8 = undefined;
+    var w = std.Io.File.stdout().writer(c.io, &buf);
+    try w.interface.writeAll(usage);
+    try w.interface.flush();
 }
 
 fn fail(c: Ctx, msg: []const u8) !void {
