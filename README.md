@@ -1,15 +1,58 @@
 <!-- GENERATED from templates/root.tmpl.md by `zephem docs` — edit the template, not this file. -->
 # zephem
 
-**Z**ig + **ephem**eral. A tool that extracts the structure of a Zig module — its
-**containers, labels, levels, and the references between them** — and transforms it into
-pristine, queryable **datasets** built for LLM consumption and static research.
+**A complete, self-checking map of the Zig standard library you actually have installed**, for
+the AI (or person) writing Zig against it. Zig's std changes fast, so a model's memory of it is
+usually a release or two out of date: `std.io.getStdOut`, `GeneralPurposeAllocator` and
+`std.fs.File` are all gone in zig 0.16.0. zephem answers from the source of the toolchain on your
+`PATH`, never from memory.
 
-The data is *ephemeral by design*: never hand-authored, always regenerated from the
-compiler's own source. A committed dataset is just a pinned snapshot of a fixed Zig
-version — the product is the pipeline that reproduces it, not the bytes.
+## Try it
 
-## What it does
+```sh
+zig build                             # → zig-out/bin/zephem
+zephem look read file                 # keyword search: what reads a file?
+zephem map doc std.ArrayList.append   # one declaration: signature, docs, a real usage
+zephem map doc std.io.Writer          # a name from an older Zig
+```
+
+```
+$ zephem look read file
+  std.Io.Dir.readFile  (fn)
+      fn readFile(dir: Dir, io: Io, file_path: []const u8, buffer: []u8) ReadFileError![]u8
+      → fn (Io.Dir, Io, []const u8, []u8) error{…30 members}![]u8
+      ⌁ Read all of file contents using a preallocated buffer. …
+
+$ zephem map doc std.ArrayList.append
+# std.ArrayList.append is std.array_list.Aligned().append
+  fn append(self: *Self, gpa: Allocator, item: T) Allocator.Error!void
+  Extend the list by 1 element. Allocates more memory as necessary. …
+  usage (a std test in std.array_list that calls append(; 8 more): …
+
+$ zephem map doc std.io.Writer            # exit code 1: not in this Zig
+std.io.Writer not in the map
+  did you mean: std.Io.Writer
+```
+
+## Why the answers can be trusted
+
+- **Generated, never written.** Every row comes from the toolchain's own files: std's source
+  (63,494 declarations across 340 files, public and private), the compiler's
+  resolved types, and its builtin table plus language reference (128 builtins).
+  Usage examples are std's own tests.
+- **It checks itself.** Each dataset is read back a second way and must reconcile: every node
+  hangs off a real parent, every reference resolves to a real node. If the check fails, nothing
+  is written.
+- **It is reproducible.** Regenerating on the same Zig gives byte-identical files (`--check`).
+- **It says when it doesn't know.** Exit codes separate a hit (0), a miss (1), a usage error
+  (2) and a missing map (3); a map pinned to another Zig version warns instead of guessing.
+- **It is fast.** Cold, on a Ryzen 7 9800X3D: a query takes 4–11 ms; rebuilding the whole map
+  after a Zig upgrade takes about 17 s, most of it the compiler-reflection sweep.
+
+zephem is a map and nothing else: the agent-facing pieces (the Claude Code skill and the
+post-edit hook) live in [zcanon](https://github.com/AstraLibernis/zcanon), which reads this map.
+
+## How it works: the datasets
 
 Point it at a Zig source root and it walks the whole logical namespace tree — following
 `@import` edges between files and descending inline `struct`/`enum`/`union`/`opaque`
@@ -49,7 +92,7 @@ comptime, so platform-gated and "poison" decls (e.g. `std.c.darwin`'s `assert(is
 are just harmless text. This is what lets it map **all** of std — a reflection walk dies on
 the first un-evaluatable decl.
 
-## Quickstart
+## Commands
 
 ```sh
 zig build                        # → zig-out/bin/zephem (ReleaseSafe by default; -Doptimize=Debug to debug)

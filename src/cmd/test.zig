@@ -55,6 +55,8 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // were followed, `map show std.ArrayList` listed one row and `look ArrayList append` never
     // reached the real `append`.
     try expectLook(c, w, &fails, "look reaches a member through a delegating name", &.{ "ArrayList", "append", "--limit", "2" }, &.{ "std.array_list.Aligned().append", "≡ std.ArrayList().append" });
+    // a deprecated alias is listed (it finds the member) but marked, after the current names
+    try expectLook(c, w, &fails, "deprecated alternative names are marked and last", &.{ "ArrayList", "append", "--limit", "2" }, &.{"≡ std.ArrayList().append, std.ArrayListAligned().append (deprecated)"});
     try expectMap(c, w, &fails, "map show follows delegates to the members", &.{ "show", "std.ArrayList" }, &.{ "─delegates→ std.array_list.Aligned", "std.array_list.Aligned().append" });
     try expectMap(c, w, &fails, "map doc rewrites the path people type", &.{ "doc", "std.ArrayList.append" }, &.{ "is std.array_list.Aligned().append", "fn append(" });
     try expectMap(c, w, &fails, "map doc follows alias then delegates", &.{ "doc", "std.StringHashMap().get" }, &.{"std.hash_map.HashMap().get"});

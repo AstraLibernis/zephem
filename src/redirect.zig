@@ -160,9 +160,11 @@ pub const Aka = struct {
     r: *const Redirects,
     rev: std.StringHashMap(std.ArrayList([]const u8)),
     memo: std.StringHashMap([]const []const u8),
+    /// names whose own doc comment starts `Deprecated` (std's convention)
+    deprecated: *const std.StringHashMap(void),
 
-    pub fn init(r: *const Redirects) !Aka {
-        return .{ .r = r, .rev = try r.reverseMap(), .memo = .init(r.a) };
+    pub fn init(r: *const Redirects, deprecated: *const std.StringHashMap(void)) !Aka {
+        return .{ .r = r, .rev = try r.reverseMap(), .memo = .init(r.a), .deprecated = deprecated };
     }
 
     pub fn of(self: *Aka, path: []const u8) ![]const u8 {
@@ -175,12 +177,20 @@ pub const Aka = struct {
             if (std.mem.endsWith(u8, head, "()")) head = head[0 .. head.len - 2];
             const srcs = try self.sources(head);
             if (srcs.len == 0) continue;
+            // Current names first; a deprecated one (`std.ArrayListUnmanaged`, "Deprecated; use
+            // `ArrayList`") is still listed — it finds the member when someone searches the old
+            // name — but marked, so it never reads as an equal alternative to write.
             var buf: std.ArrayList(u8) = .empty;
-            for (srcs, 0..) |s, i| {
-                if (i > 0) try buf.appendSlice(self.r.a, ", ");
-                // keep the `()` when the member hangs off a factory call
-                const call = if (std.mem.endsWith(u8, path[0..end], "()")) "()" else "";
-                try buf.print(self.r.a, "{s}{s}{s}", .{ s, call, path[dot..] });
+            var n: usize = 0;
+            for ([_]bool{ false, true }) |want_deprecated| {
+                for (srcs) |s| {
+                    if (self.deprecated.contains(s) != want_deprecated) continue;
+                    if (n > 0) try buf.appendSlice(self.r.a, ", ");
+                    n += 1;
+                    // keep the `()` when the member hangs off a factory call
+                    const call = if (std.mem.endsWith(u8, path[0..end], "()")) "()" else "";
+                    try buf.print(self.r.a, "{s}{s}{s}{s}", .{ s, call, path[dot..], if (want_deprecated) " (deprecated)" else "" });
+                }
             }
             return buf.items;
         }

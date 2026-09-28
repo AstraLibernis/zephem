@@ -103,7 +103,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 }
 
 /// The lookup table's format. Bump it when a column is added, so every older bake is rebuilt.
-const format = "zephem-lookup 2";
+const format = "zephem-lookup 3";
 
 /// What a bake from `dir` must be stamped with: the format plus every dataset manifest. A
 /// regenerated map changes a manifest, so the stamp stops matching.
@@ -196,7 +196,12 @@ fn build(c: Ctx, dir: []const u8) !Built {
         }
     }
     const redirects = try redirect.Redirects.build(a, nodes, edges);
-    var aka = try redirect.Aka.init(&redirects);
+    var deprecated = std.StringHashMap(void).init(a);
+    {
+        var it = doc.iterator();
+        while (it.next()) |e| if (std.mem.startsWith(u8, e.value_ptr.*, "Deprecated")) try deprecated.put(e.key_ptr.*, {});
+    }
+    var aka = try redirect.Aka.init(&redirects, &deprecated);
 
     // resolved → (rkind, rdetail), first occurrence per path
     var rkind = std.StringHashMap([]const u8).init(a);

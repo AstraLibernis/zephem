@@ -15,7 +15,7 @@ const std = @import("std");
 const Walk = @import("Walk.zig");
 const Decl = Walk.Decl;
 
-const gpa = std.heap.page_allocator;
+const gpa = std.heap.page_allocator; // zsnag:ok — R009: a one-shot dump; everything lives until exit, so the page allocator is the simplest correct choice
 
 const STD_ROOT = "/usr/lib/zig/std";
 
@@ -85,7 +85,7 @@ pub fn main() !void {
             }
 
             // Decide whether to descend (resolve aliases first).
-            var tgt: u32 = @intCast(i);
+            var tgt: u32 = @intCast(i); // zsnag:ok — R007: `i` indexes Walk.decls, which autodoc itself indexes with u32
             var chase: usize = 0;
             const target_cat = while (chase < 32) : (chase += 1) {
                 const c = @as(Decl.Index, @enumFromInt(tgt)).get().categorize();
@@ -110,5 +110,5 @@ pub fn main() !void {
     }
 
     try w.flush();
-    std.debug.print("# files={d} reachable_pub_fqns={d} total_decls={d}\n", .{ file_count, printed, Walk.decls.items.len });
+    std.debug.print("# files={d} reachable_pub_fqns={d} total_decls={d}\n", .{ file_count, printed, Walk.decls.items.len }); // zsnag:ok — R010: this stderr summary line is the program's intended output, read by the comparison note
 }
