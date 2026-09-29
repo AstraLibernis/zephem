@@ -60,22 +60,27 @@ never folded into the base.
    noinline/threadlocal/comptime + `var`-vs-`const` — a mutable global was previously indistinguishable
    from a const), the `errmember` attribute (named `error{…}` set members), and the **host triple** in
    `PINNED`. All additive attrs / a PINNED line → nodes/edges/index + the reflect layer unchanged.
-9. **batched sweep** (2026-09-28) — `zephem depth` probes containers ~50 per object file
+9. **batched sweep** (2026-09-28, v0.6.0) — `zephem depth` probes containers ~50 per object file
    (analysis only) to find the ones that fail, then reflects the clean ones ~50 per binary. Output
    is byte-identical to the one-container-per-process sweep (kept as `--solo`), and a full sweep
    went from 146–241 s to 16.5 s ± 0.1 s cold. The same work found that zephem's own generated source
    broke on quoted identifiers (`@"PE32+"`), so 4 containers had been recorded as compiler poison;
    they now resolve.
-10. **dependency maps** (2026-09-28) — `zephem deps <project>` maps the modules a project's
+10. **dependency maps** (2026-09-28, v0.6.0) — `zephem deps <project>` maps the modules a project's
    packages export (read from `build.zig.zon` / `build.zig`, never run), each self-checked into
    `data/deps/`; `look`/`map` search them next to std. Also: deprecated aliases are marked on the
    `≡` line, and the README leads with what zephem is for.
+11. **the map is the product** (2026-09-26 → 09-29, v0.6.0) — the bundled skill is removed (zcanon
+   owns agent usage); the lookup table lives inside the repo and `map` searches it in place,
+   rebaking a stale index; builtins are mapped; queries follow alias/delegates edges and suggest
+   the nearest name on a miss; Windows builds; ReleaseSafe by default; code relicensed to
+   GPL-3.0-or-later (the datasets stay MIT).
 
 ---
 
 ## Current status
 
-The datasets live in [`data/std/`](data/std/) (the product), pinned to **@@ZIG@@**.
+The datasets live in [`data/std/`](data/std/) (the foundation the map is built from), pinned to **@@ZIG@@**.
 Everything below is self-verifying and byte-identical on rerun.
 
 > This table is **status** — what's built and how much. The canonical per-dataset docs (columns,
