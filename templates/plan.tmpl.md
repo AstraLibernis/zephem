@@ -1,12 +1,14 @@
 # zephem — Plan
 
-**What it is.** A tool that, pointed at a Zig source root, emits pristine, queryable
-**datasets** of true, direct knowledge about it — starting with the namespace tree (where
-everything is, how it's shaped) and layering on deeper facts (signatures, doc-comments,
-references, resolved sizes). The product is the datasets *and the pipeline that regenerates
-and self-checks them*, never prose. Intended consumers: LLMs (clean tables that parse into
-context) and humans using the data as a research aid. Every fact is something the compiler
-or source states or computes — nothing authored.
+**What it is.** A complete, self-checking map of the Zig standard library you actually have
+installed (and, via `zephem deps`, your project's packages), regenerated from the toolchain's
+own source. Its purpose is to let an LLM (or a person) **look std APIs up instead of
+recalling them**: `zephem look` / `zephem map` answer from the map, and zcanon checks every
+std call against it. Underneath, the map is built as pristine, queryable **datasets**, starting
+with the namespace tree and layering on signatures, doc-comments, references and resolved
+types, each regenerated and self-checked by the pipeline. The datasets are the foundation,
+never prose; the map built on them is the product. Every fact is something the compiler
+or source states or computes, nothing authored.
 
 **Two guarantees, both proven, both orthogonal.**
 - **True** — every fact is extracted/computed, and the data checks itself (conservation,
