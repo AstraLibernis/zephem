@@ -99,4 +99,37 @@ pub fn build(b: *std.Build) void {
         }) });
         test_step.dependOn(&b.addRunArtifact(t).step);
     }
+
+    // `zig build test-tsan` — the tests that reach the `zephem` module (proc.zig runs work on
+    // threads) under ThreadSanitizer, which reports data races at run time. Needs LLVM (the
+    // self-hosted x86 backend does not instrument), libc, and an explicit linux-gnu target, whose
+    // kernel headers ship with Zig; the native one reads /usr/include, which lacks them here.
+    const tsan_step = b.step("test-tsan", "run the zephem-module tests under ThreadSanitizer (data races)");
+    const tsan_target = b.resolveTargetQuery(.{ .cpu_arch = .x86_64, .os_tag = .linux, .abi = .gnu });
+    const tsan_zephem = b.createModule(.{
+        .root_source_file = b.path("src/lib.zig"),
+        .target = tsan_target,
+        .optimize = optimize,
+        .link_libc = true,
+        .sanitize_thread = true,
+    });
+    inline for (.{
+        "src/test/relation_test.zig",
+        "src/test/manifest_test.zig",
+        "src/test/query_test.zig",
+        "src/test/pkg_test.zig",
+    }) |tf| {
+        const t = b.addTest(.{
+            .root_module = b.createModule(.{
+                .root_source_file = b.path(tf),
+                .target = tsan_target,
+                .optimize = optimize,
+                .link_libc = true,
+                .sanitize_thread = true,
+                .imports = &.{.{ .name = "zephem", .module = tsan_zephem }},
+            }),
+            .use_llvm = true,
+        });
+        tsan_step.dependOn(&b.addRunArtifact(t).step);
+    }
 }
