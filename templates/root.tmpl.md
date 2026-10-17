@@ -182,7 +182,7 @@ Cold, on a Ryzen 7 9800X3D (release build, one pinned core, benchfence-gated): `
 std is not the only code a project calls. `zephem deps` maps a project's packages the same way:
 
 ```sh
-cd myproject && zig build --fetch      # Zig 0.16 unpacks every package into ./zig-pkg/<hash>/
+cd myproject && zig build --fetch      # Zig unpacks every package into ./zig-pkg/<hash>/ (0.16 and 0.17 alike)
 zephem deps myproject                  # map each module those packages export
 zephem look clap parse                 # → clap.parse, clap.parseEx, …  (next to std's answers)
 zephem map doc clap.parse
