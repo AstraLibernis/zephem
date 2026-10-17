@@ -309,6 +309,7 @@ work (L4 runnable test examples, L6 version diff) live in **[PLAN.md](PLAN.md)**
 | **[data/README.md](data/README.md)** | the data layer + query recipes | users of the datasets |
 | **[data/std/extracted/README.md](data/std/extracted/README.md)** · **[derived/README.md](data/std/derived/README.md)** | per-dataset reference (columns, purpose, self-check) | anyone consuming a `.tsv` |
 | **[docs/reproducibility.md](docs/reproducibility.md)** | the determinism / `--check` contract | maintainers |
+| **[docs/release-diff.md](docs/release-diff.md)** | what a new Zig release is compared on, item by item, and which the diff covers | maintainers |
 | **[docs/comparison/autodoc-vs-zephem.md](docs/comparison/autodoc-vs-zephem.md)** | how coverage compares to Zig's own autodoc | curious |
 | **[docs/archive/README.md](docs/archive/README.md)** | tombstone — retired work, *historical only* | provenance |
 
