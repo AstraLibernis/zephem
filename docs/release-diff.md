@@ -68,7 +68,11 @@ then `zephem diff <previous> <new>`.
   `Type.Struct.is_tuple`, `HashMapUnmanaged().Header.capacity`, `ArrayBitSet().last_item_mask`,
   `Endormorphism.SplitScalar`, …). Fixed by two more support clauses (upward: children vouch
   for their container; shared members by name and kind between the two parents, not counting
-  the candidate itself — counting it re-admitted 3 coincidences). Net: 461 moves, 9 of the 12
-  recovered; the 3 still lost (`Fn.Param.Attributes.@"noalias"`, `Serializer.Options.whitespace`,
-  `ArmCpuinfoImpl.have_fields`) have no neighbour to vouch for them and stay listed as removed +
-  added, which is the honest default.
+  the candidate itself — counting it re-admitted 3 coincidences). Net: 458 moves; all 14 known
+  coincidences absent; the 6 "certain" lost moves recovered (`Type.Struct.is_tuple`,
+  `StructField.Attributes.@"comptime"`, `Header.capacity`, `ArrayBitSet().last_item_mask`,
+  `Endormorphism.SplitScalar`, `ArmCpuinfoImpl.CoreInfo.implementer`); 6 the auditor rated
+  "likely" or with no vouching neighbour stay listed as removed + added
+  (`Fn.Param.Attributes.@"noalias"`, `Serializer.Options.whitespace`, `ArmCpuinfoImpl.have_fields`,
+  `PrefixedArtifact.artifact`, `Cache.File.Stat`, `PkgConfigPkg.desc`) — the honest default when
+  nothing but a name connects two paths.
