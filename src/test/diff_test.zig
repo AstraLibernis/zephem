@@ -267,10 +267,10 @@ test "report: moves, tags and deprecations get their own sections; removed list 
     var tw: std.Io.Writer.Allocating = .init(a);
     try diff.report(a, &tw.writer, "0.16.0", "0.17.0", r, .{ .tsv = true });
     const t = tw.writer.buffered();
-    try std.testing.expect(std.mem.startsWith(u8, t, "change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\n"));
-    try std.testing.expect(std.mem.find(u8, t, "moved\tinferred\tstd.builtin.Type\tstruct\tstruct\tstd.builtin.Type\tstd.lang.Type\n") != null);
+    try std.testing.expect(std.mem.startsWith(u8, t, "change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\tdetail\n"));
+    try std.testing.expect(std.mem.find(u8, t, "moved\tinferred\tstd.builtin.Type\tstruct\tstruct\tstd.builtin.Type\tstd.lang.Type\t\n") != null);
     try std.testing.expect(std.mem.find(u8, t, "builtin_changed\textracted\t@splat\t") != null);
-    try std.testing.expect(std.mem.find(u8, t, "value_changed\textracted\tstd.mem.max\tconst_int\tconst_int\t4096\t8192\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "value_changed\textracted\tstd.mem.max\tconst_int\tconst_int\t4096\t8192\t\n") != null);
     try std.testing.expect(std.mem.find(u8, t, "deprecated_removed\textracted\tstd.mem.gone\t") != null);
 
     // Filters: one kind, one prefix.
@@ -284,4 +284,67 @@ test "versionFromPinned reads the first line" {
     try std.testing.expectEqualStrings("0.17.0", snapshot.versionFromPinned("zig 0.17.0\ntarget x86_64-linux\n").?);
     try std.testing.expectEqual(@as(?[]const u8, null), snapshot.versionFromPinned("target only\n"));
     try std.testing.expectEqual(@as(?[]const u8, null), snapshot.versionFromPinned("zig \n"));
+}
+
+test "parseSig: parameters, qualifiers, nested types, trailing comma, varargs, return type" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = diff.parseSig(a, "fn sort( comptime T: type, items: []T, context: anytype, comptime lessThanFn: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) void").?;
+    try std.testing.expectEqual(@as(usize, 4), s.types.len);
+    try std.testing.expectEqualStrings("T", s.names[0]);
+    try std.testing.expectEqualStrings("type", s.types[0]);
+    try std.testing.expectEqualStrings("lessThanFn", s.names[3]);
+    try std.testing.expectEqualStrings("fn (@TypeOf(context), lhs: T, rhs: T) bool", s.types[3]);
+    try std.testing.expectEqualStrings("void", s.ret);
+    const v = diff.parseSig(a, "fn printf(fmt: [*:0]const u8, ...) c_int").?;
+    try std.testing.expectEqual(@as(usize, 2), v.types.len);
+    try std.testing.expectEqualStrings("...", v.types[1]);
+    try std.testing.expectEqual(@as(?diff.SigShape, null), diff.parseSig(a, "not a signature"));
+}
+
+test "classify: every failure mode" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    try std.testing.expectEqual(diff.SigChange.arity, diff.classify(a, "fn f(a: u32) void", "fn f(a: u32, b: u32) void"));
+    try std.testing.expectEqual(diff.SigChange.order, diff.classify(a, "fn f(comptime T: type, a: []const T, min: usize, el: T) bool", "fn f(comptime T: type, a: []const T, el: T, min: usize) bool"));
+    try std.testing.expectEqual(diff.SigChange.types, diff.classify(a, "fn f(a: u32) void", "fn f(a: u64) void"));
+    try std.testing.expectEqual(diff.SigChange.return_type, diff.classify(a, "fn f(a: u32) !u8", "fn f(a: u32) !u16"));
+    try std.testing.expectEqual(diff.SigChange.error_set, diff.classify(a, "fn f(a: u32) Allocator.Error!void", "fn f(a: u32) !void"));
+    try std.testing.expectEqual(diff.SigChange.names, diff.classify(a, "fn deinit(self: *Manifest) void", "fn deinit(m: *Manifest) void"));
+    try std.testing.expectEqual(diff.SigChange.other, diff.classify(a, "garbage", "fn f() void"));
+}
+
+test "changed declarations carry their signature failure mode; doc-only changes are separate and flagged" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const on = "path\tkind\tname\tvis\nstd.x.f\tfn\tf\tpub\nstd.x.g\tfn\tg\tpub\nstd.x.h\tfn\th\tpub\n";
+    const oa = "path\tattr\tvalue\nstd.x.f\tsig\tfn f(a: u32) void\nstd.x.g\tsig\tfn g() void\nstd.x.g\tdoc\tReturns the thing.\nstd.x.h\tsig\tfn h() void\nstd.x.h\tdoc\tOld words.\n";
+    const nn = on;
+    const na = "path\tattr\tvalue\nstd.x.f\tsig\tfn f(a: u64) void\nstd.x.g\tsig\tfn g() void\nstd.x.g\tdoc\tReturns the thing. It is now cached and no longer allocates.\nstd.x.h\tsig\tfn h() void\nstd.x.h\tdoc\tNew words.\n";
+    const old = try diff.loadSideBytes(a, on, oa);
+    const new = try diff.loadSideBytes(a, nn, na);
+    const r = try diff.analyze(a, old, new, false);
+    try std.testing.expectEqual(@as(usize, 1), r.changes.len);
+    try std.testing.expectEqual(diff.SigChange.types, r.changes[0].sig_change.?);
+    try std.testing.expectEqual(@as(usize, 2), r.docs.len);
+    try std.testing.expectEqualStrings("std.x.g", r.docs[0].path);
+    try std.testing.expect(r.docs[0].hint);
+    try std.testing.expectEqualStrings("std.x.h", r.docs[1].path);
+    try std.testing.expect(!r.docs[1].hint);
+
+    var aw: std.Io.Writer.Allocating = .init(a);
+    try diff.report(a, &aw.writer, "a", "b", r, .{});
+    const text = aw.writer.buffered();
+    try std.testing.expect(std.mem.find(u8, text, "signature changes by failure mode: 1 types") != null);
+    try std.testing.expect(std.mem.find(u8, text, "## docs changed, declaration unchanged (2; 1 say") != null);
+    try std.testing.expect(std.mem.find(u8, text, "`std.x.g`\n    - was: Returns the thing.\n    - now: Returns the thing. It is now cached") != null);
+    var tw: std.Io.Writer.Allocating = .init(a);
+    try diff.report(a, &tw.writer, "a", "b", r, .{ .tsv = true });
+    const t = tw.writer.buffered();
+    try std.testing.expect(std.mem.startsWith(u8, t, "change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\tdetail\n"));
+    try std.testing.expect(std.mem.find(u8, t, "changed\textracted\tstd.x.f\tfn\tfn\tfn f(a: u32) void\tfn f(a: u64) void\ttypes\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "doc_changed\textracted\tstd.x.g\t\t\tReturns the thing.\tReturns the thing. It is now cached and no longer allocates.\thint\n") != null);
 }

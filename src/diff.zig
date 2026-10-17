@@ -13,7 +13,12 @@
 //!   deprecated declaration is gone); **enum tag sets** summarised per enum instead of as one
 //!   removal and one addition per tag; **builtins** added, removed or re-signed
 //!   (`builtins.tsv`); **resolved values** that changed (`resolved.tsv`: a const_int or
-//!   const_bool with a different value).
+//!   const_bool with a different value); **signature changes classified by how they fail**
+//!   (arity, parameter order with the same types, types, return type, error set, names only);
+//!   **doc-only changes** (same declaration, different prose), flagged when the new text says
+//!   "no longer" or "now" — the one signal for a semantics change.
+//! - a **curated** note per version (`data/versions/<v>/LANGUAGE.md`, from the release notes,
+//!   hand-written): language changes the map cannot see. Appended to the report, labelled.
 //! - one **inferred** item, always labelled: **moved** — a removed and an added declaration
 //!   with the same name, kind and signature, when that match is unique on both sides.
 //!
@@ -26,6 +31,7 @@ const Ctx = @import("ctx.zig").Ctx;
 const rel = @import("relation.zig");
 const snapshot = @import("snapshot.zig");
 const util = @import("util.zig");
+const sigmod = @import("sig.zig");
 
 pub const Decl = struct {
     name: []const u8,
@@ -62,6 +68,157 @@ pub const Change = struct {
     path: []const u8,
     old: ?Decl,
     new: ?Decl,
+    /// For a `changed` declaration whose signature differs: how the change fails.
+    sig_change: ?SigChange = null,
+};
+
+/// How a signature change fails for code written against the old one.
+pub const SigChange = enum {
+    /// parameter count differs — the call does not compile
+    arity,
+    /// same parameter types in a different order — the call COMPILES and is wrong
+    order,
+    /// a parameter type differs
+    types,
+    /// the return payload differs
+    return_type,
+    /// only the error set differs
+    error_set,
+    /// only parameter names differ — cosmetic
+    names,
+    /// one side could not be parsed as `fn name(params) ret`
+    other,
+};
+
+/// A parsed signature: parameter names, parameter types and the return type, as written.
+pub const SigShape = struct {
+    names: []const []const u8,
+    types: []const []const u8,
+    ret: []const u8,
+};
+
+/// Parse `fn name(a: T, comptime b: U) R` into its parts (prose inside the parameter list is
+/// removed first, see sig.zig). Returns null when the text is not shaped like a fn signature.
+pub fn parseSig(a: std.mem.Allocator, raw: []const u8) ?SigShape {
+    const text = sigmod.split(a, raw).sig;
+    const open = std.mem.find(u8, text, "(") orelse return null;
+    // The matching close paren at depth 0.
+    var depth: usize = 0;
+    var close: ?usize = null;
+    for (text[open..], open..) |ch, i| {
+        switch (ch) {
+            '(', '[', '{' => depth += 1,
+            ')', ']', '}' => {
+                depth -= 1;
+                if (depth == 0) {
+                    close = i;
+                    break;
+                }
+            },
+            else => {},
+        }
+    }
+    const end = close orelse return null;
+    var names: std.ArrayList([]const u8) = .empty;
+    var types: std.ArrayList([]const u8) = .empty;
+    var seg_start = open + 1;
+    depth = 0;
+    var i = open + 1;
+    while (i <= end) : (i += 1) {
+        const ch = text[i];
+        if (i < end) switch (ch) {
+            '(', '[', '{' => {
+                depth += 1;
+                continue;
+            },
+            ')', ']', '}' => {
+                depth -= 1;
+                continue;
+            },
+            else => {},
+        };
+        if (i == end or (ch == ',' and depth == 0)) {
+            const seg = std.mem.trim(u8, text[seg_start..i], " \t\n");
+            seg_start = i + 1;
+            if (seg.len == 0) continue; // trailing comma
+            // `name: Type`, with `comptime`/`noalias` qualifiers before the name; `...` is varargs.
+            if (findColonAtDepth0(seg)) |colon| {
+                var name = std.mem.trim(u8, seg[0..colon], " ");
+                while (std.mem.findScalarLast(u8, name, ' ')) |sp| name = std.mem.trim(u8, name[sp + 1 ..], " ");
+                names.append(a, name) catch return null;
+                types.append(a, std.mem.trim(u8, seg[colon + 1 ..], " ")) catch return null;
+            } else {
+                names.append(a, "") catch return null;
+                types.append(a, seg) catch return null;
+            }
+        }
+    }
+    return .{ .names = names.items, .types = types.items, .ret = std.mem.trim(u8, text[end + 1 ..], " ") };
+}
+
+fn findColonAtDepth0(seg: []const u8) ?usize {
+    var depth: usize = 0;
+    for (seg, 0..) |ch, i| switch (ch) {
+        '(', '[', '{' => depth += 1,
+        ')', ']', '}' => depth -= 1,
+        ':' => if (depth == 0) return i,
+        else => {},
+    };
+    return null;
+}
+
+/// The error-set part and the payload of a return type (`Allocator.Error!void` → both;
+/// `!void` → inferred set + payload; `void` → none + payload).
+fn splitReturn(ret: []const u8) struct { err: []const u8, payload: []const u8 } {
+    var depth: usize = 0;
+    for (ret, 0..) |ch, i| switch (ch) {
+        '(', '[', '{' => depth += 1,
+        ')', ']', '}' => depth -= 1,
+        '!' => if (depth == 0) return .{ .err = ret[0..i], .payload = ret[i + 1 ..] },
+        else => {},
+    };
+    return .{ .err = "", .payload = ret };
+}
+
+/// Classify how `new_sig` differs from `old_sig` for a caller of the old one.
+pub fn classify(a: std.mem.Allocator, old_sig: []const u8, new_sig: []const u8) SigChange {
+    const o = parseSig(a, old_sig) orelse return .other;
+    const n = parseSig(a, new_sig) orelse return .other;
+    if (o.types.len != n.types.len) return .arity;
+    var same_types = true;
+    for (o.types, n.types) |x, y| if (!std.mem.eql(u8, x, y)) {
+        same_types = false;
+    };
+    if (same_types) {
+        if (std.mem.eql(u8, o.ret, n.ret)) return .names;
+        const ro = splitReturn(o.ret);
+        const rn = splitReturn(n.ret);
+        return if (std.mem.eql(u8, ro.payload, rn.payload)) .error_set else .return_type;
+    }
+    // Same multiset of types in a different order?
+    const used = a.alloc(bool, n.types.len) catch return .types;
+    @memset(used, false);
+    var all_found = true;
+    outer: for (o.types) |x| {
+        for (n.types, 0..) |y, j| {
+            if (!used[j] and std.mem.eql(u8, x, y)) {
+                used[j] = true;
+                continue :outer;
+            }
+        }
+        all_found = false;
+        break;
+    }
+    return if (all_found) .order else .types;
+}
+
+/// A declaration whose prose changed while kind, visibility and signature stayed the same.
+pub const DocChange = struct {
+    path: []const u8,
+    old: []const u8,
+    new: []const u8,
+    /// The new text says "no longer" or "now" where the old did not — read it.
+    hint: bool,
 };
 
 pub const Move = struct { from: []const u8, to: []const u8, decl: Decl };
@@ -98,6 +255,7 @@ pub const Result = struct {
     tag_sets: []const TagSet,
     builtins: []const BuiltinChange,
     values: []const ValueChange,
+    docs: []const DocChange,
     /// Paths that are part of a move (either end), so the lists can skip them.
     moved: std.StringHashMapUnmanaged(void),
 };
@@ -200,7 +358,10 @@ pub fn compute(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
         if (new.decls.get(p)) |n| {
             if (!include_private and !isPub(o) and !isPub(n)) continue;
             const same = std.mem.eql(u8, o.kind, n.kind) and std.mem.eql(u8, o.vis, n.vis) and optEql(o.sig, n.sig);
-            if (!same) try out.append(a, .{ .what = .changed, .path = p, .old = o, .new = n });
+            if (!same) {
+                const sc: ?SigChange = if (o.sig != null and n.sig != null and !optEql(o.sig, n.sig)) classify(a, o.sig.?, n.sig.?) else null;
+                try out.append(a, .{ .what = .changed, .path = p, .old = o, .new = n, .sig_change = sc });
+            }
         } else {
             if (!include_private and !isPub(o)) continue;
             try out.append(a, .{ .what = .removed, .path = p, .old = o, .new = null });
@@ -352,6 +513,33 @@ pub fn valueChanges(a: std.mem.Allocator, old: Side, new: Side, include_private:
     return out.items;
 }
 
+fn semanticHint(old_doc: []const u8, new_doc: []const u8) bool {
+    const phrases = [_][]const u8{ "no longer", "now " };
+    for (phrases) |ph| {
+        if (std.ascii.findIgnoreCase(new_doc, ph) != null and std.ascii.findIgnoreCase(old_doc, ph) == null) return true;
+    }
+    return false;
+}
+
+/// Declarations present on both sides, otherwise unchanged, whose doc text differs.
+pub fn docChanges(a: std.mem.Allocator, old: Side, new: Side, include_private: bool) ![]const DocChange {
+    var out: std.ArrayList(DocChange) = .empty;
+    for (old.paths) |p| {
+        const o = old.decls.get(p).?;
+        const n = new.decls.get(p) orelse continue;
+        if (!include_private and !isPub(o) and !isPub(n)) continue;
+        const same_decl = std.mem.eql(u8, o.kind, n.kind) and std.mem.eql(u8, o.vis, n.vis) and optEql(o.sig, n.sig);
+        if (!same_decl) continue;
+        if (optEql(o.doc, n.doc)) continue;
+        // Gaining or losing the Deprecated marker is reported as a deprecation, not a doc change.
+        if (o.deprecated() != n.deprecated()) continue;
+        const od = o.doc orelse "";
+        const nd = n.doc orelse "";
+        try out.append(a, .{ .path = p, .old = od, .new = nd, .hint = semanticHint(od, nd) });
+    }
+    return out.items;
+}
+
 /// Run every analysis.
 pub fn analyze(a: std.mem.Allocator, old: Side, new: Side, include_private: bool) !Result {
     const changes = try compute(a, old, new, include_private);
@@ -368,6 +556,7 @@ pub fn analyze(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
         .tag_sets = try tagSets(a, changes),
         .builtins = try builtinChanges(a, old, new),
         .values = try valueChanges(a, old, new, include_private),
+        .docs = try docChanges(a, old, new, include_private),
         .moved = moved,
     };
 }
@@ -485,7 +674,22 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
     if (n_tags > 0) try w.print("; {d} of them enum tags, summarised per enum", .{n_tags});
     if (n_moved > 0) try w.print("; {d} paired as {d} moves, inferred", .{ n_moved, n_moved / 2 });
     try w.writeAll(")\n");
-    if (kept.items.len == 0 and r.builtins.len == 0 and r.values.len == 0) return;
+    {
+        var by_class: [@typeInfo(SigChange).@"enum".field_names.len]usize = @splat(0);
+        var any = false;
+        for (kept.items) |ch| if (ch.sig_change) |sc| {
+            by_class[@backingInt(sc)] += 1;
+            any = true;
+        };
+        if (any) {
+            try w.writeAll("signature changes by failure mode:");
+            inline for (@typeInfo(SigChange).@"enum".field_names, 0..) |name, idx| {
+                if (by_class[idx] > 0) try w.print(" {d} {s} ·", .{ by_class[idx], name });
+            }
+            try w.writeAll("  (order = compiles and is wrong)\n");
+        }
+    }
+    if (kept.items.len == 0 and r.builtins.len == 0 and r.values.len == 0 and r.docs.len == 0) return;
 
     // Where it moved.
     if (kept.items.len > 0) {
@@ -604,6 +808,29 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
         }
     }
 
+    {
+        var count: usize = 0;
+        var hints: usize = 0;
+        for (r.docs) |d| if (inScope(d.path, o)) {
+            count += 1;
+            if (d.hint) hints += 1;
+        };
+        if (count > 0) {
+            try w.print("\n## docs changed, declaration unchanged ({d}; {d} say \"no longer\" / \"now\" — read those)\n\n", .{ count, hints });
+            var shown: usize = 0;
+            for (r.docs) |d| {
+                if (!inScope(d.path, o) or !d.hint) continue;
+                if (o.limit != 0 and shown == o.limit) {
+                    try w.print("… {d} more flagged\n", .{hints - shown});
+                    break;
+                }
+                shown += 1;
+                try w.print("- `{s}`\n    - was: {s}\n    - now: {s}\n", .{ d.path, firstLine(d.old), firstLine(d.new) });
+            }
+            if (count > hints) try w.print("- … and {d} with reworded docs and no such phrase (listed in --tsv as doc_changed)\n", .{count - hints});
+        }
+    }
+
     try section(w, kept.items, r.moved, .added, "added (moves and enum tags listed in their own sections)", o.limit);
 }
 
@@ -644,6 +871,7 @@ fn section(w: *std.Io.Writer, changes: []const Change, moved: std.StringHashMapU
                 if (!std.mem.eql(u8, o.vis, n.vis)) try w.print("  {s} → {s}", .{ o.vis, n.vis });
                 try w.writeAll("\n");
                 if (!optEql(o.sig, n.sig)) {
+                    if (ch.sig_change) |sc| try w.print("    - signature: {t}{s}\n", .{ sc, if (sc == .order) " — same types, different order: compiles and is wrong" else "" });
                     try w.print("    - was: {s}\n    - now: {s}\n", .{ sigOr(ch.old), sigOr(ch.new) });
                 }
             },
@@ -652,15 +880,22 @@ fn section(w: *std.Io.Writer, changes: []const Change, moved: std.StringHashMapU
 }
 
 /// One row per finding. Columns are stable and only ever appended to:
-/// change · provenance · path · kind_old · kind_new · old · new
+/// change · provenance · path · kind_old · kind_new · old · new · detail
+/// (`detail` = the signature failure mode for changed rows, `hint` for flagged doc rows)
 fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
-    try w.writeAll("change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\n");
+    try w.writeAll("change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\tdetail\n");
     for (kept) |ch| {
-        try w.print("{t}\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\n", .{ ch.what, ch.path, kindOr(ch.old), kindOr(ch.new), sigOr(ch.old), sigOr(ch.new) });
+        try w.print("{t}\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\t", .{ ch.what, ch.path, kindOr(ch.old), kindOr(ch.new), sigOr(ch.old), sigOr(ch.new) });
+        if (ch.sig_change) |sc| try w.print("{t}", .{sc});
+        try w.writeAll("\n");
+    }
+    for (r.docs) |d| {
+        if (!inScope(d.path, o)) continue;
+        try w.print("doc_changed\textracted\t{s}\t\t\t{s}\t{s}\t{s}\n", .{ d.path, firstLine(d.old), firstLine(d.new), if (d.hint) "hint" else "" });
     }
     for (r.moves) |m| {
         if (!(inScope(m.from, o) or inScope(m.to, o))) continue;
-        try w.print("moved\tinferred\t{s}\t{s}\t{s}\t{s}\t{s}\n", .{ m.from, m.decl.kind, m.decl.kind, m.from, m.to });
+        try w.print("moved\tinferred\t{s}\t{s}\t{s}\t{s}\t{s}\t\n", .{ m.from, m.decl.kind, m.decl.kind, m.from, m.to });
     }
     for (r.deprecations) |d| {
         if (!inScope(d.path, o)) continue;
@@ -669,7 +904,7 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
             .lifted => "undeprecated",
             .removed => "deprecated_removed",
         };
-        try w.print("{s}\textracted\t{s}\t\t\t\t{s}\n", .{ tag, d.path, firstLine(d.doc) });
+        try w.print("{s}\textracted\t{s}\t\t\t\t{s}\t\n", .{ tag, d.path, firstLine(d.doc) });
     }
     if (o.prefix == null) for (r.builtins) |b| {
         const tag: []const u8 = switch (b.state) {
@@ -677,11 +912,11 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
             .removed => "builtin_removed",
             .changed => "builtin_changed",
         };
-        try w.print("{s}\textracted\t{s}\tbuiltin\tbuiltin\t{s}\t{s}\n", .{ tag, b.name, if (b.old) |x| x.sig else "", if (b.new) |x| x.sig else "" });
+        try w.print("{s}\textracted\t{s}\tbuiltin\tbuiltin\t{s}\t{s}\t\n", .{ tag, b.name, if (b.old) |x| x.sig else "", if (b.new) |x| x.sig else "" });
     };
     for (r.values) |v| {
         if (!inScope(v.path, o)) continue;
-        try w.print("value_changed\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\n", .{ v.path, v.kind, v.kind, v.old, v.new });
+        try w.print("value_changed\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\t\n", .{ v.path, v.kind, v.kind, v.old, v.new });
     }
 }
 
@@ -700,7 +935,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\  --only W     one kind of declaration change in the lists
         \\  --private    include private declarations
         \\  --limit N    rows per section (default 40; 0 = all)
-        \\  --tsv        one row per finding: change · provenance · path · kind_old · kind_new · old · new
+        \\  --tsv        one row per finding: change · provenance · path · kind_old · kind_new · old · new · detail
         \\
     ;
     if (try argv.helpRequested(c, args, usage)) return;
@@ -749,4 +984,15 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     };
     const result = try analyze(c.a, old, new, include_private);
     try report(c.a, w, old_name, new_name, result, o);
+
+    // Curated, not extracted: language changes the map cannot see, written by hand from the
+    // release notes and kept beside the version folder. Labelled so in the report; never in TSV.
+    if (!o.tsv) {
+        const note_path = try util.join(c.a, new_dir, "LANGUAGE.md");
+        if (std.Io.Dir.cwd().readFileAlloc(c.io, note_path, c.a, .unlimited)) |note| {
+            try w.print("\n## language changes — CURATED from the release notes, not extracted ({s})\n\n", .{note_path});
+            try w.writeAll(note);
+            if (note.len > 0 and note[note.len - 1] != '\n') try w.writeAll("\n");
+        } else |_| {}
+    }
 }

@@ -16,7 +16,7 @@ then `zephem diff <previous> <new>`.
 |---|---|---|---|---|
 | 1 | **removed** declaration (path in old, not in new) | `extracted/nodes.tsv` | hard break: the code will not compile | yes |
 | 2 | **added** declaration | `extracted/nodes.tsv` | the replacement is usually here | yes |
-| 3 | **signature changed** — split by failure mode: parameter count · parameter *order* with the same types (compiles, wrong result; `containsAtLeastScalar` in 0.17) · parameter or return type · error set | `extracted/attrs.tsv` (`sig`) | each fails differently; the order case is the one that compiles | one bucket; the split is next |
+| 3 | **signature changed** — split by failure mode: parameter count · parameter *order* with the same types (compiles, wrong result; `containsAtLeastScalar` in 0.17) · parameter or return type · error set | `extracted/attrs.tsv` (`sig`) | each fails differently; the order case is the one that compiles | yes — classified arity · order · types · return_type · error_set · names (`detail` column) |
 | 4 | **kind changed** (const → enum, fn → alias, decl ↔ field) | `extracted/nodes.tsv` | the same name is a different thing | yes |
 | 5 | **visibility changed** (pub → private) | `extracted/nodes.tsv` | a removal in practice | yes |
 | 6 | **deprecated** — newly marked, un-marked, or marked-then-removed, with the replacement the doc names | `extracted/attrs.tsv` (`doc`) | zsnag R011 reads this; the diff lists newly / lifted / deprecated-then-removed | yes |
@@ -24,7 +24,7 @@ then `zephem diff <previous> <new>`.
 | 8 | **builtins** added, removed, signature or doc changed | `extracted/builtins.tsv` | `@splat` grew a job; `@bitCast` lost one | yes (added / removed / re-signed; doc-only changes not yet) |
 | 9 | **resolved values** that changed (a `max_path_bytes`) | `extracted/resolved.tsv` | code that hard-codes the old value is silently wrong | yes (const_int / const_bool) |
 | 10 | **alias / delegation targets** (what `std.ArrayList` resolves to now) | `extracted/edges.tsv` | member lookups follow these hops | next |
-| 11 | **doc text changed, signature unchanged** — count it; flag docs that gain "no longer" / "now" | `extracted/attrs.tsv` (`doc`) | the only signal for a semantics change | next |
+| 11 | **doc text changed, signature unchanged** — count it; flag docs that gain "no longer" / "now" | `extracted/attrs.tsv` (`doc`) | the only signal for a semantics change | yes — counted; flagged rows listed (`doc_changed … hint`) |
 
 ## Inferences — always labelled as such
 
@@ -36,14 +36,14 @@ then `zephem diff <previous> <new>`.
 
 | # | change | source | why | where |
 |---|---|---|---|---|
-| 13 | **language changes** — operators and syntax (`**` → `@splat`, `void{}`, `errdefer \|err\|`) | the release notes, by hand | the map covers builtins, not grammar | a short note beside the version folder, labelled curated |
+| 13 | **language changes** — operators and syntax (`**` → `@splat`, `void{}`, `errdefer \|err\|`) | the release notes, by hand | the map covers builtins, not grammar | `data/versions/<v>/LANGUAGE.md`, appended to the report under a CURATED heading; never in `--tsv` |
 
 ## Rules
 
 - Every reported line carries its provenance: **extracted** (rows 1–11), **inferred** (12) or
   **curated** (13). An inference is never rewritten into a fact to look certain.
 - The TSV form (`zephem diff --tsv`) is the machine-facing output with stable columns
-  (`change · provenance · path · kind_old · kind_new · old · new`); the report is a view over it.
+  (`change · provenance · path · kind_old · kind_new · old · new · detail`); the report is a view over it.
   New columns are appended, never reordered.
 - The exact diff is complete on its own. Everything below row 11 is readability and
   zsnag's benefit, not correctness.

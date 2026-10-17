@@ -152,8 +152,11 @@ the others and two of them can be compared directly: `diff -r data/versions/0.16
 data/versions/0.17.0`, or `zephem diff 0.16.0 0.17.0`, which reports the public declarations
 removed, changed (kind, visibility, signature: old → new) and added, grouped by module, plus
 moves (inferred from a unique name + kind + signature match, and labelled so), enum tag sets
-per enum, deprecations (newly, lifted, deprecated-then-removed), builtins, and resolved
-constants whose value changed — the items of [docs/release-diff.md](docs/release-diff.md)
+per enum, deprecations (newly, lifted, deprecated-then-removed), builtins, resolved constants
+whose value changed, signature changes classified by how they fail (arity · order · types ·
+return type · error set · names only), doc-only changes flagged when the new text says "no
+longer"/"now", and a hand-curated `LANGUAGE.md` per version for what the map cannot see — the
+items of [docs/release-diff.md](docs/release-diff.md)
 (`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per finding
 with a provenance column for tools, `live` names `data/std/`). `zig build check` includes `snapshot --check`, so the
 committed folder for the current Zig can never drift from the live map. The regenerate
