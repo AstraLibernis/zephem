@@ -16,12 +16,12 @@ then `zephem diff <previous> <new>`.
 |---|---|---|---|---|
 | 1 | **removed** declaration (path in old, not in new) | `extracted/nodes.tsv` | hard break: the code will not compile | yes |
 | 2 | **added** declaration | `extracted/nodes.tsv` | the replacement is usually here | yes |
-| 3 | **signature changed** — split by failure mode: parameter count · parameter *order* with the same types (compiles, wrong result; `containsAtLeastScalar` in 0.17) · parameter or return type · error set | `extracted/attrs.tsv` (`sig`) | each fails differently; the order case is the one that compiles | yes — classified arity · order · types · return_type · error_set · names (`detail` column) |
+| 3 | **signature changed** — split by failure mode: parameter count · parameter *order* with the same types (compiles, wrong result; `containsAtLeastScalar` in 0.17) · parameter or return type · error set | `extracted/attrs.tsv` (`sig`) | each fails differently; the order case is the one that compiles | yes — classified arity · order · types · return_type · error_set · names · sig_dropped · sig_gained (`detail` column); whitespace / trailing-comma reflow is not a change |
 | 4 | **kind changed** (const → enum, fn → alias, decl ↔ field) | `extracted/nodes.tsv` | the same name is a different thing | yes |
 | 5 | **visibility changed** (pub → private) | `extracted/nodes.tsv` | a removal in practice | yes |
 | 6 | **deprecated** — newly marked, un-marked, or marked-then-removed, with the replacement the doc names | `extracted/attrs.tsv` (`doc`) | zsnag R011 reads this; the diff lists newly / lifted / deprecated-then-removed | yes |
 | 7 | **enum tag sets** (`Debug` → `debug`), summarised per enum | `extracted/nodes.tsv` (`tag`) | otherwise fifty removals and fifty additions | yes |
-| 8 | **builtins** added, removed, signature or doc changed | `extracted/builtins.tsv` | `@splat` grew a job; `@bitCast` lost one | yes (added / removed / re-signed; doc-only changes not yet) |
+| 8 | **builtins** added, removed, signature or doc changed | `extracted/builtins.tsv` | `@splat` grew a job; `@bitCast` lost one | yes (added / removed / re-signed / same signature with new langref text) |
 | 9 | **resolved values** that changed (a `max_path_bytes`) | `extracted/resolved.tsv` | code that hard-codes the old value is silently wrong | yes (const_int / const_bool) |
 | 10 | **alias / delegation targets** (what `std.ArrayList` resolves to now) | `extracted/edges.tsv` | member lookups follow these hops | next |
 | 11 | **doc text changed, signature unchanged** — count it; flag docs that gain "no longer" / "now" | `extracted/attrs.tsv` (`doc`) | the only signal for a semantics change | yes — counted; flagged rows listed (`doc_changed … hint`) |
@@ -30,7 +30,7 @@ then `zephem diff <previous> <new>`.
 
 | # | change | method | why | `zephem diff` |
 |---|---|---|---|---|
-| 12 | **moved** declaration | a removed and an added one with the same name, kind and signature (a different path); never on signature alone | turns 0.17's `std.builtin` → `std.lang` block into a rename table zsnag can quote ("moved to … in 0.17") | yes — `--tsv` rows `moved · inferred` |
+| 12 | **moved** declaration | a removed and an added one with the same name, kind and signature, unique on both sides; a declaration **without** a signature (field, container, const) additionally needs its parents to vouch — its parent is itself a move to the new parent, or two or more declarations move between the same two parents (a unique name alone produced ~3% coincidences in the 0.16 → 0.17 audit) | turns 0.17's `std.builtin` → `std.lang` block into a rename table zsnag can quote ("moved to … in 0.17") | yes — `--tsv` rows `moved · inferred` |
 
 ## Outside the map — curated, marked as such
 
@@ -47,3 +47,18 @@ then `zephem diff <previous> <new>`.
   New columns are appended, never reordered.
 - The exact diff is complete on its own. Everything below row 11 is readability and
   zsnag's benefit, not correctness.
+
+## Audit record
+
+- **2026-10-16, 0.16.0 → 0.17.0, blind re-computation from the raw TSVs by an independent agent
+  (own scripts, source read last).** Confirmed row by row: removed / changed / added sets, the
+  478 move pairs, 4,447 tags over 259 enums, 149 deprecations, 28 builtins, 11 values, 182 doc
+  changes with 1 flagged, snapshot integrity against `data/std/` and against git, TSV shape and
+  the report/TSV count agreement. Refuted and fixed the same day: 2 "changed" rows were
+  whitespace-only reflow (signatures are now compared normalised; `names` requires a name to
+  differ); 31 fn → alias/const rows had an empty `detail` (now `sig_dropped`); the header's
+  move count was wrong under `--only`/`--module` (now counted in scope); ~13 of 478 moves (3%)
+  were coincidences between sig-less declarations with a unique name (moves now need parent
+  support, row 12); 17 builtins with new langref text and the same signature were silent (now
+  `builtin_doc_changed`). Also hardened: depth counters saturate on an unmatched closer;
+  duplicate paths in `resolved.tsv` are read once.

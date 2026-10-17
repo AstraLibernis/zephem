@@ -86,9 +86,46 @@ pub const SigChange = enum {
     error_set,
     /// only parameter names differ — cosmetic
     names,
+    /// whitespace or a trailing comma only — cosmetic (normally folded away before classifying)
+    format,
+    /// the new side has no signature at all (a fn became an alias or a const)
+    sig_dropped,
+    /// the old side had no signature and the new one has (an alias or const became a fn)
+    sig_gained,
     /// one side could not be parsed as `fn name(params) ret`
     other,
 };
+
+/// A signature with runs of whitespace collapsed to one space and a trailing comma before
+/// `)` removed — the two ways `zig fmt` rewrites a signature without changing it.
+pub fn normalizeSig(a: std.mem.Allocator, sig: []const u8) ![]const u8 {
+    var out: std.ArrayList(u8) = .empty;
+    var pending_space = false;
+    for (sig) |ch| {
+        if (ch == ' ' or ch == '\t' or ch == '\n') {
+            pending_space = out.items.len > 0;
+            continue;
+        }
+        if (pending_space) {
+            // No space before a closer or a comma, nor after an opener; otherwise one space.
+            const last = out.items[out.items.len - 1];
+            const after_opener = last == '(' or last == '[' or last == '{';
+            if (!after_opener and ch != ')' and ch != ']' and ch != '}' and ch != ',') try out.append(a, ' ');
+            pending_space = false;
+        }
+        if (ch == ')' and out.items.len > 0 and out.items[out.items.len - 1] == ',') _ = out.pop();
+        try out.append(a, ch);
+    }
+    return out.items;
+}
+
+fn sigEqlNormalized(a: std.mem.Allocator, x: ?[]const u8, y: ?[]const u8) bool {
+    if (x == null and y == null) return true;
+    if (x == null or y == null) return false;
+    const nx = normalizeSig(a, x.?) catch return false;
+    const ny = normalizeSig(a, y.?) catch return false;
+    return std.mem.eql(u8, nx, ny);
+}
 
 /// A parsed signature: parameter names, parameter types and the return type, as written.
 pub const SigShape = struct {
@@ -109,7 +146,7 @@ pub fn parseSig(a: std.mem.Allocator, raw: []const u8) ?SigShape {
         switch (ch) {
             '(', '[', '{' => depth += 1,
             ')', ']', '}' => {
-                depth -= 1;
+                depth -|= 1;
                 if (depth == 0) {
                     close = i;
                     break;
@@ -132,7 +169,7 @@ pub fn parseSig(a: std.mem.Allocator, raw: []const u8) ?SigShape {
                 continue;
             },
             ')', ']', '}' => {
-                depth -= 1;
+                depth -|= 1;
                 continue;
             },
             else => {},
@@ -160,7 +197,7 @@ fn findColonAtDepth0(seg: []const u8) ?usize {
     var depth: usize = 0;
     for (seg, 0..) |ch, i| switch (ch) {
         '(', '[', '{' => depth += 1,
-        ')', ']', '}' => depth -= 1,
+        ')', ']', '}' => depth -|= 1,
         ':' => if (depth == 0) return i,
         else => {},
     };
@@ -173,7 +210,7 @@ fn splitReturn(ret: []const u8) struct { err: []const u8, payload: []const u8 } 
     var depth: usize = 0;
     for (ret, 0..) |ch, i| switch (ch) {
         '(', '[', '{' => depth += 1,
-        ')', ']', '}' => depth -= 1,
+        ')', ']', '}' => depth -|= 1,
         '!' => if (depth == 0) return .{ .err = ret[0..i], .payload = ret[i + 1 ..] },
         else => {},
     };
@@ -190,7 +227,10 @@ pub fn classify(a: std.mem.Allocator, old_sig: []const u8, new_sig: []const u8) 
         same_types = false;
     };
     if (same_types) {
-        if (std.mem.eql(u8, o.ret, n.ret)) return .names;
+        if (std.mem.eql(u8, o.ret, n.ret)) {
+            for (o.names, n.names) |x, y| if (!std.mem.eql(u8, x, y)) return .names;
+            return .format;
+        }
         const ro = splitReturn(o.ret);
         const rn = splitReturn(n.ret);
         return if (std.mem.eql(u8, ro.payload, rn.payload)) .error_set else .return_type;
@@ -221,7 +261,15 @@ pub const DocChange = struct {
     hint: bool,
 };
 
-pub const Move = struct { from: []const u8, to: []const u8, decl: Decl };
+pub const Move = struct {
+    from: []const u8,
+    to: []const u8,
+    decl: Decl,
+    /// What backs the pairing beyond the unique name + kind: the signature, or the parents
+    /// (the declaration's parent moved to the new parent too, or two or more declarations
+    /// moved between the same two parents).
+    support: enum { signature, parents },
+};
 
 pub const Deprecation = struct {
     pub const State = enum { newly, lifted, removed };
@@ -238,7 +286,7 @@ pub const TagSet = struct {
 };
 
 pub const BuiltinChange = struct {
-    pub const State = enum { added, removed, changed };
+    pub const State = enum { added, removed, changed, doc };
     name: []const u8,
     state: State,
     old: ?Builtin,
@@ -305,7 +353,9 @@ pub fn loadExtrasBytes(a: std.mem.Allocator, side: *Side, builtins_tsv: []const 
         var paths: std.ArrayList([]const u8) = .empty;
         for (t.rows) |row| {
             const path = t.cell(row, "path");
-            try side.resolved.put(a, path, .{ .kind = t.cell(row, "kind"), .detail = t.cell(row, "detail") });
+            const gop = try side.resolved.getOrPut(a, path);
+            if (gop.found_existing) continue; // resolved.tsv repeats some fn/type paths
+            gop.value_ptr.* = .{ .kind = t.cell(row, "kind"), .detail = t.cell(row, "detail") };
             try paths.append(a, path);
         }
         std.mem.sort([]const u8, paths.items, {}, lessThan);
@@ -357,9 +407,10 @@ pub fn compute(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
         const o = old.decls.get(p).?;
         if (new.decls.get(p)) |n| {
             if (!include_private and !isPub(o) and !isPub(n)) continue;
-            const same = std.mem.eql(u8, o.kind, n.kind) and std.mem.eql(u8, o.vis, n.vis) and optEql(o.sig, n.sig);
+            const same_sig = sigEqlNormalized(a, o.sig, n.sig);
+            const same = std.mem.eql(u8, o.kind, n.kind) and std.mem.eql(u8, o.vis, n.vis) and same_sig;
             if (!same) {
-                const sc: ?SigChange = if (o.sig != null and n.sig != null and !optEql(o.sig, n.sig)) classify(a, o.sig.?, n.sig.?) else null;
+                const sc: ?SigChange = if (same_sig) null else if (o.sig != null and n.sig != null) classify(a, o.sig.?, n.sig.?) else if (o.sig != null) .sig_dropped else .sig_gained;
                 try out.append(a, .{ .what = .changed, .path = p, .old = o, .new = n, .sig_change = sc });
             }
         } else {
@@ -383,9 +434,15 @@ pub fn compute(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
 
 /// Moves (INFERRED): a removed and an added declaration with the same name, kind and
 /// signature, where that key matches exactly one removed and exactly one added declaration.
-/// Enum tags are excluded (they are summarised per enum). A declaration without a signature
-/// (a container, a const) pairs on name + kind alone, so for those the uniqueness requirement
-/// is what keeps `Options` from being "moved" to a random other `Options`.
+/// Enum tags are excluded (they are summarised per enum).
+///
+/// A declaration without a signature (a field, a container, a const) has only its name and
+/// kind to pair on, and a unique name is not enough: an audit of the 0.16 → 0.17 run found
+/// ~3% coincidences (`Fuzz.CoverageMap.mapped_memory` → `MachOFile.DsymFile.mapped_memory`).
+/// So a sig-less candidate is accepted only with **support from its parents**: its parent is
+/// itself an accepted move to the new parent, or at least two candidates move between the
+/// same two parents (two coincidences between the same pair of containers are unlikely).
+/// Computed to a fixpoint so a moved container vouches for its members and vice versa.
 pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
     const Key = struct {
         fn of(al: std.mem.Allocator, d: Decl) ![]const u8 {
@@ -403,7 +460,8 @@ pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
         const gop = try map.getOrPut(a, try Key.of(a, d));
         gop.value_ptr.* = if (gop.found_existing) ambiguous else i;
     }
-    var out: std.ArrayList(Move) = .empty;
+    // Candidates: unique on both sides.
+    var cands: std.ArrayList(Move) = .empty;
     for (changes) |ch| {
         if (ch.what != .removed) continue;
         const d = ch.old.?;
@@ -413,9 +471,42 @@ pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
         if (ri == ambiguous) continue;
         const ai = added.get(key) orelse continue;
         if (ai == ambiguous) continue;
-        try out.append(a, .{ .from = ch.path, .to = changes[ai].path, .decl = d });
+        try cands.append(a, .{ .from = ch.path, .to = changes[ai].path, .decl = d, .support = if (d.sig != null) .signature else .parents });
     }
+    // Signature-backed candidates stand on their own. Sig-less ones need parent support.
+    const accepted = try a.alloc(bool, cands.items.len);
+    @memset(accepted, false);
+    var pair_count: std.StringHashMapUnmanaged(usize) = .empty; // "fromParent\x00toParent" → candidates
+    for (cands.items) |m| {
+        const gop = try pair_count.getOrPut(a, try parentPair(a, m));
+        if (!gop.found_existing) gop.value_ptr.* = 0;
+        gop.value_ptr.* += 1;
+    }
+    var accepted_pairs: std.StringHashMapUnmanaged(void) = .empty; // "from\x00to" of accepted moves
+    for (cands.items, 0..) |m, i| if (m.support == .signature) {
+        accepted[i] = true;
+        try accepted_pairs.put(a, try a.print("{s}\x00{s}", .{ m.from, m.to }), {});
+    };
+    var progress = true;
+    while (progress) {
+        progress = false;
+        for (cands.items, 0..) |m, i| {
+            if (accepted[i]) continue;
+            const pp = try parentPair(a, m);
+            const ok = (pair_count.get(pp) orelse 0) >= 2 or accepted_pairs.contains(pp);
+            if (!ok) continue;
+            accepted[i] = true;
+            try accepted_pairs.put(a, try a.print("{s}\x00{s}", .{ m.from, m.to }), {});
+            progress = true;
+        }
+    }
+    var out: std.ArrayList(Move) = .empty;
+    for (cands.items, 0..) |m, i| if (accepted[i]) try out.append(a, m);
     return out.items;
+}
+
+fn parentPair(a: std.mem.Allocator, m: Move) ![]const u8 {
+    return a.print("{s}\x00{s}", .{ util.dottedParent(m.from), util.dottedParent(m.to) });
 }
 
 /// Deprecation state changes among the (public-filtered) declarations.
@@ -474,14 +565,18 @@ pub fn tagSets(a: std.mem.Allocator, changes: []const Change) ![]const TagSet {
     return out.items;
 }
 
-/// Builtins added, removed, or with a different signature (a doc-only change is not reported:
-/// builtin docs are prose from the langref).
+/// Builtins added, removed, with a different signature, or with the same signature and
+/// different langref prose (`doc`: the only signal for a semantics change, e.g. `@bitCast`).
 pub fn builtinChanges(a: std.mem.Allocator, old: Side, new: Side) ![]const BuiltinChange {
     var out: std.ArrayList(BuiltinChange) = .empty;
     for (old.builtin_names) |n| {
         const o = old.builtins.get(n).?;
         if (new.builtins.get(n)) |nw| {
-            if (!std.mem.eql(u8, o.sig, nw.sig)) try out.append(a, .{ .name = n, .state = .changed, .old = o, .new = nw });
+            if (!std.mem.eql(u8, o.sig, nw.sig)) {
+                try out.append(a, .{ .name = n, .state = .changed, .old = o, .new = nw });
+            } else if (!std.mem.eql(u8, o.doc, nw.doc)) {
+                try out.append(a, .{ .name = n, .state = .doc, .old = o, .new = nw });
+            }
         } else try out.append(a, .{ .name = n, .state = .removed, .old = o, .new = null });
     }
     for (new.builtin_names) |n| {
@@ -528,7 +623,7 @@ pub fn docChanges(a: std.mem.Allocator, old: Side, new: Side, include_private: b
         const o = old.decls.get(p).?;
         const n = new.decls.get(p) orelse continue;
         if (!include_private and !isPub(o) and !isPub(n)) continue;
-        const same_decl = std.mem.eql(u8, o.kind, n.kind) and std.mem.eql(u8, o.vis, n.vis) and optEql(o.sig, n.sig);
+        const same_decl = std.mem.eql(u8, o.kind, n.kind) and std.mem.eql(u8, o.vis, n.vis) and sigEqlNormalized(a, o.sig, n.sig);
         if (!same_decl) continue;
         if (optEql(o.doc, n.doc)) continue;
         // Gaining or losing the Deprecated marker is reported as a deprecation, not a doc change.
@@ -657,22 +752,29 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
     var n_removed: usize = 0;
     var n_changed: usize = 0;
     var n_tags: usize = 0;
-    var n_moved: usize = 0;
+    var n_hidden: usize = 0;
     for (kept.items) |ch| {
         switch (ch.what) {
             .added => n_added += 1,
             .removed => n_removed += 1,
-            .changed => n_changed += 1,
+            .changed => {
+                n_changed += 1;
+                if (isPub(ch.old.?) and !isPub(ch.new.?)) n_hidden += 1;
+            },
         }
         const d = (ch.old orelse ch.new).?;
         if (ch.what != .changed and isTag(d)) n_tags += 1;
-        if (r.moved.contains(ch.path)) n_moved += 1;
     }
+    var n_moves: usize = 0;
+    for (r.moves) |m| if (inScope(m.from, o) or inScope(m.to, o)) {
+        n_moves += 1;
+    };
     try w.print("# zephem diff {s} → {s}", .{ old_name, new_name });
     if (o.prefix) |p| try w.print("  (under {s})", .{p});
     try w.print("\n\n{d} removed · {d} changed · {d} added  (public declarations", .{ n_removed, n_changed, n_added });
     if (n_tags > 0) try w.print("; {d} of them enum tags, summarised per enum", .{n_tags});
-    if (n_moved > 0) try w.print("; {d} paired as {d} moves, inferred", .{ n_moved, n_moved / 2 });
+    if (n_moves > 0) try w.print("; {d} moves inferred", .{n_moves});
+    if (n_hidden > 0) try w.print("; {d} went private — a removal in practice", .{n_hidden});
     try w.writeAll(")\n");
     {
         var by_class: [@typeInfo(SigChange).@"enum".field_names.len]usize = @splat(0);
@@ -713,7 +815,7 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
             count += 1;
         };
         if (count > 0) {
-            try w.print("\n## moved — INFERRED: same name, kind and signature, unique on both sides ({d})\n\n", .{count});
+            try w.print("\n## moved — INFERRED: unique name + kind, backed by the signature or by the parents moving together ({d})\n\n", .{count});
             var shown: usize = 0;
             for (r.moves) |m| {
                 if (!(inScope(m.from, o) or inScope(m.to, o))) continue;
@@ -722,7 +824,7 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
                     break;
                 }
                 shown += 1;
-                try w.print("- `{s}` → `{s}`  ({s})\n", .{ m.from, m.to, m.decl.kind });
+                try w.print("- `{s}` → `{s}`  ({s}; by {t})\n", .{ m.from, m.to, m.decl.kind, m.support });
             }
         }
     }
@@ -785,6 +887,7 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
             .added => try w.print("- `{s}`  added  {s}\n", .{ b.name, b.new.?.sig }),
             .removed => try w.print("- `{s}`  removed  {s}\n", .{ b.name, b.old.?.sig }),
             .changed => try w.print("- `{s}`\n    - was: {s}\n    - now: {s}\n", .{ b.name, b.old.?.sig, b.new.?.sig }),
+            .doc => try w.print("- `{s}`  same signature, langref text changed — read it\n", .{b.name}),
         };
     }
 
@@ -895,7 +998,7 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
     }
     for (r.moves) |m| {
         if (!(inScope(m.from, o) or inScope(m.to, o))) continue;
-        try w.print("moved\tinferred\t{s}\t{s}\t{s}\t{s}\t{s}\t\n", .{ m.from, m.decl.kind, m.decl.kind, m.from, m.to });
+        try w.print("moved\tinferred\t{s}\t{s}\t{s}\t{s}\t{s}\t{t}\n", .{ m.from, m.decl.kind, m.decl.kind, m.from, m.to, m.support });
     }
     for (r.deprecations) |d| {
         if (!inScope(d.path, o)) continue;
@@ -911,6 +1014,7 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
             .added => "builtin_added",
             .removed => "builtin_removed",
             .changed => "builtin_changed",
+            .doc => "builtin_doc_changed",
         };
         try w.print("{s}\textracted\t{s}\tbuiltin\tbuiltin\t{s}\t{s}\t\n", .{ tag, b.name, if (b.old) |x| x.sig else "", if (b.new) |x| x.sig else "" });
     };

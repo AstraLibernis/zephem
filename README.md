@@ -151,7 +151,8 @@ that is committed and never rewritten, so every release of std zephem has mapped
 the others and two of them can be compared directly: `diff -r data/versions/0.16.0
 data/versions/0.17.0`, or `zephem diff 0.16.0 0.17.0`, which reports the public declarations
 removed, changed (kind, visibility, signature: old → new) and added, grouped by module, plus
-moves (inferred from a unique name + kind + signature match, and labelled so), enum tag sets
+moves (inferred: a unique name + kind + signature, or for signature-less declarations their
+parents moving together; labelled so), enum tag sets
 per enum, deprecations (newly, lifted, deprecated-then-removed), builtins, resolved constants
 whose value changed, signature changes classified by how they fail (arity · order · types ·
 return type · error set · names only), doc-only changes flagged when the new text says "no

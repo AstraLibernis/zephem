@@ -22,6 +22,8 @@ const old_nodes =
     "std.builtin\tns\tbuiltin\tpub\n" ++
     "std.builtin.Type\tstruct\tType\tpub\n" ++
     "std.builtin.Type.name\tfield\tname\tpub\n" ++
+    "std.builtin.Signedness\tenum\tSignedness\tpub\n" ++
+    "std.a.X.count\tfield\tcount\tpub\n" ++
     "std.builtin.Mode\tenum\tMode\tpub\n" ++
     "std.builtin.Mode.Debug\ttag\tDebug\tpub\n" ++
     "std.builtin.Mode.ReleaseSafe\ttag\tReleaseSafe\tpub\n" ++
@@ -50,6 +52,8 @@ const new_nodes =
     "std.lang\tns\tlang\tpub\n" ++
     "std.lang.Type\tstruct\tType\tpub\n" ++
     "std.lang.Type.name\tfield\tname\tpub\n" ++
+    "std.lang.Signedness\tenum\tSignedness\tpub\n" ++
+    "std.b.Y.count\tfield\tcount\tpub\n" ++
     "std.builtin\tns\tbuiltin\tpub\n" ++
     "std.builtin.Mode\tenum\tMode\tpub\n" ++
     "std.builtin.Mode.debug\ttag\tdebug\tpub\n" ++
@@ -67,11 +71,13 @@ const new_attrs =
 const old_builtins =
     "name\tparams\tsig\tdoc\texample\n" ++
     "@splat\t1\t@splat(scalar: anytype) anytype\tvector only\t\n" ++
-    "@setCold\t1\t@setCold(is_cold: bool) void\tgone\t\n";
+    "@setCold\t1\t@setCold(is_cold: bool) void\tgone\t\n" ++
+    "@max\t2\t@max(a: T, b: T) T\told words\t\n";
 const new_builtins =
     "name\tparams\tsig\tdoc\texample\n" ++
     "@splat\t1\t@splat(element: anytype) anytype\tarray or vector\t\n" ++
-    "@branchHint\t1\t@branchHint(hint: BranchHint) void\tnew\t\n";
+    "@branchHint\t1\t@branchHint(hint: BranchHint) void\tnew\t\n" ++
+    "@max\t2\t@max(a: T, b: T) T\tnew words\t\n";
 const old_resolved =
     "path\tkind\tdetail\n" ++
     "std.mem.max\tconst_int\t4096\n" ++
@@ -136,22 +142,32 @@ test "compute: --private includes private additions" {
     try std.testing.expectEqual(diff.What.added, findChange(changes, "std.mem.secret").?.what);
 }
 
-test "moves: Type follows builtin → lang with its field; an ambiguous `Options` does not pair; tags never pair" {
+test "moves: sig-less declarations need parent support; a lone same-name field does not pair; ambiguous `Options` never pairs; tags never pair" {
     var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
     defer ar.deinit();
     const a = ar.allocator();
     const s = try sides(a);
     const r = try diff.analyze(a, s[0], s[1], false);
 
-    try std.testing.expectEqual(@as(usize, 2), r.moves.len);
-    try std.testing.expectEqualStrings("std.builtin.Type", r.moves[0].from);
-    try std.testing.expectEqualStrings("std.lang.Type", r.moves[0].to);
-    try std.testing.expectEqualStrings("std.builtin.Type.name", r.moves[1].from);
-    try std.testing.expectEqualStrings("std.lang.Type.name", r.moves[1].to);
-    // Two removed `Options` structs and two added ones: no unique match, so no move.
-    for (r.moves) |m| try std.testing.expect(std.mem.find(u8, m.from, "Options") == null);
+    // Type and Signedness both go std.builtin → std.lang (two between the same parents: accepted);
+    // Type.name follows because its parent Type is an accepted move. `count` has a unique name
+    // but X → Y has no support: it stays a removal + an addition.
+    try std.testing.expectEqual(@as(usize, 3), r.moves.len);
+    try std.testing.expectEqualStrings("std.builtin.Signedness", r.moves[0].from);
+    try std.testing.expectEqualStrings("std.lang.Signedness", r.moves[0].to);
+    try std.testing.expectEqualStrings("std.builtin.Type", r.moves[1].from);
+    try std.testing.expectEqualStrings("std.lang.Type", r.moves[1].to);
+    try std.testing.expect(r.moves[1].support == .parents);
+    try std.testing.expectEqualStrings("std.builtin.Type.name", r.moves[2].from);
+    try std.testing.expectEqualStrings("std.lang.Type.name", r.moves[2].to);
+    for (r.moves) |m| {
+        try std.testing.expect(std.mem.find(u8, m.from, "Options") == null);
+        try std.testing.expect(std.mem.find(u8, m.from, "count") == null);
+    }
     try std.testing.expect(r.moved.contains("std.lang.Type"));
+    try std.testing.expect(!r.moved.contains("std.a.X.count"));
     try std.testing.expect(!r.moved.contains("std.builtin.Mode.Debug"));
+    try std.testing.expectEqual(diff.What.removed, findChange(r.changes, "std.a.X.count").?.what);
 }
 
 test "deprecations: newly, lifted, and deprecated-then-removed" {
@@ -188,13 +204,15 @@ test "builtins: added, removed, re-signed" {
     const a = ar.allocator();
     const s = try sides(a);
     const r = try diff.analyze(a, s[0], s[1], false);
-    try std.testing.expectEqual(@as(usize, 3), r.builtins.len);
+    try std.testing.expectEqual(@as(usize, 4), r.builtins.len);
     try std.testing.expectEqualStrings("@branchHint", r.builtins[0].name);
     try std.testing.expectEqual(diff.BuiltinChange.State.added, r.builtins[0].state);
-    try std.testing.expectEqualStrings("@setCold", r.builtins[1].name);
-    try std.testing.expectEqual(diff.BuiltinChange.State.removed, r.builtins[1].state);
-    try std.testing.expectEqualStrings("@splat", r.builtins[2].name);
-    try std.testing.expectEqual(diff.BuiltinChange.State.changed, r.builtins[2].state);
+    try std.testing.expectEqualStrings("@max", r.builtins[1].name);
+    try std.testing.expectEqual(diff.BuiltinChange.State.doc, r.builtins[1].state);
+    try std.testing.expectEqualStrings("@setCold", r.builtins[2].name);
+    try std.testing.expectEqual(diff.BuiltinChange.State.removed, r.builtins[2].state);
+    try std.testing.expectEqualStrings("@splat", r.builtins[3].name);
+    try std.testing.expectEqual(diff.BuiltinChange.State.changed, r.builtins[3].state);
 }
 
 test "resolved values: a constant whose value changed" {
@@ -226,7 +244,7 @@ test "tallies: per module, largest first" {
     const s = try sides(a);
     const ts = try diff.tallies(a, try diff.compute(a, s[0], s[1], false));
     try std.testing.expect(ts.len >= 2);
-    try std.testing.expectEqualStrings("std.builtin", ts[0].module); // 4 removed + 2 added tags/decls
+    try std.testing.expectEqualStrings("std.builtin", ts[0].module); // the most rows: Type, Type.name, Signedness, Mode tags, Options
     var mem: ?diff.Tally = null;
     for (ts) |t| if (std.mem.eql(u8, t.module, "std.mem")) {
         mem = t;
@@ -268,7 +286,7 @@ test "report: moves, tags and deprecations get their own sections; removed list 
     try diff.report(a, &tw.writer, "0.16.0", "0.17.0", r, .{ .tsv = true });
     const t = tw.writer.buffered();
     try std.testing.expect(std.mem.startsWith(u8, t, "change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\tdetail\n"));
-    try std.testing.expect(std.mem.find(u8, t, "moved\tinferred\tstd.builtin.Type\tstruct\tstruct\tstd.builtin.Type\tstd.lang.Type\t\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "moved\tinferred\tstd.builtin.Type\tstruct\tstruct\tstd.builtin.Type\tstd.lang.Type\tparents\n") != null);
     try std.testing.expect(std.mem.find(u8, t, "builtin_changed\textracted\t@splat\t") != null);
     try std.testing.expect(std.mem.find(u8, t, "value_changed\textracted\tstd.mem.max\tconst_int\tconst_int\t4096\t8192\t\n") != null);
     try std.testing.expect(std.mem.find(u8, t, "deprecated_removed\textracted\tstd.mem.gone\t") != null);
@@ -314,6 +332,29 @@ test "classify: every failure mode" {
     try std.testing.expectEqual(diff.SigChange.error_set, diff.classify(a, "fn f(a: u32) Allocator.Error!void", "fn f(a: u32) !void"));
     try std.testing.expectEqual(diff.SigChange.names, diff.classify(a, "fn deinit(self: *Manifest) void", "fn deinit(m: *Manifest) void"));
     try std.testing.expectEqual(diff.SigChange.other, diff.classify(a, "garbage", "fn f() void"));
+    try std.testing.expectEqual(diff.SigChange.format, diff.classify(a, "fn create( owner: *Build, options: Options, ) *ObjCopy", "fn create(owner: *Build, options: Options) *ObjCopy"));
+}
+
+test "normalizeSig folds zig fmt's reflow: whitespace runs and the trailing comma" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    try std.testing.expectEqualStrings("fn create(owner: *Build, options: Options) *ObjCopy", try diff.normalizeSig(a, "fn create( owner: *Build,\n    options: Options, ) *ObjCopy"));
+    try std.testing.expectEqualStrings("fn f(a: [2]u8) void", try diff.normalizeSig(a, "fn f(a: [2]u8) void"));
+}
+
+test "a formatting-only signature change is not a change; a dropped signature is sig_dropped" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const on = "path\tkind\tname\tvis\nstd.x.f\tfn\tf\tpub\nstd.x.g\tfn\tg\tpub\n";
+    const oa = "path\tattr\tvalue\nstd.x.f\tsig\tfn f( a: u32, ) void\nstd.x.g\tsig\tfn g() void\n";
+    const nn = "path\tkind\tname\tvis\nstd.x.f\tfn\tf\tpub\nstd.x.g\talias\tg\tpub\n";
+    const na = "path\tattr\tvalue\nstd.x.f\tsig\tfn f(a: u32) void\n";
+    const r = try diff.analyze(a, try diff.loadSideBytes(a, on, oa), try diff.loadSideBytes(a, nn, na), false);
+    try std.testing.expectEqual(@as(usize, 1), r.changes.len);
+    try std.testing.expectEqualStrings("std.x.g", r.changes[0].path);
+    try std.testing.expectEqual(diff.SigChange.sig_dropped, r.changes[0].sig_change.?);
 }
 
 test "changed declarations carry their signature failure mode; doc-only changes are separate and flagged" {
