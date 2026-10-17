@@ -150,9 +150,12 @@ matches the files on disk — into `data/versions/<zig-version>/`, a complete co
 that is committed and never rewritten, so every release of std zephem has mapped sits beside
 the others and two of them can be compared directly: `diff -r data/versions/0.16.0
 data/versions/0.17.0`, or `zephem diff 0.16.0 0.17.0`, which reports the public declarations
-removed, changed (kind, visibility, signature: old → new) and added, grouped by module
-(`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per change
-for tools, `live` names `data/std/`). `zig build check` includes `snapshot --check`, so the
+removed, changed (kind, visibility, signature: old → new) and added, grouped by module, plus
+moves (inferred from a unique name + kind + signature match, and labelled so), enum tag sets
+per enum, deprecations (newly, lifted, deprecated-then-removed), builtins, and resolved
+constants whose value changed — the items of [docs/release-diff.md](docs/release-diff.md)
+(`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per finding
+with a provenance column for tools, `live` names `data/std/`). `zig build check` includes `snapshot --check`, so the
 committed folder for the current Zig can never drift from the live map. The regenerate
 sequence for a new Zig is therefore `std → depth --commit → overlays → lookup → docs →
 snapshot`.

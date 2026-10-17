@@ -5,6 +5,9 @@ const std = @import("std");
 const diff = @import("zephem").diff;
 const snapshot = @import("zephem").snapshot;
 
+// A small std: a module `mem`, an enum `Mode` whose tags are renamed, a namespace `builtin`
+// whose `Type` moves to `lang`, a deprecated fn that is then removed, a fn that becomes
+// deprecated, a constant whose resolved value changes.
 const old_nodes =
     "path\tkind\tname\tvis\n" ++
     "std\tns\tstd\tpub\n" ++
@@ -13,12 +16,24 @@ const old_nodes =
     "std.mem.gone\tfn\tgone\tpub\n" ++
     "std.mem.resized\tfn\tresized\tpub\n" ++
     "std.mem.hidden\tfn\thidden\tpriv\n" ++
-    "std.mem.Kind\tconst\tKind\tpub\n";
+    "std.mem.Kind\tconst\tKind\tpub\n" ++
+    "std.mem.indexOf\tfn\tindexOf\tpub\n" ++
+    "std.mem.max\tconst\tmax\tpub\n" ++
+    "std.builtin\tns\tbuiltin\tpub\n" ++
+    "std.builtin.Type\tstruct\tType\tpub\n" ++
+    "std.builtin.Type.name\tfield\tname\tpub\n" ++
+    "std.builtin.Mode\tenum\tMode\tpub\n" ++
+    "std.builtin.Mode.Debug\ttag\tDebug\tpub\n" ++
+    "std.builtin.Mode.ReleaseSafe\ttag\tReleaseSafe\tpub\n" ++
+    "std.builtin.Options\tstruct\tOptions\tpub\n" ++
+    "std.io.Options\tstruct\tOptions\tpub\n";
 const old_attrs =
     "path\tattr\tvalue\n" ++
     "std.mem.eql\tsig\tfn eql(comptime T: type, a: []const T, b: []const T) bool\n" ++
     "std.mem.gone\tsig\tfn gone() void\n" ++
+    "std.mem.gone\tdoc\tDeprecated; use nothing.\n" ++
     "std.mem.resized\tsig\tfn resized(a: u32) void\n" ++
+    "std.mem.indexOf\tsig\tfn indexOf(comptime T: type, h: []const T, n: []const T) ?usize\n" ++
     "std.mem.eql\tdoc\tCompares two slices\n";
 const new_nodes =
     "path\tkind\tname\tvis\n" ++
@@ -29,15 +44,54 @@ const new_nodes =
     "std.mem.hidden\tfn\thidden\tpriv\n" ++
     "std.mem.Kind\tenum\tKind\tpub\n" ++
     "std.mem.fresh\tfn\tfresh\tpub\n" ++
-    "std.mem.secret\tfn\tsecret\tpriv\n";
+    "std.mem.secret\tfn\tsecret\tpriv\n" ++
+    "std.mem.indexOf\tfn\tindexOf\tpub\n" ++
+    "std.mem.max\tconst\tmax\tpub\n" ++
+    "std.lang\tns\tlang\tpub\n" ++
+    "std.lang.Type\tstruct\tType\tpub\n" ++
+    "std.lang.Type.name\tfield\tname\tpub\n" ++
+    "std.builtin\tns\tbuiltin\tpub\n" ++
+    "std.builtin.Mode\tenum\tMode\tpub\n" ++
+    "std.builtin.Mode.debug\ttag\tdebug\tpub\n" ++
+    "std.builtin.Mode.safe\ttag\tsafe\tpub\n" ++
+    "std.fs.Options\tstruct\tOptions\tpub\n" ++
+    "std.net.Options\tstruct\tOptions\tpub\n";
 const new_attrs =
     "path\tattr\tvalue\n" ++
     "std.mem.eql\tsig\tfn eql(comptime T: type, a: []const T, b: []const T) bool\n" ++
     "std.mem.resized\tsig\tfn resized(a: u64) void\n" ++
-    "std.mem.fresh\tsig\tfn fresh() void\n";
+    "std.mem.fresh\tsig\tfn fresh() void\n" ++
+    "std.mem.indexOf\tsig\tfn indexOf(comptime T: type, h: []const T, n: []const T) ?usize\n" ++
+    "std.mem.indexOf\tdoc\tDeprecated: use `find`.\n";
+
+const old_builtins =
+    "name\tparams\tsig\tdoc\texample\n" ++
+    "@splat\t1\t@splat(scalar: anytype) anytype\tvector only\t\n" ++
+    "@setCold\t1\t@setCold(is_cold: bool) void\tgone\t\n";
+const new_builtins =
+    "name\tparams\tsig\tdoc\texample\n" ++
+    "@splat\t1\t@splat(element: anytype) anytype\tarray or vector\t\n" ++
+    "@branchHint\t1\t@branchHint(hint: BranchHint) void\tnew\t\n";
+const old_resolved =
+    "path\tkind\tdetail\n" ++
+    "std.mem.max\tconst_int\t4096\n" ++
+    "std.mem.eql\tfn\tfn (...) bool\n";
+const new_resolved =
+    "path\tkind\tdetail\n" ++
+    "std.mem.max\tconst_int\t8192\n" ++
+    "std.mem.eql\tfn\tfn (...) bool\n";
 
 fn sides(a: std.mem.Allocator) !struct { diff.Side, diff.Side } {
-    return .{ try diff.loadSideBytes(a, old_nodes, old_attrs), try diff.loadSideBytes(a, new_nodes, new_attrs) };
+    var old = try diff.loadSideBytes(a, old_nodes, old_attrs);
+    var new = try diff.loadSideBytes(a, new_nodes, new_attrs);
+    try diff.loadExtrasBytes(a, &old, old_builtins, old_resolved);
+    try diff.loadExtrasBytes(a, &new, new_builtins, new_resolved);
+    return .{ old, new };
+}
+
+fn findChange(changes: []const diff.Change, path: []const u8) ?diff.Change {
+    for (changes) |ch| if (std.mem.eql(u8, ch.path, path)) return ch;
+    return null;
 }
 
 test "compute: added, removed, kind and signature changes; private declarations skipped by default" {
@@ -47,24 +101,30 @@ test "compute: added, removed, kind and signature changes; private declarations 
     const s = try sides(a);
     const changes = try diff.compute(a, s[0], s[1], false);
 
-    // Sorted by path; the private `secret` is not reported.
-    try std.testing.expectEqual(@as(usize, 4), changes.len);
-    try std.testing.expectEqualStrings("std.mem.Kind", changes[0].path);
-    try std.testing.expectEqual(diff.What.changed, changes[0].what);
-    try std.testing.expectEqualStrings("const", changes[0].old.?.kind);
-    try std.testing.expectEqualStrings("enum", changes[0].new.?.kind);
+    const kind = findChange(changes, "std.mem.Kind").?;
+    try std.testing.expectEqual(diff.What.changed, kind.what);
+    try std.testing.expectEqualStrings("const", kind.old.?.kind);
+    try std.testing.expectEqualStrings("enum", kind.new.?.kind);
 
-    try std.testing.expectEqualStrings("std.mem.fresh", changes[1].path);
-    try std.testing.expectEqual(diff.What.added, changes[1].what);
-    try std.testing.expectEqualStrings("fn fresh() void", changes[1].new.?.sig.?);
+    const fresh = findChange(changes, "std.mem.fresh").?;
+    try std.testing.expectEqual(diff.What.added, fresh.what);
+    try std.testing.expectEqualStrings("fn fresh() void", fresh.new.?.sig.?);
 
-    try std.testing.expectEqualStrings("std.mem.gone", changes[2].path);
-    try std.testing.expectEqual(diff.What.removed, changes[2].what);
+    try std.testing.expectEqual(diff.What.removed, findChange(changes, "std.mem.gone").?.what);
 
-    try std.testing.expectEqualStrings("std.mem.resized", changes[3].path);
-    try std.testing.expectEqual(diff.What.changed, changes[3].what);
-    try std.testing.expectEqualStrings("fn resized(a: u32) void", changes[3].old.?.sig.?);
-    try std.testing.expectEqualStrings("fn resized(a: u64) void", changes[3].new.?.sig.?);
+    const resized = findChange(changes, "std.mem.resized").?;
+    try std.testing.expectEqual(diff.What.changed, resized.what);
+    try std.testing.expectEqualStrings("fn resized(a: u32) void", resized.old.?.sig.?);
+    try std.testing.expectEqualStrings("fn resized(a: u64) void", resized.new.?.sig.?);
+
+    // A doc-only change (indexOf became deprecated) is NOT a declaration change.
+    try std.testing.expectEqual(@as(?diff.Change, null), findChange(changes, "std.mem.indexOf"));
+    // Private: never listed.
+    try std.testing.expectEqual(@as(?diff.Change, null), findChange(changes, "std.mem.secret"));
+    // Sorted by path.
+    for (changes[1..], changes[0 .. changes.len - 1]) |later, earlier| {
+        try std.testing.expect(std.mem.order(u8, earlier.path, later.path) == .lt);
+    }
 }
 
 test "compute: --private includes private additions" {
@@ -73,13 +133,80 @@ test "compute: --private includes private additions" {
     const a = ar.allocator();
     const s = try sides(a);
     const changes = try diff.compute(a, s[0], s[1], true);
-    try std.testing.expectEqual(@as(usize, 5), changes.len);
-    var found = false;
-    for (changes) |ch| if (std.mem.eql(u8, ch.path, "std.mem.secret")) {
-        found = true;
-        try std.testing.expectEqual(diff.What.added, ch.what);
-    };
-    try std.testing.expect(found);
+    try std.testing.expectEqual(diff.What.added, findChange(changes, "std.mem.secret").?.what);
+}
+
+test "moves: Type follows builtin → lang with its field; an ambiguous `Options` does not pair; tags never pair" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = try sides(a);
+    const r = try diff.analyze(a, s[0], s[1], false);
+
+    try std.testing.expectEqual(@as(usize, 2), r.moves.len);
+    try std.testing.expectEqualStrings("std.builtin.Type", r.moves[0].from);
+    try std.testing.expectEqualStrings("std.lang.Type", r.moves[0].to);
+    try std.testing.expectEqualStrings("std.builtin.Type.name", r.moves[1].from);
+    try std.testing.expectEqualStrings("std.lang.Type.name", r.moves[1].to);
+    // Two removed `Options` structs and two added ones: no unique match, so no move.
+    for (r.moves) |m| try std.testing.expect(std.mem.find(u8, m.from, "Options") == null);
+    try std.testing.expect(r.moved.contains("std.lang.Type"));
+    try std.testing.expect(!r.moved.contains("std.builtin.Mode.Debug"));
+}
+
+test "deprecations: newly, lifted, and deprecated-then-removed" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = try sides(a);
+    const r = try diff.analyze(a, s[0], s[1], false);
+    try std.testing.expectEqual(@as(usize, 2), r.deprecations.len);
+    try std.testing.expectEqualStrings("std.mem.gone", r.deprecations[0].path);
+    try std.testing.expectEqual(diff.Deprecation.State.removed, r.deprecations[0].state);
+    try std.testing.expectEqualStrings("std.mem.indexOf", r.deprecations[1].path);
+    try std.testing.expectEqual(diff.Deprecation.State.newly, r.deprecations[1].state);
+    try std.testing.expectEqualStrings("Deprecated: use `find`.", r.deprecations[1].doc);
+}
+
+test "tag sets: renamed tags are summarised under their enum" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = try sides(a);
+    const r = try diff.analyze(a, s[0], s[1], false);
+    try std.testing.expectEqual(@as(usize, 1), r.tag_sets.len);
+    try std.testing.expectEqualStrings("std.builtin.Mode", r.tag_sets[0].@"enum");
+    try std.testing.expectEqual(@as(usize, 2), r.tag_sets[0].removed.len);
+    try std.testing.expectEqualStrings("Debug", r.tag_sets[0].removed[0]);
+    try std.testing.expectEqual(@as(usize, 2), r.tag_sets[0].added.len);
+    try std.testing.expectEqualStrings("debug", r.tag_sets[0].added[0]);
+}
+
+test "builtins: added, removed, re-signed" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = try sides(a);
+    const r = try diff.analyze(a, s[0], s[1], false);
+    try std.testing.expectEqual(@as(usize, 3), r.builtins.len);
+    try std.testing.expectEqualStrings("@branchHint", r.builtins[0].name);
+    try std.testing.expectEqual(diff.BuiltinChange.State.added, r.builtins[0].state);
+    try std.testing.expectEqualStrings("@setCold", r.builtins[1].name);
+    try std.testing.expectEqual(diff.BuiltinChange.State.removed, r.builtins[1].state);
+    try std.testing.expectEqualStrings("@splat", r.builtins[2].name);
+    try std.testing.expectEqual(diff.BuiltinChange.State.changed, r.builtins[2].state);
+}
+
+test "resolved values: a constant whose value changed" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = try sides(a);
+    const r = try diff.analyze(a, s[0], s[1], false);
+    try std.testing.expectEqual(@as(usize, 1), r.values.len);
+    try std.testing.expectEqualStrings("std.mem.max", r.values[0].path);
+    try std.testing.expectEqualStrings("4096", r.values[0].old);
+    try std.testing.expectEqualStrings("8192", r.values[0].new);
 }
 
 test "module and under" {
@@ -98,40 +225,59 @@ test "tallies: per module, largest first" {
     const a = ar.allocator();
     const s = try sides(a);
     const ts = try diff.tallies(a, try diff.compute(a, s[0], s[1], false));
-    try std.testing.expectEqual(@as(usize, 1), ts.len);
-    try std.testing.expectEqualStrings("std.mem", ts[0].module);
-    try std.testing.expectEqual(@as(usize, 1), ts[0].added);
-    try std.testing.expectEqual(@as(usize, 1), ts[0].removed);
-    try std.testing.expectEqual(@as(usize, 2), ts[0].changed);
+    try std.testing.expect(ts.len >= 2);
+    try std.testing.expectEqualStrings("std.builtin", ts[0].module); // 4 removed + 2 added tags/decls
+    var mem: ?diff.Tally = null;
+    for (ts) |t| if (std.mem.eql(u8, t.module, "std.mem")) {
+        mem = t;
+    };
+    try std.testing.expectEqual(@as(usize, 1), mem.?.added);
+    try std.testing.expectEqual(@as(usize, 1), mem.?.removed);
+    try std.testing.expectEqual(@as(usize, 2), mem.?.changed);
 }
 
-test "report: human form names the removed path and both signatures; tsv has one row per change" {
+test "report: moves, tags and deprecations get their own sections; removed list skips moved and tag paths" {
     var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
     defer ar.deinit();
     const a = ar.allocator();
     const s = try sides(a);
-    const changes = try diff.compute(a, s[0], s[1], false);
+    const r = try diff.analyze(a, s[0], s[1], false);
 
     var aw: std.Io.Writer.Allocating = .init(a);
-    try diff.report(a, &aw.writer, "0.16.0", "0.17.0", changes, .{});
+    try diff.report(a, &aw.writer, "0.16.0", "0.17.0", r, .{});
     const text = aw.writer.buffered();
-    try std.testing.expect(std.mem.find(u8, text, "1 removed · 2 changed · 1 added") != null);
-    try std.testing.expect(std.mem.find(u8, text, "`std.mem.gone`") != null);
+    try std.testing.expect(std.mem.find(u8, text, "## moved — INFERRED") != null);
+    try std.testing.expect(std.mem.find(u8, text, "`std.builtin.Type` → `std.lang.Type`") != null);
+    try std.testing.expect(std.mem.find(u8, text, "`std.builtin.Mode`: -Debug -ReleaseSafe +debug +safe") != null);
+    try std.testing.expect(std.mem.find(u8, text, "deprecated, now removed") != null);
+    try std.testing.expect(std.mem.find(u8, text, "newly deprecated: Deprecated: use `find`.") != null);
     try std.testing.expect(std.mem.find(u8, text, "was: fn resized(a: u32) void") != null);
-    try std.testing.expect(std.mem.find(u8, text, "now: fn resized(a: u64) void") != null);
-    try std.testing.expect(std.mem.find(u8, text, "kind const → enum") != null);
+    try std.testing.expect(std.mem.find(u8, text, "`@splat`\n    - was:") != null);
+    try std.testing.expect(std.mem.find(u8, text, "`std.mem.max`  4096 → 8192") != null);
+    // The removed list names `gone` and the ambiguous Options, but not the moved Type or the tags.
+    const removed_at = std.mem.find(u8, text, "## removed").?;
+    const next_at = std.mem.find(u8, text[removed_at..], "## enum tag sets").? + removed_at;
+    const removed_section = text[removed_at..next_at];
+    try std.testing.expect(std.mem.find(u8, removed_section, "`std.mem.gone`") != null);
+    try std.testing.expect(std.mem.find(u8, removed_section, "`std.builtin.Options`") != null);
+    try std.testing.expect(std.mem.find(u8, removed_section, "`std.builtin.Type`") == null);
+    try std.testing.expect(std.mem.find(u8, removed_section, "Mode.Debug") == null);
 
+    // TSV: a provenance column, moves labelled inferred.
     var tw: std.Io.Writer.Allocating = .init(a);
-    try diff.report(a, &tw.writer, "0.16.0", "0.17.0", changes, .{ .tsv = true });
-    var lines = std.mem.splitScalar(u8, std.mem.trimEnd(u8, tw.writer.buffered(), "\n"), '\n');
-    var n: usize = 0;
-    while (lines.next()) |_| n += 1;
-    try std.testing.expectEqual(@as(usize, 5), n); // header + 4 changes
+    try diff.report(a, &tw.writer, "0.16.0", "0.17.0", r, .{ .tsv = true });
+    const t = tw.writer.buffered();
+    try std.testing.expect(std.mem.startsWith(u8, t, "change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\n"));
+    try std.testing.expect(std.mem.find(u8, t, "moved\tinferred\tstd.builtin.Type\tstruct\tstruct\tstd.builtin.Type\tstd.lang.Type\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "builtin_changed\textracted\t@splat\t") != null);
+    try std.testing.expect(std.mem.find(u8, t, "value_changed\textracted\tstd.mem.max\tconst_int\tconst_int\t4096\t8192\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "deprecated_removed\textracted\tstd.mem.gone\t") != null);
 
     // Filters: one kind, one prefix.
     var fw: std.Io.Writer.Allocating = .init(a);
-    try diff.report(a, &fw.writer, "a", "b", changes, .{ .only = .removed, .prefix = "std.mem" });
+    try diff.report(a, &fw.writer, "a", "b", r, .{ .only = .removed, .prefix = "std.mem" });
     try std.testing.expect(std.mem.find(u8, fw.writer.buffered(), "1 removed · 0 changed · 0 added") != null);
+    try std.testing.expect(std.mem.find(u8, fw.writer.buffered(), "## moved") == null);
 }
 
 test "versionFromPinned reads the first line" {
