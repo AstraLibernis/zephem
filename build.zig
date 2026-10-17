@@ -53,6 +53,15 @@ pub fn build(b: *std.Build) void {
     Sub.add(b, exe, "lookup", "bake the denormalized lookup table zlook searches", &.{"lookup"});
     Sub.add(b, exe, "snapshot", "freeze the verified live map into data/versions/<zig-version>/", &.{"snapshot"});
     Sub.add(b, exe, "diff", "compare two frozen maps: `zig build diff -- 0.16.0 0.17.0 [--module std.mem]`", &.{"diff"});
+    // `zig build verify-diff -- 0.16.0 0.17.0` — tools/verify-diff.py recomputes every quantity the
+    // diff reports from the raw TSVs in Python (no shared code), demands set equality with the
+    // binary's --tsv output, and checks the arithmetic identities; exit 1 on any disagreement.
+    {
+        const run = b.addSystemCommand(&.{ "python3", "tools/verify-diff.py" });
+        run.addPassthruArgs();
+        run.step.dependOn(b.getInstallStep());
+        b.step("verify-diff", "independent re-computation of a diff (python3): `zig build verify-diff -- 0.16.0 0.17.0`").dependOn(&run.step);
+    }
     Sub.add(b, exe, "smoke", "run the query smoke battery", &.{"test"});
 
     // `zig build check` — the FAST parity gate: map + overlays + docs each prove they rebuild.

@@ -156,7 +156,8 @@ per enum, deprecations (newly, lifted, deprecated-then-removed), builtins, resol
 whose value changed, signature changes classified by how they fail (arity · order · types ·
 return type · error set · names only), doc-only changes flagged when the new text says "no
 longer"/"now", and a hand-curated `LANGUAGE.md` per version for what the map cannot see — the
-items of [docs/release-diff.md](docs/release-diff.md)
+items of [docs/release-diff.md](docs/release-diff.md); `zig build verify-diff -- 0.16.0 0.17.0` recomputes
+all of it independently in Python and fails on any disagreement
 (`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per finding
 with a provenance column for tools, `live` names `data/std/`). `zig build check` includes `snapshot --check`, so the
 committed folder for the current Zig can never drift from the live map. The regenerate

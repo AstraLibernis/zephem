@@ -48,6 +48,33 @@ then `zephem diff <previous> <new>`.
 - The exact diff is complete on its own. Everything below row 11 is readability and
   zsnag's benefit, not correctness.
 
+## Verification — a second witness, every time
+
+`tools/verify-diff.py <old> <new>` (`zig build verify-diff -- 0.16.0 0.17.0`) recomputes every
+quantity above from the raw TSVs in Python, sharing no code with `src/diff.zig`, runs the binary's
+`--tsv` and human output, and demands **set equality per finding type** (not equal counts: the
+same 2,270 removed paths, the same 458 (from, to, support) move triples, the same path → hint
+map for doc changes). It then checks the identities that are true by construction and would
+expose a row counted twice or not at all:
+
+| | identity |
+|---|---|
+| I1 | \|pub(old)\| = \|removed\| + \|both, pub in old\| |
+| I2 | \|pub(new)\| = \|added\| + \|both, pub in new\| |
+| I3/I4 | removed listed = \|removed\| − \|removed tags\| − \|moves\|; same for added |
+| I5 | moves are a bijection: \|{from}\| = \|{to}\| = \|moves\|, from ⊆ removed, to ⊆ added |
+| I6 | Σ per-module tallies = (\|removed\|, \|changed\|, \|added\|) |
+| I7 | Σ signature classes = \|changed with two differing normalised sigs\|; sig_dropped = old sig only; blank = same sig |
+| I8 | Σ over enums (tags removed + added) = \|removed tags\| + \|added tags\| |
+| I9 | newly-deprecated ∩ un-deprecated = ∅; deprecated-then-removed ⊆ removed |
+| I10 | every manifest entry in both version folders verifies by sha256 |
+
+The script exits 1 on any disagreement; a mutation check (a wrapper that drops one TSV row) makes
+it fail, so a green run is not vacuous. It is the standing procedure after every regenerate:
+`snapshot`, then `verify-diff <previous> <new>`. The script is written by the same author as the
+tool, so it guards against implementation slips, not against a shared misreading of the data;
+that is what the blind audits below were for.
+
 ## Audit record
 
 - **2026-10-16, 0.16.0 → 0.17.0, blind re-computation from the raw TSVs by an independent agent
