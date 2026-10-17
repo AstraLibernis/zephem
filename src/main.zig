@@ -4,7 +4,8 @@
 //! zephem — one binary, many subcommands. Pointed at Zig's std, it regenerates and self-checks
 //! the queryable map, and serves lookups over it. This dispatcher builds the ambient `Ctx`
 //! (allocator · io · env) and hands off to the subcommand. Everything is built BY Zig: `build.zig`
-//! exposes `zig build std/depth/overlays/docs/lookup/check/depth-check/test/smoke` over this binary.
+//! exposes `zig build std/depth/overlays/docs/lookup/snapshot/diff/check/depth-check/test/smoke` over
+//! this binary.
 const std = @import("std");
 const Ctx = @import("ctx.zig").Ctx;
 const cmd_std = @import("cmd/std.zig");
@@ -14,6 +15,8 @@ const cmd_docs = @import("docs.zig");
 const cmd_lookup = @import("lookup.zig");
 const cmd_test = @import("cmd/test.zig");
 const cmd_deps = @import("cmd/deps.zig");
+const cmd_snapshot = @import("snapshot.zig");
+const cmd_diff = @import("diff.zig");
 const zlook = @import("zlook.zig");
 const zmap = @import("zmap.zig");
 const Outcome = @import("query.zig").Outcome;
@@ -28,6 +31,8 @@ const usage =
     \\  docs       regenerate the markdown docs from templates/
     \\  deps       map a project's dependencies so look/map cover them
     \\  lookup     bake the denormalized lookup table zlook searches
+    \\  snapshot   freeze the live map into data/versions/<zig-version>/
+    \\  diff       compare two frozen maps: what std added, removed, changed
     \\  look       keyword-search the map (SIMD)
     \\  map        browse the map: find / show / doc
     \\  test       run the query smoke battery
@@ -55,6 +60,8 @@ pub fn main(init: std.process.Init) !void {
     if (std.mem.eql(u8, cmd, "docs")) return cmd_docs.run(c, rest);
     if (std.mem.eql(u8, cmd, "lookup")) return cmd_lookup.run(c, rest);
     if (std.mem.eql(u8, cmd, "deps")) return cmd_deps.run(c, rest);
+    if (std.mem.eql(u8, cmd, "snapshot")) return cmd_snapshot.run(c, rest);
+    if (std.mem.eql(u8, cmd, "diff")) return cmd_diff.run(c, rest);
     if (std.mem.eql(u8, cmd, "look")) return runWithStdout(c, zlook.run, rest);
     if (std.mem.eql(u8, cmd, "map")) return runWithStdout(c, zmap.run, rest);
     if (std.mem.eql(u8, cmd, "test")) return cmd_test.run(c, rest);

@@ -24,6 +24,16 @@ At a glance — the parser's shape model is **@@N_NODES@@ nodes across @@N_FILES
 and **@@N_EDGES@@ typed edges**; reflect adds
 @@N_RES_CONT@@ containers resolved, and six derivatives key back to the tree at the same `path`.
 
+## versions/ — one frozen folder per Zig version
+
+`std/` is the live map and changes with every regenerate. `versions/<zig-version>/` holds a
+frozen, verified copy of `std/` for each Zig that has been mapped (`zephem snapshot`; `PINNED`,
+every `SHA256SUMS*` manifest, and every file the manifests list — the READMEs are not copied,
+they describe the live format). Nothing in `versions/` is ever rewritten, so the history of std
+is a set of folders, not a set of commits: `zephem diff 0.16.0 0.17.0` (or any file tool) compares
+two of them directly. `zig build check` fails if the folder for the current Zig differs from
+`std/`.
+
 ## Kind policy — who owns what, and which overlay counts it
 
 Clean lines of separation: **every fact has exactly one producer** (the parser owns

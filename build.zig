@@ -51,12 +51,14 @@ pub fn build(b: *std.Build) void {
     Sub.add(b, exe, "overlays", "rebuild the derived overlays (canon,consensus,callcard,doccov,sigshape)", &.{"overlays"});
     Sub.add(b, exe, "docs", "regenerate the markdown docs from templates/", &.{"docs"});
     Sub.add(b, exe, "lookup", "bake the denormalized lookup table zlook searches", &.{"lookup"});
+    Sub.add(b, exe, "snapshot", "freeze the verified live map into data/versions/<zig-version>/", &.{"snapshot"});
+    Sub.add(b, exe, "diff", "compare two frozen maps: `zig build diff -- 0.16.0 0.17.0 [--module std.mem]`", &.{"diff"});
     Sub.add(b, exe, "smoke", "run the query smoke battery", &.{"test"});
 
     // `zig build check` — the FAST parity gate: map + overlays + docs each prove they rebuild.
     // Deliberately excludes the depth sweep (two full reflection passes — machine-dependent).
-    const check = b.step("check", "fast parity gate: std --check && overlays --check && docs --check");
-    inline for (.{ "std", "overlays", "docs" }) |sub| {
+    const check = b.step("check", "fast parity gate: std --check && overlays --check && docs --check && snapshot --check");
+    inline for (.{ "std", "overlays", "docs", "snapshot" }) |sub| {
         const run = b.addRunArtifact(exe);
         run.addArgs(&.{ sub, "--check" });
         check.dependOn(&run.step);
@@ -90,6 +92,7 @@ pub fn build(b: *std.Build) void {
         "src/test/manifest_test.zig",
         "src/test/query_test.zig",
         "src/test/pkg_test.zig",
+        "src/test/diff_test.zig",
     }) |tf| {
         const t = b.addTest(.{ .root_module = b.createModule(.{
             .root_source_file = b.path(tf),
@@ -118,6 +121,7 @@ pub fn build(b: *std.Build) void {
         "src/test/manifest_test.zig",
         "src/test/query_test.zig",
         "src/test/pkg_test.zig",
+        "src/test/diff_test.zig",
     }) |tf| {
         const t = b.addTest(.{
             .root_module = b.createModule(.{

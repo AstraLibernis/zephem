@@ -18,3 +18,5 @@ pub const ctx = @import("ctx.zig");
 pub const sig = @import("sig.zig");
 pub const query = @import("query.zig");
 pub const pkg = @import("pkg.zig");
+pub const snapshot = @import("snapshot.zig");
+pub const diff = @import("diff.zig");

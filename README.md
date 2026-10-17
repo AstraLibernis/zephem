@@ -99,6 +99,8 @@ the first un-evaluatable decl.
 zig build                        # → zig-out/bin/zephem (ReleaseSafe by default; -Doptimize=Debug to debug)
 zephem std                       # map the active toolchain's std → data/std/extracted/
 zephem map doc std.fmt.parseInt  # query the map (builds its lookup table on first use)
+zephem snapshot                  # freeze data/std/ into data/versions/<zig-version>/ (after a full regenerate)
+zephem diff 0.16.0 0.17.0        # what std removed, changed and added between two frozen maps
 ```
 
 Every subcommand takes `-h`/`--help` and rejects unknown arguments. The query commands
@@ -139,8 +141,21 @@ Each hit that is reachable under other public names lists them on a `≡` line; 
 carries them in its `aka` column. Nothing is inferred: every hop is an edge from `edges.tsv`.
 
 Needs Zig **zig 0.17.0** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
-command surface is `zephem <std|depth|overlays|deps|lookup|look|map|docs>` — details below and in
-each engine's README.
+command surface is `zephem <std|depth|overlays|deps|lookup|look|map|docs|snapshot|diff>` — details
+below and in each engine's README.
+
+**One folder per Zig version.** `data/std/` is always the map of the Zig on `PATH`, and a
+regenerate overwrites it. `zephem snapshot` freezes it — after proving every manifest in it
+matches the files on disk — into `data/versions/<zig-version>/`, a complete copy of the map
+that is committed and never rewritten, so every release of std zephem has mapped sits beside
+the others and two of them can be compared directly: `diff -r data/versions/0.16.0
+data/versions/0.17.0`, or `zephem diff 0.16.0 0.17.0`, which reports the public declarations
+removed, changed (kind, visibility, signature: old → new) and added, grouped by module
+(`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per change
+for tools, `live` names `data/std/`). `zig build check` includes `snapshot --check`, so the
+committed folder for the current Zig can never drift from the live map. The regenerate
+sequence for a new Zig is therefore `std → depth --commit → overlays → lookup → docs →
+snapshot`.
 
 **Everything zephem writes stays inside the checkout.** Both query commands (and zcanon) read
 `data/lookup.tsv`, one pre-joined row per declaration, with `data/examples.tsv` and
