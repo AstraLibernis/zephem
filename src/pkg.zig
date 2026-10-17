@@ -58,7 +58,7 @@ pub fn modulesOf(a: std.mem.Allocator, src: [:0]const u8) ![]Module {
     var out: std.ArrayList(Module) = .empty;
     var i: u32 = 0;
     while (i < ast.nodes.len) : (i += 1) {
-        const node: Ast.Node.Index = @enumFromInt(i);
+        const node: Ast.Node.Index = @fromBackingInt(@intCast(i));
         var cbuf: [1]Ast.Node.Index = undefined;
         const call = ast.fullCall(&cbuf, node) orelse continue;
         if (!calls(&ast, call, "addModule") or call.ast.params.len != 2) continue;

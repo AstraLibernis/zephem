@@ -20,7 +20,7 @@ pub const Outcome = enum(u8) {
     unavailable = 3,
 
     pub fn code(o: Outcome) u8 {
-        return @intFromEnum(o);
+        return @backingInt(o);
     }
 };
 

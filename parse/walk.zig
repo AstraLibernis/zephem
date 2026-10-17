@@ -815,7 +815,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
             Res{ .scope = Scope.module, .target = e.target }
         else
             resolve(&w, e.src, e.target, 4);
-        counts[@intFromEnum(r.scope)] += 1;
+        counts[@backingInt(r.scope)] += 1;
         try ew.print("{s}\t{s}\t{s}\t{s}\n", .{ e.src, e.etype, r.target, @tagName(r.scope) });
     }
     try ew.flush();
@@ -825,10 +825,10 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     var sfw = std.Io.File.stderr().writerStreaming(io, &sbuf);
     const s = &sfw.interface;
     try s.print("[parse] {s}\n  nodes: {d}   edges: {d}\n  scope: local {d} · cross {d} · primitive {d} · module {d} · generic {d} · inline {d} · unresolved {d}\n", .{
-        root,                                   w.node_set.count(),                  w.edges.items.len,
-        counts[@intFromEnum(Scope.local)],      counts[@intFromEnum(Scope.cross)],   counts[@intFromEnum(Scope.primitive)],
-        counts[@intFromEnum(Scope.module)],     counts[@intFromEnum(Scope.generic)], counts[@intFromEnum(Scope.@"inline")],
-        counts[@intFromEnum(Scope.unresolved)],
+        root,                                  w.node_set.count(),                 w.edges.items.len,
+        counts[@backingInt(Scope.local)],      counts[@backingInt(Scope.cross)],   counts[@backingInt(Scope.primitive)],
+        counts[@backingInt(Scope.module)],     counts[@backingInt(Scope.generic)], counts[@backingInt(Scope.@"inline")],
+        counts[@backingInt(Scope.unresolved)],
     });
     try s.flush();
 

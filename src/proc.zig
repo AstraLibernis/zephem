@@ -22,7 +22,7 @@ pub const Output = struct {
 fn codeOf(term: std.process.Child.Term) u8 {
     return switch (term) {
         .exited => |c| c,
-        .signal => |s| 128 +% @as(u8, @truncate(@intFromEnum(s))),
+        .signal => |s| 128 +% @as(u8, @truncate(@backingInt(s))),
         else => 255,
     };
 }

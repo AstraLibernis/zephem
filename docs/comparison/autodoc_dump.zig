@@ -58,7 +58,7 @@ pub fn main() !void {
     var seen_fqn = std.StringHashMap(void).init(gpa); // dedup printed paths
     var queue = std.ArrayList(Decl.Index).empty;
     try queue.append(gpa, root_decl);
-    try visited.put(@intFromEnum(root_decl), {});
+    try visited.put(@backingInt(root_decl), {});
 
     var stdout_buf: [1 << 16]u8 = undefined;
     var fw = std.Io.File.stdout().writerStreaming(io, &stdout_buf);
@@ -88,15 +88,15 @@ pub fn main() !void {
             var tgt: u32 = @intCast(i); // zsnag:ok — R007: `i` indexes Walk.decls, which autodoc itself indexes with u32
             var chase: usize = 0;
             const target_cat = while (chase < 32) : (chase += 1) {
-                const c = @as(Decl.Index, @enumFromInt(tgt)).get().categorize();
+                const c = @as(Decl.Index, @fromBackingInt(@intCast(tgt))).get().categorize();
                 switch (c) {
                     .alias => |a| {
                         if (a == .none) break c;
-                        tgt = @intFromEnum(a);
+                        tgt = @backingInt(a);
                     },
                     else => break c,
                 }
-            } else @as(Decl.Index, @enumFromInt(tgt)).get().categorize();
+            } else @as(Decl.Index, @fromBackingInt(@intCast(tgt))).get().categorize();
 
             const expandable = switch (target_cat) {
                 .namespace, .container, .type_function => true,
@@ -104,7 +104,7 @@ pub fn main() !void {
             };
             if (expandable and !visited.contains(tgt)) {
                 try visited.put(tgt, {});
-                try queue.append(gpa, @enumFromInt(tgt));
+                try queue.append(gpa, @fromBackingInt(@intCast(tgt)));
             }
         }
     }
