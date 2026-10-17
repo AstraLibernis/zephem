@@ -6,7 +6,7 @@ through the compiler); the `src/` layer does the glue and the querying (the `zep
 No Nushell, no Python, no duckdb — the TSV files are the source of truth, queried by
 `zephem look`/`map` (or any tool: they're plain TSV).
 
-The snapshot lives in `std/`, pinned to **zig 0.16.0** (`std/PINNED`), split into two groups
+The snapshot lives in `std/`, pinned to **zig 0.17.0** (`std/PINNED`), split into two groups
 by *where each fact comes from*:
 
 | folder | what it holds | producer | trust |
@@ -19,11 +19,11 @@ and the self-check that guards it). The clean line: **extracted/ is what Zig say
 derived/ is what zephem computes from it, and can be deleted and rebuilt from extracted/
 alone.**
 
-At a glance — the parser's shape model is **63,494 nodes across 340 files**
-(the tree), **111,480 attributes** (13,721 docs, 11,273 sigs, 19,809 values,
-63,493 locations, 1,433 test bodies, 1,257 modifiers, 494 error members),
-and **54,666 typed edges**; reflect adds
-2,912 containers resolved, and six derivatives key back to the tree at the same `path`.
+At a glance — the parser's shape model is **68,845 nodes across 343 files**
+(the tree), **120,415 attributes** (13,885 docs, 11,697 sigs, 22,640 values,
+68,844 locations, 1,520 test bodies, 1,344 modifiers, 485 error members),
+and **56,612 typed edges**; reflect adds
+3,158 containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## Kind policy — who owns what, and which overlay counts it
 

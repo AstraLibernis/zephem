@@ -7,7 +7,7 @@ strict: **derive never invents a fact.** Every row here traces back to one or mo
 `extracted/` rows, and each derivative is self-checking against its inputs. Delete this
 whole folder and it rebuilds from `extracted/` alone.
 
-Pinned to **zig 0.16.0** (`../PINNED`).
+Pinned to **zig 0.17.0** (`../PINNED`).
 
 ---
 
@@ -16,8 +16,8 @@ Built by `derive/index.zig` from `extracted/nodes.tsv`. One row per container, r
 where its block lives in the map. Columns: `path · line · span · depth · kind · n_children`.
 Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
 `line` (1-based, header-aware) + `span` (subtree size) pin the exact block, letting a
-consumer read one module in a single ranged read instead of scanning 63494 rows.
-**4,042 containers.**
+consumer read one module in a single ranged read instead of scanning 68845 rows.
+**4,332 containers.**
 
 ```sh
 zephem map show std.crypto.aead   # exactly that subtree, via the table of contents
@@ -31,37 +31,37 @@ Self-checked both ways: `index.zig` asserts root span == total rows and every sp
 `path · origin · owner`, from `zephem overlays` over `nodes.tsv` (text view) and
 `resolved.tsv` (reflected view). Rather than force the two to match 1:1 and call every
 non-match a miss, it **compares** them and tags every path by which witness sees it:
-`read+run` (both agree — 13,416), `run-only` (only when reflected, e.g. a generic
-member like `Sha256.digest_length` — 2,304), `read-only` (text read it but it
-can't run here: poison, or the `std` root — 12,983). One row per path in
-`nodes ∪ resolved` (28,703), **zero blanks**. Verified by `zephem overlays --check`.
+`read+run` (both agree — 14,003), `run-only` (only when reflected, e.g. a generic
+member like `Sha256.digest_length` — 2,909), `read-only` (text read it but it
+can't run here: poison, or the `std` root — 13,283). One row per path in
+`nodes ∪ resolved` (30,195), **zero blanks**. Verified by `zephem overlays --check`.
 
 ### `canon.tsv` — dedup / dealias families
 `path · canon`, from `zephem overlays` over `resolved.tsv` alone. The compiler resolves
 every type to a canonical `@typeName`, so two paths that name the *same* underlying type
-collide on it. This surfaces exactly those collisions — **236 paths in
-100 families** (each `canon` shared by ≥ 2 paths). Verified by
+collide on it. This surfaces exactly those collisions — **355 paths in
+149 families** (each `canon` shared by ≥ 2 paths). Verified by
 `zephem overlays --check` (every family complete and backed by `resolved.tsv`).
 
 ### `doccov.tsv` — documentation coverage
 `path · kind · documented`, from `zephem overlays` over `nodes.tsv` (every node) joined
 against the `doc` attributes (`attrs.tsv` where `attr == doc` — which paths carry a `///`
-doc). 1:1 with the whole map. On zig 0.16.0: **22% documented** (13,721
+doc). 1:1 with the whole map. On zig 0.17.0: **20% documented** (13,885
 nodes). Verified by `zephem overlays --check`.
 
 ### `sigshape.tsv` — signature shapes
 `path · first_param · io · generic`, from `zephem overlays` over the `sig` attributes
 (`attrs.tsv` where `attr == sig`). Classes each signature by first-param kind
 (`self`/`none`/`allocator`/`other`), whether it threads `Io`, and whether it's generic
-(`comptime`/`anytype`). **11,273 fns**, every field a closed set. Verified by
+(`comptime`/`anytype`). **11,697 fns**, every field a closed set. Verified by
 `zephem overlays --check`.
 
 ### `callcard.tsv` — as-written ⋈ resolved
 `path · witness · sig · resolved`, from `zephem overlays` — the merge of the `sig`
 attributes (as-written) and `resolved.tsv` (typed) on a normalized path. One row per
-callable (13,002): `both` (4,819 — the resolved column fills in real types
-where the source said `@This()`/`Self`), `reflect-only` (1,729), `parser-only`
-(6,454 — a private or uninstantiated-factory fn the compiler couldn't build here,
+callable (13,978): `both` (4,908 — the resolved column fills in real types
+where the source said `@This()`/`Self`), `reflect-only` (2,281), `parser-only`
+(6,789 — a private or uninstantiated-factory fn the compiler couldn't build here,
 no resolved type). Verified by `zephem overlays --check`.
 
 ---

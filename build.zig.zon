@@ -1,7 +1,7 @@
 .{
     .name = .zephem,
     .version = "0.6.0",
-    .minimum_zig_version = "0.16.0",
+    .minimum_zig_version = "0.17.0",
     // Regenerated once by `zig build` on first run if it disagrees; the id (low 32 bits)
     // must be nonzero. Pure-std project, so no dependency hashes ride on this.
     .fingerprint = 0x4cdbcf3acf755ade,

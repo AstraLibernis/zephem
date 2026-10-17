@@ -9,7 +9,7 @@ said so; nothing in this folder is zephem's opinion.
 The transforms that combine or reshape these files live one level over in
 [`../derived/`](../derived/).
 
-Pinned to **zig 0.16.0** (`../PINNED`); a target-specific subset (see `resolved`/`poison`
+Pinned to **zig 0.17.0** (`../PINNED`); a target-specific subset (see `resolved`/`poison`
 below) is **x86_64-linux** (the host recorded in `../PINNED`).
 
 ---
@@ -30,8 +30,8 @@ All three key on the same dotted `path`, so they re-join without a lookup table.
 The whole `std` namespace tree, one row per node. A node is a declaration (public **or**
 private), a struct/union **field**, an enum **tag**, or a **type-factory member** (a member
 of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.MultiArrayList().append`;
-the `()` marks "instantiate first"). **63,494 rows** (56,088 pub / 7,406 priv)
-across **340 files**, max depth **8**.
+the `()` marks "instantiate first"). **68,845 rows** (61,592 pub / 7,253 priv)
+across **343 files**, max depth **8**.
 Columns: `path · kind · name · vis`  (`vis ∈ pub · priv`).
 `kind ∈ ns · nsref · nserr · modref · struct · enum · union · opaque · fn · const · alias · field · tag`.
 
@@ -42,46 +42,46 @@ off its `path`, and the verifier reconciles the tree by that — every non-root 
 itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
-`path · attr · value`. Sparse: a row exists only where the fact is present. **111,480 rows**
+`path · attr · value`. Sparse: a row exists only where the fact is present. **120,415 rows**
 across seven attributes:
 
 | attr | value | count |
 |---|---|---|
-| `loc` | source location `file:line` (root-relative, machine-independent) | 63,493 |
-| `value` | a `field`/`tag`'s written type & default, or a `const`'s literal | 19,809 |
-| `doc` | the decl's `///` doc-comment, whitespace-collapsed | 13,721 |
-| `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 11,273 |
-| `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,433 |
-| `mod` | a decl's qualifiers — `extern`/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | 1,257 |
-| `errmember` | a member of a named `error{…}` set (one row per member) | 494 |
+| `loc` | source location `file:line` (root-relative, machine-independent) | 68,844 |
+| `value` | a `field`/`tag`'s written type & default, or a `const`'s literal | 22,640 |
+| `doc` | the decl's `///` doc-comment, whitespace-collapsed | 13,885 |
+| `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 11,697 |
+| `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,520 |
+| `mod` | a decl's qualifiers — `extern`/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | 1,344 |
+| `errmember` | a member of a named `error{…}` set (one row per member) | 485 |
 
 ### `edges.tsv` — Edges (typed references, resolved)
 `src · type · target · scope`. Every reference a declaration makes, **with its reach resolved**
-in a second pass against the walked node set. **54,666 edges**, five types:
+in a second pass against the walked node set. **56,612 edges**, five types:
 
 | type | count | what it links |
 |---|---|---|
-| `has_type` | 47,983 | a fn param/return or field → the type it names |
-| `alias` | 2,942 | a re-export (`pub const X = Y.Z`) → what it points at |
-| `error_set` | 2,876 | an `error{…}` / error-union → its members |
-| `imports` | 828 | an `@import` alias → the file/module it names |
-| `delegates` | 37 | a forwarding factory (`fn X() type { return Y(args); }`) → its target |
+| `has_type` | 49,683 | a fn param/return or field → the type it names |
+| `alias` | 2,982 | a re-export (`pub const X = Y.Z`) → what it points at |
+| `error_set` | 3,073 | an `error{…}` / error-union → its members |
+| `imports` | 843 | an `@import` alias → the file/module it names |
+| `delegates` | 31 | a forwarding factory (`fn X() type { return Y(args); }`) → its target |
 
 `scope` records **where the target landed** — the one invariant worth protecting is that a
 `local`/`cross` edge always points at a real node:
 
 | scope | count | meaning |
 |---|---|---|
-| `primitive` | 21,486 | a language builtin (`i32`, `usize`, `type`, …) |
-| `local` | 16,538 | a node inside `src`'s own container (incl. `@This()`) |
-| `cross` | 9,497 | a node elsewhere in the tree |
-| `module` | 4,013 | an `@import` alias / a file or module boundary |
-| `unresolved` | 2,020 | couldn't place it (comptime-built, exotic) |
-| `inline` | 539 | an inline `struct{…}`/`enum{…}` literal target |
-| `generic` | 573 | a comptime type parameter in scope |
+| `primitive` | 22,044 | a language builtin (`i32`, `usize`, `type`, …) |
+| `local` | 17,073 | a node inside `src`'s own container (incl. `@This()`) |
+| `cross` | 10,259 | a node elsewhere in the tree |
+| `module` | 4,027 | an `@import` alias / a file or module boundary |
+| `unresolved` | 2,088 | couldn't place it (comptime-built, exotic) |
+| `inline` | 536 | an inline `struct{…}`/`enum{…}` literal target |
+| `generic` | 585 | a comptime type parameter in scope |
 
-**48,094 of 54,666 edges (96% of the resolvable ones)** land on a
-node, primitive, or generic param; 2,020 stay unresolved.
+**49,961 of 56,612 edges (96% of the resolvable ones)** land on a
+node, primitive, or generic param; 2,088 stay unresolved.
 
 the backward check in `zephem std` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to
@@ -113,11 +113,11 @@ poison here.
 
 ### `resolved.tsv` — resolved depth
 `path · kind · detail`. Resolved const values, expanded generics, typed signatures.
-On zig 0.16.0: **2,912 containers resolved (15,796 rows).**
+On zig 0.17.0: **3,158 containers resolved (16,997 rows).**
 
 ### `poison.tsv` — what didn't resolve
 `path · reason`. Decls that failed to resolve, each with the compiler's exact reason
-(platform / foreign lib / `@compileError` / timeout). **923 genuine poison.**
+(platform / foreign lib / `@compileError` / timeout). **957 genuine poison.**
 The tree now includes private decls (many platform/foreign-lib) and uninstantiated `()`
 factory containers, so poison is higher than the pub-only parser's was — each is an honest
 "the compiler couldn't build this here", not a miss.

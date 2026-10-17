@@ -36,16 +36,16 @@ edges.tsv : src · type · target · scope       Edges        — typed referenc
 > The Tree stays a pure mirror; interpretation lives in the derive layer on top.
 
 The product is **ephemeral by design**: never hand-authored, always regenerable from source,
-pinned to one Zig version (`../data/std/PINNED` → zig 0.16.0). The product is the pipeline that
+pinned to one Zig version (`../data/std/PINNED` → zig 0.17.0). The product is the pipeline that
 reproduces it, not the bytes.
 
 ## 2. What it produces (`../data/std/extracted/`)
 
 | stream | shape | what it is |
 |---|---|---|
-| `nodes.tsv` | Tree | 63,494 nodes (56,088 pub / 7,406 priv), incl. fields, tags, and factory members (`<fn>()`) |
-| `attrs.tsv` | Attributes | 111,480 facts — 13,721 docs · 11,273 sigs · 19,809 values · 63,493 locations · 1,433 test bodies · 1,257 modifiers · 494 error members |
-| `edges.tsv` | Edges | 54,666 typed references, 96% of the resolvable ones landing on a node/primitive |
+| `nodes.tsv` | Tree | 68,845 nodes (61,592 pub / 7,253 priv), incl. fields, tags, and factory members (`<fn>()`) |
+| `attrs.tsv` | Attributes | 120,415 facts — 13,885 docs · 11,697 sigs · 22,640 values · 68,844 locations · 1,520 test bodies · 1,344 modifiers · 485 error members |
+| `edges.tsv` | Edges | 56,612 typed references, 96% of the resolvable ones landing on a node/primitive |
 | `builtins.tsv` | — | 128 builtins (`@intCast`, …) from `parse/langref.zig`: the compiler's builtin table + the language reference, cross-checked |
 
 (The `index.tsv` table of contents is built *from* the Tree by the [`../derive/`](../derive/)

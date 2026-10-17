@@ -11,7 +11,7 @@ pub fn build(b: *std.Build) void {
     // Default to ReleaseSafe, not Debug: the query commands are ~10x faster (`map doc` 330 ms →
     // 33 ms) and the integrity asserts stay live — ReleaseFast would elide them.
     // `-Doptimize=Debug` still works for debugging.
-    const optimize = b.option(std.builtin.OptimizeMode, "optimize", "optimization mode (default: ReleaseSafe)") orelse .ReleaseSafe;
+    const optimize = b.option(std.builtin.Optimize, "optimize", "optimization mode (default: safe)") orelse .safe;
 
     // The three engines live in their own directories (parse/ · reflect/ · derive/); the ex-Nushell
     // orchestration, relational lib, overlays, query, and docs live in src/. The parser and index
@@ -42,7 +42,7 @@ pub fn build(b: *std.Build) void {
         fn add(bb: *std.Build, e: *std.Build.Step.Compile, name: []const u8, desc: []const u8, argv: []const []const u8) void {
             const run = bb.addRunArtifact(e);
             run.addArgs(argv);
-            if (bb.args) |ua| run.addArgs(ua);
+            run.addPassthruArgs();
             bb.step(name, desc).dependOn(&run.step);
         }
     };

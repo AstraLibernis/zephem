@@ -251,7 +251,7 @@ fn parseChild(w: *W, abs: []const u8) ?*Ast {
     if (w.ast_cache.get(abs)) |a| return a; // already parsed this build — reuse (Asts are arena-persistent)
     const src = std.Io.Dir.cwd().readFileAllocOptions(w.io, abs, w.arena, .unlimited, .of(u8), 0) catch return null;
     const a = w.arena.create(Ast) catch return null;
-    a.* = Ast.parse(w.arena, src, .zig) catch return null;
+    a.* = Ast.parse(w.arena, src, .{}) catch return null;
     if (a.errors.len != 0) return null;
     w.ast_cache.put(abs, a) catch {}; // zsnag:ok — a failed cache insert only means this file is re-parsed later, same output
     return a;
@@ -747,7 +747,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
 pub const Stats = struct {
     nodes: usize,
     edges: usize,
-    scope: [@typeInfo(Scope).@"enum".fields.len]usize,
+    scope: [@typeInfo(Scope).@"enum".field_names.len]usize,
 };
 
 /// Walk `root` (a std.zig path) and write the three TSV streams. `arena` must outlive nothing past
@@ -763,7 +763,7 @@ pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []
 /// prints one line per module instead).
 pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_name: []const u8, nodes_out: []const u8, edges_out: []const u8, attrs_out: []const u8, report: bool) !Stats {
     const src = try std.Io.Dir.cwd().readFileAllocOptions(io, root, arena, .unlimited, .of(u8), 0);
-    var ast = try Ast.parse(arena, src, .zig);
+    var ast = try Ast.parse(arena, src, .{});
 
     const nf = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nf.close(io);
@@ -807,7 +807,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     var efw = ef.writer(io, &ebuf);
     const ew = &efw.interface;
     try ew.print("src\ttype\ttarget\tscope\n", .{});
-    var counts = [_]usize{0} ** @typeInfo(Scope).@"enum".fields.len; // by Scope
+    var counts: [@typeInfo(Scope).@"enum".field_names.len]usize = @splat(0); // by Scope
     for (w.edges.items) |e| {
         // an `imports` edge always reaches out of the tree (a file/module we didn't walk) — its
         // target is a path, not a name to look up, so it never goes through scope resolution.

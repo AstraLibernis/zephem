@@ -98,7 +98,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // ── examples ── harvested from std's own tests, never written. A doctest of the decl
     // first; else a namespace test that calls it with an argument count fitting its signature.
     try expectMap(c, w, &fails, "map doc shows the decl's own doctest", &.{ "doc", "std.fmt.parseInt" }, &.{ "example (a std test of this declaration)", "test parseInt {" });
-    try expectMap(c, w, &fails, "map doc usage matches the signature, not another append", &.{ "doc", "std.ArrayList.append" }, &.{ "usage (a std test in std.array_list that calls append(", ".append(gpa, " });
+    try expectMap(c, w, &fails, "map doc usage matches the signature, not another append", &.{ "doc", "std.ArrayList.append" }, &.{ "usage (a std test in std.array_list that calls append(", ".append(a, 2)" });
 
     // ── platform bindings ── std.c/std.os rank after the portable API unless named.
     try expectLook(c, w, &fails, "look ranks portable API before std.c/std.os", &.{ "sleep", "--limit", "1" }, &.{ "std.Io.sleep", "in std.c/std.os, ranked after the portable API" });

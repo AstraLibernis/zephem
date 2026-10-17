@@ -71,12 +71,12 @@ fn inSkip(comptime skip_list: []const []const u8, comptime name: []const u8) boo
 }
 
 /// The public decls of a container type, or null if `T` is not a decl-bearing container.
-fn declsOf(comptime T: type) ?[]const std.builtin.Type.Declaration {
+fn declsOf(comptime T: type) ?[]const [:0]const u8 {
     return switch (@typeInfo(T)) {
-        .@"struct" => |s| s.decls,
-        .@"enum" => |e| e.decls,
-        .@"union" => |u| u.decls,
-        .@"opaque" => |o| o.decls,
+        .@"struct" => |s| s.decl_names,
+        .@"enum" => |e| e.decl_names,
+        .@"union" => |u| u.decl_names,
+        .@"opaque" => |o| o.decl_names,
         else => null,
     };
 }
@@ -93,13 +93,13 @@ fn emit(w: *std.Io.Writer, comptime skip_list: []const []const u8, comptime path
     @setEvalBranchQuota(2_000_000); // big namespaces (std, os.linux) blow past the 1000 default
     const decls = comptime declsOf(T) orelse return;
     inline for (decls) |d| {
-        const field = @field(T, d.name);
+        const field = @field(T, d);
         const FT = @TypeOf(field);
-        const child = path ++ "." ++ comptime quoteId(d.name);
+        const child = path ++ "." ++ comptime quoteId(d);
 
         if (FT == type) {
             try w.print("{s}\ttype\t{s}\n", .{ child, @typeName(field) });
-            const skip = top and comptime inSkip(skip_list, d.name);
+            const skip = top and comptime inSkip(skip_list, d);
             if (descend > 0 and comptime isContainer(field) and !skip) {
                 try emit(w, skip_list, child, field, descend - 1, false);
             }

@@ -26,7 +26,7 @@ pub const Module = struct { name: []const u8, root: []const u8 };
 
 /// The `.dependencies` of a build.zig.zon.
 pub fn depsOf(a: std.mem.Allocator, zon: [:0]const u8) ![]Dep {
-    var ast = try Ast.parse(a, zon, .zon);
+    var ast = try Ast.parse(a, zon, .{ .mode = .zon });
     if (ast.errors.len != 0) return error.ManifestUnparsable;
     var out: std.ArrayList(Dep) = .empty;
     var buf: [2]Ast.Node.Index = undefined;
@@ -53,7 +53,7 @@ pub fn depsOf(a: std.mem.Allocator, zon: [:0]const u8) ![]Dep {
 
 /// Every `<x>.addModule("name", .{ ... .root_source_file = <y>.path("file") ... })` in a build.zig.
 pub fn modulesOf(a: std.mem.Allocator, src: [:0]const u8) ![]Module {
-    var ast = try Ast.parse(a, src, .zig);
+    var ast = try Ast.parse(a, src, .{});
     if (ast.errors.len != 0) return error.BuildScriptUnparsable;
     var out: std.ArrayList(Module) = .empty;
     var i: u32 = 0;

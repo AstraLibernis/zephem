@@ -13,7 +13,7 @@ container per subprocess**, so a poison decl kills only its own process and the 
 This is the exact opposite trade-off from the parser — depth over totality, bought with isolation.
 
 These rows are **x86_64-linux-specific** (the host recorded in `../data/std/PINNED`): a decl gated
-to another target resolves as poison here. Pinned to **zig 0.16.0**.
+to another target resolves as poison here. Pinned to **zig 0.17.0**.
 
 ---
 
@@ -43,7 +43,7 @@ is nothing to reflect yet).
 | `poison.tsv` | the containers that *didn't* resolve, each with the compiler's own first error line (platform / foreign lib / `@compileError` / timeout) | `path · reason` |
 | `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the resolved/poison/skipped split from it | `path · status · n_rows` |
 
-On zig 0.16.0: **4,042 containers swept → 2,912 resolved (15,796 rows) / 923 genuine poison / 207 skipped.**
+On zig 0.17.0: **4,332 containers swept → 3,158 resolved (16,997 rows) / 957 genuine poison / 217 skipped.**
 
 ### Planned — the same sweep, more facts
 
