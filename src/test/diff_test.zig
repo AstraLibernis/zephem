@@ -170,6 +170,51 @@ test "moves: sig-less declarations need parent support; a lone same-name field d
     try std.testing.expectEqual(diff.What.removed, findChange(r.changes, "std.a.X.count").?.what);
 }
 
+test "moves: upward support (two children vouch for their container) and shared-member support (common names vouch for a lone unique one)" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    // Endormorphism.SplitScalar → Endomorphism.SplitScalar: the container is the only thing
+    // moving between crypto.Endormorphism and crypto.Endomorphism, but its fields r1/r2 are two
+    // candidates between the two SplitScalars, so they are accepted and then vouch upward.
+    // Type.Struct.is_tuple: the only globally-unique field; `layout` and `decls` exist in many
+    // structs, so they are not candidates — but old Struct lost them and new Struct gained them,
+    // and two shared members are enough.
+    const on = "path\tkind\tname\tvis\n" ++
+        "std.crypto.Endormorphism\tstruct\tEndormorphism\tpub\n" ++
+        "std.crypto.Endormorphism.SplitScalar\tstruct\tSplitScalar\tpub\n" ++
+        "std.crypto.Endormorphism.SplitScalar.r1\tfield\tr1\tpub\n" ++
+        "std.crypto.Endormorphism.SplitScalar.r2\tfield\tr2\tpub\n" ++
+        "std.builtin.Type.Struct\tstruct\tStruct\tpub\n" ++
+        "std.builtin.Type.Struct.is_tuple\tfield\tis_tuple\tpub\n" ++
+        "std.builtin.Type.Struct.layout\tfield\tlayout\tpub\n" ++
+        "std.builtin.Type.Struct.decls\tfield\tdecls\tpub\n" ++
+        "std.other.Struct\tstruct\tStruct\tpub\n" ++
+        "std.other.Struct.layout\tfield\tlayout\tpub\n" ++
+        "std.other.Struct.decls\tfield\tdecls\tpub\n";
+    const nn = "path\tkind\tname\tvis\n" ++
+        "std.crypto.Endomorphism\tstruct\tEndomorphism\tpub\n" ++
+        "std.crypto.Endomorphism.SplitScalar\tstruct\tSplitScalar\tpub\n" ++
+        "std.crypto.Endomorphism.SplitScalar.r1\tfield\tr1\tpub\n" ++
+        "std.crypto.Endomorphism.SplitScalar.r2\tfield\tr2\tpub\n" ++
+        "std.lang.Type.Struct\tstruct\tStruct\tpub\n" ++
+        "std.lang.Type.Struct.is_tuple\tfield\tis_tuple\tpub\n" ++
+        "std.lang.Type.Struct.layout\tfield\tlayout\tpub\n" ++
+        "std.lang.Type.Struct.decls\tfield\tdecls\tpub\n" ++
+        "std.elsewhere.Struct\tstruct\tStruct\tpub\n" ++
+        "std.elsewhere.Struct.layout\tfield\tlayout\tpub\n" ++
+        "std.elsewhere.Struct.decls\tfield\tdecls\tpub\n";
+    const attrs = "path\tattr\tvalue\n";
+    const r = try diff.analyze(a, try diff.loadSideBytes(a, on, attrs), try diff.loadSideBytes(a, nn, attrs), false);
+    var got: std.ArrayList([]const u8) = .empty;
+    for (r.moves) |m| try got.append(a, m.from);
+    const want = [_][]const u8{ "std.builtin.Type.Struct.is_tuple", "std.crypto.Endormorphism.SplitScalar", "std.crypto.Endormorphism.SplitScalar.r1", "std.crypto.Endormorphism.SplitScalar.r2" };
+    try std.testing.expectEqual(want.len, got.items.len);
+    for (want, got.items) |w, g| try std.testing.expectEqualStrings(w, g);
+    // Endormorphism itself (unique name, one child moved) is still not claimed: one child is one coincidence.
+    try std.testing.expect(!r.moved.contains("std.crypto.Endormorphism"));
+}
+
 test "deprecations: newly, lifted, and deprecated-then-removed" {
     var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
     defer ar.deinit();

@@ -439,10 +439,17 @@ pub fn compute(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
 /// A declaration without a signature (a field, a container, a const) has only its name and
 /// kind to pair on, and a unique name is not enough: an audit of the 0.16 → 0.17 run found
 /// ~3% coincidences (`Fuzz.CoverageMap.mapped_memory` → `MachOFile.DsymFile.mapped_memory`).
-/// So a sig-less candidate is accepted only with **support from its parents**: its parent is
-/// itself an accepted move to the new parent, or at least two candidates move between the
-/// same two parents (two coincidences between the same pair of containers are unlikely).
-/// Computed to a fixpoint so a moved container vouches for its members and vice versa.
+/// So a sig-less candidate is accepted only with **support**, any of:
+/// - its parent is itself an accepted move to the new parent (downward);
+/// - at least two of its own children are accepted moves into the new path (upward);
+/// - at least two candidates move between the same two parents;
+/// - the two parents share at least two members by (name, kind) among what one lost and the
+///   other gained — members whose names are too common to be candidates themselves still
+///   count here (a `Struct` whose `layout`, `fields`, `decls` all reappear under the new parent);
+///   the candidate itself is not counted.
+/// Two coincidences between the same pair of containers are unlikely; one is not. Computed to a
+/// fixpoint so a moved container vouches for its members and vice versa. The second audit of
+/// 0.16 → 0.17 found 12 true moves lost to the parent-only rule; the last two clauses recover them.
 pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
     const Key = struct {
         fn of(al: std.mem.Allocator, d: Decl) ![]const u8 {
@@ -473,7 +480,7 @@ pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
         if (ai == ambiguous) continue;
         try cands.append(a, .{ .from = ch.path, .to = changes[ai].path, .decl = d, .support = if (d.sig != null) .signature else .parents });
     }
-    // Signature-backed candidates stand on their own. Sig-less ones need parent support.
+    // Signature-backed candidates stand on their own. Sig-less ones need support.
     const accepted = try a.alloc(bool, cands.items.len);
     @memset(accepted, false);
     var pair_count: std.StringHashMapUnmanaged(usize) = .empty; // "fromParent\x00toParent" → candidates
@@ -482,10 +489,29 @@ pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
         if (!gop.found_existing) gop.value_ptr.* = 0;
         gop.value_ptr.* += 1;
     }
+    // Members each container lost / gained, by (name, kind), for the shared-members clause.
+    var lost: std.StringHashMapUnmanaged(std.ArrayList([]const u8)) = .empty; // parent → ["name\x00kind"]
+    var gained: std.StringHashMapUnmanaged(void) = .empty; // "parent\x00name\x00kind"
+    for (changes) |ch| {
+        const d = (if (ch.what == .removed) ch.old else if (ch.what == .added) ch.new else null) orelse continue;
+        if (isTag(d)) continue;
+        const parent = util.dottedParent(ch.path);
+        if (ch.what == .removed) {
+            const gop = try lost.getOrPut(a, parent);
+            if (!gop.found_existing) gop.value_ptr.* = .empty;
+            try gop.value_ptr.append(a, try a.print("{s}\x00{s}", .{ d.name, d.kind }));
+        } else {
+            try gained.put(a, try a.print("{s}\x00{s}\x00{s}", .{ parent, d.name, d.kind }), {});
+        }
+    }
     var accepted_pairs: std.StringHashMapUnmanaged(void) = .empty; // "from\x00to" of accepted moves
+    var child_count: std.StringHashMapUnmanaged(usize) = .empty; // "fromParent\x00toParent" → accepted children
     for (cands.items, 0..) |m, i| if (m.support == .signature) {
         accepted[i] = true;
         try accepted_pairs.put(a, try a.print("{s}\x00{s}", .{ m.from, m.to }), {});
+        const gop = try child_count.getOrPut(a, try parentPair(a, m));
+        if (!gop.found_existing) gop.value_ptr.* = 0;
+        gop.value_ptr.* += 1;
     };
     var progress = true;
     while (progress) {
@@ -493,16 +519,37 @@ pub fn moves(a: std.mem.Allocator, changes: []const Change) ![]const Move {
         for (cands.items, 0..) |m, i| {
             if (accepted[i]) continue;
             const pp = try parentPair(a, m);
-            const ok = (pair_count.get(pp) orelse 0) >= 2 or accepted_pairs.contains(pp);
+            const own = try a.print("{s}\x00{s}", .{ m.from, m.to });
+            const ok = (pair_count.get(pp) orelse 0) >= 2 or // two candidates between the same parents
+                accepted_pairs.contains(pp) or // the parent itself moved there (downward)
+                (child_count.get(own) orelse 0) >= 2 or // two of its children already moved there (upward)
+                try sharedMembers(a, lost, gained, m, util.dottedParent(m.from), util.dottedParent(m.to)) >= 2;
             if (!ok) continue;
             accepted[i] = true;
-            try accepted_pairs.put(a, try a.print("{s}\x00{s}", .{ m.from, m.to }), {});
+            try accepted_pairs.put(a, own, {});
+            const gop = try child_count.getOrPut(a, pp);
+            if (!gop.found_existing) gop.value_ptr.* = 0;
+            gop.value_ptr.* += 1;
             progress = true;
         }
     }
     var out: std.ArrayList(Move) = .empty;
     for (cands.items, 0..) |m, i| if (accepted[i]) try out.append(a, m);
     return out.items;
+}
+
+/// How many members `from_parent` lost that `to_parent` gained, matched by (name, kind) — not
+/// counting the candidate itself, which would otherwise vouch for its own move (a `State` enum
+/// beside a `state` field, an `in` beside an `out`: one shared neighbour is still one coincidence).
+fn sharedMembers(a: std.mem.Allocator, lost: std.StringHashMapUnmanaged(std.ArrayList([]const u8)), gained: std.StringHashMapUnmanaged(void), self: Move, from_parent: []const u8, to_parent: []const u8) !usize {
+    const members = lost.get(from_parent) orelse return 0;
+    const own = try a.print("{s}\x00{s}", .{ self.decl.name, self.decl.kind });
+    var n: usize = 0;
+    for (members.items) |nk| {
+        if (std.mem.eql(u8, nk, own)) continue;
+        if (gained.contains(try a.print("{s}\x00{s}", .{ to_parent, nk }))) n += 1;
+    }
+    return n;
 }
 
 fn parentPair(a: std.mem.Allocator, m: Move) ![]const u8 {

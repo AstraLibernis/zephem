@@ -30,7 +30,7 @@ then `zephem diff <previous> <new>`.
 
 | # | change | method | why | `zephem diff` |
 |---|---|---|---|---|
-| 12 | **moved** declaration | a removed and an added one with the same name, kind and signature, unique on both sides; a declaration **without** a signature (field, container, const) additionally needs its parents to vouch — its parent is itself a move to the new parent, or two or more declarations move between the same two parents (a unique name alone produced ~3% coincidences in the 0.16 → 0.17 audit) | turns 0.17's `std.builtin` → `std.lang` block into a rename table zsnag can quote ("moved to … in 0.17") | yes — `--tsv` rows `moved · inferred` |
+| 12 | **moved** declaration | a removed and an added one with the same name, kind and signature, unique on both sides; a declaration **without** a signature (field, container, const) additionally needs support: its parent is itself a move to the new parent, two or more of its children already moved into the new path, two or more candidates move between the same two parents, or the two parents share two or more other lost/gained members by name and kind (a unique name alone produced ~3% coincidences in the 0.16 → 0.17 audit; the parent-only rule then lost 12 true moves, which the last two clauses recover) | turns 0.17's `std.builtin` → `std.lang` block into a rename table zsnag can quote ("moved to … in 0.17") | yes — `--tsv` rows `moved · inferred` |
 
 ## Outside the map — curated, marked as such
 
@@ -62,3 +62,13 @@ then `zephem diff <previous> <new>`.
   support, row 12); 17 builtins with new langref text and the same signature were silent (now
   `builtin_doc_changed`). Also hardened: depth counters saturate on an unmatched closer;
   duplicate paths in `resolved.tsv` are read once.
+- **Follow-up, same day, same auditor, on the fixes:** all five confirmed; the normaliser was
+  shown never to merge signatures that differ in a token (29 multi-spelling classes, 0 token
+  differences); the stricter move rule lost 12 true moves (precision 452/452, recall −12:
+  `Type.Struct.is_tuple`, `HashMapUnmanaged().Header.capacity`, `ArrayBitSet().last_item_mask`,
+  `Endormorphism.SplitScalar`, …). Fixed by two more support clauses (upward: children vouch
+  for their container; shared members by name and kind between the two parents, not counting
+  the candidate itself — counting it re-admitted 3 coincidences). Net: 461 moves, 9 of the 12
+  recovered; the 3 still lost (`Fn.Param.Attributes.@"noalias"`, `Serializer.Options.whitespace`,
+  `ArmCpuinfoImpl.have_fields`) have no neighbour to vouch for them and stay listed as removed +
+  added, which is the honest default.
