@@ -16,7 +16,9 @@
 //!   const_bool with a different value); **signature changes classified by how they fail**
 //!   (arity, parameter order with the same types, types, return type, error set, names only);
 //!   **doc-only changes** (same declaration, different prose), flagged when the new text says
-//!   "no longer" or "now" — the one signal for a semantics change.
+//!   "no longer" or "now" — the one signal for a semantics change; **alias / delegation
+//!   targets** (`edges.tsv`): a declaration on both sides whose alias or delegation now points
+//!   elsewhere, or that became or stopped being one.
 //! - a **curated** note per version (`data/versions/<v>/LANGUAGE.md`, from the release notes,
 //!   hand-written): language changes the map cannot see. Appended to the report, labelled.
 //! - one **inferred** item, always labelled: **moved** — a removed and an added declaration
@@ -48,10 +50,12 @@ pub const Decl = struct {
 
 pub const Builtin = struct { sig: []const u8, doc: []const u8 };
 pub const Resolved = struct { kind: []const u8, detail: []const u8 };
+/// An `alias` or `delegates` edge from edges.tsv: what a declaration resolves to.
+pub const Alias = struct { edge: []const u8, target: []const u8, scope: []const u8 };
 
 /// One side of the comparison: every declaration by path, plus the paths in sorted order so
-/// the output never depends on hash order. Builtins and resolved values are optional (a map
-/// without a depth sweep has no resolved.tsv).
+/// the output never depends on hash order. Builtins, resolved values and aliases are optional
+/// (a map without a depth sweep has no resolved.tsv).
 pub const Side = struct {
     decls: std.StringHashMapUnmanaged(Decl) = .empty,
     paths: []const []const u8 = &.{},
@@ -59,6 +63,8 @@ pub const Side = struct {
     builtin_names: []const []const u8 = &.{},
     resolved: std.StringHashMapUnmanaged(Resolved) = .empty,
     resolved_paths: []const []const u8 = &.{},
+    aliases: std.StringHashMapUnmanaged(Alias) = .empty,
+    alias_paths: []const []const u8 = &.{},
 };
 
 pub const What = enum { added, removed, changed };
@@ -295,6 +301,18 @@ pub const BuiltinChange = struct {
 
 pub const ValueChange = struct { path: []const u8, kind: []const u8, old: []const u8, new: []const u8 };
 
+/// A declaration present on both sides whose alias / delegation edge changed.
+pub const AliasChange = struct {
+    pub const State = enum { retargeted, gained, lost };
+    path: []const u8,
+    state: State,
+    old: ?Alias,
+    new: ?Alias,
+    /// A retarget whose old target → new target is itself an (inferred) move: the alias follows
+    /// a relocation, not a different definition.
+    target_moved: bool = false,
+};
+
 /// Everything the diff found, in one place, so the report and the TSV draw from the same facts.
 pub const Result = struct {
     changes: []const Change,
@@ -304,6 +322,7 @@ pub const Result = struct {
     builtins: []const BuiltinChange,
     values: []const ValueChange,
     docs: []const DocChange,
+    aliases: []const AliasChange,
     /// Paths that are part of a move (either end), so the lists can skip them.
     moved: std.StringHashMapUnmanaged(void),
 };
@@ -363,6 +382,25 @@ pub fn loadExtrasBytes(a: std.mem.Allocator, side: *Side, builtins_tsv: []const 
     }
 }
 
+/// Add the `alias` and `delegates` edges of edges.tsv to a side (empty text = absent). A path
+/// carries at most one such edge in the data; should one carry two, the first row wins.
+pub fn loadAliasesBytes(a: std.mem.Allocator, side: *Side, edges_tsv: []const u8) !void {
+    if (edges_tsv.len == 0) return;
+    const t = try rel.loadBytes(a, edges_tsv);
+    var paths: std.ArrayList([]const u8) = .empty;
+    for (t.rows) |row| {
+        const edge = t.cell(row, "type");
+        if (!std.mem.eql(u8, edge, "alias") and !std.mem.eql(u8, edge, "delegates")) continue;
+        const src = t.cell(row, "src");
+        const gop = try side.aliases.getOrPut(a, src);
+        if (gop.found_existing) continue;
+        gop.value_ptr.* = .{ .edge = edge, .target = t.cell(row, "target"), .scope = t.cell(row, "scope") };
+        try paths.append(a, src);
+    }
+    std.mem.sort([]const u8, paths.items, {}, lessThan);
+    side.alias_paths = paths.items;
+}
+
 fn readOptional(c: Ctx, dir: []const u8, rel_path: []const u8) ![]const u8 {
     return std.Io.Dir.cwd().readFileAlloc(c.io, try util.join(c.a, dir, rel_path), c.a, .unlimited) catch |e| switch (e) {
         error.FileNotFound => "",
@@ -376,6 +414,7 @@ pub fn loadSide(c: Ctx, dir: []const u8) !Side {
     const attrs = try std.Io.Dir.cwd().readFileAlloc(c.io, try util.join(c.a, dir, "extracted/attrs.tsv"), c.a, .unlimited);
     var side = try loadSideBytes(c.a, nodes, attrs);
     try loadExtrasBytes(c.a, &side, try readOptional(c, dir, "extracted/builtins.tsv"), try readOptional(c, dir, "extracted/resolved.tsv"));
+    try loadAliasesBytes(c.a, &side, try readOptional(c, dir, "extracted/edges.tsv"));
     return side;
 }
 
@@ -682,6 +721,40 @@ pub fn docChanges(a: std.mem.Allocator, old: Side, new: Side, include_private: b
     return out.items;
 }
 
+/// Declarations present on both sides whose alias / delegation edge points elsewhere
+/// (`retargeted`: a different target or edge type), appeared (`gained`: the declaration became an
+/// alias — its definition now lives at the target) or disappeared (`lost`). Declarations on only
+/// one side are already added / removed / moved rows. Sorted by path.
+pub fn aliasChanges(a: std.mem.Allocator, old: Side, new: Side, include_private: bool, mv: []const Move) ![]const AliasChange {
+    var move_pairs: std.StringHashMapUnmanaged(void) = .empty;
+    for (mv) |m| try move_pairs.put(a, try a.print("{s}\x00{s}", .{ m.from, m.to }), {});
+    var out: std.ArrayList(AliasChange) = .empty;
+    for (old.alias_paths) |p| {
+        const od = old.decls.get(p) orelse continue;
+        const nd = new.decls.get(p) orelse continue;
+        if (!include_private and !isPub(od) and !isPub(nd)) continue;
+        const o = old.aliases.get(p).?;
+        if (new.aliases.get(p)) |n| {
+            if (std.mem.eql(u8, o.edge, n.edge) and std.mem.eql(u8, o.target, n.target)) continue;
+            const moved = move_pairs.contains(try a.print("{s}\x00{s}", .{ o.target, n.target }));
+            try out.append(a, .{ .path = p, .state = .retargeted, .old = o, .new = n, .target_moved = moved });
+        } else try out.append(a, .{ .path = p, .state = .lost, .old = o, .new = null });
+    }
+    for (new.alias_paths) |p| {
+        if (old.aliases.contains(p)) continue;
+        const od = old.decls.get(p) orelse continue;
+        const nd = new.decls.get(p) orelse continue;
+        if (!include_private and !isPub(od) and !isPub(nd)) continue;
+        try out.append(a, .{ .path = p, .state = .gained, .old = null, .new = new.aliases.get(p).? });
+    }
+    std.mem.sort(AliasChange, out.items, {}, struct {
+        fn lt(_: void, x: AliasChange, y: AliasChange) bool {
+            return std.mem.order(u8, x.path, y.path) == .lt;
+        }
+    }.lt);
+    return out.items;
+}
+
 /// Run every analysis.
 pub fn analyze(a: std.mem.Allocator, old: Side, new: Side, include_private: bool) !Result {
     const changes = try compute(a, old, new, include_private);
@@ -699,6 +772,7 @@ pub fn analyze(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
         .builtins = try builtinChanges(a, old, new),
         .values = try valueChanges(a, old, new, include_private),
         .docs = try docChanges(a, old, new, include_private),
+        .aliases = try aliasChanges(a, old, new, include_private, mv),
         .moved = moved,
     };
 }
@@ -838,7 +912,7 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
             try w.writeAll("  (order = compiles and is wrong)\n");
         }
     }
-    if (kept.items.len == 0 and r.builtins.len == 0 and r.values.len == 0 and r.docs.len == 0) return;
+    if (kept.items.len == 0 and r.builtins.len == 0 and r.values.len == 0 and r.docs.len == 0 and r.aliases.len == 0) return;
 
     // Where it moved.
     if (kept.items.len > 0) {
@@ -960,6 +1034,30 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
 
     {
         var count: usize = 0;
+        for (r.aliases) |al| if (inScope(al.path, o)) {
+            count += 1;
+        };
+        if (count > 0) {
+            try w.print("\n## aliases and delegations changed — member lookups follow these ({d})\n\n", .{count});
+            var shown: usize = 0;
+            for (r.aliases) |al| {
+                if (!inScope(al.path, o)) continue;
+                if (o.limit != 0 and shown == o.limit) {
+                    try w.print("… {d} more\n", .{count - shown});
+                    break;
+                }
+                shown += 1;
+                switch (al.state) {
+                    .retargeted => try w.print("- `{s}`  {s} `{s}` → {s} `{s}`{s}\n", .{ al.path, al.old.?.edge, al.old.?.target, al.new.?.edge, al.new.?.target, if (al.target_moved) "  (the target moved — inferred)" else "" }),
+                    .gained => try w.print("- `{s}`  now {s} `{s}`\n", .{ al.path, al.new.?.edge, al.new.?.target }),
+                    .lost => try w.print("- `{s}`  no longer {s} `{s}`\n", .{ al.path, al.old.?.edge, al.old.?.target }),
+                }
+            }
+        }
+    }
+
+    {
+        var count: usize = 0;
         var hints: usize = 0;
         for (r.docs) |d| if (inScope(d.path, o)) {
             count += 1;
@@ -1031,7 +1129,9 @@ fn section(w: *std.Io.Writer, changes: []const Change, moved: std.StringHashMapU
 
 /// One row per finding. Columns are stable and only ever appended to:
 /// change · provenance · path · kind_old · kind_new · old · new · detail
-/// (`detail` = the signature failure mode for changed rows, `hint` for flagged doc rows)
+/// (`detail` = the signature failure mode for changed rows, `hint` for flagged doc rows,
+/// `target_moved` for an alias retarget that follows an inferred move; alias rows put the edge
+/// type in kind_old / kind_new and the targets in old / new)
 fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
     try w.writeAll("change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\tdetail\n");
     for (kept) |ch| {
@@ -1069,6 +1169,15 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
         if (!inScope(v.path, o)) continue;
         try w.print("value_changed\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\t\n", .{ v.path, v.kind, v.kind, v.old, v.new });
     }
+    for (r.aliases) |al| {
+        if (!inScope(al.path, o)) continue;
+        try w.print("alias_{t}\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\t{s}\n", .{
+            al.state,                                 al.path,
+            if (al.old) |x| x.edge else "",           if (al.new) |x| x.edge else "",
+            if (al.old) |x| x.target else "",         if (al.new) |x| x.target else "",
+            if (al.target_moved) "target_moved" else "",
+        });
+    }
 }
 
 // ---------------------------------------------------------------- command ----------
@@ -1080,8 +1189,8 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         \\
         \\  compare two frozen maps: a Zig version under data/versions/ (0.16.0), or `live`
         \\  for data/std/. Public declarations by default. Reports removed / changed / added
-        \\  declarations, moves (inferred), enum tag sets, deprecations, builtins and resolved
-        \\  values — see docs/release-diff.md.
+        \\  declarations, moves (inferred), enum tag sets, deprecations, builtins, resolved
+        \\  values and alias / delegation targets — see docs/release-diff.md.
         \\  --module P   only paths under P (std.mem, std.Io.Dir, …)
         \\  --only W     one kind of declaration change in the lists
         \\  --private    include private declarations

@@ -25,6 +25,8 @@ that is counted in two places or in none:
   I8  Σ over enums of (tags removed + tags added) = |removed tags| + |added tags|
   I9  newly-deprecated ∩ un-deprecated = ∅ ; deprecated-then-removed ⊆ removed
   I10 every manifest-listed file in both version folders has the digest its manifest states
+  I11 aliased declarations (on both sides, public on either): |in old| = retargeted + lost +
+      unchanged, |in new| = retargeted + gained + unchanged
 
 Everything printed is recomputed here; the only thing taken from the tool is its own output.
 """
@@ -58,6 +60,12 @@ class Side:
         if p.exists():
             for r in tsv(p):
                 self.resolved.setdefault(r["path"], (r["kind"], r["detail"]))  # first row wins
+        self.alias = {}  # path -> (edge, target); alias / delegates edges only, first row wins
+        p = d / "extracted/edges.tsv"
+        if p.exists():
+            for r in tsv(p):
+                if r["type"] in ("alias", "delegates"):
+                    self.alias.setdefault(r["src"], (r["type"], r["target"]))
 
     def pub(self):
         return {p for p, d in self.decl.items() if d["vis"] == "pub"}
@@ -282,7 +290,20 @@ def compute(old: Side, new: Side):
         hint = any(re.search(ph, nd, re.I) and not re.search(ph, od, re.I) for ph in (r"no longer", r"now "))
         docs[p] = hint
 
-    return dict(O=O, N=N, both=both, removed=removed, added=added, changed=changed, sigclass=sigclass, moves=moves,
+    # Alias / delegation edges on declarations present on both sides (public on either).
+    alias_both = {p for p in both if old.decl[p]["vis"] == "pub" or new.decl[p]["vis"] == "pub"}
+    move_pairs = {(f, t) for f, t, _ in moves}
+    a_retarget, a_gained, a_lost = {}, set(), set()
+    for p in alias_both:
+        oa, na = old.alias.get(p), new.alias.get(p)
+        if oa and na and oa != na:
+            a_retarget[p] = (oa[1], na[1], (oa[1], na[1]) in move_pairs)
+        elif oa and not na:
+            a_lost.add(p)
+        elif na and not oa:
+            a_gained.add(p)
+
+    return dict(a_retarget=a_retarget, a_gained=a_gained, a_lost=a_lost, alias_both=alias_both,O=O, N=N, both=both, removed=removed, added=added, changed=changed, sigclass=sigclass, moves=moves,
                 newly=newly, lifted=lifted, dep_removed=dep_removed, tags_r=tags_r, tags_a=tags_a, enums=enums,
                 b_added=b_added, b_removed=b_removed, b_changed=b_changed, b_doc=b_doc, values=values, docs=docs)
 
@@ -350,6 +371,9 @@ def main():
     check("builtins doc-only (set)", me["b_doc"], {r[2] for r in by["builtin_doc_changed"]})
     check("resolved values changed (set)", me["values"], {(r[2], r[5], r[6]) for r in by["value_changed"]})
     check("doc-only changes (path→hint)", me["docs"], {r[2]: (r[7] == "hint") for r in by["doc_changed"]})
+    check("aliases retargeted (path→old,new,moved)", me["a_retarget"], {r[2]: (r[5], r[6], r[7] == "target_moved") for r in by["alias_retargeted"]})
+    check("aliases gained (set)", me["a_gained"], {r[2] for r in by["alias_gained"]})
+    check("aliases lost (set)", me["a_lost"], {r[2] for r in by["alias_lost"]})
 
     # Human report agrees with the TSV.
     m = re.search(r"^(\d+) removed · (\d+) changed · (\d+) added", human, re.M)
@@ -368,6 +392,7 @@ def main():
     md = re.search(r"^## docs changed, declaration unchanged \((\d+); (\d+) say", human, re.M)
     check("human: doc changes", len(me["docs"]), int(md.group(1)) if md else 0)
     check("human: doc changes flagged", sum(me["docs"].values()), int(md.group(2)) if md else 0)
+    check("human: aliases", len(me["a_retarget"]) + len(me["a_gained"]) + len(me["a_lost"]), section_count(human, "aliases and delegations changed"))
     mv_from = {f for f, _, _ in me["moves"]}
     check("human: removed listed = removed − tags − moves", len(me["removed"]) - len(me["tags_r"]) - len(mv_from & me["removed"]), section_count(human, "removed"))
     mv_to = {t for _, t, _ in me["moves"]}
@@ -399,6 +424,11 @@ def main():
     per_enum = Counter(parent(p) for p in me["tags_r"] | me["tags_a"])
     ident.append(("I8 Σ enum tag rows = removed tags + added tags", sum(per_enum.values()), len(me["tags_r"]) + len(me["tags_a"])))
     ident.append(("I9 newly ∩ lifted = ∅; dep_removed ⊆ removed", (len(me["newly"] & me["lifted"]), me["dep_removed"] <= me["removed"]), (0, True)))
+    al_old = {p for p in me["alias_both"] if p in old.alias}
+    al_new = {p for p in me["alias_both"] if p in new.alias}
+    same = {p for p in al_old & al_new if old.alias[p] == new.alias[p]}
+    ident.append(("I11 aliased in old = retargeted + lost + unchanged; in new = retargeted + gained + unchanged",
+                  (len(al_old), len(al_new)), (len(me["a_retarget"]) + len(me["a_lost"]) + len(same), len(me["a_retarget"]) + len(me["a_gained"]) + len(same))))
     # I10 manifests
     man_ok, man_n = True, 0
     for v in (old_v, new_v):

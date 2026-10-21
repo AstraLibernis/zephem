@@ -23,14 +23,14 @@ then `zephem diff <previous> <new>`.
 | 7 | **enum tag sets** (`Debug` → `debug`), summarised per enum | `extracted/nodes.tsv` (`tag`) | otherwise fifty removals and fifty additions | yes |
 | 8 | **builtins** added, removed, signature or doc changed | `extracted/builtins.tsv` | `@splat` grew a job; `@bitCast` lost one | yes (added / removed / re-signed / same signature with new langref text) |
 | 9 | **resolved values** that changed (a `max_path_bytes`) | `extracted/resolved.tsv` | code that hard-codes the old value is silently wrong | yes (const_int / const_bool) |
-| 10 | **alias / delegation targets** (what `std.ArrayList` resolves to now) | `extracted/edges.tsv` | member lookups follow these hops | next |
+| 10 | **alias / delegation targets** (what `std.ArrayList` resolves to now) | `extracted/edges.tsv` (`alias`, `delegates`) | member lookups follow these hops | yes — for declarations on both sides: retargeted (`target_moved` when the old → new target is itself an inferred move), gained (the name became an alias; its definition now lives at the target), lost. **Blind spot:** an alias written through an import (`std.Build.Configuration.…`) is extracted with scope `module` and target `std` alone (`parse/walk.zig` `resolve`), so a retarget among those ~1,240 edges per version is not seen |
 | 11 | **doc text changed, signature unchanged** — count it; flag docs that gain "no longer" / "now" | `extracted/attrs.tsv` (`doc`) | the only signal for a semantics change | yes — counted; flagged rows listed (`doc_changed … hint`) |
 
 ## Inferences — always labelled as such
 
 | # | change | method | why | `zephem diff` |
 |---|---|---|---|---|
-| 12 | **moved** declaration | a removed and an added one with the same name, kind and signature, unique on both sides; a declaration **without** a signature (field, container, const) additionally needs support: its parent is itself a move to the new parent, two or more of its children already moved into the new path, two or more candidates move between the same two parents, or the two parents share two or more other lost/gained members by name and kind (a unique name alone produced ~3% coincidences in the 0.16 → 0.17 audit; the parent-only rule then lost 12 true moves, which the last two clauses recover) | turns 0.17's `std.builtin` → `std.lang` block into a rename table zsnag can quote ("moved to … in 0.17") | yes — `--tsv` rows `moved · inferred` |
+| 12 | **moved** declaration | a removed and an added one with the same name, kind and signature, unique on both sides; a declaration **without** a signature (field, container, const) additionally needs support: its parent is itself a move to the new parent, two or more of its children already moved into the new path, two or more candidates move between the same two parents, or the two parents share two or more other lost/gained members by name and kind (a unique name alone produced ~3% coincidences in the 0.16 → 0.17 audit; the parent-only rule then lost 12 true moves, which the last two clauses recover) | turns 0.17's `std.builtin` → `std.lang` block into a rename table, read from the diff when porting | yes — `--tsv` rows `moved · inferred` |
 
 ## Outside the map — curated, marked as such
 
@@ -45,8 +45,10 @@ then `zephem diff <previous> <new>`.
 - The TSV form (`zephem diff --tsv`) is the machine-facing output with stable columns
   (`change · provenance · path · kind_old · kind_new · old · new · detail`); the report is a view over it.
   New columns are appended, never reordered.
-- The exact diff is complete on its own. Everything below row 11 is readability and
-  zsnag's benefit, not correctness.
+- The exact diff is complete on its own. Everything below row 11 is readability, not
+  correctness.
+- The diff is read, not wired in: zsnag and `look`/`map` work from the current version's map
+  only. When a change between versions has to be understood, consult `zephem diff`.
 
 ## Verification — a second witness, every time
 
@@ -68,6 +70,7 @@ expose a row counted twice or not at all:
 | I8 | Σ over enums (tags removed + added) = \|removed tags\| + \|added tags\| |
 | I9 | newly-deprecated ∩ un-deprecated = ∅; deprecated-then-removed ⊆ removed |
 | I10 | every manifest entry in both version folders verifies by sha256 |
+| I11 | aliased declarations: \|in old\| = retargeted + lost + unchanged; \|in new\| = retargeted + gained + unchanged |
 
 The script exits 1 on any disagreement; a mutation check (a wrapper that drops one TSV row) makes
 it fail, so a green run is not vacuous. It is the standing procedure after every regenerate:

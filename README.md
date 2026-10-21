@@ -156,7 +156,7 @@ parents moving together; labelled so), enum tag sets
 per enum, deprecations (newly, lifted, deprecated-then-removed), builtins, resolved constants
 whose value changed, signature changes classified by how they fail (arity · order · types ·
 return type · error set · names only), doc-only changes flagged when the new text says "no
-longer"/"now", and a hand-curated `LANGUAGE.md` per version for what the map cannot see — the
+longer"/"now", aliases and delegations that point elsewhere, became one or stopped being one, and a hand-curated `LANGUAGE.md` per version for what the map cannot see — the
 items of [docs/release-diff.md](docs/release-diff.md); `zig build verify-diff -- 0.16.0 0.17.0` recomputes
 all of it independently in Python and fails on any disagreement
 (`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per finding

@@ -87,11 +87,32 @@ const new_resolved =
     "std.mem.max\tconst_int\t8192\n" ++
     "std.mem.eql\tfn\tfn (...) bool\n";
 
+// `Kind` follows the moved `builtin.Type`, `max` is retargeted outright, `indexOf` stops
+// delegating, `eql` becomes an alias; the removed `builtin.Options` and the private `hidden`
+// never report; non-alias edge types are ignored.
+const old_edges =
+    "src\ttype\ttarget\tscope\n" ++
+    "std.mem.Kind\talias\tstd.builtin.Type\tlocal\n" ++
+    "std.mem.max\talias\tu32\tprimitive\n" ++
+    "std.mem.indexOf\tdelegates\tstd.mem.find\tlocal\n" ++
+    "std.mem.hidden\talias\tstd.mem.a\tlocal\n" ++
+    "std.builtin.Options\talias\tstd.Options\tcross\n" ++
+    "std.mem.resized\timports\tstd\tmodule\n";
+const new_edges =
+    "src\ttype\ttarget\tscope\n" ++
+    "std.mem.Kind\talias\tstd.lang.Type\tlocal\n" ++
+    "std.mem.max\talias\tu64\tprimitive\n" ++
+    "std.mem.eql\talias\tstd.mem.eqlImpl\tlocal\n" ++
+    "std.mem.hidden\talias\tstd.mem.b\tlocal\n" ++
+    "std.mem.resized\timports\tstd.mem\tmodule\n";
+
 fn sides(a: std.mem.Allocator) !struct { diff.Side, diff.Side } {
     var old = try diff.loadSideBytes(a, old_nodes, old_attrs);
     var new = try diff.loadSideBytes(a, new_nodes, new_attrs);
     try diff.loadExtrasBytes(a, &old, old_builtins, old_resolved);
     try diff.loadExtrasBytes(a, &new, new_builtins, new_resolved);
+    try diff.loadAliasesBytes(a, &old, old_edges);
+    try diff.loadAliasesBytes(a, &new, new_edges);
     return .{ old, new };
 }
 
@@ -270,6 +291,46 @@ test "resolved values: a constant whose value changed" {
     try std.testing.expectEqualStrings("std.mem.max", r.values[0].path);
     try std.testing.expectEqualStrings("4096", r.values[0].old);
     try std.testing.expectEqualStrings("8192", r.values[0].new);
+}
+
+test "aliases: retargeted (one following a move), gained, lost; removed and private paths skipped" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const s = try sides(a);
+    const r = try diff.analyze(a, s[0], s[1], false);
+    try std.testing.expectEqual(@as(usize, 4), r.aliases.len);
+    try std.testing.expectEqualStrings("std.mem.Kind", r.aliases[0].path);
+    try std.testing.expectEqual(diff.AliasChange.State.retargeted, r.aliases[0].state);
+    try std.testing.expect(r.aliases[0].target_moved);
+    try std.testing.expectEqualStrings("std.mem.eql", r.aliases[1].path);
+    try std.testing.expectEqual(diff.AliasChange.State.gained, r.aliases[1].state);
+    try std.testing.expectEqualStrings("std.mem.indexOf", r.aliases[2].path);
+    try std.testing.expectEqual(diff.AliasChange.State.lost, r.aliases[2].state);
+    try std.testing.expectEqualStrings("delegates", r.aliases[2].old.?.edge);
+    try std.testing.expectEqualStrings("std.mem.max", r.aliases[3].path);
+    try std.testing.expectEqual(diff.AliasChange.State.retargeted, r.aliases[3].state);
+    try std.testing.expect(!r.aliases[3].target_moved);
+
+    // --private adds the private one.
+    const rp = try diff.analyze(a, s[0], s[1], true);
+    try std.testing.expectEqual(@as(usize, 5), rp.aliases.len);
+
+    var aw: std.Io.Writer.Allocating = .init(a);
+    try diff.report(a, &aw.writer, "a", "b", r, .{});
+    const text = aw.writer.buffered();
+    try std.testing.expect(std.mem.find(u8, text, "## aliases and delegations changed — member lookups follow these (4)") != null);
+    try std.testing.expect(std.mem.find(u8, text, "- `std.mem.Kind`  alias `std.builtin.Type` → alias `std.lang.Type`  (the target moved — inferred)\n") != null);
+    try std.testing.expect(std.mem.find(u8, text, "- `std.mem.eql`  now alias `std.mem.eqlImpl`\n") != null);
+    try std.testing.expect(std.mem.find(u8, text, "- `std.mem.indexOf`  no longer delegates `std.mem.find`\n") != null);
+
+    var tw: std.Io.Writer.Allocating = .init(a);
+    try diff.report(a, &tw.writer, "a", "b", r, .{ .tsv = true });
+    const t = tw.writer.buffered();
+    try std.testing.expect(std.mem.find(u8, t, "alias_retargeted\textracted\tstd.mem.Kind\talias\talias\tstd.builtin.Type\tstd.lang.Type\ttarget_moved\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "alias_retargeted\textracted\tstd.mem.max\talias\talias\tu32\tu64\t\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "alias_gained\textracted\tstd.mem.eql\t\talias\t\tstd.mem.eqlImpl\t\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "alias_lost\textracted\tstd.mem.indexOf\tdelegates\t\tstd.mem.find\t\t\n") != null);
 }
 
 test "module and under" {
