@@ -1333,6 +1333,8 @@ std.Io.Dispatch.AsyncClosure.contextPointer	parser-only	fn contextPointer(closur
 std.Io.Dispatch.AsyncClosure.entry	parser-only	fn entry() callconv(.naked) void	
 std.Io.Dispatch.AsyncClosure.fromFiber	parser-only	fn fromFiber(fiber: *Fiber) *AsyncClosure	
 std.Io.Dispatch.BatchOperationUserdata.fromErased	parser-only	fn fromErased(erased: *Erased) *BatchOperationUserdata	
+std.Io.Dispatch.BatchOperationUserdata.operation.file_write_streaming.data	parser-only	fn data(operation: *const @This()) []const []const u8	
+std.Io.Dispatch.BatchOperationUserdata.operation.file_write_streaming.header	parser-only	fn header(operation: *const @This()) []const u8	
 std.Io.Dispatch.BatchOperationUserdata.toErased	parser-only	fn toErased(userdata: *BatchOperationUserdata) *Erased	
 std.Io.Dispatch.BatchWaiter.@"suspend"	parser-only	fn @"suspend"(context: ?*anyopaque) callconv(.c) void	
 std.Io.Dispatch.BatchWaiter.signal	parser-only	fn signal(context: ?*anyopaque) callconv(.c) void	
@@ -1609,6 +1611,13 @@ std.Io.File.MultiReader.stream	parser-only	fn stream(r: *Io.Reader, w: *Io.Write
 std.Io.File.MultiReader.toOwnedSlice	both	fn toOwnedSlice(mr: *MultiReader, index: usize) Allocator.Error![]u8	fn (*Io.File.MultiReader, usize) error{OutOfMemory}![]u8
 std.Io.File.OpenFlags.isRead	reflect-only		fn (Io.Dir.OpenFileOptions) bool
 std.Io.File.OpenFlags.isWrite	reflect-only		fn (Io.Dir.OpenFileOptions) bool
+std.Io.File.Permissions.[orelse].[else].[then].fromMode	parser-only	fn fromMode(mode: std.posix.mode_t) @This()	
+std.Io.File.Permissions.[orelse].[else].[then].readOnly	parser-only	fn readOnly(self: @This()) bool	
+std.Io.File.Permissions.[orelse].[else].[then].setReadOnly	parser-only	fn setReadOnly(self: @This(), read_only: bool) @This()	
+std.Io.File.Permissions.[orelse].[else].[then].toMode	parser-only	fn toMode(self: @This()) std.posix.mode_t	
+std.Io.File.Permissions.[orelse].[then].readOnly	parser-only	fn readOnly(self: @This()) bool	
+std.Io.File.Permissions.[orelse].[then].setReadOnly	parser-only	fn setReadOnly(self: @This(), read_only: bool) @This()	
+std.Io.File.Permissions.[orelse].[then].toAttributes	parser-only	fn toAttributes(self: @This()) windows.FILE.ATTRIBUTE	
 std.Io.File.Permissions.fromMode	reflect-only		fn (u32) Io.File.Permissions__enum
 std.Io.File.Permissions.readOnly	reflect-only		fn (Io.File.Permissions__enum) bool
 std.Io.File.Permissions.setReadOnly	reflect-only		fn (Io.File.Permissions__enum, bool) Io.File.Permissions__enum
@@ -5182,6 +5191,9 @@ std.crypto.Certificate.Bundle.rescanMac	parser-only	fn rescanMac(cb: *Bundle, gp
 std.crypto.Certificate.Bundle.rescanWindows	parser-only	fn rescanWindows(cb: *Bundle, gpa: Allocator, io: Io, now: Io.Timestamp) RescanWindowsError!void	
 std.crypto.Certificate.Bundle.rescanWithPath	parser-only	fn rescanWithPath(cb: *Bundle, gpa: Allocator, io: Io, now: Io.Timestamp, cert_file_path: []const u8) RescanWithPathError!void	
 std.crypto.Certificate.Bundle.verify	both	fn verify(cb: Bundle, subject: Certificate.Parsed, now_sec: i64) VerifyError!void	fn (crypto.Certificate.Bundle, crypto.Certificate.Parsed, i64) error{CertificateExpired,CertificateFieldHasInvalidLength,CertificateFieldHasWrongDataType,CertificateIssuerMismatch,CertificateIssuerNotFound,CertificateNotYetValid,CertificatePublicKeyInvalid,CertificateSignatureAlgorithmMismatch,CertificateSignatureAlgorithmUnsupported,CertificateSignatureInvalid,CertificateSignatureInvalidLength,CertificateSignatureNamedCurveUnsupported,CertificateSignatureUnsupportedBitCount}!void
+std.crypto.Certificate.Chain.[windows].addCert	parser-only	fn addCert(chain: *Chain, cert: []const u8) std.Io.UnexpectedError!void	
+std.crypto.Certificate.Chain.[windows].deinit	parser-only	fn deinit(chain: *Chain) void	
+std.crypto.Certificate.Chain.[windows].verify	parser-only	fn verify(chain: *const Chain, now: std.Io.Timestamp) VerifyError!void	
 std.crypto.Certificate.Date.toSeconds	parser-only	fn toSeconds(date: Date) u64	
 std.crypto.Certificate.NamedCurve.Curve	both	fn Curve(comptime curve: NamedCurve) type	fn (comptime crypto.Certificate.NamedCurve) type
 std.crypto.Certificate.Parsed.checkHostName	parser-only	fn checkHostName(host_name: []const u8, dns_name: []const u8) bool	
@@ -5340,12 +5352,6 @@ std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().decryptWithAdVector	parser-only	
 std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: ?[]const u8, nonce: ?[]const u8, key: [key_length]u8) void	
 std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().encryptWithAdVector	parser-only	fn encryptWithAdVector(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const []const u8, key: [key_length]u8) void	
 std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().s2v	parser-only	fn s2v(iv: *[16]u8, key: [Aes.key_bits / 8]u8, strings: []const []const u8) void	
-std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac	parser-only	fn Cmac(comptime BlockCipher: type) type	
-std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().create	parser-only	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void	
-std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().double	parser-only	fn double(l: Block) Block	
-std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().final	parser-only	fn final(self: *Self, out: *[mac_length]u8) void	
-std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().init	parser-only	fn init(key: *const [key_length]u8) Self	
-std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().update	parser-only	fn update(self: *Self, msg: []const u8) void	
 std.crypto.aead.aes_siv.Aes128Siv.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, ?[]const u8, ?[]const u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_siv.Aes128Siv.decryptWithAdVector	reflect-only		fn ([]u8, []const u8, [16]u8, []const []const u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_siv.Aes128Siv.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, ?[]const u8, ?[]const u8, [32]u8) void
@@ -5544,13 +5550,6 @@ std.crypto.auth.siphash.SipHashStateless().init	parser-only	fn init(key: *const 
 std.crypto.auth.siphash.SipHashStateless().round	parser-only	fn round(self: *Self, b: [8]u8) void	
 std.crypto.auth.siphash.SipHashStateless().sipRound	parser-only	fn sipRound(d: *Self) void	
 std.crypto.auth.siphash.SipHashStateless().update	parser-only	fn update(self: *Self, b: []const u8) void	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.DecoderWithIgnore.decode	parser-only	fn decode( self: DecoderWithIgnore, bin: []u8, encoded: []const u8, ) error{ NoSpaceLeft, InvalidCharacter, InvalidPadding }![]const u8	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.DecoderWithIgnore.decodedLenForSlice	parser-only	fn decodedLenForSlice(decoder: DecoderWithIgnore, encoded: []const u8) !usize	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.DecoderWithIgnore.decodedLenUpperBound	parser-only	fn decodedLenUpperBound(hex_len: usize) usize	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.decode	parser-only	fn decode(bin: []u8, encoded: []const u8) error{ SizeMismatch, InvalidCharacter, InvalidPadding }!void	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.decodeAny	parser-only	fn decodeAny( bin: []u8, encoded: []const u8, ignored_chars: ?StaticBitSet(256), ) error{ NoSpaceLeft, InvalidCharacter, InvalidPadding }![]const u8	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.decoderWithIgnore	parser-only	fn decoderWithIgnore(ignore_chars: []const u8) error{InvalidCharacter}!DecoderWithIgnore	
-std.crypto.codecs.@"base64_hex_ct.zig".hex.encode	parser-only	fn encode(encoded: []u8, bin: []const u8, comptime case: std.fmt.Case) error{SizeMismatch}!void	
 std.crypto.codecs.asn1.Any.decodeDer	both	fn decodeDer(decoder: *der.Decoder) !@This()	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Any.decodeDer)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.Any
 std.crypto.codecs.asn1.Any.encodeDer	both	fn encodeDer(self: @This(), encoder: *der.Encoder) !void	fn (crypto.codecs.asn1.Any, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Any.encodeDer)).@"fn".return_type.?).error_union.error_set!void
 std.crypto.codecs.asn1.BitString.bitLen	both	fn bitLen(self: BitString) usize	fn (crypto.codecs.asn1.BitString) usize
@@ -5677,6 +5676,159 @@ std.crypto.core.aes.Block.toBytes	reflect-only		fn (crypto.aes.aesni.Block) [16]
 std.crypto.core.aes.Block.xorBlocks	reflect-only		fn (crypto.aes.aesni.Block, crypto.aes.aesni.Block) crypto.aes.aesni.Block
 std.crypto.core.aes.Block.xorBytes	reflect-only		fn (crypto.aes.aesni.Block, *const [16]u8) [16]u8
 std.crypto.core.aes.BlockVec	reflect-only		fn (comptime comptime_int) type
+std.crypto.core.aes.impl.[else].[else].Aes128.initDec	parser-only	fn initDec(key: [key_bits / 8]u8) AesDecryptCtx(Aes128)	
+std.crypto.core.aes.impl.[else].[else].Aes128.initEnc	parser-only	fn initEnc(key: [key_bits / 8]u8) AesEncryptCtx(Aes128)	
+std.crypto.core.aes.impl.[else].[else].Aes256.initDec	parser-only	fn initDec(key: [key_bits / 8]u8) AesDecryptCtx(Aes256)	
+std.crypto.core.aes.impl.[else].[else].Aes256.initEnc	parser-only	fn initEnc(key: [key_bits / 8]u8) AesEncryptCtx(Aes256)	
+std.crypto.core.aes.impl.[else].[else].AesDecryptCtx	parser-only	fn AesDecryptCtx(comptime Aes: type) type	
+std.crypto.core.aes.impl.[else].[else].AesDecryptCtx().decrypt	parser-only	fn decrypt(ctx: Self, dst: *[16]u8, src: *const [16]u8) void	
+std.crypto.core.aes.impl.[else].[else].AesDecryptCtx().decryptWide	parser-only	fn decryptWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8) void	
+std.crypto.core.aes.impl.[else].[else].AesDecryptCtx().init	parser-only	fn init(key: [Aes.key_bits / 8]u8) Self	
+std.crypto.core.aes.impl.[else].[else].AesDecryptCtx().initFromEnc	parser-only	fn initFromEnc(ctx: AesEncryptCtx(Aes)) Self	
+std.crypto.core.aes.impl.[else].[else].AesEncryptCtx	parser-only	fn AesEncryptCtx(comptime Aes: type) type	
+std.crypto.core.aes.impl.[else].[else].AesEncryptCtx().encrypt	parser-only	fn encrypt(ctx: Self, dst: *[16]u8, src: *const [16]u8) void	
+std.crypto.core.aes.impl.[else].[else].AesEncryptCtx().encryptWide	parser-only	fn encryptWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8) void	
+std.crypto.core.aes.impl.[else].[else].AesEncryptCtx().init	parser-only	fn init(key: [Aes.key_bits / 8]u8) Self	
+std.crypto.core.aes.impl.[else].[else].AesEncryptCtx().xor	parser-only	fn xor(ctx: Self, dst: *[16]u8, src: *const [16]u8, counter: [16]u8) void	
+std.crypto.core.aes.impl.[else].[else].AesEncryptCtx().xorWide	parser-only	fn xorWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8, counters: [16 * count]u8) void	
+std.crypto.core.aes.impl.[else].[else].Block.andBlocks	parser-only	fn andBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.decrypt	parser-only	fn decrypt(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.decryptLast	parser-only	fn decryptLast(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.decryptUnprotected	parser-only	fn decryptUnprotected(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.encrypt	parser-only	fn encrypt(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.encryptLast	parser-only	fn encryptLast(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.encryptUnprotected	parser-only	fn encryptUnprotected(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.fromBytes	parser-only	fn fromBytes(bytes: *const [16]u8) Block	
+std.crypto.core.aes.impl.[else].[else].Block.invMixColumns	parser-only	fn invMixColumns(block: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.orBlocks	parser-only	fn orBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.parallel.decryptLastWide	parser-only	fn decryptLastWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[else].Block.parallel.decryptParallel	parser-only	fn decryptParallel(comptime count: usize, blocks: [count]Block, round_keys: [count]Block) [count]Block	
+std.crypto.core.aes.impl.[else].[else].Block.parallel.decryptWide	parser-only	fn decryptWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[else].Block.parallel.encryptLastWide	parser-only	fn encryptLastWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[else].Block.parallel.encryptParallel	parser-only	fn encryptParallel(comptime count: usize, blocks: [count]Block, round_keys: [count]Block) [count]Block	
+std.crypto.core.aes.impl.[else].[else].Block.parallel.encryptWide	parser-only	fn encryptWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[else].Block.toBytes	parser-only	fn toBytes(block: Block) [16]u8	
+std.crypto.core.aes.impl.[else].[else].Block.xorBlocks	parser-only	fn xorBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[else].[else].Block.xorBytes	parser-only	fn xorBytes(block: Block, bytes: *const [16]u8) [16]u8	
+std.crypto.core.aes.impl.[else].[else].BlockVec	parser-only	fn BlockVec(comptime blocks_count: comptime_int) type	
+std.crypto.core.aes.impl.[else].[else].BlockVec().andBlocks	parser-only	fn andBlocks(block_vec1: Self, block_vec2: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().decrypt	parser-only	fn decrypt(block_vec: Self, inv_round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().decryptLast	parser-only	fn decryptLast(block_vec: Self, inv_round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().encrypt	parser-only	fn encrypt(block_vec: Self, round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().encryptLast	parser-only	fn encryptLast(block_vec: Self, round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().fromBytes	parser-only	fn fromBytes(bytes: *const [blocks_count * 16]u8) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().invMixColumns	parser-only	fn invMixColumns(block_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().orBlocks	parser-only	fn orBlocks(block_vec1: Self, block_vec2: Block) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().toBytes	parser-only	fn toBytes(block_vec: Self) [blocks_count * 16]u8	
+std.crypto.core.aes.impl.[else].[else].BlockVec().xorBlocks	parser-only	fn xorBlocks(block_vec1: Self, block_vec2: Self) Self	
+std.crypto.core.aes.impl.[else].[else].BlockVec().xorBytes	parser-only	fn xorBytes(block_vec: Self, bytes: *const [blocks_count * 16]u8) [32]u8	
+std.crypto.core.aes.impl.[else].[else].KeySchedule	parser-only	fn KeySchedule(comptime Aes: type) type	
+std.crypto.core.aes.impl.[else].[else].KeySchedule().expandKey	parser-only	fn expandKey(key: [key_length]u8) Self	
+std.crypto.core.aes.impl.[else].[else].KeySchedule().invert	parser-only	fn invert(key_schedule: Self) Self	
+std.crypto.core.aes.impl.[else].[else].generateSbox	parser-only	fn generateSbox(invert: bool) [256]u8	
+std.crypto.core.aes.impl.[else].[else].generateTable	parser-only	fn generateTable(invert: bool) [4][256]u32	
+std.crypto.core.aes.impl.[else].[else].mul	parser-only	fn mul(a: u8, b: u8) u8	
+std.crypto.core.aes.impl.[else].[else].sbox_lookup	parser-only	fn sbox_lookup(sbox: *align(64) const [256]u8, idx0: u8, idx1: u8, idx2: u8, idx3: u8) [4]u8	
+std.crypto.core.aes.impl.[else].[else].table_lookup	parser-only	fn table_lookup(table: *align(64) const [4][256]u32, idx0: u8, idx1: u8, idx2: u8, idx3: u8) [4]u32	
+std.crypto.core.aes.impl.[else].[then].Aes128.initDec	parser-only	fn initDec(key: [key_bits / 8]u8) AesDecryptCtx(Aes128)	
+std.crypto.core.aes.impl.[else].[then].Aes128.initEnc	parser-only	fn initEnc(key: [key_bits / 8]u8) AesEncryptCtx(Aes128)	
+std.crypto.core.aes.impl.[else].[then].Aes256.initDec	parser-only	fn initDec(key: [key_bits / 8]u8) AesDecryptCtx(Aes256)	
+std.crypto.core.aes.impl.[else].[then].Aes256.initEnc	parser-only	fn initEnc(key: [key_bits / 8]u8) AesEncryptCtx(Aes256)	
+std.crypto.core.aes.impl.[else].[then].AesDecryptCtx	parser-only	fn AesDecryptCtx(comptime Aes: type) type	
+std.crypto.core.aes.impl.[else].[then].AesDecryptCtx().decrypt	parser-only	fn decrypt(ctx: Self, dst: *[16]u8, src: *const [16]u8) void	
+std.crypto.core.aes.impl.[else].[then].AesDecryptCtx().decryptWide	parser-only	fn decryptWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8) void	
+std.crypto.core.aes.impl.[else].[then].AesDecryptCtx().init	parser-only	fn init(key: [Aes.key_bits / 8]u8) Self	
+std.crypto.core.aes.impl.[else].[then].AesDecryptCtx().initFromEnc	parser-only	fn initFromEnc(ctx: AesEncryptCtx(Aes)) Self	
+std.crypto.core.aes.impl.[else].[then].AesEncryptCtx	parser-only	fn AesEncryptCtx(comptime Aes: type) type	
+std.crypto.core.aes.impl.[else].[then].AesEncryptCtx().encrypt	parser-only	fn encrypt(ctx: Self, dst: *[16]u8, src: *const [16]u8) void	
+std.crypto.core.aes.impl.[else].[then].AesEncryptCtx().encryptWide	parser-only	fn encryptWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8) void	
+std.crypto.core.aes.impl.[else].[then].AesEncryptCtx().init	parser-only	fn init(key: [Aes.key_bits / 8]u8) Self	
+std.crypto.core.aes.impl.[else].[then].AesEncryptCtx().xor	parser-only	fn xor(ctx: Self, dst: *[16]u8, src: *const [16]u8, counter: [16]u8) void	
+std.crypto.core.aes.impl.[else].[then].AesEncryptCtx().xorWide	parser-only	fn xorWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8, counters: [16 * count]u8) void	
+std.crypto.core.aes.impl.[else].[then].Block.andBlocks	parser-only	fn andBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.decrypt	parser-only	fn decrypt(block: Block, inv_round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.decryptLast	parser-only	fn decryptLast(block: Block, inv_round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.encrypt	parser-only	fn encrypt(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.encryptLast	parser-only	fn encryptLast(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.fromBytes	parser-only	fn fromBytes(bytes: *const [16]u8) Block	
+std.crypto.core.aes.impl.[else].[then].Block.invMixColumns	parser-only	fn invMixColumns(block: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.orBlocks	parser-only	fn orBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.parallel.decryptLastWide	parser-only	fn decryptLastWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[then].Block.parallel.decryptParallel	parser-only	fn decryptParallel(comptime count: usize, blocks: [count]Block, round_keys: [count]Block) [count]Block	
+std.crypto.core.aes.impl.[else].[then].Block.parallel.decryptWide	parser-only	fn decryptWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[then].Block.parallel.encryptLastWide	parser-only	fn encryptLastWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[then].Block.parallel.encryptParallel	parser-only	fn encryptParallel(comptime count: usize, blocks: [count]Block, round_keys: [count]Block) [count]Block	
+std.crypto.core.aes.impl.[else].[then].Block.parallel.encryptWide	parser-only	fn encryptWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[else].[then].Block.toBytes	parser-only	fn toBytes(block: Block) [16]u8	
+std.crypto.core.aes.impl.[else].[then].Block.xorBlocks	parser-only	fn xorBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[else].[then].Block.xorBytes	parser-only	fn xorBytes(block: Block, bytes: *const [16]u8) [16]u8	
+std.crypto.core.aes.impl.[else].[then].BlockVec	parser-only	fn BlockVec(comptime blocks_count: comptime_int) type	
+std.crypto.core.aes.impl.[else].[then].BlockVec().andBlocks	parser-only	fn andBlocks(block_vec1: Self, block_vec2: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().decrypt	parser-only	fn decrypt(block_vec: Self, inv_round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().decryptLast	parser-only	fn decryptLast(block_vec: Self, inv_round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().encrypt	parser-only	fn encrypt(block_vec: Self, round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().encryptLast	parser-only	fn encryptLast(block_vec: Self, round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().fromBytes	parser-only	fn fromBytes(bytes: *const [blocks_count * 16]u8) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().invMixColumns	parser-only	fn invMixColumns(block_vec: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().orBlocks	parser-only	fn orBlocks(block_vec1: Self, block_vec2: Block) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().toBytes	parser-only	fn toBytes(block_vec: Self) [blocks_count * 16]u8	
+std.crypto.core.aes.impl.[else].[then].BlockVec().xorBlocks	parser-only	fn xorBlocks(block_vec1: Self, block_vec2: Self) Self	
+std.crypto.core.aes.impl.[else].[then].BlockVec().xorBytes	parser-only	fn xorBytes(block_vec: Self, bytes: *const [blocks_count * 16]u8) [32]u8	
+std.crypto.core.aes.impl.[else].[then].KeySchedule	parser-only	fn KeySchedule(comptime Aes: type) type	
+std.crypto.core.aes.impl.[else].[then].KeySchedule().drc128	parser-only	fn drc128(comptime rc: u8, t: Repr) Repr	
+std.crypto.core.aes.impl.[else].[then].KeySchedule().drc256	parser-only	fn drc256(comptime second: bool, comptime rc: u8, t: Repr, tx: Repr) Repr	
+std.crypto.core.aes.impl.[else].[then].KeySchedule().expand128	parser-only	fn expand128(t1: *Block) Self	
+std.crypto.core.aes.impl.[else].[then].KeySchedule().expand256	parser-only	fn expand256(t1: *Block, t2: *Block) Self	
+std.crypto.core.aes.impl.[else].[then].KeySchedule().invert	parser-only	fn invert(key_schedule: Self) Self	
+std.crypto.core.aes.impl.[then].Aes128.initDec	parser-only	fn initDec(key: [key_bits / 8]u8) AesDecryptCtx(Aes128)	
+std.crypto.core.aes.impl.[then].Aes128.initEnc	parser-only	fn initEnc(key: [key_bits / 8]u8) AesEncryptCtx(Aes128)	
+std.crypto.core.aes.impl.[then].Aes256.initDec	parser-only	fn initDec(key: [key_bits / 8]u8) AesDecryptCtx(Aes256)	
+std.crypto.core.aes.impl.[then].Aes256.initEnc	parser-only	fn initEnc(key: [key_bits / 8]u8) AesEncryptCtx(Aes256)	
+std.crypto.core.aes.impl.[then].AesDecryptCtx	parser-only	fn AesDecryptCtx(comptime Aes: type) type	
+std.crypto.core.aes.impl.[then].AesDecryptCtx().decrypt	parser-only	fn decrypt(ctx: Self, dst: *[16]u8, src: *const [16]u8) void	
+std.crypto.core.aes.impl.[then].AesDecryptCtx().decryptWide	parser-only	fn decryptWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8) void	
+std.crypto.core.aes.impl.[then].AesDecryptCtx().init	parser-only	fn init(key: [Aes.key_bits / 8]u8) Self	
+std.crypto.core.aes.impl.[then].AesDecryptCtx().initFromEnc	parser-only	fn initFromEnc(ctx: AesEncryptCtx(Aes)) Self	
+std.crypto.core.aes.impl.[then].AesEncryptCtx	parser-only	fn AesEncryptCtx(comptime Aes: type) type	
+std.crypto.core.aes.impl.[then].AesEncryptCtx().encrypt	parser-only	fn encrypt(ctx: Self, dst: *[16]u8, src: *const [16]u8) void	
+std.crypto.core.aes.impl.[then].AesEncryptCtx().encryptWide	parser-only	fn encryptWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8) void	
+std.crypto.core.aes.impl.[then].AesEncryptCtx().init	parser-only	fn init(key: [Aes.key_bits / 8]u8) Self	
+std.crypto.core.aes.impl.[then].AesEncryptCtx().xor	parser-only	fn xor(ctx: Self, dst: *[16]u8, src: *const [16]u8, counter: [16]u8) void	
+std.crypto.core.aes.impl.[then].AesEncryptCtx().xorWide	parser-only	fn xorWide(ctx: Self, comptime count: usize, dst: *[16 * count]u8, src: *const [16 * count]u8, counters: [16 * count]u8) void	
+std.crypto.core.aes.impl.[then].Block.andBlocks	parser-only	fn andBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[then].Block.decrypt	parser-only	fn decrypt(block: Block, inv_round_key: Block) Block	
+std.crypto.core.aes.impl.[then].Block.decryptLast	parser-only	fn decryptLast(block: Block, inv_round_key: Block) Block	
+std.crypto.core.aes.impl.[then].Block.encrypt	parser-only	fn encrypt(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[then].Block.encryptLast	parser-only	fn encryptLast(block: Block, round_key: Block) Block	
+std.crypto.core.aes.impl.[then].Block.fromBytes	parser-only	fn fromBytes(bytes: *const [16]u8) Block	
+std.crypto.core.aes.impl.[then].Block.invMixColumns	parser-only	fn invMixColumns(block: Block) Block	
+std.crypto.core.aes.impl.[then].Block.orBlocks	parser-only	fn orBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[then].Block.parallel.decryptLastWide	parser-only	fn decryptLastWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[then].Block.parallel.decryptParallel	parser-only	fn decryptParallel(comptime count: usize, blocks: [count]Block, round_keys: [count]Block) [count]Block	
+std.crypto.core.aes.impl.[then].Block.parallel.decryptWide	parser-only	fn decryptWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[then].Block.parallel.encryptLastWide	parser-only	fn encryptLastWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[then].Block.parallel.encryptParallel	parser-only	fn encryptParallel(comptime count: usize, blocks: [count]Block, round_keys: [count]Block) [count]Block	
+std.crypto.core.aes.impl.[then].Block.parallel.encryptWide	parser-only	fn encryptWide(comptime count: usize, blocks: [count]Block, round_key: Block) [count]Block	
+std.crypto.core.aes.impl.[then].Block.toBytes	parser-only	fn toBytes(block: Block) [16]u8	
+std.crypto.core.aes.impl.[then].Block.xorBlocks	parser-only	fn xorBlocks(block1: Block, block2: Block) Block	
+std.crypto.core.aes.impl.[then].Block.xorBytes	parser-only	fn xorBytes(block: Block, bytes: *const [16]u8) [16]u8	
+std.crypto.core.aes.impl.[then].BlockVec	parser-only	fn BlockVec(comptime blocks_count: comptime_int) type	
+std.crypto.core.aes.impl.[then].BlockVec().andBlocks	parser-only	fn andBlocks(block_vec1: Self, block_vec2: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().decrypt	parser-only	fn decrypt(block_vec: Self, inv_round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().decryptLast	parser-only	fn decryptLast(block_vec: Self, inv_round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().encrypt	parser-only	fn encrypt(block_vec: Self, round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().encryptLast	parser-only	fn encryptLast(block_vec: Self, round_key_vec: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().fromBytes	parser-only	fn fromBytes(bytes: *const [blocks_count * 16]u8) Self	
+std.crypto.core.aes.impl.[then].BlockVec().invMixColumns	parser-only	fn invMixColumns(block_vec: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().orBlocks	parser-only	fn orBlocks(block_vec1: Self, block_vec2: Block) Self	
+std.crypto.core.aes.impl.[then].BlockVec().toBytes	parser-only	fn toBytes(block_vec: Self) [blocks_count * 16]u8	
+std.crypto.core.aes.impl.[then].BlockVec().xorBlocks	parser-only	fn xorBlocks(block_vec1: Self, block_vec2: Self) Self	
+std.crypto.core.aes.impl.[then].BlockVec().xorBytes	parser-only	fn xorBytes(block_vec: Self, bytes: *const [blocks_count * 16]u8) [blocks_count * 16]u8	
+std.crypto.core.aes.impl.[then].KeySchedule	parser-only	fn KeySchedule(comptime Aes: type) type	
+std.crypto.core.aes.impl.[then].KeySchedule().drc	parser-only	fn drc(comptime second: bool, comptime rc: u8, t: Repr, tx: Repr) Repr	
+std.crypto.core.aes.impl.[then].KeySchedule().expand128	parser-only	fn expand128(t1: *Block) Self	
+std.crypto.core.aes.impl.[then].KeySchedule().expand256	parser-only	fn expand256(t1: *Block, t2: *Block) Self	
+std.crypto.core.aes.impl.[then].KeySchedule().invert	parser-only	fn invert(key_schedule: Self) Self	
 std.crypto.core.keccak.KeccakF	both	fn KeccakF(comptime f: u11) type	fn (comptime u11) type
 std.crypto.core.keccak.KeccakF().addByte	parser-only	fn addByte(self: *Self, byte: u8, offset: usize) void	
 std.crypto.core.keccak.KeccakF().addBytes	parser-only	fn addBytes(self: *Self, bytes: []const u8) void	
@@ -5774,79 +5926,36 @@ std.crypto.ecc.@"p384.zig".AffineCoordinates.cMov	parser-only	fn cMov(p: *Affine
 std.crypto.ecc.@"p384.zig".AffineCoordinates.neg	parser-only	fn neg(p: AffineCoordinates) AffineCoordinates	
 std.crypto.ecc.@"secp256k1.zig".AffineCoordinates.cMov	parser-only	fn cMov(p: *AffineCoordinates, a: AffineCoordinates, c: u1) void	
 std.crypto.ecc.@"secp256k1.zig".AffineCoordinates.neg	parser-only	fn neg(p: AffineCoordinates) AffineCoordinates	
-std.crypto.ecc.Curve25519.Fe._carry128	parser-only	fn _carry128(r: *[5]u128) Fe	
-std.crypto.ecc.Curve25519.Fe._sq	parser-only	fn _sq(a: Fe, comptime double: bool) Fe	
-std.crypto.ecc.Curve25519.Fe.abs	both	fn abs(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.add	both	fn add(a: Fe, b: Fe) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.cMov	both	fn cMov(fe: *Fe, a: Fe, c: u64) void	fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
-std.crypto.ecc.Curve25519.Fe.cSwap2	both	fn cSwap2(a0: *Fe, b0: *Fe, a1: *Fe, b1: *Fe, c: u64) void	fn (*crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, u64) void
-std.crypto.ecc.Curve25519.Fe.equivalent	both	fn equivalent(a: Fe, b: Fe) bool	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) bool
-std.crypto.ecc.Curve25519.Fe.fromBytes	both	fn fromBytes(s: [32]u8) Fe	fn ([32]u8) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.fromBytes64	both	fn fromBytes64(s: [64]u8) Fe	fn ([64]u8) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.invert	both	fn invert(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.isNegative	both	fn isNegative(a: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Curve25519.Fe.isSquare	both	fn isSquare(a: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Curve25519.Fe.isZero	both	fn isZero(fe: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Curve25519.Fe.mul	both	fn mul(a: Fe, b: Fe) callconv(bloaty_inline) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.mul32	both	fn mul32(a: Fe, comptime n: u32) Fe	fn (crypto.25519.field.Fe, comptime u32) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.neg	both	fn neg(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.pow2523	both	fn pow2523(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.reduce	parser-only	fn reduce(fe: *Fe) void	
-std.crypto.ecc.Curve25519.Fe.rejectNonCanonical	both	fn rejectNonCanonical(s: [32]u8, comptime ignore_extra_bit: bool) NonCanonicalError!void	fn ([32]u8, comptime bool) error{NonCanonical}!void
-std.crypto.ecc.Curve25519.Fe.sq	both	fn sq(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.sq2	both	fn sq2(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.sqn	parser-only	fn sqn(a: Fe, n: usize) Fe	
-std.crypto.ecc.Curve25519.Fe.sqrt	both	fn sqrt(x2: Fe) NotSquareError!Fe	fn (crypto.25519.field.Fe) error{NotSquare}!crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.sub	both	fn sub(a: Fe, b: Fe) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Curve25519.Fe.toBytes	both	fn toBytes(fe: Fe) [32]u8	fn (crypto.25519.field.Fe) [32]u8
-std.crypto.ecc.Curve25519.Fe.uncheckedSqrt	parser-only	fn uncheckedSqrt(x2: Fe) Fe	
-std.crypto.ecc.Curve25519.clampedMul	both	fn clampedMul(p: Curve25519, s: [32]u8) IdentityElementError!Curve25519	fn (crypto.25519.curve25519.Curve25519, [32]u8) error{IdentityElement}!crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Curve25519.clearCofactor	both	fn clearCofactor(p: Curve25519) WeakPublicKeyError!Curve25519	fn (crypto.25519.curve25519.Curve25519) error{WeakPublicKey}!crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Curve25519.elligator2	both	fn elligator2(r: Fe) Curve25519	fn (crypto.25519.field.Fe) crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Curve25519.fromBytes	both	fn fromBytes(s: [32]u8) Curve25519	fn ([32]u8) crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Curve25519.fromEdwards25519	both	fn fromEdwards25519(p: crypto.ecc.Edwards25519) IdentityElementError!Curve25519	fn (crypto.25519.edwards25519.Edwards25519) error{IdentityElement}!crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Curve25519.ladder	parser-only	fn ladder(p: Curve25519, s: [32]u8, comptime bits: usize) IdentityElementError!Curve25519	
-std.crypto.ecc.Curve25519.mul	both	fn mul(p: Curve25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Curve25519	fn (crypto.25519.curve25519.Curve25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Curve25519.rejectIdentity	both	fn rejectIdentity(p: Curve25519) IdentityElementError!void	fn (crypto.25519.curve25519.Curve25519) error{IdentityElement}!void
-std.crypto.ecc.Curve25519.rejectNonCanonical	both	fn rejectNonCanonical(s: [32]u8) NonCanonicalError!void	fn ([32]u8) error{NonCanonical}!void
-std.crypto.ecc.Curve25519.scalar.add	reflect-only		fn ([32]u8, [32]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.clamp	reflect-only		fn (*[32]u8) void
-std.crypto.ecc.Curve25519.scalar.mul	reflect-only		fn ([32]u8, [32]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.mul8	reflect-only		fn ([32]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.mulAdd	reflect-only		fn ([32]u8, [32]u8, [32]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.neg	reflect-only		fn ([32]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.random	reflect-only		fn (Io) [32]u8
-std.crypto.ecc.Curve25519.scalar.reduce	reflect-only		fn ([32]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.reduce64	reflect-only		fn ([64]u8) [32]u8
-std.crypto.ecc.Curve25519.scalar.rejectNonCanonical	reflect-only		fn ([32]u8) error{NonCanonical}!void
-std.crypto.ecc.Curve25519.scalar.sub	reflect-only		fn ([32]u8, [32]u8) [32]u8
-std.crypto.ecc.Curve25519.toBytes	both	fn toBytes(p: Curve25519) [32]u8	fn (crypto.25519.curve25519.Curve25519) [32]u8
-std.crypto.ecc.Edwards25519.Fe._carry128	parser-only	fn _carry128(r: *[5]u128) Fe	
-std.crypto.ecc.Edwards25519.Fe._sq	parser-only	fn _sq(a: Fe, comptime double: bool) Fe	
-std.crypto.ecc.Edwards25519.Fe.abs	both	fn abs(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.add	both	fn add(a: Fe, b: Fe) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.cMov	both	fn cMov(fe: *Fe, a: Fe, c: u64) void	fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
-std.crypto.ecc.Edwards25519.Fe.cSwap2	both	fn cSwap2(a0: *Fe, b0: *Fe, a1: *Fe, b1: *Fe, c: u64) void	fn (*crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, u64) void
-std.crypto.ecc.Edwards25519.Fe.equivalent	both	fn equivalent(a: Fe, b: Fe) bool	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) bool
-std.crypto.ecc.Edwards25519.Fe.fromBytes	both	fn fromBytes(s: [32]u8) Fe	fn ([32]u8) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.fromBytes64	both	fn fromBytes64(s: [64]u8) Fe	fn ([64]u8) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.invert	both	fn invert(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.isNegative	both	fn isNegative(a: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Edwards25519.Fe.isSquare	both	fn isSquare(a: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Edwards25519.Fe.isZero	both	fn isZero(fe: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Edwards25519.Fe.mul	both	fn mul(a: Fe, b: Fe) callconv(bloaty_inline) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.mul32	both	fn mul32(a: Fe, comptime n: u32) Fe	fn (crypto.25519.field.Fe, comptime u32) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.neg	both	fn neg(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.pow2523	both	fn pow2523(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.reduce	parser-only	fn reduce(fe: *Fe) void	
-std.crypto.ecc.Edwards25519.Fe.rejectNonCanonical	both	fn rejectNonCanonical(s: [32]u8, comptime ignore_extra_bit: bool) NonCanonicalError!void	fn ([32]u8, comptime bool) error{NonCanonical}!void
-std.crypto.ecc.Edwards25519.Fe.sq	both	fn sq(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.sq2	both	fn sq2(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.sqn	parser-only	fn sqn(a: Fe, n: usize) Fe	
-std.crypto.ecc.Edwards25519.Fe.sqrt	both	fn sqrt(x2: Fe) NotSquareError!Fe	fn (crypto.25519.field.Fe) error{NotSquare}!crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.sub	both	fn sub(a: Fe, b: Fe) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Edwards25519.Fe.toBytes	both	fn toBytes(fe: Fe) [32]u8	fn (crypto.25519.field.Fe) [32]u8
-std.crypto.ecc.Edwards25519.Fe.uncheckedSqrt	parser-only	fn uncheckedSqrt(x2: Fe) Fe	
+std.crypto.ecc.Curve25519.clampedMul	reflect-only		fn (crypto.25519.curve25519.Curve25519, [32]u8) error{IdentityElement}!crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Curve25519.clearCofactor	reflect-only		fn (crypto.25519.curve25519.Curve25519) error{WeakPublicKey}!crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Curve25519.elligator2	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Curve25519.fromBytes	reflect-only		fn ([32]u8) crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Curve25519.fromEdwards25519	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) error{IdentityElement}!crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Curve25519.mul	reflect-only		fn (crypto.25519.curve25519.Curve25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Curve25519.rejectIdentity	reflect-only		fn (crypto.25519.curve25519.Curve25519) error{IdentityElement}!void
+std.crypto.ecc.Curve25519.rejectNonCanonical	reflect-only		fn ([32]u8) error{NonCanonical}!void
+std.crypto.ecc.Curve25519.toBytes	reflect-only		fn (crypto.25519.curve25519.Curve25519) [32]u8
+std.crypto.ecc.Edwards25519.Fe.abs	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.add	reflect-only		fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.cMov	reflect-only		fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
+std.crypto.ecc.Edwards25519.Fe.cSwap2	reflect-only		fn (*crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, u64) void
+std.crypto.ecc.Edwards25519.Fe.equivalent	reflect-only		fn (crypto.25519.field.Fe, crypto.25519.field.Fe) bool
+std.crypto.ecc.Edwards25519.Fe.fromBytes	reflect-only		fn ([32]u8) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.fromBytes64	reflect-only		fn ([64]u8) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.invert	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.isNegative	reflect-only		fn (crypto.25519.field.Fe) bool
+std.crypto.ecc.Edwards25519.Fe.isSquare	reflect-only		fn (crypto.25519.field.Fe) bool
+std.crypto.ecc.Edwards25519.Fe.isZero	reflect-only		fn (crypto.25519.field.Fe) bool
+std.crypto.ecc.Edwards25519.Fe.mul	reflect-only		fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.mul32	reflect-only		fn (crypto.25519.field.Fe, comptime u32) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.neg	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.pow2523	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.rejectNonCanonical	reflect-only		fn ([32]u8, comptime bool) error{NonCanonical}!void
+std.crypto.ecc.Edwards25519.Fe.sq	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.sq2	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.sqrt	reflect-only		fn (crypto.25519.field.Fe) error{NotSquare}!crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.sub	reflect-only		fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Edwards25519.Fe.toBytes	reflect-only		fn (crypto.25519.field.Fe) [32]u8
 std.crypto.ecc.Edwards25519.add	both	fn add(p: Edwards25519, q: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Edwards25519.cMov	parser-only	fn cMov(p: *Edwards25519, a: Edwards25519, c: u64) void	
 std.crypto.ecc.Edwards25519.clampedMul	both	fn clampedMul(p: Edwards25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
@@ -5888,6 +5997,25 @@ std.crypto.ecc.Edwards25519.stringToPoints	parser-only	fn stringToPoints(comptim
 std.crypto.ecc.Edwards25519.sub	both	fn sub(p: Edwards25519, q: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
 std.crypto.ecc.Edwards25519.toBytes	both	fn toBytes(p: Edwards25519) [encoded_length]u8	fn (crypto.25519.edwards25519.Edwards25519) [32]u8
 std.crypto.ecc.Edwards25519.xmontToYmont	parser-only	fn xmontToYmont(x: Fe) NotSquareError!Fe	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".add	parser-only	fn add(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".addcarryxU64	parser-only	fn addcarryxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".cmovznzU64	parser-only	fn cmovznzU64(out1: *u64, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".divstep	parser-only	fn divstep(out1: *u64, out2: *[5]u64, out3: *[5]u64, out4: *[4]u64, out5: *[4]u64, arg1: u64, arg2: [5]u64, arg3: [5]u64, arg4: [4]u64, arg5: [4]u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".divstepPrecomp	parser-only	fn divstepPrecomp(out1: *[4]u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".fromBytes	parser-only	fn fromBytes(out1: *[4]u64, arg1: [32]u8) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".fromMontgomery	parser-only	fn fromMontgomery(out1: *NonMontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".msat	parser-only	fn msat(out1: *[5]u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".mul	parser-only	fn mul(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".mulxU64	parser-only	fn mulxU64(out1: *u64, out2: *u64, arg1: u64, arg2: u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".nonzero	parser-only	fn nonzero(out1: *u64, arg1: [4]u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".opp	parser-only	fn opp(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".selectznz	parser-only	fn selectznz(out1: *[4]u64, arg1: u1, arg2: [4]u64, arg3: [4]u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".setOne	parser-only	fn setOne(out1: *MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".square	parser-only	fn square(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".sub	parser-only	fn sub(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".subborrowxU64	parser-only	fn subborrowxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".toBytes	parser-only	fn toBytes(out1: *[32]u8, arg1: [4]u64) void	
+std.crypto.ecc.P256.@"field.zig".@"p256_64.zig".toMontgomery	parser-only	fn toMontgomery(out1: *MontgomeryDomainFieldElement, arg1: NonMontgomeryDomainFieldElement) void	
 std.crypto.ecc.P256.Fe.add	reflect-only		fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })) crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })
 std.crypto.ecc.P256.Fe.cMov	reflect-only		fn (*crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), u1) void
 std.crypto.ecc.P256.Fe.dbl	reflect-only		fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })) crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })
@@ -5928,6 +6056,25 @@ std.crypto.ecc.P256.precompute	parser-only	fn precompute(p: P256, comptime count
 std.crypto.ecc.P256.random	both	fn random(io: std.Io) P256	fn (Io) crypto.pcurves.p256.P256
 std.crypto.ecc.P256.recoverY	both	fn recoverY(x: Fe, is_odd: bool) NotSquareError!Fe	fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), bool) error{NotSquare}!crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p256.p256_64, .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })
 std.crypto.ecc.P256.rejectIdentity	both	fn rejectIdentity(p: P256) IdentityElementError!void	fn (crypto.pcurves.p256.P256) error{IdentityElement}!void
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".add	parser-only	fn add(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".addcarryxU64	parser-only	fn addcarryxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".cmovznzU64	parser-only	fn cmovznzU64(out1: *u64, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".divstep	parser-only	fn divstep(out1: *u64, out2: *[5]u64, out3: *[5]u64, out4: *[4]u64, out5: *[4]u64, arg1: u64, arg2: [5]u64, arg3: [5]u64, arg4: [4]u64, arg5: [4]u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".divstepPrecomp	parser-only	fn divstepPrecomp(out1: *[4]u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".fromBytes	parser-only	fn fromBytes(out1: *[4]u64, arg1: [32]u8) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".fromMontgomery	parser-only	fn fromMontgomery(out1: *NonMontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".msat	parser-only	fn msat(out1: *[5]u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".mul	parser-only	fn mul(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".mulxU64	parser-only	fn mulxU64(out1: *u64, out2: *u64, arg1: u64, arg2: u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".nonzero	parser-only	fn nonzero(out1: *u64, arg1: [4]u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".opp	parser-only	fn opp(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".selectznz	parser-only	fn selectznz(out1: *[4]u64, arg1: u1, arg2: [4]u64, arg3: [4]u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".setOne	parser-only	fn setOne(out1: *MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".square	parser-only	fn square(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".sub	parser-only	fn sub(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".subborrowxU64	parser-only	fn subborrowxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".toBytes	parser-only	fn toBytes(out1: *[32]u8, arg1: [4]u64) void	
+std.crypto.ecc.P256.scalar.@"p256_scalar_64.zig".toMontgomery	parser-only	fn toMontgomery(out1: *MontgomeryDomainFieldElement, arg1: NonMontgomeryDomainFieldElement) void	
 std.crypto.ecc.P256.scalar.Scalar.add	both	fn add(x: Scalar, y: Scalar) Scalar	fn (crypto.pcurves.p256.scalar.Scalar, crypto.pcurves.p256.scalar.Scalar) crypto.pcurves.p256.scalar.Scalar
 std.crypto.ecc.P256.scalar.Scalar.dbl	both	fn dbl(n: Scalar) Scalar	fn (crypto.pcurves.p256.scalar.Scalar) crypto.pcurves.p256.scalar.Scalar
 std.crypto.ecc.P256.scalar.Scalar.equivalent	both	fn equivalent(a: Scalar, b: Scalar) bool	fn (crypto.pcurves.p256.scalar.Scalar, crypto.pcurves.p256.scalar.Scalar) bool
@@ -5985,6 +6132,25 @@ std.crypto.ecc.P256.sub	both	fn sub(p: P256, q: P256) P256	fn (crypto.pcurves.p2
 std.crypto.ecc.P256.subMixed	both	fn subMixed(p: P256, q: AffineCoordinates) P256	fn (crypto.pcurves.p256.P256, crypto.pcurves.p256.AffineCoordinates) crypto.pcurves.p256.P256
 std.crypto.ecc.P256.toCompressedSec1	both	fn toCompressedSec1(p: P256) [33]u8	fn (crypto.pcurves.p256.P256) [33]u8
 std.crypto.ecc.P256.toUncompressedSec1	both	fn toUncompressedSec1(p: P256) [65]u8	fn (crypto.pcurves.p256.P256) [65]u8
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".add	parser-only	fn add(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".addcarryxU64	parser-only	fn addcarryxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".cmovznzU64	parser-only	fn cmovznzU64(out1: *u64, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".divstep	parser-only	fn divstep(out1: *u64, out2: *[7]u64, out3: *[7]u64, out4: *[6]u64, out5: *[6]u64, arg1: u64, arg2: [7]u64, arg3: [7]u64, arg4: [6]u64, arg5: [6]u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".divstepPrecomp	parser-only	fn divstepPrecomp(out1: *[6]u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".fromBytes	parser-only	fn fromBytes(out1: *[6]u64, arg1: [48]u8) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".fromMontgomery	parser-only	fn fromMontgomery(out1: *NonMontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".msat	parser-only	fn msat(out1: *[7]u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".mul	parser-only	fn mul(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".mulxU64	parser-only	fn mulxU64(out1: *u64, out2: *u64, arg1: u64, arg2: u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".nonzero	parser-only	fn nonzero(out1: *u64, arg1: [6]u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".opp	parser-only	fn opp(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".selectznz	parser-only	fn selectznz(out1: *[6]u64, arg1: u1, arg2: [6]u64, arg3: [6]u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".setOne	parser-only	fn setOne(out1: *MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".square	parser-only	fn square(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".sub	parser-only	fn sub(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".subborrowxU64	parser-only	fn subborrowxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".toBytes	parser-only	fn toBytes(out1: *[48]u8, arg1: [6]u64) void	
+std.crypto.ecc.P384.@"field.zig".@"p384_64.zig".toMontgomery	parser-only	fn toMontgomery(out1: *MontgomeryDomainFieldElement, arg1: NonMontgomeryDomainFieldElement) void	
 std.crypto.ecc.P384.Fe.add	reflect-only		fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 }), crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })) crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })
 std.crypto.ecc.P384.Fe.cMov	reflect-only		fn (*crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 }), crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 }), u1) void
 std.crypto.ecc.P384.Fe.dbl	reflect-only		fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })) crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })
@@ -6025,6 +6191,25 @@ std.crypto.ecc.P384.precompute	parser-only	fn precompute(p: P384, comptime count
 std.crypto.ecc.P384.random	both	fn random(io: std.Io) P384	fn (Io) crypto.pcurves.p384.P384
 std.crypto.ecc.P384.recoverY	both	fn recoverY(x: Fe, is_odd: bool) NotSquareError!Fe	fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 }), bool) error{NotSquare}!crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.p384.p384_64, .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48 })
 std.crypto.ecc.P384.rejectIdentity	both	fn rejectIdentity(p: P384) IdentityElementError!void	fn (crypto.pcurves.p384.P384) error{IdentityElement}!void
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".add	parser-only	fn add(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".addcarryxU64	parser-only	fn addcarryxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".cmovznzU64	parser-only	fn cmovznzU64(out1: *u64, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".divstep	parser-only	fn divstep(out1: *u64, out2: *[7]u64, out3: *[7]u64, out4: *[6]u64, out5: *[6]u64, arg1: u64, arg2: [7]u64, arg3: [7]u64, arg4: [6]u64, arg5: [6]u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".divstepPrecomp	parser-only	fn divstepPrecomp(out1: *[6]u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".fromBytes	parser-only	fn fromBytes(out1: *[6]u64, arg1: [48]u8) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".fromMontgomery	parser-only	fn fromMontgomery(out1: *NonMontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".msat	parser-only	fn msat(out1: *[7]u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".mul	parser-only	fn mul(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".mulxU64	parser-only	fn mulxU64(out1: *u64, out2: *u64, arg1: u64, arg2: u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".nonzero	parser-only	fn nonzero(out1: *u64, arg1: [6]u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".opp	parser-only	fn opp(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".selectznz	parser-only	fn selectznz(out1: *[6]u64, arg1: u1, arg2: [6]u64, arg3: [6]u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".setOne	parser-only	fn setOne(out1: *MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".square	parser-only	fn square(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".sub	parser-only	fn sub(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".subborrowxU64	parser-only	fn subborrowxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".toBytes	parser-only	fn toBytes(out1: *[48]u8, arg1: [6]u64) void	
+std.crypto.ecc.P384.scalar.@"p384_scalar_64.zig".toMontgomery	parser-only	fn toMontgomery(out1: *MontgomeryDomainFieldElement, arg1: NonMontgomeryDomainFieldElement) void	
 std.crypto.ecc.P384.scalar.Scalar.add	both	fn add(x: Scalar, y: Scalar) Scalar	fn (crypto.pcurves.p384.scalar.Scalar, crypto.pcurves.p384.scalar.Scalar) crypto.pcurves.p384.scalar.Scalar
 std.crypto.ecc.P384.scalar.Scalar.dbl	both	fn dbl(n: Scalar) Scalar	fn (crypto.pcurves.p384.scalar.Scalar) crypto.pcurves.p384.scalar.Scalar
 std.crypto.ecc.P384.scalar.Scalar.equivalent	both	fn equivalent(a: Scalar, b: Scalar) bool	fn (crypto.pcurves.p384.scalar.Scalar, crypto.pcurves.p384.scalar.Scalar) bool
@@ -6057,73 +6242,26 @@ std.crypto.ecc.P384.sub	both	fn sub(p: P384, q: P384) P384	fn (crypto.pcurves.p3
 std.crypto.ecc.P384.subMixed	both	fn subMixed(p: P384, q: AffineCoordinates) P384	fn (crypto.pcurves.p384.P384, crypto.pcurves.p384.AffineCoordinates) crypto.pcurves.p384.P384
 std.crypto.ecc.P384.toCompressedSec1	both	fn toCompressedSec1(p: P384) [49]u8	fn (crypto.pcurves.p384.P384) [49]u8
 std.crypto.ecc.P384.toUncompressedSec1	both	fn toUncompressedSec1(p: P384) [97]u8	fn (crypto.pcurves.p384.P384) [97]u8
-std.crypto.ecc.Ristretto255.Curve.Fe._carry128	parser-only	fn _carry128(r: *[5]u128) Fe	
-std.crypto.ecc.Ristretto255.Curve.Fe._sq	parser-only	fn _sq(a: Fe, comptime double: bool) Fe	
-std.crypto.ecc.Ristretto255.Curve.Fe.abs	both	fn abs(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.add	both	fn add(a: Fe, b: Fe) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.cMov	both	fn cMov(fe: *Fe, a: Fe, c: u64) void	fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
-std.crypto.ecc.Ristretto255.Curve.Fe.cSwap2	both	fn cSwap2(a0: *Fe, b0: *Fe, a1: *Fe, b1: *Fe, c: u64) void	fn (*crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, u64) void
-std.crypto.ecc.Ristretto255.Curve.Fe.equivalent	both	fn equivalent(a: Fe, b: Fe) bool	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) bool
-std.crypto.ecc.Ristretto255.Curve.Fe.fromBytes	both	fn fromBytes(s: [32]u8) Fe	fn ([32]u8) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.fromBytes64	both	fn fromBytes64(s: [64]u8) Fe	fn ([64]u8) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.invert	both	fn invert(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.isNegative	both	fn isNegative(a: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Ristretto255.Curve.Fe.isSquare	both	fn isSquare(a: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Ristretto255.Curve.Fe.isZero	both	fn isZero(fe: Fe) bool	fn (crypto.25519.field.Fe) bool
-std.crypto.ecc.Ristretto255.Curve.Fe.mul	both	fn mul(a: Fe, b: Fe) callconv(bloaty_inline) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.mul32	both	fn mul32(a: Fe, comptime n: u32) Fe	fn (crypto.25519.field.Fe, comptime u32) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.neg	both	fn neg(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.pow2523	both	fn pow2523(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.reduce	parser-only	fn reduce(fe: *Fe) void	
-std.crypto.ecc.Ristretto255.Curve.Fe.rejectNonCanonical	both	fn rejectNonCanonical(s: [32]u8, comptime ignore_extra_bit: bool) NonCanonicalError!void	fn ([32]u8, comptime bool) error{NonCanonical}!void
-std.crypto.ecc.Ristretto255.Curve.Fe.sq	both	fn sq(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.sq2	both	fn sq2(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.sqn	parser-only	fn sqn(a: Fe, n: usize) Fe	
-std.crypto.ecc.Ristretto255.Curve.Fe.sqrt	both	fn sqrt(x2: Fe) NotSquareError!Fe	fn (crypto.25519.field.Fe) error{NotSquare}!crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.sub	both	fn sub(a: Fe, b: Fe) Fe	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.ecc.Ristretto255.Curve.Fe.toBytes	both	fn toBytes(fe: Fe) [32]u8	fn (crypto.25519.field.Fe) [32]u8
-std.crypto.ecc.Ristretto255.Curve.Fe.uncheckedSqrt	parser-only	fn uncheckedSqrt(x2: Fe) Fe	
-std.crypto.ecc.Ristretto255.Curve.add	both	fn add(p: Edwards25519, q: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.cMov	parser-only	fn cMov(p: *Edwards25519, a: Edwards25519, c: u64) void	
-std.crypto.ecc.Ristretto255.Curve.clampedMul	both	fn clampedMul(p: Edwards25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.clearCofactor	both	fn clearCofactor(p: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.dbl	both	fn dbl(p: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.elligator2	both	fn elligator2(r: Fe) struct { x: Fe, y: Fe, not_square: bool }	fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct
-std.crypto.ecc.Ristretto255.Curve.fromBytes	both	fn fromBytes(s: [encoded_length]u8) EncodingError!Edwards25519	fn ([32]u8) error{InvalidEncoding}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.fromHash	both	fn fromHash(h: [64]u8) Edwards25519	fn ([64]u8) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.fromString	both	fn fromString(comptime random_oracle: bool, ctx: []const u8, s: []const u8) Edwards25519	fn (comptime bool, []const u8, []const u8) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.fromUniform	both	fn fromUniform(r: [32]u8) Edwards25519	fn ([32]u8) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.montToEd	parser-only	fn montToEd(x: Fe, y: Fe) Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.mul	both	fn mul(p: Edwards25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.mulDoubleBasePublic	both	fn mulDoubleBasePublic(p1: Edwards25519, s1: [32]u8, p2: Edwards25519, s2: [32]u8) WeakPublicKeyError!Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, [32]u8, crypto.25519.edwards25519.Edwards25519, [32]u8) error{WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.mulMulti	both	fn mulMulti(comptime count: usize, ps: [count]Edwards25519, ss: [count][32]u8) (IdentityElementError || WeakPublicKeyError)!Edwards25519	fn (comptime usize, anytype, anytype) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.mulPublic	both	fn mulPublic(p: Edwards25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.neg	both	fn neg(p: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.pcMul	parser-only	fn pcMul(pc: *const [9]Edwards25519, s: [32]u8, comptime vartime: bool) IdentityElementError!Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.pcMul16	parser-only	fn pcMul16(pc: *const [16]Edwards25519, s: [32]u8, comptime vartime: bool) IdentityElementError!Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.pcSelect	parser-only	fn pcSelect(comptime n: usize, pc: *const [n]Edwards25519, b: u8) Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.precompute	parser-only	fn precompute(p: Edwards25519, comptime count: usize) [1 + count]Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.rejectIdentity	both	fn rejectIdentity(p: Edwards25519) IdentityElementError!void	fn (crypto.25519.edwards25519.Edwards25519) error{IdentityElement}!void
-std.crypto.ecc.Ristretto255.Curve.rejectLowOrder	both	fn rejectLowOrder(p: Edwards25519) WeakPublicKeyError!void	fn (crypto.25519.edwards25519.Edwards25519) error{WeakPublicKey}!void
-std.crypto.ecc.Ristretto255.Curve.rejectNonCanonical	both	fn rejectNonCanonical(s: [32]u8) NonCanonicalError!void	fn ([32]u8) error{NonCanonical}!void
-std.crypto.ecc.Ristretto255.Curve.rejectUnexpectedSubgroup	both	fn rejectUnexpectedSubgroup(p: Edwards25519) (WeakPublicKeyError || UnexpectedSubgroupError)!void	fn (crypto.25519.edwards25519.Edwards25519) error{UnexpectedSubgroup,WeakPublicKey}!void
-std.crypto.ecc.Ristretto255.Curve.scalar.add	reflect-only		fn ([32]u8, [32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.clamp	reflect-only		fn (*[32]u8) void
-std.crypto.ecc.Ristretto255.Curve.scalar.mul	reflect-only		fn ([32]u8, [32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.mul8	reflect-only		fn ([32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.mulAdd	reflect-only		fn ([32]u8, [32]u8, [32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.neg	reflect-only		fn ([32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.random	reflect-only		fn (Io) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.reduce	reflect-only		fn ([32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.reduce64	reflect-only		fn ([64]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.rejectNonCanonical	reflect-only		fn ([32]u8) error{NonCanonical}!void
-std.crypto.ecc.Ristretto255.Curve.scalar.sub	reflect-only		fn ([32]u8, [32]u8) [32]u8
-std.crypto.ecc.Ristretto255.Curve.shift	parser-only	fn shift(p: Edwards25519, n: comptime_int) Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.slide	parser-only	fn slide(s: [32]u8) [2 * 32]i8	
-std.crypto.ecc.Ristretto255.Curve.stringToPoints	parser-only	fn stringToPoints(comptime n: usize, ctx: []const u8, s: []const u8) [n]Edwards25519	
-std.crypto.ecc.Ristretto255.Curve.sub	both	fn sub(p: Edwards25519, q: Edwards25519) Edwards25519	fn (crypto.25519.edwards25519.Edwards25519, crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.Ristretto255.Curve.toBytes	both	fn toBytes(p: Edwards25519) [encoded_length]u8	fn (crypto.25519.edwards25519.Edwards25519) [32]u8
-std.crypto.ecc.Ristretto255.Curve.xmontToYmont	parser-only	fn xmontToYmont(x: Fe) NotSquareError!Fe	
+std.crypto.ecc.Ristretto255.Curve.add	reflect-only		fn (crypto.25519.edwards25519.Edwards25519, crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.clampedMul	reflect-only		fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.clearCofactor	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.dbl	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.elligator2	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.edwards25519.Edwards25519.elligator2__struct
+std.crypto.ecc.Ristretto255.Curve.fromBytes	reflect-only		fn ([32]u8) error{InvalidEncoding}!crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.fromHash	reflect-only		fn ([64]u8) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.fromString	reflect-only		fn (comptime bool, []const u8, []const u8) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.fromUniform	reflect-only		fn ([32]u8) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.mul	reflect-only		fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.mulDoubleBasePublic	reflect-only		fn (crypto.25519.edwards25519.Edwards25519, [32]u8, crypto.25519.edwards25519.Edwards25519, [32]u8) error{WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.mulMulti	reflect-only		fn (comptime usize, anytype, anytype) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.mulPublic	reflect-only		fn (crypto.25519.edwards25519.Edwards25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.neg	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.rejectIdentity	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) error{IdentityElement}!void
+std.crypto.ecc.Ristretto255.Curve.rejectLowOrder	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) error{WeakPublicKey}!void
+std.crypto.ecc.Ristretto255.Curve.rejectNonCanonical	reflect-only		fn ([32]u8) error{NonCanonical}!void
+std.crypto.ecc.Ristretto255.Curve.rejectUnexpectedSubgroup	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) error{UnexpectedSubgroup,WeakPublicKey}!void
+std.crypto.ecc.Ristretto255.Curve.sub	reflect-only		fn (crypto.25519.edwards25519.Edwards25519, crypto.25519.edwards25519.Edwards25519) crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.Ristretto255.Curve.toBytes	reflect-only		fn (crypto.25519.edwards25519.Edwards25519) [32]u8
 std.crypto.ecc.Ristretto255.Fe.abs	reflect-only		fn (crypto.25519.field.Fe) crypto.25519.field.Fe
 std.crypto.ecc.Ristretto255.Fe.add	reflect-only		fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
 std.crypto.ecc.Ristretto255.Fe.cMov	reflect-only		fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
@@ -6168,6 +6306,25 @@ std.crypto.ecc.Ristretto255.scalar.sub	reflect-only		fn ([32]u8, [32]u8) [32]u8
 std.crypto.ecc.Ristretto255.sqrtRatioM1	parser-only	fn sqrtRatioM1(u: Fe, v: Fe) struct { ratio_is_square: u32, root: Fe }	
 std.crypto.ecc.Ristretto255.sub	both	fn sub(p: Ristretto255, q: Ristretto255) Ristretto255	fn (crypto.25519.ristretto255.Ristretto255, crypto.25519.ristretto255.Ristretto255) crypto.25519.ristretto255.Ristretto255
 std.crypto.ecc.Ristretto255.toBytes	both	fn toBytes(e: Ristretto255) [encoded_length]u8	fn (crypto.25519.ristretto255.Ristretto255) [32]u8
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".add	parser-only	fn add(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".addcarryxU64	parser-only	fn addcarryxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".cmovznzU64	parser-only	fn cmovznzU64(out1: *u64, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".divstep	parser-only	fn divstep(out1: *u64, out2: *[5]u64, out3: *[5]u64, out4: *[4]u64, out5: *[4]u64, arg1: u64, arg2: [5]u64, arg3: [5]u64, arg4: [4]u64, arg5: [4]u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".divstepPrecomp	parser-only	fn divstepPrecomp(out1: *[4]u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".fromBytes	parser-only	fn fromBytes(out1: *[4]u64, arg1: [32]u8) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".fromMontgomery	parser-only	fn fromMontgomery(out1: *NonMontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".msat	parser-only	fn msat(out1: *[5]u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".mul	parser-only	fn mul(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".mulxU64	parser-only	fn mulxU64(out1: *u64, out2: *u64, arg1: u64, arg2: u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".nonzero	parser-only	fn nonzero(out1: *u64, arg1: [4]u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".opp	parser-only	fn opp(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".selectznz	parser-only	fn selectznz(out1: *[4]u64, arg1: u1, arg2: [4]u64, arg3: [4]u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".setOne	parser-only	fn setOne(out1: *MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".square	parser-only	fn square(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".sub	parser-only	fn sub(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".subborrowxU64	parser-only	fn subborrowxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".toBytes	parser-only	fn toBytes(out1: *[32]u8, arg1: [4]u64) void	
+std.crypto.ecc.Secp256k1.@"field.zig".@"secp256k1_64.zig".toMontgomery	parser-only	fn toMontgomery(out1: *MontgomeryDomainFieldElement, arg1: NonMontgomeryDomainFieldElement) void	
 std.crypto.ecc.Secp256k1.Endormorphism.splitScalar	both	fn splitScalar(s: [32]u8, endian: std.builtin.Endian) NonCanonicalError!SplitScalar	fn ([32]u8, builtin.Endian) error{NonCanonical}!crypto.pcurves.secp256k1.Secp256k1.Endormorphism.SplitScalar
 std.crypto.ecc.Secp256k1.Fe.add	reflect-only		fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })) crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })
 std.crypto.ecc.Secp256k1.Fe.cMov	reflect-only		fn (*crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), u1) void
@@ -6210,6 +6367,25 @@ std.crypto.ecc.Secp256k1.precompute	parser-only	fn precompute(p: Secp256k1, comp
 std.crypto.ecc.Secp256k1.random	both	fn random(io: std.Io) Secp256k1	fn (Io) crypto.pcurves.secp256k1.Secp256k1
 std.crypto.ecc.Secp256k1.recoverY	both	fn recoverY(x: Fe, is_odd: bool) NotSquareError!Fe	fn (crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 }), bool) error{NotSquare}!crypto.pcurves.common.Field(.{ .fiat = crypto.pcurves.secp256k1.secp256k1_64, .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32 })
 std.crypto.ecc.Secp256k1.rejectIdentity	both	fn rejectIdentity(p: Secp256k1) IdentityElementError!void	fn (crypto.pcurves.secp256k1.Secp256k1) error{IdentityElement}!void
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".add	parser-only	fn add(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".addcarryxU64	parser-only	fn addcarryxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".cmovznzU64	parser-only	fn cmovznzU64(out1: *u64, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".divstep	parser-only	fn divstep(out1: *u64, out2: *[5]u64, out3: *[5]u64, out4: *[4]u64, out5: *[4]u64, arg1: u64, arg2: [5]u64, arg3: [5]u64, arg4: [4]u64, arg5: [4]u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".divstepPrecomp	parser-only	fn divstepPrecomp(out1: *[4]u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".fromBytes	parser-only	fn fromBytes(out1: *[4]u64, arg1: [32]u8) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".fromMontgomery	parser-only	fn fromMontgomery(out1: *NonMontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".msat	parser-only	fn msat(out1: *[5]u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".mul	parser-only	fn mul(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".mulxU64	parser-only	fn mulxU64(out1: *u64, out2: *u64, arg1: u64, arg2: u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".nonzero	parser-only	fn nonzero(out1: *u64, arg1: [4]u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".opp	parser-only	fn opp(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".selectznz	parser-only	fn selectznz(out1: *[4]u64, arg1: u1, arg2: [4]u64, arg3: [4]u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".setOne	parser-only	fn setOne(out1: *MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".square	parser-only	fn square(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".sub	parser-only	fn sub(out1: *MontgomeryDomainFieldElement, arg1: MontgomeryDomainFieldElement, arg2: MontgomeryDomainFieldElement) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".subborrowxU64	parser-only	fn subborrowxU64(out1: *u64, out2: *u1, arg1: u1, arg2: u64, arg3: u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".toBytes	parser-only	fn toBytes(out1: *[32]u8, arg1: [4]u64) void	
+std.crypto.ecc.Secp256k1.scalar.@"secp256k1_scalar_64.zig".toMontgomery	parser-only	fn toMontgomery(out1: *MontgomeryDomainFieldElement, arg1: NonMontgomeryDomainFieldElement) void	
 std.crypto.ecc.Secp256k1.scalar.Scalar.add	both	fn add(x: Scalar, y: Scalar) Scalar	fn (crypto.pcurves.secp256k1.scalar.Scalar, crypto.pcurves.secp256k1.scalar.Scalar) crypto.pcurves.secp256k1.scalar.Scalar
 std.crypto.ecc.Secp256k1.scalar.Scalar.dbl	both	fn dbl(n: Scalar) Scalar	fn (crypto.pcurves.secp256k1.scalar.Scalar) crypto.pcurves.secp256k1.scalar.Scalar
 std.crypto.ecc.Secp256k1.scalar.Scalar.equivalent	both	fn equivalent(a: Scalar, b: Scalar) bool	fn (crypto.pcurves.secp256k1.scalar.Scalar, crypto.pcurves.secp256k1.scalar.Scalar) bool
@@ -6393,11 +6569,6 @@ std.crypto.hash.ascon.AsconXof128.hash	reflect-only		fn ([]const u8, []u8, crypt
 std.crypto.hash.ascon.AsconXof128.init	reflect-only		fn (crypto.ascon.AsconXof128.Options) crypto.ascon.AsconXof128
 std.crypto.hash.ascon.AsconXof128.squeeze	reflect-only		fn (*crypto.ascon.AsconXof128, []u8) void
 std.crypto.hash.ascon.AsconXof128.update	reflect-only		fn (*crypto.ascon.AsconXof128, []const u8) void
-std.crypto.hash.ascon.variants.AsconAead128.AeadState.finalize	parser-only	fn finalize(self: *AeadState) void	
-std.crypto.hash.ascon.variants.AsconAead128.AeadState.init	parser-only	fn init(key: [16]u8, nonce: [16]u8) AeadState	
-std.crypto.hash.ascon.variants.AsconAead128.AeadState.processAd	parser-only	fn processAd(self: *AeadState, ad: []const u8) void	
-std.crypto.hash.ascon.variants.AsconAead128.decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void	
-std.crypto.hash.ascon.variants.AsconAead128.encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	
 std.crypto.hash.ascon.variants.AsconCxof128.hash	parser-only	fn hash(bytes: []const u8, out: []u8, options: Options) void	
 std.crypto.hash.ascon.variants.AsconCxof128.init	parser-only	fn init(options: Options) AsconCxof128	
 std.crypto.hash.ascon.variants.AsconCxof128.squeeze	parser-only	fn squeeze(self: *AsconCxof128, out: []u8) void	
@@ -6410,24 +6581,6 @@ std.crypto.hash.ascon.variants.AsconXof128.hash	parser-only	fn hash(bytes: []con
 std.crypto.hash.ascon.variants.AsconXof128.init	parser-only	fn init(options: Options) AsconXof128	
 std.crypto.hash.ascon.variants.AsconXof128.squeeze	parser-only	fn squeeze(self: *AsconXof128, out: []u8) void	
 std.crypto.hash.ascon.variants.AsconXof128.update	parser-only	fn update(self: *AsconXof128, b: []const u8) void	
-std.crypto.hash.ascon.variants.State	parser-only	fn State(comptime endian: std.builtin.Endian) type	
-std.crypto.hash.ascon.variants.State().addByte	parser-only	fn addByte(self: *Self, byte: u8, offset: usize) void	
-std.crypto.hash.ascon.variants.State().addBytes	parser-only	fn addBytes(self: *Self, bytes: []const u8) void	
-std.crypto.hash.ascon.variants.State().asBytes	parser-only	fn asBytes(self: *Self) *[block_bytes]u8	
-std.crypto.hash.ascon.variants.State().clear	parser-only	fn clear(self: *Self, from: usize, to: usize) void	
-std.crypto.hash.ascon.variants.State().endianSwap	parser-only	fn endianSwap(self: *Self) void	
-std.crypto.hash.ascon.variants.State().extractBytes	parser-only	fn extractBytes(self: *Self, out: []u8) void	
-std.crypto.hash.ascon.variants.State().init	parser-only	fn init(initial_state: [block_bytes]u8) Self	
-std.crypto.hash.ascon.variants.State().initFromWords	parser-only	fn initFromWords(initial_state: [5]u64) Self	
-std.crypto.hash.ascon.variants.State().initXof	parser-only	fn initXof() Self	
-std.crypto.hash.ascon.variants.State().initXofA	parser-only	fn initXofA() Self	
-std.crypto.hash.ascon.variants.State().permute	parser-only	fn permute(state: *Self) void	
-std.crypto.hash.ascon.variants.State().permuteR	parser-only	fn permuteR(state: *Self, comptime rounds: u4) void	
-std.crypto.hash.ascon.variants.State().permuteRatchet	parser-only	fn permuteRatchet(state: *Self, comptime rounds: u4, comptime rate: u6) void	
-std.crypto.hash.ascon.variants.State().round	parser-only	fn round(state: *Self, rk: u64) void	
-std.crypto.hash.ascon.variants.State().secureZero	parser-only	fn secureZero(self: *Self) void	
-std.crypto.hash.ascon.variants.State().setBytes	parser-only	fn setBytes(self: *Self, bytes: []const u8) void	
-std.crypto.hash.ascon.variants.State().xorBytes	parser-only	fn xorBytes(self: *Self, out: []u8, in: []const u8) void	
 std.crypto.hash.blake2.Blake2b	both	fn Blake2b(comptime out_bits: usize) type	fn (comptime usize) type
 std.crypto.hash.blake2.Blake2b().final	parser-only	fn final(d: *Self, out: *[digest_length]u8) void	
 std.crypto.hash.blake2.Blake2b().hash	parser-only	fn hash(b: []const u8, out: *[digest_length]u8, options: Options) void	
@@ -6858,8 +7011,6 @@ std.crypto.nacl.SecretBox.seal	reflect-only		fn ([]u8, []const u8, [24]u8, [32]u
 std.crypto.nacl.salsa20.Box.createSharedSecret	parser-only	fn createSharedSecret(public_key: [public_length]u8, secret_key: [secret_length]u8) (IdentityElementError || WeakPublicKeyError)![shared_length]u8	
 std.crypto.nacl.salsa20.Box.open	parser-only	fn open(m: []u8, c: []const u8, npub: [nonce_length]u8, public_key: [public_length]u8, secret_key: [secret_length]u8) (IdentityElementError || WeakPublicKeyError || AuthenticationError)!void	
 std.crypto.nacl.salsa20.Box.seal	parser-only	fn seal(c: []u8, m: []const u8, npub: [nonce_length]u8, public_key: [public_length]u8, secret_key: [secret_length]u8) (IdentityElementError || WeakPublicKeyError)!void	
-std.crypto.nacl.salsa20.Salsa	parser-only	fn Salsa(comptime rounds: comptime_int) type	
-std.crypto.nacl.salsa20.Salsa().xor	parser-only	fn xor(out: []u8, in: []const u8, counter: u64, key: [key_length]u8, nonce: [nonce_length]u8) void	
 std.crypto.nacl.salsa20.SalsaNonVecImpl	parser-only	fn SalsaNonVecImpl(comptime rounds: comptime_int) type	
 std.crypto.nacl.salsa20.SalsaNonVecImpl().Rp	parser-only	fn Rp(a: usize, b: usize, c: usize, d: u6) QuarterRound	
 std.crypto.nacl.salsa20.SalsaNonVecImpl().hashToBytes	parser-only	fn hashToBytes(out: *[64]u8, x: BlockVec) void	
@@ -6878,10 +7029,6 @@ std.crypto.nacl.salsa20.SealedBox.open	parser-only	fn open(m: []u8, c: []const u
 std.crypto.nacl.salsa20.SealedBox.seal	parser-only	fn seal(io: std.Io, c: []u8, m: []const u8, public_key: [public_length]u8) (WeakPublicKeyError || IdentityElementError)!void	
 std.crypto.nacl.salsa20.SecretBox.open	parser-only	fn open(m: []u8, c: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void	
 std.crypto.nacl.salsa20.SecretBox.seal	parser-only	fn seal(c: []u8, m: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	
-std.crypto.nacl.salsa20.XSalsa	parser-only	fn XSalsa(comptime rounds: comptime_int) type	
-std.crypto.nacl.salsa20.XSalsa().xor	parser-only	fn xor(out: []u8, in: []const u8, counter: u64, key: [key_length]u8, nonce: [nonce_length]u8) void	
-std.crypto.nacl.salsa20.XSalsa20Poly1305.decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void	
-std.crypto.nacl.salsa20.XSalsa20Poly1305.encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	
 std.crypto.nacl.salsa20.extend	parser-only	fn extend(comptime rounds: comptime_int, key: [32]u8, nonce: [24]u8) struct { key: [32]u8, nonce: [8]u8 }	
 std.crypto.nacl.salsa20.keyToWords	parser-only	fn keyToWords(key: [32]u8) [8]u32	
 std.crypto.onetimeauth.@"ghash_polyval.zig".Hash	parser-only	fn Hash(comptime endian: std.builtin.Endian, comptime shift_key: bool) type	
@@ -7639,6 +7786,52 @@ std.debug.SafetyLock.assertLocked	both	fn assertLocked(l: SafetyLock) void	fn (d
 std.debug.SafetyLock.assertUnlocked	both	fn assertUnlocked(l: SafetyLock) void	fn (debug.SafetyLock) void
 std.debug.SafetyLock.lock	both	fn lock(l: *SafetyLock) void	fn (*debug.SafetyLock) void
 std.debug.SafetyLock.unlock	both	fn unlock(l: *SafetyLock) void	fn (*debug.SafetyLock) void
+std.debug.SelfInfo.[else].[coff].[then].Module.DebugInfo.MappedFile.deinit	parser-only	fn deinit(mf: *const MappedFile, io: Io) void	
+std.debug.SelfInfo.[else].[coff].[then].Module.DebugInfo.deinit	parser-only	fn deinit(di: *DebugInfo, gpa: Allocator, io: Io) void	
+std.debug.SelfInfo.[else].[coff].[then].Module.DebugInfo.getSymbols	parser-only	fn getSymbols( di: *DebugInfo, symbol_allocator: Allocator, text_arena: Allocator, vaddr: usize, resolve_inline_callers: bool, symbols: *std.ArrayList(std.debug.Symbol), ) Error!void	
+std.debug.SelfInfo.[else].[coff].[then].Module.deinit	parser-only	fn deinit(module: *Module, gpa: Allocator, io: Io) void	
+std.debug.SelfInfo.[else].[coff].[then].Module.getDebugInfo	parser-only	fn getDebugInfo(module: *Module, gpa: Allocator, io: Io) Error!*DebugInfo	
+std.debug.SelfInfo.[else].[coff].[then].Module.loadDebugInfo	parser-only	fn loadDebugInfo(module: *const Module, gpa: Allocator, io: Io) Error!DebugInfo	
+std.debug.SelfInfo.[else].[coff].[then].UnwindContext.deinit	parser-only	fn deinit(ctx: *UnwindContext) void	
+std.debug.SelfInfo.[else].[coff].[then].UnwindContext.getFp	parser-only	fn getFp(ctx: *UnwindContext) usize	
+std.debug.SelfInfo.[else].[coff].[then].UnwindContext.init	parser-only	fn init(ctx: *const std.debug.cpu_context.Native) UnwindContext	
+std.debug.SelfInfo.[else].[coff].[then].deinit	parser-only	fn deinit(si: *SelfInfo, io: Io) void	
+std.debug.SelfInfo.[else].[coff].[then].dllNotification	parser-only	fn dllNotification( reason: LDR.DLL_NOTIFICATION.REASON, data: *const LDR.DLL_NOTIFICATION.DATA, context: ?*anyopaque, ) callconv(.winapi) void	
+std.debug.SelfInfo.[else].[coff].[then].findModule	parser-only	fn findModule(si: *SelfInfo, gpa: Allocator, address: usize) error{ MissingDebugInfo, OutOfMemory, Unexpected }!*Module	
+std.debug.SelfInfo.[else].[coff].[then].getModuleName	parser-only	fn getModuleName(si: *SelfInfo, io: Io, address: usize) Error![]const u8	
+std.debug.SelfInfo.[else].[coff].[then].getModuleSlide	parser-only	fn getModuleSlide(si: *SelfInfo, io: Io, address: usize) Error!usize	
+std.debug.SelfInfo.[else].[coff].[then].getNtdllProc	parser-only	fn getNtdllProc( si: *SelfInfo, comptime proc: std.meta.DeclEnum(windows.ntdll), ) !@TypeOf(&@field(windows.ntdll, @tagName(proc)))	
+std.debug.SelfInfo.[else].[coff].[then].getSymbols	parser-only	fn getSymbols( si: *SelfInfo, io: Io, symbol_allocator: Allocator, text_arena: Allocator, address: usize, resolve_inline_callers: bool, symbols: *std.ArrayList(std.debug.Symbol), ) Error!void	
+std.debug.SelfInfo.[else].[coff].[then].loadNtdllProc	parser-only	fn loadNtdllProc(si: *SelfInfo, name: []const u8) Io.UnexpectedError!*anyopaque	
+std.debug.SelfInfo.[else].[coff].[then].unwindFrame	parser-only	fn unwindFrame(si: *SelfInfo, io: Io, context: *UnwindContext) Error!usize	
+std.debug.SelfInfo.[else].[elf].[else].DlIterContext.callback	parser-only	fn callback(info: *std.posix.dl_phdr_info, size: usize, context: *@This()) !void	
+std.debug.SelfInfo.[else].[elf].[else].Module.getLoadedElf	parser-only	fn getLoadedElf(mod: *Module, gpa: Allocator, io: Io) Error!*LoadedElf	
+std.debug.SelfInfo.[else].[elf].[else].Module.getUnwindSections	parser-only	fn getUnwindSections(mod: *Module, gpa: Allocator, io: Io) Error![]Dwarf.Unwind	
+std.debug.SelfInfo.[else].[elf].[else].Module.loadElf	parser-only	fn loadElf(mod: *Module, gpa: Allocator, io: Io) Error!LoadedElf	
+std.debug.SelfInfo.[else].[elf].[else].Module.loadUnwindSections	parser-only	fn loadUnwindSections(mod: *Module, gpa: Allocator, io: Io) Error!UnwindSections	
+std.debug.SelfInfo.[else].[elf].[else].deinit	parser-only	fn deinit(si: *SelfInfo, io: Io) void	
+std.debug.SelfInfo.[else].[elf].[else].findModule	parser-only	fn findModule(si: *SelfInfo, gpa: Allocator, io: Io, address: usize, lock: enum { shared, exclusive }) Error!*Module	
+std.debug.SelfInfo.[else].[elf].[else].getModuleName	parser-only	fn getModuleName(si: *SelfInfo, io: Io, address: usize) Error![]const u8	
+std.debug.SelfInfo.[else].[elf].[else].getModuleSlide	parser-only	fn getModuleSlide(si: *SelfInfo, io: Io, address: usize) Error!usize	
+std.debug.SelfInfo.[else].[elf].[else].getSymbols	parser-only	fn getSymbols( si: *SelfInfo, io: Io, symbol_allocator: Allocator, text_arena: Allocator, address: usize, resolve_inline_callers: bool, symbols: *std.ArrayList(std.debug.Symbol), ) Error!void	
+std.debug.SelfInfo.[else].[elf].[else].unwindFrame	parser-only	fn unwindFrame(si: *SelfInfo, io: Io, context: *UnwindContext) Error!usize	
+std.debug.SelfInfo.[else].[macho].MachoSymbol.addressLessThan	parser-only	fn addressLessThan(context: void, lhs: MachoSymbol, rhs: MachoSymbol) bool	
+std.debug.SelfInfo.[else].[macho].MachoSymbol.find	parser-only	fn find(symbols: []const MachoSymbol, address: usize) ?*const MachoSymbol	
+std.debug.SelfInfo.[else].[macho].Module.Adapter.eql	parser-only	fn eql(_: Adapter, a_text_base: usize, b_module: Module, b_index: usize) bool	
+std.debug.SelfInfo.[else].[macho].Module.Adapter.hash	parser-only	fn hash(_: Adapter, text_base: usize) u32	
+std.debug.SelfInfo.[else].[macho].Module.Context.eql	parser-only	fn eql(_: Context, a_module: Module, b_module: Module, b_index: usize) bool	
+std.debug.SelfInfo.[else].[macho].Module.Context.hash	parser-only	fn hash(_: Context, module: Module) u32	
+std.debug.SelfInfo.[else].[macho].Module.getFile	parser-only	fn getFile(module: *Module, gpa: Allocator, io: Io) Error!*MachOFile	
+std.debug.SelfInfo.[else].[macho].Module.getUnwindInfo	parser-only	fn getUnwindInfo(module: *Module, gpa: Allocator) Error!*Unwind	
+std.debug.SelfInfo.[else].[macho].Module.loadUnwindInfo	parser-only	fn loadUnwindInfo(module: *const Module, gpa: Allocator) Error!Unwind	
+std.debug.SelfInfo.[else].[macho].deinit	parser-only	fn deinit(si: *SelfInfo, io: Io) void	
+std.debug.SelfInfo.[else].[macho].findModule	parser-only	fn findModule(si: *SelfInfo, gpa: Allocator, io: Io, address: usize) Error!*Module	
+std.debug.SelfInfo.[else].[macho].getModuleName	parser-only	fn getModuleName(si: *SelfInfo, io: Io, address: usize) Error![]const u8	
+std.debug.SelfInfo.[else].[macho].getModuleSlide	parser-only	fn getModuleSlide(si: *SelfInfo, io: Io, address: usize) Error!usize	
+std.debug.SelfInfo.[else].[macho].getSymbols	parser-only	fn getSymbols( si: *SelfInfo, io: Io, symbol_allocator: Allocator, text_arena: Allocator, address: usize, resolve_inline_callers: bool, symbols: *std.ArrayList(std.debug.Symbol), ) Error!void	
+std.debug.SelfInfo.[else].[macho].mapDebugInfoFile	parser-only	fn mapDebugInfoFile(io: Io, path: []const u8) ![]align(std.heap.page_size_min) const u8	
+std.debug.SelfInfo.[else].[macho].unwindFrame	parser-only	fn unwindFrame(si: *SelfInfo, io: Io, context: *UnwindContext) Error!usize	
+std.debug.SelfInfo.[else].[macho].unwindFrameInner	parser-only	fn unwindFrameInner(si: *SelfInfo, io: Io, context: *UnwindContext) !usize	
 std.debug.SelfInfo.deinit	reflect-only		fn (*debug.SelfInfo.Elf, Io) void
 std.debug.SelfInfo.getModuleName	reflect-only		fn (*debug.SelfInfo.Elf, Io, usize) error{Canceled,InvalidDebugInfo,MissingDebugInfo,OutOfMemory,ReadFailed,Unexpected,UnsupportedDebugInfo}![]const u8
 std.debug.SelfInfo.getModuleSlide	reflect-only		fn (*debug.SelfInfo.Elf, Io, usize) error{Canceled,InvalidDebugInfo,MissingDebugInfo,OutOfMemory,ReadFailed,Unexpected,UnsupportedDebugInfo}!usize
@@ -7908,6 +8101,12 @@ std.enums.EnumArray().iterator	parser-only	fn iterator(self: *Self) Iterator
 std.enums.EnumArray().set	parser-only	fn set(self: *Self, key: Key, value: Value) void	
 std.enums.EnumFieldStruct	both	fn EnumFieldStruct(comptime E: type, comptime Data: type, comptime field_default: ?Data) type	fn (comptime type, comptime type, comptime anytype) type
 std.enums.EnumIndexer	both	fn EnumIndexer(comptime E: type) type	fn (comptime type) type
+std.enums.EnumIndexer().[return1].indexOf	parser-only	fn indexOf(e: E) usize	
+std.enums.EnumIndexer().[return1].keyForIndex	parser-only	fn keyForIndex(i: usize) E	
+std.enums.EnumIndexer().[return2].indexOf	parser-only	fn indexOf(e: E) usize	
+std.enums.EnumIndexer().[return2].keyForIndex	parser-only	fn keyForIndex(i: usize) E	
+std.enums.EnumIndexer().[return3].indexOf	parser-only	fn indexOf(e: E) usize	
+std.enums.EnumIndexer().[return3].keyForIndex	parser-only	fn keyForIndex(i: usize) E	
 std.enums.EnumIndexer().indexOf	parser-only	fn indexOf(e: E) usize	
 std.enums.EnumIndexer().keyForIndex	parser-only	fn keyForIndex(i: usize) E	
 std.enums.EnumMap	both	fn EnumMap(comptime E: type, comptime V: type) type	fn (comptime type, comptime type) type
@@ -7972,7 +8171,6 @@ std.fmt.@"parse_float.zig".@"convert_fast.zig".FloatInfo.from	parser-only	fn fro
 std.fmt.@"parse_float.zig".@"convert_fast.zig".fastIntPow10	parser-only	fn fastIntPow10(comptime T: type, i: usize) T	
 std.fmt.@"parse_float.zig".@"convert_fast.zig".fastPow10	parser-only	fn fastPow10(comptime T: type, i: usize) T	
 std.fmt.@"parse_float.zig".@"convert_fast.zig".isFastPath	parser-only	fn isFastPath(comptime T: type, n: Number(T)) bool	
-std.fmt.@"parse_float.zig".@"convert_slow.zig".@"decimal.zig".isEightDigits	parser-only	fn isEightDigits(v: u64) bool	
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal	parser-only	fn Decimal(comptime T: type) type	
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().leftShift	parser-only	fn leftShift(self: *Self, shift: usize) void	
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().new	parser-only	fn new() Self	
@@ -8980,40 +9178,6 @@ std.hash_map.eqlString	both	fn eqlString(a: []const u8, b: []const u8) bool	fn (
 std.hash_map.getAutoEqlFn	both	fn getAutoEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool)	fn (comptime type, comptime type) anytype
 std.hash_map.getAutoHashFn	both	fn getAutoHashFn(comptime K: type, comptime Context: type) (fn (Context, K) u64)	fn (comptime type, comptime type) anytype
 std.hash_map.hashString	both	fn hashString(s: []const u8) u64	fn ([]const u8) u64
-std.heap.@"debug_allocator.zig".DebugAllocator	parser-only	fn DebugAllocator(comptime config: Config) type	
-std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.captureStackTrace	parser-only	fn captureStackTrace( bucket: *BucketHeader, ret_addr: usize, slot_count: usize, slot_index: SlotIndex, trace_kind: TraceKind, ) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.fromPage	parser-only	fn fromPage(page_addr: usize, slot_count: usize) *BucketHeader	
-std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.log2PtrAligns	parser-only	fn log2PtrAligns(bucket: *BucketHeader, slot_count: usize) []mem.Alignment	
-std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.requestedSizes	parser-only	fn requestedSizes(bucket: *BucketHeader, slot_count: usize) []LargestSizeClassInt	
-std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.stackTracePtr	parser-only	fn stackTracePtr( bucket: *BucketHeader, slot_count: usize, slot_index: SlotIndex, trace_kind: TraceKind, ) *[stack_n]usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.usedBits	parser-only	fn usedBits(bucket: *BucketHeader, index: usize) *usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().LargeAlloc.captureStackTrace	parser-only	fn captureStackTrace(self: *LargeAlloc, ret_addr: usize, trace_kind: TraceKind) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().LargeAlloc.dumpStackTrace	parser-only	fn dumpStackTrace(self: *LargeAlloc, trace_kind: TraceKind) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().LargeAlloc.getStackTrace	parser-only	fn getStackTrace(self: *LargeAlloc, trace_kind: TraceKind) std.debug.StackTrace	
-std.heap.@"debug_allocator.zig".DebugAllocator().alloc	parser-only	fn alloc(context: *anyopaque, len: usize, alignment: mem.Alignment, ret_addr: usize) ?[*]u8	
-std.heap.@"debug_allocator.zig".DebugAllocator().allocator	parser-only	fn allocator(self: *Self) Allocator	
-std.heap.@"debug_allocator.zig".DebugAllocator().bucketAlignsStart	parser-only	fn bucketAlignsStart(slot_count: usize) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().bucketRequestedSizesStart	parser-only	fn bucketRequestedSizesStart(slot_count: usize) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().bucketSize	parser-only	fn bucketSize(slot_count: usize) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().bucketStackFramesStart	parser-only	fn bucketStackFramesStart(slot_count: usize) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().bucketStackTrace	parser-only	fn bucketStackTrace( bucket: *BucketHeader, slot_count: usize, slot_index: SlotIndex, trace_kind: TraceKind, ) StackTrace	
-std.heap.@"debug_allocator.zig".DebugAllocator().calculateSlotCount	parser-only	fn calculateSlotCount(size_class_index: usize) SlotIndex	
-std.heap.@"debug_allocator.zig".DebugAllocator().collectStackTrace	parser-only	fn collectStackTrace(first_trace_addr: usize, addr_buf: *[stack_n]usize) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().deinit	parser-only	fn deinit(self: *Self) std.heap.Check	
-std.heap.@"debug_allocator.zig".DebugAllocator().deinitWithoutLeakChecks	parser-only	fn deinitWithoutLeakChecks(self: *Self) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().detectLeaks	parser-only	fn detectLeaks(self: *Self) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().detectLeaksInBucket	parser-only	fn detectLeaksInBucket( bucket: *BucketHeader, size_class_index: usize, used_bits_count: usize, ) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().flushRetainedMetadata	parser-only	fn flushRetainedMetadata(self: *Self) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().free	parser-only	fn free( context: *anyopaque, old_memory: []u8, alignment: mem.Alignment, return_address: usize, ) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().freeLarge	parser-only	fn freeLarge( self: *Self, old_mem: []u8, alignment: mem.Alignment, ret_addr: usize, ) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().freeRetainedMetadata	parser-only	fn freeRetainedMetadata(self: *Self) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().remap	parser-only	fn remap( context: *anyopaque, memory: []u8, alignment: mem.Alignment, new_len: usize, return_address: usize, ) ?[*]u8	
-std.heap.@"debug_allocator.zig".DebugAllocator().reportDoubleFree	parser-only	fn reportDoubleFree(ret_addr: usize, alloc_stack_trace: StackTrace, free_stack_trace: StackTrace) void	
-std.heap.@"debug_allocator.zig".DebugAllocator().resize	parser-only	fn resize( context: *anyopaque, memory: []u8, alignment: mem.Alignment, new_len: usize, return_address: usize, ) bool	
-std.heap.@"debug_allocator.zig".DebugAllocator().resizeLarge	parser-only	fn resizeLarge( self: *Self, old_mem: []u8, alignment: mem.Alignment, new_size: usize, ret_addr: usize, may_move: bool, ) ?[*]u8	
-std.heap.@"debug_allocator.zig".DebugAllocator().resizeSmall	parser-only	fn resizeSmall( self: *Self, memory: []u8, alignment: mem.Alignment, new_len: usize, return_address: usize, size_class_index: usize, ) bool	
-std.heap.@"debug_allocator.zig".DebugAllocator().usedBitsCount	parser-only	fn usedBitsCount(slot_count: usize) usize	
-std.heap.@"debug_allocator.zig".DebugAllocator().usedBitsSize	parser-only	fn usedBitsSize(slot_count: usize) usize	
 std.heap.ArenaAllocator.FuzzAllocator.alloc	parser-only	fn alloc(ctx: *anyopaque, len: usize, alignment: Alignment, ret_addr: usize) ?[*]u8	
 std.heap.ArenaAllocator.FuzzAllocator.allocator	parser-only	fn allocator(fa: *FuzzAllocator) Allocator	
 std.heap.ArenaAllocator.FuzzAllocator.free	parser-only	fn free(ctx: *anyopaque, memory: []u8, alignment: Alignment, ret_addr: usize) void	
@@ -9298,41 +9462,11 @@ std.http.Server.init	both	fn init(in: *Reader, out: *Writer) Server	fn (*Io.Read
 std.http.Server.receiveHead	both	fn receiveHead(s: *Server) ReceiveHeadError!Request	fn (*http.Server) error{HttpConnectionClosing,HttpHeadersInvalid,HttpHeadersOversize,HttpRequestTruncated,ReadFailed}!http.Server.Request
 std.http.Status.class	both	fn class(self: Status) Class	fn (http.Status) http.Status.Class
 std.http.Status.phrase	both	fn phrase(self: Status) ?[]const u8	fn (http.Status) ?[]const u8
-std.json.@"dynamic.zig".ParseError	parser-only	fn ParseError(comptime Source: type) type	
-std.json.@"dynamic.zig".Value.dump	parser-only	fn dump(v: Value) void	
-std.json.@"dynamic.zig".Value.jsonParse	parser-only	fn jsonParse(allocator: Allocator, source: anytype, options: ParseOptions) ParseError(@TypeOf(source.*))!@This()	
-std.json.@"dynamic.zig".Value.jsonParseFromValue	parser-only	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()	
-std.json.@"dynamic.zig".Value.jsonStringify	parser-only	fn jsonStringify(value: @This(), jws: anytype) !void	
-std.json.@"dynamic.zig".Value.parseFromNumberSlice	parser-only	fn parseFromNumberSlice(s: []const u8) Value	
 std.json.@"dynamic.zig".handleCompleteValue	parser-only	fn handleCompleteValue(stack: *Array, allocator: Allocator, source: anytype, value_: Value, options: ParseOptions) !?Value	
-std.json.@"dynamic.zig".isNumberFormattedLikeAnInteger	parser-only	fn isNumberFormattedLikeAnInteger(value: []const u8) bool	
-std.json.@"hashmap.zig".Value.dump	parser-only	fn dump(v: Value) void	
-std.json.@"hashmap.zig".Value.jsonParse	parser-only	fn jsonParse(allocator: Allocator, source: anytype, options: ParseOptions) ParseError(@TypeOf(source.*))!@This()	
-std.json.@"hashmap.zig".Value.jsonParseFromValue	parser-only	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()	
-std.json.@"hashmap.zig".Value.jsonStringify	parser-only	fn jsonStringify(value: @This(), jws: anytype) !void	
-std.json.@"hashmap.zig".Value.parseFromNumberSlice	parser-only	fn parseFromNumberSlice(s: []const u8) Value	
-std.json.@"hashmap.zig".innerParse	parser-only	fn innerParse( comptime T: type, allocator: Allocator, source: anytype, options: ParseOptions, ) ParseError(@TypeOf(source.*))!T	
-std.json.@"hashmap.zig".innerParseFromValue	parser-only	fn innerParseFromValue( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!T	
-std.json.@"static.zig".ParseError	parser-only	fn ParseError(comptime Source: type) type	
-std.json.@"static.zig".Parsed	parser-only	fn Parsed(comptime T: type) type	
-std.json.@"static.zig".Parsed().deinit	parser-only	fn deinit(self: @This()) void	
-std.json.@"static.zig".Value.dump	parser-only	fn dump(v: Value) void	
-std.json.@"static.zig".Value.jsonParse	parser-only	fn jsonParse(allocator: Allocator, source: anytype, options: ParseOptions) ParseError(@TypeOf(source.*))!@This()	
-std.json.@"static.zig".Value.jsonParseFromValue	parser-only	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()	
-std.json.@"static.zig".Value.jsonStringify	parser-only	fn jsonStringify(value: @This(), jws: anytype) !void	
-std.json.@"static.zig".Value.parseFromNumberSlice	parser-only	fn parseFromNumberSlice(s: []const u8) Value	
 std.json.@"static.zig".fillDefaultStructValues	parser-only	fn fillDefaultStructValues(comptime T: type, r: *T, fields_seen: *[@typeInfo(T).@"struct".fields.len]bool) !void	
 std.json.@"static.zig".freeAllocated	parser-only	fn freeAllocated(allocator: Allocator, token: Token) void	
-std.json.@"static.zig".innerParse	parser-only	fn innerParse( comptime T: type, allocator: Allocator, source: anytype, options: ParseOptions, ) ParseError(@TypeOf(source.*))!T	
 std.json.@"static.zig".innerParseArrayFromArrayValue	parser-only	fn innerParseArrayFromArrayValue( comptime T: type, comptime Child: type, comptime len: comptime_int, allocator: Allocator, array: Array, options: ParseOptions, ) !T	
-std.json.@"static.zig".innerParseFromValue	parser-only	fn innerParseFromValue( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!T	
 std.json.@"static.zig".internalParseArray	parser-only	fn internalParseArray( comptime T: type, comptime Child: type, allocator: Allocator, source: anytype, options: ParseOptions, ) !T	
-std.json.@"static.zig".parseFromSlice	parser-only	fn parseFromSlice( comptime T: type, allocator: Allocator, s: []const u8, options: ParseOptions, ) ParseError(Scanner)!Parsed(T)	
-std.json.@"static.zig".parseFromSliceLeaky	parser-only	fn parseFromSliceLeaky( comptime T: type, allocator: Allocator, s: []const u8, options: ParseOptions, ) ParseError(Scanner)!T	
-std.json.@"static.zig".parseFromTokenSource	parser-only	fn parseFromTokenSource( comptime T: type, allocator: Allocator, scanner_or_reader: anytype, options: ParseOptions, ) ParseError(@TypeOf(scanner_or_reader.*))!Parsed(T)	
-std.json.@"static.zig".parseFromTokenSourceLeaky	parser-only	fn parseFromTokenSourceLeaky( comptime T: type, allocator: Allocator, scanner_or_reader: anytype, options: ParseOptions, ) ParseError(@TypeOf(scanner_or_reader.*))!T	
-std.json.@"static.zig".parseFromValue	parser-only	fn parseFromValue( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!Parsed(T)	
-std.json.@"static.zig".parseFromValueLeaky	parser-only	fn parseFromValueLeaky( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!T	
 std.json.@"static.zig".sliceToEnum	parser-only	fn sliceToEnum(comptime T: type, slice: []const u8) !T	
 std.json.@"static.zig".sliceToInt	parser-only	fn sliceToInt(comptime T: type, slice: []const u8) !T	
 std.json.Array.SentinelSlice	reflect-only		fn (comptime json.dynamic.Value) type
@@ -9685,29 +9819,20 @@ std.math.@"cbrt.zig".cbrt32	parser-only	fn cbrt32(x: f32) f32
 std.math.@"cbrt.zig".cbrt64	parser-only	fn cbrt64(x: f64) f64	
 std.math.@"cosh.zig".cosh32	parser-only	fn cosh32(x: f32) f32	
 std.math.@"cosh.zig".cosh64	parser-only	fn cosh64(x: f64) f64	
-std.math.@"cosh.zig".expo2	parser-only	fn expo2(x: anytype) @TypeOf(x)	
 std.math.@"expm1.zig".expm1_32	parser-only	fn expm1_32(x_: f32) f32	
 std.math.@"expm1.zig".expm1_64	parser-only	fn expm1_64(x_: f64) f64	
-std.math.@"frexp.zig".Frexp	parser-only	fn Frexp(comptime T: type) type	
 std.math.@"frexp.zig".FrexpTests	parser-only	fn FrexpTests(comptime Float: type) type	
-std.math.@"gamma.zig".lgamma	parser-only	fn lgamma(comptime T: type, x: T) T	
 std.math.@"gamma.zig".series	parser-only	fn series(comptime T: type, abs: T) T	
 std.math.@"gamma.zig".sinpi	parser-only	fn sinpi(comptime T: type, x: T) T	
 std.math.@"hypot.zig".emulateFma	parser-only	fn emulateFma(comptime T: type) bool	
 std.math.@"hypot.zig".hypotFused	parser-only	fn hypotFused(comptime F: type, x: F, y: F) F	
 std.math.@"hypot.zig".hypotUnfused	parser-only	fn hypotUnfused(comptime F: type, x: F, y: F) F	
 std.math.@"ilogb.zig".ilogbX	parser-only	fn ilogbX(comptime T: type, x: T) i32	
-std.math.@"isinf.zig".isNegativeInf	parser-only	fn isNegativeInf(x: anytype) bool	
-std.math.@"isinf.zig".isPositiveInf	parser-only	fn isPositiveInf(x: anytype) bool	
-std.math.@"isnan.zig".isSignalNan	parser-only	fn isSignalNan(x: anytype) bool	
-std.math.@"iszero.zig".isNegativeZero	parser-only	fn isNegativeZero(x: anytype) bool	
 std.math.@"log10.zig".less_than_5	parser-only	fn less_than_5(x: u32) u32	
-std.math.@"log10.zig".log10_int	parser-only	fn log10_int(x: anytype) std.math.Log2Int(@TypeOf(x))	
 std.math.@"log10.zig".log10_int_u8	parser-only	fn log10_int_u8(x: u8) u32	
 std.math.@"log10.zig".pow10	parser-only	fn pow10(comptime y: comptime_int) comptime_int	
 std.math.@"log1p.zig".log1p_32	parser-only	fn log1p_32(x: f32) f32	
 std.math.@"log1p.zig".log1p_64	parser-only	fn log1p_64(x: f64) f64	
-std.math.@"modf.zig".Modf	parser-only	fn Modf(comptime T: type) type	
 std.math.@"modf.zig".ModfTests	parser-only	fn ModfTests(comptime T: type) type	
 std.math.@"nextafter.zig".bitwiseEqual	parser-only	fn bitwiseEqual(comptime T: type, x: T, y: T) bool	
 std.math.@"nextafter.zig".nextAfterFloat	parser-only	fn nextAfterFloat(comptime T: type, x: T, y: T) T	
@@ -9722,7 +9847,6 @@ std.math.@"sinh.zig".sinh32	parser-only	fn sinh32(x: f32) f32
 std.math.@"sinh.zig".sinh64	parser-only	fn sinh64(x: f64) f64	
 std.math.@"sqrt.zig".Sqrt	parser-only	fn Sqrt(comptime T: type) type	
 std.math.@"sqrt.zig".sqrt_int	parser-only	fn sqrt_int(comptime T: type, value: T) Sqrt(T)	
-std.math.@"tanh.zig".expo2	parser-only	fn expo2(x: anytype) @TypeOf(x)	
 std.math.@"tanh.zig".tanh32	parser-only	fn tanh32(x: f32) f32	
 std.math.@"tanh.zig".tanh64	parser-only	fn tanh64(x: f64) f64	
 std.math.AlignCastResult	parser-only	fn AlignCastResult(comptime alignment: Alignment, comptime Ptr: type) type	
@@ -9976,8 +10100,6 @@ std.math.complex.@"cosh.zig".cosh64	parser-only	fn cosh64(z: Complex(f64)) Compl
 std.math.complex.@"cosh.zig".ldexp_cexp	parser-only	fn ldexp_cexp(z: anytype, expt: i32) Complex(@TypeOf(z.re, z.im))	
 std.math.complex.@"exp.zig".exp32	parser-only	fn exp32(z: Complex(f32)) Complex(f32)	
 std.math.complex.@"exp.zig".exp64	parser-only	fn exp64(z: Complex(f64)) Complex(f64)	
-std.math.complex.@"exp.zig".ldexp_cexp	parser-only	fn ldexp_cexp(z: anytype, expt: i32) Complex(@TypeOf(z.re, z.im))	
-std.math.complex.@"sinh.zig".ldexp_cexp	parser-only	fn ldexp_cexp(z: anytype, expt: i32) Complex(@TypeOf(z.re, z.im))	
 std.math.complex.@"sinh.zig".sinh32	parser-only	fn sinh32(z: Complex(f32)) Complex(f32)	
 std.math.complex.@"sinh.zig".sinh64	parser-only	fn sinh64(z: Complex(f64)) Complex(f64)	
 std.math.complex.@"sqrt.zig".sqrt32	parser-only	fn sqrt32(z: Complex(f32)) Complex(f32)	
@@ -10078,7 +10200,7 @@ std.math.isPositiveZero	both	fn isPositiveZero(x: anytype) bool	fn (anytype) cal
 std.math.isPowerOfTwo	both	fn isPowerOfTwo(int: anytype) bool	fn (anytype) bool
 std.math.isSignalNan	both	fn isSignalNan(x: anytype) bool	fn (anytype) bool
 std.math.lcm	both	fn lcm(a: anytype, b: anytype) @TypeOf(a, b)	fn (anytype, anytype) anytype
-std.math.ldexp	both	fn ldexp(x: anytype, n: i32) @TypeOf(x)	fn (anytype, i32) anytype
+std.math.ldexp	reflect-only		fn (anytype, i32) anytype
 std.math.lerp	both	fn lerp(a: anytype, b: anytype, t: anytype) @TypeOf(a, b, t)	fn (anytype, anytype, anytype) anytype
 std.math.lgamma	both	fn lgamma(comptime T: type, x: T) T	fn (comptime type, anytype) anytype
 std.math.log	both	fn log(comptime T: type, base: T, x: T) T	fn (comptime type, anytype, anytype) anytype
@@ -10704,6 +10826,180 @@ std.os.linux.accept	parser-only	fn accept(fd: i32, noalias addr: ?*sockaddr, noa
 std.os.linux.accept4	parser-only	fn accept4(fd: i32, noalias addr: ?*sockaddr, noalias len: ?*socklen_t, flags: u32) usize	
 std.os.linux.access	parser-only	fn access(path: [*:0]const u8, mode: u32) usize	
 std.os.linux.acct	parser-only	fn acct(path: [*:0]const u8) usize	
+std.os.linux.arch_bits.[aarch64,aarch64_be].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[aarch64,aarch64_be].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].restore	parser-only	fn restore() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[arm,armeb,thumb,thumbeb].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[hexagon].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[hexagon].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[hexagon].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[hexagon].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[hexagon].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[hexagon].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[hexagon].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[hexagon].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[loongarch32].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[loongarch32].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[loongarch32].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[loongarch32].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[loongarch32].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[loongarch32].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[loongarch32].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[loongarch32].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[loongarch64].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[loongarch64].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[loongarch64].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[loongarch64].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[loongarch64].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[loongarch64].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[loongarch64].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[loongarch64].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[m68k].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[m68k].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[m68k].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[m68k].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[m68k].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[m68k].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[m68k].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[m68k].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[m68k].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[mips,mipsel].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall7	parser-only	fn syscall7( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, arg7: u32, ) u32	
+std.os.linux.arch_bits.[mips,mipsel].syscall_pipe	parser-only	fn syscall_pipe(fd: *[2]i32) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[else].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[else].syscall_pipe	parser-only	fn syscall_pipe(fd: *[2]i32) u64	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[mips64,mips64el].[gnuabin32,muslabin32].syscall_pipe	parser-only	fn syscall_pipe(fd: *[2]i32) u32	
+std.os.linux.arch_bits.[or1k].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[or1k].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[or1k].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[or1k].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[or1k].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[or1k].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[or1k].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[or1k].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].restore	parser-only	fn restore() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[powerpc,powerpcle].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[powerpc,powerpcle].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].restore	parser-only	fn restore() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[powerpc64,powerpc64le].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[riscv32].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[riscv32].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[riscv32].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[riscv32].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[riscv32].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[riscv32].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[riscv32].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[riscv32].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[riscv64].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[riscv64].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[riscv64].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[riscv64].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[riscv64].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[riscv64].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[riscv64].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[riscv64].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[s390x].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[s390x].restore	parser-only	fn restore() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[s390x].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[s390x].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[s390x].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[s390x].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[s390x].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[s390x].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[s390x].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[s390x].syscall6	parser-only	fn syscall6(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64) u64	
+std.os.linux.arch_bits.[sparc64].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[sparc64].restore_rt	parser-only	fn restore_rt() callconv(.c) void	
+std.os.linux.arch_bits.[sparc64].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[sparc64].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[sparc64].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[sparc64].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[sparc64].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[sparc64].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[sparc64].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[sparc64].syscall_fork	parser-only	fn syscall_fork() u64	
+std.os.linux.arch_bits.[sparc64].syscall_pipe	parser-only	fn syscall_pipe(fd: *[2]i32) u64	
+std.os.linux.arch_bits.[x86].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[x86].restore	parser-only	fn restore() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[x86].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[x86].socketcall	parser-only	fn socketcall(call: u32, args: [*]const u32) u32	
+std.os.linux.arch_bits.[x86].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[x86].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[x86].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[x86].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[x86].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[x86].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[x86].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
+std.os.linux.arch_bits.[x86_64].[else].clone	parser-only	fn clone() callconv(.naked) u64	
+std.os.linux.arch_bits.[x86_64].[else].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[x86_64].[else].syscall0	parser-only	fn syscall0(number: SYS) u64	
+std.os.linux.arch_bits.[x86_64].[else].syscall1	parser-only	fn syscall1(number: SYS, arg1: u64) u64	
+std.os.linux.arch_bits.[x86_64].[else].syscall2	parser-only	fn syscall2(number: SYS, arg1: u64, arg2: u64) u64	
+std.os.linux.arch_bits.[x86_64].[else].syscall3	parser-only	fn syscall3(number: SYS, arg1: u64, arg2: u64, arg3: u64) u64	
+std.os.linux.arch_bits.[x86_64].[else].syscall4	parser-only	fn syscall4(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64) u64	
+std.os.linux.arch_bits.[x86_64].[else].syscall5	parser-only	fn syscall5(number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64) u64	
+std.os.linux.arch_bits.[x86_64].[else].syscall6	parser-only	fn syscall6( number: SYS, arg1: u64, arg2: u64, arg3: u64, arg4: u64, arg5: u64, arg6: u64, ) u64	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].clone	parser-only	fn clone() callconv(.naked) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.arch_bits.[x86_64].[gnux32,muslx32].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
 std.os.linux.bind	parser-only	fn bind(fd: i32, addr: *const sockaddr, len: socklen_t) usize	
 std.os.linux.bpf	parser-only	fn bpf(cmd: BPF.Cmd, attr: *BPF.Attr, size: u32) usize	
 std.os.linux.brk	parser-only	fn brk(addr: usize) usize	
@@ -10731,10 +11027,6 @@ std.os.linux.dl.DlDynLib.getError	parser-only	fn getError() ?[:0]const u8
 std.os.linux.dl.DlDynLib.lookup	parser-only	fn lookup(self: *DlDynLib, comptime T: type, name: [:0]const u8) ?T	
 std.os.linux.dl.DlDynLib.open	parser-only	fn open(path: []const u8) Error!DlDynLib	
 std.os.linux.dl.DlDynLib.openZ	parser-only	fn openZ(path_c: [*:0]const u8) Error!DlDynLib	
-std.os.linux.dl.DynLib.close	parser-only	fn close(self: *DynLib) void	
-std.os.linux.dl.DynLib.lookup	parser-only	fn lookup(self: *DynLib, comptime T: type, name: [:0]const u8) ?T	
-std.os.linux.dl.DynLib.open	parser-only	fn open(path: []const u8) Error!DynLib	
-std.os.linux.dl.DynLib.openZ	parser-only	fn openZ(path_c: [*:0]const u8) Error!DynLib	
 std.os.linux.dl.ElfDynLib.GnuHashSection32.fromPtr	parser-only	fn fromPtr(header: *elf.gnu_hash.Header) @This()	
 std.os.linux.dl.ElfDynLib.GnuHashSection64.fromPtr	parser-only	fn fromPtr(header: *elf.gnu_hash.Header) @This()	
 std.os.linux.dl.ElfDynLib.close	parser-only	fn close(self: *ElfDynLib) void	
@@ -11030,6 +11322,15 @@ std.os.linux.symlink	parser-only	fn symlink(existing: [*:0]const u8, new: [*:0]c
 std.os.linux.symlinkat	parser-only	fn symlinkat(existing: [*:0]const u8, newfd: i32, newpath: [*:0]const u8) usize	
 std.os.linux.sync	parser-only	fn sync() void	
 std.os.linux.syncfs	parser-only	fn syncfs(fd: fd_t) usize	
+std.os.linux.syscall_bits.[then].restore	parser-only	fn restore() callconv(.naked) noreturn	
+std.os.linux.syscall_bits.[then].restore_rt	parser-only	fn restore_rt() callconv(.naked) noreturn	
+std.os.linux.syscall_bits.[then].syscall0	parser-only	fn syscall0(number: SYS) u32	
+std.os.linux.syscall_bits.[then].syscall1	parser-only	fn syscall1(number: SYS, arg1: u32) u32	
+std.os.linux.syscall_bits.[then].syscall2	parser-only	fn syscall2(number: SYS, arg1: u32, arg2: u32) u32	
+std.os.linux.syscall_bits.[then].syscall3	parser-only	fn syscall3(number: SYS, arg1: u32, arg2: u32, arg3: u32) u32	
+std.os.linux.syscall_bits.[then].syscall4	parser-only	fn syscall4(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32) u32	
+std.os.linux.syscall_bits.[then].syscall5	parser-only	fn syscall5(number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32) u32	
+std.os.linux.syscall_bits.[then].syscall6	parser-only	fn syscall6( number: SYS, arg1: u32, arg2: u32, arg3: u32, arg4: u32, arg5: u32, arg6: u32, ) u32	
 std.os.linux.sysinfo	parser-only	fn sysinfo(info: *Sysinfo) usize	
 std.os.linux.tcdrain	parser-only	fn tcdrain(fd: fd_t) usize	
 std.os.linux.tcgetattr	parser-only	fn tcgetattr(fd: fd_t, termios_p: *termios) usize	
@@ -11081,6 +11382,10 @@ std.os.plan9.read	both	fn read(fd: i32, buf: [*]const u8, count: usize) usize	fn
 std.os.plan9.sbrk	both	fn sbrk(n: usize) usize	fn (usize) usize
 std.os.plan9.sigaction	both	fn sigaction(sig: u6, noalias act: ?*const Sigaction, noalias oact: ?*Sigaction) usize	fn (u6, noalias ?*const os.plan9.Sigaction, noalias ?*os.plan9.Sigaction) usize
 std.os.plan9.sigemptyset	both	fn sigemptyset() sigset_t	fn () c_long
+std.os.plan9.syscall_bits.[x86_64].syscall1	parser-only	fn syscall1(sys: plan9.SYS, arg0: usize) usize	
+std.os.plan9.syscall_bits.[x86_64].syscall2	parser-only	fn syscall2(sys: plan9.SYS, arg0: usize, arg1: usize) usize	
+std.os.plan9.syscall_bits.[x86_64].syscall3	parser-only	fn syscall3(sys: plan9.SYS, arg0: usize, arg1: usize, arg2: usize) usize	
+std.os.plan9.syscall_bits.[x86_64].syscall4	parser-only	fn syscall4(sys: plan9.SYS, arg0: usize, arg1: usize, arg2: usize, arg3: usize) usize	
 std.os.plan9.syscall_bits.syscall1	reflect-only		fn (os.plan9.SYS, usize) usize
 std.os.plan9.syscall_bits.syscall2	reflect-only		fn (os.plan9.SYS, usize, usize) usize
 std.os.plan9.syscall_bits.syscall3	reflect-only		fn (os.plan9.SYS, usize, usize, usize) usize
@@ -11819,7 +12124,6 @@ std.sort.@"pdq.zig".chosePivot	parser-only	fn chosePivot(a: usize, b: usize, piv
 std.sort.@"pdq.zig".partialInsertionSort	parser-only	fn partialInsertionSort(a: usize, b: usize, context: anytype) bool	
 std.sort.@"pdq.zig".partition	parser-only	fn partition(a: usize, b: usize, pivot: *usize, context: anytype) bool	
 std.sort.@"pdq.zig".partitionEqual	parser-only	fn partitionEqual(a: usize, b: usize, pivot: usize, context: anytype) usize	
-std.sort.@"pdq.zig".pdqContext	parser-only	fn pdqContext(a: usize, b: usize, context: anytype) void	
 std.sort.@"pdq.zig".reverseRange	parser-only	fn reverseRange(a: usize, b: usize, context: anytype) void	
 std.sort.@"pdq.zig".sort3	parser-only	fn sort3(a: usize, b: usize, c: usize, swaps: *usize, context: anytype) void	
 std.sort.IdAndValue.lessThan	parser-only	fn lessThan(context: void, a: IdAndValue, b: IdAndValue) bool	
@@ -13212,6 +13516,9 @@ std.zig.Zir.ExtraData	parser-only	fn ExtraData(comptime T: type) type
 std.zig.Zir.Inst.Capture.unwrap	both	fn unwrap(cap: Capture) Unwrapped	fn (zig.Zir.Inst.Capture) zig.Zir.Inst.Capture.Unwrapped
 std.zig.Zir.Inst.Capture.wrap	both	fn wrap(cap: Unwrapped) Capture	fn (zig.Zir.Inst.Capture.Unwrapped) zig.Zir.Inst.Capture
 std.zig.Zir.Inst.CompileErrors.Item.notesLen	both	fn notesLen(item: Item, zir: Zir) u32	fn (zig.Zir.Inst.CompileErrors.Item, zig.Zir) u32
+std.zig.Zir.Inst.Data.str.get	parser-only	fn get(self: @This(), code: Zir) []const u8	
+std.zig.Zir.Inst.Data.str_op.getStr	parser-only	fn getStr(self: @This(), zir: Zir) [:0]const u8	
+std.zig.Zir.Inst.Data.str_tok.get	parser-only	fn get(self: @This(), code: Zir) [:0]const u8	
 std.zig.Zir.Inst.Declaration.Flags.Id.hasLibName	both	fn hasLibName(id: Id) bool	fn (zig.Zir.Inst.Declaration.Flags.Id) bool
 std.zig.Zir.Inst.Declaration.Flags.Id.hasName	both	fn hasName(id: Id) bool	fn (zig.Zir.Inst.Declaration.Flags.Id) bool
 std.zig.Zir.Inst.Declaration.Flags.Id.hasSpecialBodies	both	fn hasSpecialBodies(id: Id) bool	fn (zig.Zir.Inst.Declaration.Flags.Id) bool
@@ -14041,6 +14348,22 @@ std.zig.string_literal.parseAlloc	both	fn parseAlloc(allocator: std.mem.Allocato
 std.zig.string_literal.parseCharLiteral	both	fn parseCharLiteral(slice: []const u8) ParsedCharLiteral	fn ([]const u8) zig.string_literal.ParsedCharLiteral
 std.zig.string_literal.parseEscapeSequence	both	fn parseEscapeSequence(slice: []const u8, offset: *usize) ParsedCharLiteral	fn ([]const u8, *usize) zig.string_literal.ParsedCharLiteral
 std.zig.string_literal.parseWrite	both	fn parseWrite(writer: *Writer, bytes: []const u8) Writer.Error!Result	fn (*Io.Writer, []const u8) error{WriteFailed}!zig.string_literal.Result
+std.zig.system.@"loongarch.zig".bit	parser-only	fn bit(input: u32, offset: u5) bool	
+std.zig.system.@"loongarch.zig".cpucfg	parser-only	fn cpucfg(word: u32) u32	
+std.zig.system.@"loongarch.zig".detectNativeCpuAndFeatures	parser-only	fn detectNativeCpuAndFeatures( arch: std.Target.Cpu.Arch, os: std.Target.Os, query: std.Target.Query, ) ?std.Target.Cpu	
+std.zig.system.@"loongarch.zig".setFeature	parser-only	fn setFeature(cpu: *std.Target.Cpu, feature: std.Target.loongarch.Feature, enabled: bool) void	
+std.zig.system.@"loongarch.zig".zig_loongarch_cpucfg	parser-only	fn zig_loongarch_cpucfg(word: u32, result: *u32) callconv(.c) void	
+std.zig.system.@"x86.zig".bit	parser-only	fn bit(input: u32, offset: u5) bool	
+std.zig.system.@"x86.zig".cpuid	parser-only	fn cpuid(leaf_id: u32, subid: u32) CpuidLeaf	
+std.zig.system.@"x86.zig".detectAMDProcessor	parser-only	fn detectAMDProcessor(cpu: Target.Cpu, family: u32, model: u32) ?*const Target.Cpu.Model	
+std.zig.system.@"x86.zig".detectIntelProcessor	parser-only	fn detectIntelProcessor(cpu: *Target.Cpu, family: u32, model: u32, brand_id: u32) void	
+std.zig.system.@"x86.zig".detectNativeCpuAndFeatures	parser-only	fn detectNativeCpuAndFeatures(arch: Target.Cpu.Arch, os: Target.Os, query: Target.Query) Target.Cpu	
+std.zig.system.@"x86.zig".detectNativeFeatures	parser-only	fn detectNativeFeatures(cpu: *Target.Cpu, os_tag: Target.Os.Tag) void	
+std.zig.system.@"x86.zig".getXCR0	parser-only	fn getXCR0() u32	
+std.zig.system.@"x86.zig".hasMask	parser-only	fn hasMask(input: u32, mask: u32) bool	
+std.zig.system.@"x86.zig".setFeature	parser-only	fn setFeature(cpu: *Target.Cpu, feature: Target.x86.Feature, enabled: bool) void	
+std.zig.system.@"x86.zig".zig_x86_cpuid	parser-only	fn zig_x86_cpuid(leaf_id: u32, subid: u32, eax: *u32, ebx: *u32, ecx: *u32, edx: *u32) callconv(.c) void	
+std.zig.system.@"x86.zig".zig_x86_get_xcr0	parser-only	fn zig_x86_get_xcr0() callconv(.c) u32	
 std.zig.system.NativePaths.addFrameworkDir	both	fn addFrameworkDir(self: *NativePaths, s: []const u8) !void	fn (*zig.system.NativePaths, []const u8) @typeInfo(@typeInfo(@TypeOf(zig.system.NativePaths.addFrameworkDir)).@"fn".return_type.?).error_union.error_set!void
 std.zig.system.NativePaths.addFrameworkDirFmt	both	fn addFrameworkDirFmt(self: *NativePaths, comptime fmt: []const u8, args: anytype) !void	fn (*zig.system.NativePaths, comptime []const u8, anytype) @typeInfo(@typeInfo(@TypeOf(zig.system.NativePaths.addFrameworkDirFmt)).@"fn".return_type.?).error_union.error_set!void
 std.zig.system.NativePaths.addIncludeDir	both	fn addIncludeDir(self: *NativePaths, s: []const u8) !void	fn (*zig.system.NativePaths, []const u8) @typeInfo(@typeInfo(@TypeOf(zig.system.NativePaths.addIncludeDir)).@"fn".return_type.?).error_union.error_set!void

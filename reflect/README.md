@@ -47,7 +47,7 @@ target, as a decl of its parent; or a private `@"f.zig"` file node, which no exp
 | `poison.tsv` | what *didn't* resolve — a poison container, or a failing decl of a partial one — each with the compiler's own first error line (platform / foreign lib / libc / `@compileError` / timeout) | `path · reason` |
 | `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the five buckets from it | `path · status · n_rows` |
 
-On zig 0.17.0: **5,959 containers swept → 3,162 resolved + 18 partial (21,527 rows) / 15 poison + 893 failing decls / 920 private / 1,844 skipped.**
+On zig 0.17.0: **6,428 containers swept → 3,157 resolved + 18 partial (21,429 rows) / 17 poison + 893 failing decls / 913 private / 2,323 skipped.**
 
 ### Planned — the same sweep, more facts
 

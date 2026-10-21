@@ -67,6 +67,7 @@ const W = struct {
     lexical: std.StringHashMap([]const u8), // node path → the scope its names resolve in, when that is not its parent
     lexical_names: std.StringHashMap([]const u8), // `<file node>.Sel` → Sel's re-export path (where its tests belong)
     nsrefs: std.ArrayList([2][]const u8), // (nsref path, abs file): linked to the file's home after the walk
+    selected: std.StringHashMap([]const u8), // "rel\x00Name" → where that file's top-level Name was placed first
 
     fn node(w: *W, path: []const u8, kind: []const u8, name: []const u8, vis: []const u8) !void {
         try w.nodes.print("{s}\t{s}\t{s}\t{s}\n", .{ path, kind, name, vis });
@@ -689,6 +690,28 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
             // the factory's type params are in scope for every member of `<fn>()`
             try registerTypeParams(w, ast, proto, child);
             try walk(w, ast, cd.ast.members, child, ck, dir, depth + 1, rel);
+            // A factory that returns a different type under some condition (`if (non-exhaustive)
+            // return struct {…};` before the final `return struct {…}`): each earlier one is a
+            // variant `<fn>().[return<k>]`, k-th in source order, as the arms of a per-platform
+            // const are.
+            var nested: std.ArrayList(Ast.Node.Index) = .empty;
+            try containerReturns(w, ast, ast.nodeData(node).node_and_node[1], &nested);
+            var ordinal: usize = 0;
+            for (nested.items) |r| {
+                if (r == d) continue;
+                const line = try lineOf(w, ast.source, rel, ast.tokens.items(.start)[ast.firstToken(r)]);
+                ordinal += 1; // by order, not line: a label must survive edits elsewhere in the file
+                const vname = try std.fmt.allocPrint(w.arena, "[return{d}]", .{ordinal});
+                const vp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ child, vname });
+                var rbuf: [2]Ast.Node.Index = undefined;
+                const rd = ast.fullContainerDecl(&rbuf, r).?;
+                const rk = ast.tokenSlice(rd.ast.main_token);
+                try w.attr(vp, "loc", try locOf(w, ast, r, rel));
+                try w.attr(vp, "when", try std.fmt.allocPrint(w.arena, "the return at {s}:{d}, under the condition around it", .{ rel, line }));
+                try w.node(vp, rk, vname, vis);
+                try registerTypeParams(w, ast, proto, vp);
+                try walk(w, ast, rd.ast.members, vp, rk, dir, depth + 1, rel);
+            }
         },
         else => {},
     }
@@ -696,7 +719,24 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
 
 fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u8, parent_kind: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) !void {
     var tuple_idx: usize = 0; // names unnamed (positional) tuple fields per container
+    // A file's top-level declarations have one home each: the first place the walk puts them,
+    // whole (`@import("f.zig")`) or selected (`@import("f.zig").Name`). Met again, a declaration
+    // is an alias of that home, not a second copy of its subtree.
+    const at_file_root = members.len > 0 and std.mem.findScalar(Ast.Node.Index, ast.rootDecls(), members[0]) != null;
     for (members) |m| {
+        if (at_file_root) if (declName(ast, m)) |dn| {
+            const key = try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ rel, dn });
+            const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, dn });
+            if (w.selected.get(key)) |home| {
+                if (!std.mem.eql(u8, home, cp)) {
+                    try declFacts(w, cp, try locOf(w, ast, m, rel), try docComment(w, ast, m));
+                    try w.node(cp, "alias", dn, if (isPubDecl(ast, m)) "pub" else "priv");
+                    try w.edge(cp, "alias", home);
+                    try w.aliases.put(cp, home);
+                    continue;
+                }
+            } else try w.selected.put(key, cp);
+        };
         // test / doctest → an `example` fact on the decl it documents (`test <ident>`) or on the
         // enclosing namespace (`test "…"`). Attached by owner path, in the shape's attrs stream.
         if (ast.nodeTag(m) == .test_decl) {
@@ -740,6 +780,13 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                 const tt = try typeText(w, ast, te);
                 try w.edge(cp, "has_type", tt);
                 try w.attr(cp, "type", tt);
+                // a container written as the field's type (`relative: struct { … }`): its members
+                // live under the field, as under any container
+                if (containerKind(ast, te)) |fk| {
+                    var tbuf: [2]Ast.Node.Index = undefined;
+                    const fcd = ast.fullContainerDecl(&tbuf, te).?;
+                    try walk(w, ast, fcd.ast.members, cp, fk, base_dir, depth + 1, rel);
+                }
             }
             if (field.ast.value_expr.unwrap()) |ve| try w.attr(cp, "value", try typeText(w, ast, ve));
             continue;
@@ -762,75 +809,84 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         };
         const init_src = ast.getNodeSource(init);
         if (ast.nodeTag(init) == .error_set_decl) try emitErrMembers(w, cp, init_src); // errmember attrs
-        if (importTarget(init_src)) |tgt| {
-            const sel = selectorOf(init_src);
-            // `@import("f").foo()` — a CALL selector yields a computed value/type we can't resolve by
-            // parsing (it needs the compiler). Neither a namespace nor a plain re-export: a const.
-            if (std.mem.findScalar(u8, sel, '(') != null) {
-                try declFacts(w, cp, decl_loc, decl_doc);
-                try emitInit(w, ast, init, cp, name, vis, path, base_dir, depth, rel);
-                continue;
-            }
-            const bare = sel.len == 0; // `@import("x")` vs `@import("x").Sel`
-            if (!std.mem.endsWith(u8, tgt, ".zig")) {
-                // An expression on a module (`@import("builtin").mode == .debug`) is a value, not a
-                // reference to the module: a const with its initializer.
-                if (!bare and !isAliasChain(sel)) {
-                    try declFacts(w, cp, decl_loc, decl_doc);
-                    try w.node(cp, "const", name, vis);
-                    try w.attr(cp, "value", try collapse(w.arena, std.mem.trim(u8, init_src, " \t\r\n")));
-                    continue;
-                }
-                // a MODULE we don't own (std / builtin / root) — external, never followed. Keyed by
-                // this node's path, so the name resolves lexically like any other declaration (one
-                // file's `uefi = @import("std").os.uefi` must not redefine `uefi` in another file),
-                // with the selector kept: `uefi.tables` is `std.os.uefi.tables`.
-                try declFacts(w, cp, decl_loc, decl_doc);
-                try w.node(cp, "modref", name, vis);
-                try w.imports.put(cp, if (bare) tgt else try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ tgt, sel }));
-                try w.edge(cp, "imports", tgt);
-                continue;
-            }
-            if (!bare) { // `@import("x").Sel` — FOLLOW it, place Sel under cp (its single home).
-                const rabs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
-                    try declFacts(w, cp, decl_loc, decl_doc);
-                    try w.node(cp, "alias", name, vis);
-                    try w.edge(cp, "alias", tgt);
-                    try w.aliases.put(cp, tgt);
-                    continue;
-                };
-                try emitReexport(w, rabs, sel, cp, name, vis, depth + 1, decl_loc, decl_doc);
-                continue;
-            }
-            // an OWNED .zig file — FOLLOW it, once, building the full tree.
-            const abs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
-                try declFacts(w, cp, decl_loc, decl_doc);
-                try w.node(cp, "nserr", name, vis);
-                continue;
-            };
-            try w.edge(cp, "imports", tgt);
-            if (w.visited.contains(abs) or depth >= MAX_DEPTH) {
-                try declFacts(w, cp, decl_loc, decl_doc);
-                try w.node(cp, "nsref", name, vis); // already expanded elsewhere (its canonical home)
-                try w.nsrefs.append(w.arena, .{ cp, abs });
-                continue;
-            }
-            if (parseChild(w, abs)) |child| {
-                try declFacts(w, cp, decl_loc, try joinDocs(w, decl_doc, try fileDoc(w, child)));
-                try w.visited.put(abs, {}); // mark visited only on a successful parse — a failed
-                try w.file_home.put(abs, cp);
-                try w.node(cp, "ns", name, vis); // read stays `nserr` and can be retried elsewhere
-                const child_dir = std.fs.path.dirname(abs) orelse ".";
-                try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
-            } else {
-                try declFacts(w, cp, decl_loc, decl_doc);
-                try w.node(cp, "nserr", name, vis);
-            }
-            continue;
-        }
+        if (try emitImport(w, ast, init, init_src, cp, name, vis, isVar(ast, vd), decl_loc, decl_doc, path, base_dir, depth, rel)) continue;
         try declFacts(w, cp, decl_loc, decl_doc);
-        try emitInit(w, ast, init, cp, name, vis, path, base_dir, depth, rel);
+        try emitInit(w, ast, init, cp, name, vis, isVar(ast, vd), vd.ast.type_node.unwrap(), path, base_dir, depth, rel);
     }
+}
+
+/// A declaration whose initializer is an `@import` — a module reference, a whole file (walked
+/// once, at its first import), or one declaration of a file (`emitReexport`). The one place for
+/// this, shared by declarations (`walk`) and the arms of per-platform consts (`emitArm`), so an
+/// `@import` in a switch arm (`arch_bits = switch (native_arch) { .x86_64 =>
+/// @import("linux/x86_64.zig"), … }`) maps its file like any other. False when `init_src` is
+/// not an import.
+fn emitImport(w: *W, ast: *const Ast, init: Ast.Node.Index, init_src: []const u8, cp: []const u8, name: []const u8, vis: []const u8, mutable: bool, decl_loc: []const u8, decl_doc: []const u8, path: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) anyerror!bool {
+    const tgt = importTarget(init_src) orelse return false;
+    const sel = selectorOf(init_src);
+    // `@import("f").foo()` — a CALL selector yields a computed value/type we can't resolve by
+    // parsing (it needs the compiler). Neither a namespace nor a plain re-export: a const.
+    if (std.mem.findScalar(u8, sel, '(') != null) {
+        try declFacts(w, cp, decl_loc, decl_doc);
+        try emitInit(w, ast, init, cp, name, vis, mutable, null, path, base_dir, depth, rel);
+        return true;
+    }
+    const bare = sel.len == 0; // `@import("x")` vs `@import("x").Sel`
+    if (!std.mem.endsWith(u8, tgt, ".zig")) {
+        // An expression on a module (`@import("builtin").mode == .debug`) is a value, not a
+        // reference to the module: a const with its initializer.
+        if (!bare and !isAliasChain(sel)) {
+            try declFacts(w, cp, decl_loc, decl_doc);
+            try w.node(cp, "const", name, vis);
+            try w.attr(cp, "value", try collapse(w.arena, std.mem.trim(u8, init_src, " \t\r\n")));
+            return true;
+        }
+        // a MODULE we don't own (std / builtin / root) — external, never followed. Keyed by
+        // this node's path, so the name resolves lexically like any other declaration (one
+        // file's `uefi = @import("std").os.uefi` must not redefine `uefi` in another file),
+        // with the selector kept: `uefi.tables` is `std.os.uefi.tables`.
+        try declFacts(w, cp, decl_loc, decl_doc);
+        try w.node(cp, "modref", name, vis);
+        try w.imports.put(cp, if (bare) tgt else try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ tgt, sel }));
+        try w.edge(cp, "imports", tgt);
+        return true;
+    }
+    if (!bare) { // `@import("x").Sel` — FOLLOW it, place Sel under cp (its single home).
+        const rabs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
+            try declFacts(w, cp, decl_loc, decl_doc);
+            try w.node(cp, "alias", name, vis);
+            try w.edge(cp, "alias", tgt);
+            try w.aliases.put(cp, tgt);
+            return true;
+        };
+        try emitReexport(w, rabs, sel, cp, name, vis, depth + 1, decl_loc, decl_doc);
+        return true;
+    }
+    // an OWNED .zig file — FOLLOW it, once, building the full tree.
+    const abs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
+        try declFacts(w, cp, decl_loc, decl_doc);
+        try w.node(cp, "nserr", name, vis);
+        return true;
+    };
+    try w.edge(cp, "imports", tgt);
+    if (w.visited.contains(abs) or depth >= MAX_DEPTH) {
+        try declFacts(w, cp, decl_loc, decl_doc);
+        try w.node(cp, "nsref", name, vis); // already expanded elsewhere (its canonical home)
+        try w.nsrefs.append(w.arena, .{ cp, abs });
+        return true;
+    }
+    if (parseChild(w, abs)) |child| {
+        try declFacts(w, cp, decl_loc, try joinDocs(w, decl_doc, try fileDoc(w, child)));
+        try w.visited.put(abs, {}); // mark visited only on a successful parse — a failed
+        try w.file_home.put(abs, cp);
+        try w.node(cp, "ns", name, vis); // read stays `nserr` and can be retried elsewhere
+        const child_dir = std.fs.path.dirname(abs) orelse ".";
+        try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
+    } else {
+        try declFacts(w, cp, decl_loc, decl_doc);
+        try w.node(cp, "nserr", name, vis);
+    }
+    return true;
 }
 
 /// A var/const's own qualifiers (`mod`) and declared type (`const x: T`), shared by `walk` and
@@ -844,11 +900,22 @@ fn varFacts(w: *W, ast: *const Ast, vd: Ast.full.VarDecl, cp: []const u8) !void 
     }
 }
 
+/// Is the declaration a `var` (rather than a `const`)?
+fn isVar(ast: *const Ast, vd: Ast.full.VarDecl) bool {
+    return std.mem.eql(u8, ast.tokenSlice(vd.ast.mut_token), "var");
+}
+
+/// The keyword values an initializer can be that read like a name but alias nothing.
+fn isValueWord(s: []const u8) bool {
+    for ([_][]const u8{ "null", "undefined", "true", "false", "unreachable" }) |k| if (std.mem.eql(u8, s, k)) return true;
+    return false;
+}
+
 /// What a const's initializer makes it — a container (walked), an alias, `@This()` (an alias of
 /// `container`), or a value: its text, and the error sets it merges, the factory it calls, or
 /// the arms it chooses between. The one place for this, shared by declarations in place (`walk`)
 /// and followed re-exports (`emitReexport`), so the two cannot record a const differently.
-fn emitInit(w: *W, ast: *const Ast, init: Ast.Node.Index, cp: []const u8, name: []const u8, vis: []const u8, container: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) anyerror!void {
+fn emitInit(w: *W, ast: *const Ast, init: Ast.Node.Index, cp: []const u8, name: []const u8, vis: []const u8, mutable: bool, declared: ?Ast.Node.Index, container: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) anyerror!void {
     if (containerKind(ast, init)) |ck| {
         try w.node(cp, ck, name, vis);
         var cbuf: [2]Ast.Node.Index = undefined;
@@ -857,7 +924,8 @@ fn emitInit(w: *W, ast: *const Ast, init: Ast.Node.Index, cp: []const u8, name: 
         return;
     }
     const trimmed = std.mem.trim(u8, ast.getNodeSource(init), " \t\r\n");
-    if (isAliasChain(trimmed)) {
+    // a `var` holds a value whatever it starts as; `null`/`undefined`/`true`/`false` are values
+    if (!mutable and isAliasChain(trimmed) and !isValueWord(trimmed)) {
         try w.node(cp, "alias", name, vis);
         try w.edge(cp, "alias", trimmed);
         try w.aliases.put(cp, trimmed);
@@ -876,7 +944,9 @@ fn emitInit(w: *W, ast: *const Ast, init: Ast.Node.Index, cp: []const u8, name: 
             // `Sha256 = Sha2x32(iv256, 256)`: the const is what that factory returns
             var cbuf: [1]Ast.Node.Index = undefined;
             if (ast.fullCall(&cbuf, init)) |call| {
-                const callee = try typeText(w, ast, call.ast.fn_expr);
+                // a decl literal (`x: Allocator = .init(…)`) calls a member of the declared type
+                const written = try typeText(w, ast, call.ast.fn_expr);
+                const callee = if (std.mem.startsWith(u8, written, ".") and declared != null) try std.fmt.allocPrint(w.arena, "{s}{s}", .{ try typeText(w, ast, declared.?), written }) else written;
                 try w.edge(cp, "instantiates", callee);
                 try w.instances.put(cp, callee);
             }
@@ -903,6 +973,13 @@ fn emitVariants(w: *W, ast: *const Ast, n: Ast.Node.Index, cp: []const u8, base_
     } else if (ast.fullIf(n)) |iff| {
         try emitArm(w, ast, iff.ast.then_expr, cp, "then", try typeText(w, ast, iff.ast.cond_expr), base_dir, depth, rel);
         if (iff.ast.else_expr.unwrap()) |e| try emitArm(w, ast, e, cp, "else", "else", base_dir, depth, rel);
+    } else if (ast.nodeTag(n) == .@"orelse") {
+        // `std.Options.FilePermissions orelse if (is_windows) enum {…} else …`: the option when
+        // it is set, else the default (whose own arms are split under `[orelse]`)
+        const lhs, const rhs = ast.nodeData(n).node_and_node;
+        const opt = try typeText(w, ast, lhs);
+        try emitArm(w, ast, lhs, cp, "given", try std.fmt.allocPrint(w.arena, "{s} != null", .{opt}), base_dir, depth, rel);
+        try emitArm(w, ast, rhs, cp, "orelse", try std.fmt.allocPrint(w.arena, "{s} == null", .{opt}), base_dir, depth, rel);
     }
 }
 
@@ -927,17 +1004,21 @@ fn emitArm(w: *W, ast: *const Ast, expr: Ast.Node.Index, cp: []const u8, label: 
     const name = try std.fmt.allocPrint(w.arena, "[{s}]", .{label});
     const vp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ cp, name });
     if (w.node_set.contains(vp)) return; // a repeated label (two `arm<k>` cannot collide; tags cannot repeat)
-    try w.attr(vp, "loc", try locOf(w, ast, expr, rel));
+    const loc = try locOf(w, ast, expr, rel);
     try w.attr(vp, "when", when);
-    if (containerKind(ast, expr)) |ck| {
+    // `impl: { break :impl @import("aes/aesni.zig"); }`: the arm is what its block breaks with
+    const value = blockResult(ast, expr) orelse expr;
+    if (try emitImport(w, ast, value, ast.getNodeSource(value), vp, name, "pub", false, loc, "", cp, base_dir, depth, rel)) return;
+    try w.attr(vp, "loc", loc);
+    if (containerKind(ast, value)) |ck| {
         try w.node(vp, ck, name, "pub");
         var cbuf: [2]Ast.Node.Index = undefined;
-        const cd = ast.fullContainerDecl(&cbuf, expr).?;
+        const cd = ast.fullContainerDecl(&cbuf, value).?;
         try walk(w, ast, cd.ast.members, vp, ck, base_dir, depth + 1, rel);
         return;
     }
-    const src = std.mem.trim(u8, ast.getNodeSource(expr), " \t\r\n");
-    if (isAliasChain(src)) {
+    const src = std.mem.trim(u8, ast.getNodeSource(value), " \t\r\n");
+    if (isAliasChain(src) and !isValueWord(src)) {
         try w.node(vp, "alias", name, "pub");
         try w.edge(vp, "alias", src);
         try w.aliases.put(vp, src);
@@ -945,7 +1026,35 @@ fn emitArm(w: *W, ast: *const Ast, expr: Ast.Node.Index, cp: []const u8, label: 
     }
     try w.node(vp, "const", name, "pub");
     try w.attr(vp, "value", try collapse(w.arena, src));
-    try emitVariants(w, ast, expr, vp, base_dir, depth + 1, rel);
+    try emitVariants(w, ast, value, vp, base_dir, depth + 1, rel);
+}
+
+/// Every `return <container literal>` in a fn body, through blocks and `if`/`else` (not into
+/// nested functions or containers, whose returns are their own), in source order.
+fn containerReturns(w: *W, ast: *const Ast, n: Ast.Node.Index, out: *std.ArrayList(Ast.Node.Index)) !void {
+    var buf: [2]Ast.Node.Index = undefined;
+    if (ast.blockStatements(&buf, n)) |stmts| {
+        for (stmts) |s| try containerReturns(w, ast, s, out);
+    } else if (ast.fullIf(n)) |iff| {
+        try containerReturns(w, ast, iff.ast.then_expr, out);
+        if (iff.ast.else_expr.unwrap()) |e| try containerReturns(w, ast, e, out);
+    } else if (ast.nodeTag(n) == .@"return") {
+        const op = ast.nodeData(n).opt_node.unwrap() orelse return;
+        if (containerKind(ast, op) != null) try out.append(w.arena, op);
+    }
+}
+
+/// The value a labeled block yields when it ends in `break :label value` (`impl: { break :impl
+/// @import("aes/soft.zig"); }`), or null for any other node.
+fn blockResult(ast: *const Ast, n: Ast.Node.Index) ?Ast.Node.Index {
+    var buf: [2]Ast.Node.Index = undefined;
+    const stmts = ast.blockStatements(&buf, n) orelse return null;
+    if (stmts.len == 0) return null;
+    const last = stmts[stmts.len - 1];
+    if (ast.nodeTag(last) != .@"break") return null;
+    const label, const val = ast.nodeData(last).opt_token_and_opt_node;
+    if (label.unwrap() == null) return null;
+    return val.unwrap();
 }
 
 /// 1-based line of `off`, via a per-file newline-offset table (built once, then binary-searched) —
@@ -992,6 +1101,22 @@ fn selectorOf(src: []const u8) []const u8 {
     if (s.len > 0 and s[0] == '.') s = s[1..];
     return s;
 }
+/// Is a container member declared `pub`?
+fn isPubDecl(ast: *const Ast, m: Ast.Node.Index) bool {
+    if (ast.fullVarDecl(m)) |vd| return vd.visib_token != null;
+    var fb: [1]Ast.Node.Index = undefined;
+    if (ast.fullFnProto(&fb, m)) |proto| return proto.visib_token != null;
+    return false;
+}
+
+/// The name a container member declares (a var/const or a fn), or null.
+fn declName(ast: *const Ast, m: Ast.Node.Index) ?[]const u8 {
+    if (ast.fullVarDecl(m)) |vd| return ast.tokenSlice(vd.ast.mut_token + 1);
+    var fb: [1]Ast.Node.Index = undefined;
+    if (ast.fullFnProto(&fb, m)) |proto| if (proto.name_token) |nt| return ast.tokenSlice(nt);
+    return null;
+}
+
 /// Find a pub `const`/`fn` named `sel` among a file's root decls.
 fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, sel: []const u8) ?Ast.Node.Index {
     for (members) |m| {
@@ -1032,12 +1157,76 @@ fn scopeFiles(w: *W) !void {
         try w.node(fp, "ns", fname, "priv");
         // Sel itself already lives at its re-export path (a sibling of `fp`), where a lookup of
         // its name from inside the file lands; only the rest of the file is walked here.
-        const found = findDecl(ast, ast.rootDecls(), d.sel);
+        // So does every other declaration of this file selected somewhere (`chacha20.zig`'s
+        // `ChaCha20IETF`, `XChaCha20IETF`, …): each has its home, not a copy here.
         var rest: std.ArrayList(Ast.Node.Index) = .empty;
-        for (ast.rootDecls()) |m| if (found == null or m != found.?) try rest.append(w.arena, m);
-        try w.lexical_names.put(try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ fp, d.sel }), d.sel_path);
+        for (ast.rootDecls()) |m| {
+            const dn = declName(ast, m) orelse "";
+            if (w.selected.get(try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, d.abs), dn }))) |home| {
+                try w.lexical_names.put(try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ fp, dn }), home);
+                continue;
+            }
+            try rest.append(w.arena, m);
+        }
         try walk(w, ast, rest.items, fp, "struct", std.fs.path.dirname(d.abs) orelse ".", d.depth + 1, rel);
         try w.lexical.put(d.sel_path, fp);
+    }
+}
+
+/// Files std imports where no declaration names them — inside a call argument
+/// (`Field(.{ .fiat = @import("p256_64.zig"), … })`), a function body, a struct literal — were
+/// never walked, so their declarations had no node. After the walk, every walked file's `@import`s
+/// of `.zig` files outside `test` blocks are checked; a file not walked yet gets a private node
+/// `<home>.@"f.zig"` under the file importing it (as `scopeFiles` does), and is checked in turn.
+/// Files are taken in path order, so the map does not depend on hash order.
+fn sweepImports(w: *W) !void {
+    var todo: std.ArrayList([2][]const u8) = .empty; // (abs, home)
+    var it = w.file_home.iterator();
+    while (it.next()) |e| try todo.append(w.arena, .{ e.key_ptr.*, e.value_ptr.* });
+    std.mem.sort([2][]const u8, todo.items, {}, struct {
+        fn lt(_: void, x: [2][]const u8, y: [2][]const u8) bool {
+            return std.mem.order(u8, x[1], y[1]) == .lt;
+        }
+    }.lt);
+    var k: usize = 0;
+    while (k < todo.items.len) : (k += 1) {
+        const abs, const home = todo.items[k];
+        const ast = parseChild(w, abs) orelse continue;
+        const dir = std.fs.path.dirname(abs) orelse ".";
+        // token ranges of `test` blocks: imports there are test-only
+        var tests: std.ArrayList([2]Ast.TokenIndex) = .empty;
+        for (0..ast.nodes.len) |ni| {
+            const n: Ast.Node.Index = @enumFromInt(ni); // zsnag:ok — R007: ni < nodes.len, a valid node index
+            if (ast.nodeTag(n) == .test_decl) try tests.append(w.arena, .{ ast.firstToken(n), ast.lastToken(n) });
+        }
+        const tags = ast.tokens.items(.tag);
+        var t: usize = 0;
+        while (t + 2 < tags.len) : (t += 1) {
+            if (tags[t] != .builtin or tags[t + 1] != .l_paren or tags[t + 2] != .string_literal) continue;
+            const ti: Ast.TokenIndex = @intCast(t); // zsnag:ok — R007: t < tokens.len, which fits a TokenIndex
+            if (!std.mem.eql(u8, ast.tokenSlice(ti), "@import")) continue;
+            const in_test = for (tests.items) |r| {
+                if (ti >= r[0] and ti <= r[1]) break true;
+            } else false;
+            if (in_test) continue;
+            const lit = ast.tokenSlice(ti + 2);
+            const target = lit[1 .. lit.len - 1];
+            if (!std.mem.endsWith(u8, target, ".zig")) continue;
+            const abs2 = std.fs.path.resolve(w.arena, &.{ dir, target }) catch continue;
+            if (w.visited.contains(abs2)) continue;
+            const child = parseChild(w, abs2) orelse continue;
+            const fname = try std.fmt.allocPrint(w.arena, "@\"{s}\"", .{std.fs.path.basename(abs2)});
+            const fp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ home, fname });
+            if (w.node_set.contains(fp)) continue;
+            try w.visited.put(abs2, {});
+            try w.file_home.put(abs2, fp);
+            const rel2 = relOf(w, abs2);
+            try w.attr(fp, "loc", try std.fmt.allocPrint(w.arena, "{s}:1", .{rel2}));
+            try w.attr(fp, "doc", try fileDoc(w, child));
+            try w.node(fp, "ns", fname, "priv");
+            try walk(w, child, child.rootDecls(), fp, "struct", std.fs.path.dirname(abs2) orelse ".", 1, rel2);
+            try todo.append(w.arena, .{ abs2, fp });
+        }
     }
 }
 
@@ -1078,6 +1267,11 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     const rel = relOf(w, abs);
     // `Sel` is defined in this file (not re-imported from another): its names are this file's
     // names, and the rest of the file has no other home yet. Settled after the walk (`scopeFiles`).
+    // One home per declaration: selected again (`Ristretto255.Curve` and `Edwards25519` are the
+    // same `Edwards25519` of edwards25519.zig), it is an alias of where it was placed first.
+    const key = try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, abs), sel });
+    if (w.selected.get(key)) |home| if (!std.mem.eql(u8, home, cp)) return leaf(w, cp, name, vis, home, decl_loc, decl_doc);
+    try w.selected.put(key, cp);
     const via_import = if (ast.fullVarDecl(found)) |fvd| if (fvd.ast.init_node.unwrap()) |ini| importTarget(ast.getNodeSource(ini)) != null else false else false;
     if (!via_import) try w.deferred.append(w.arena, .{ .sel_path = cp, .abs = abs, .sel = sel, .owner = parent(cp), .depth = depth });
 
@@ -1104,7 +1298,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
         // `@import("f").foo()` — a CALL selector is a computed const, not a followable namespace.
         if (std.mem.findScalar(u8, isrc_sel, '(') != null) {
             try declFacts(w, cp, tgt_loc, tgt_doc);
-            return emitInit(w, ast, init, cp, name, vis, parent(cp), dir, depth, rel);
+            return emitInit(w, ast, init, cp, name, vis, isVar(ast, vd), vd.ast.type_node.unwrap(), parent(cp), dir, depth, rel);
         }
         if (std.mem.endsWith(u8, t2, ".zig")) {
             const abs2 = std.fs.path.resolve(w.arena, &.{ dir, t2 }) catch {
@@ -1129,7 +1323,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
         }
     }
     try declFacts(w, cp, tgt_loc, tgt_doc);
-    try emitInit(w, ast, init, cp, name, vis, parent(cp), dir, depth, rel);
+    try emitInit(w, ast, init, cp, name, vis, isVar(ast, vd), vd.ast.type_node.unwrap(), parent(cp), dir, depth, rel);
 }
 
 /// Scope tallies from edge resolution — returned so the caller can report without re-reading.
@@ -1184,6 +1378,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         .lexical = std.StringHashMap([]const u8).init(arena),
         .lexical_names = std.StringHashMap([]const u8).init(arena),
         .nsrefs = .empty,
+        .selected = std.StringHashMap([]const u8).init(arena),
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
@@ -1197,6 +1392,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     try walk(&w, &ast, ast.rootDecls(), root_name, "root", root_dir, 0, std.fs.path.basename(root));
     try w.file_home.put(try std.fs.path.resolve(arena, &.{root}), root_name);
     try scopeFiles(&w);
+    try sweepImports(&w);
     try linkNsrefs(&w);
     try w.nodes.flush();
     try w.attrs.flush();
@@ -1226,7 +1422,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     var sfw = std.Io.File.stderr().writerStreaming(io, &sbuf);
     const s = &sfw.interface;
     try s.print("[parse] {s}\n  nodes: {d}   edges: {d}\n  scope: local {d} · cross {d} · primitive {d} · module {d} · generic {d} · inline {d} · unresolved {d}\n", .{
-        root,                                  w.node_set.count(),                 w.edges.items.len,
+        root,                         w.node_set.count(),        w.edges.items.len,
         counts.get(Scope.local),      counts.get(Scope.cross),   counts.get(Scope.primitive),
         counts.get(Scope.module),     counts.get(Scope.generic), counts.get(Scope.@"inline"),
         counts.get(Scope.unresolved),

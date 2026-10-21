@@ -15,6 +15,8 @@ const root_zig =
     \\pub const Tbl = @import("tbl.zig");
     \\pub const Other = @import("other.zig");
     \\pub const DynLib = @import("dl.zig").DynLib;
+    \\pub const Plat = @import("plat.zig");
+    \\pub const AgainDyn = @import("dl.zig").DynLib;
     \\pub const is_debug = @import("builtin").mode == .Debug;
     \\pub const os_tag = builtin.os.tag;
     \\
@@ -106,10 +108,62 @@ const dl_zig =
     \\
 ;
 
+
+// Imports where no declaration names a file, and other shapes of const.
+const plat_zig =
+    \\const builtin = @import("builtin");
+    \\const arch_bits = switch (builtin.cpu.arch) {
+    \\    .x86_64 => @import("arch_x86_64.zig"),
+    \\    else => @import("arch_other.zig"),
+    \\};
+    \\const impl = if (builtin.cpu.arch == .x86_64) impl: {
+    \\    break :impl @import("impl_a.zig");
+    \\} else impl: {
+    \\    break :impl @import("impl_b.zig");
+    \\};
+    \\pub const Fe = Field(.{ .fiat = @import("fiat.zig") });
+    \\fn Field(comptime p: anytype) type {
+    \\    _ = p;
+    \\    return struct {};
+    \\}
+    \\pub fn Indexer(comptime E: type) type {
+    \\    if (E == void) {
+    \\        return struct {
+    \\            pub const Odd = u8;
+    \\        };
+    \\    }
+    \\    return struct {
+    \\        pub const Even = u8;
+    \\    };
+    \\}
+    \\pub const Opts = struct {
+    \\    relative: struct {
+    \\        pub fn eql() void {}
+    \\    },
+    \\};
+    \\const Options = struct {
+    \\    pub const FilePermissions: ?type = null;
+    \\};
+    \\pub const Perm = Options.FilePermissions orelse enum { a, b };
+    \\pub var instance: u8 = undefined;
+    \\pub const nothing = null;
+    \\pub const Alloc = struct {
+    \\    pub fn init() Alloc {
+    \\        return .{};
+    \\    }
+    \\};
+    \\pub const made: Alloc = .init();
+    \\
+;
+const arch_x86_64_zig = "pub fn syscall0() void {}\n";
+const arch_other_zig = "pub fn syscall0() void {}\n";
+const impl_a_zig = "pub const Block = u8;\n";
+const impl_b_zig = "pub const Block = u16;\n";
+const fiat_zig = "pub fn mul() void {}\n";
 const Out = struct { nodes: []const u8, edges: []const u8, attrs: []const u8 };
 
 fn extract(a: std.mem.Allocator, io: std.Io, tmp: std.testing.TmpDir) !Out {
-    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig } };
+    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig }, .{ "plat.zig", plat_zig }, .{ "arch_x86_64.zig", arch_x86_64_zig }, .{ "arch_other.zig", arch_other_zig }, .{ "impl_a.zig", impl_a_zig }, .{ "impl_b.zig", impl_b_zig }, .{ "fiat.zig", fiat_zig } };
     for (files) |f| try tmp.dir.writeFile(io, .{ .sub_path = f[0], .data = f[1] });
     const base = try tmp.dir.realPathFileAlloc(io, ".", a);
     const p = struct {
@@ -203,4 +257,29 @@ test "extractor: every fixed case produces its row" {
     // A file imported again where it was already walked links to that walk, and names go through.
     try expectRow(o.edges, "std.Other.m\talias\tstd.mem\tcross");
     try expectRow(o.edges, "std.Other.UseC\talias\tstd.mem.Allocator\tcross");
+
+    // An @import in a switch arm, or in a labeled block an arm breaks with, maps its file.
+    try expectRow(o.nodes, "std.Plat.arch_bits.[x86_64]\tns\t[x86_64]\tpub");
+    try expectRow(o.nodes, "std.Plat.arch_bits.[x86_64].syscall0\tfn\tsyscall0\tpub");
+    try expectRow(o.nodes, "std.Plat.impl.[then].Block\talias\tBlock\tpub");
+    try expectRow(o.nodes, "std.Plat.impl.[else].Block\talias\tBlock\tpub");
+    // A file imported only inside a call argument gets a private node under the importing file.
+    try expectRow(o.nodes, "std.Plat.@\"fiat.zig\"\tns\t@\"fiat.zig\"\tpriv");
+    try expectRow(o.nodes, "std.Plat.@\"fiat.zig\".mul\tfn\tmul\tpub");
+    // A factory's earlier conditional return is a variant of what it returns.
+    try expectRow(o.nodes, "std.Plat.Indexer().Even\talias\tEven\tpub");
+    try expectRow(o.nodes, "std.Plat.Indexer().[return1].Odd\talias\tOdd\tpub");
+    // A container written as a field's type has its members under the field.
+    try expectRow(o.nodes, "std.Plat.Opts.relative.eql\tfn\teql\tpub");
+    // `X orelse Default`: the option and the default are arms.
+    try expectRow(o.nodes, "std.Plat.Perm.[given]\talias\t[given]\tpub");
+    try expectRow(o.nodes, "std.Plat.Perm.[orelse]\tenum\t[orelse]\tpub");
+    // A var, and a value keyword, are values, not aliases.
+    try expectRow(o.nodes, "std.Plat.instance\tconst\tinstance\tpub");
+    try expectRow(o.nodes, "std.Plat.nothing\tconst\tnothing\tpub");
+    // A declaration selected twice has one home; the second selection is an alias of it.
+    try expectRow(o.edges, "std.AgainDyn\talias\tstd.DynLib\tlocal");
+    try expectNoRow(o.nodes, "std.AgainDyn\tstruct\tAgainDyn\tpub");
+    // A decl literal calls a member of the declared type.
+    try expectRow(o.edges, "std.Plat.made\tinstantiates\tstd.Plat.Alloc.init\tlocal");
 }

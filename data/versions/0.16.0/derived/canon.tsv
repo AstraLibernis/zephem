@@ -60,10 +60,8 @@ std.os.emscripten.cpu_set_t	[16]usize
 std.posix.cpu_set_t	[16]usize
 std.Build.Cache.HexDigest	[32]u8
 std.crypto.dh.X25519.Curve.scalar.CompressedScalar	[32]u8
-std.crypto.ecc.Curve25519.scalar.CompressedScalar	[32]u8
 std.crypto.ecc.Edwards25519.scalar.CompressedScalar	[32]u8
 std.crypto.ecc.P256.scalar.CompressedScalar	[32]u8
-std.crypto.ecc.Ristretto255.Curve.scalar.CompressedScalar	[32]u8
 std.crypto.ecc.Ristretto255.scalar.CompressedScalar	[32]u8
 std.crypto.ecc.Secp256k1.scalar.CompressedScalar	[32]u8
 std.os.uefi.protocol.SimpleNetwork.MacAddress	[32]u8
@@ -91,9 +89,7 @@ std.crypto.ecc.Ristretto255.Curve.scalar	crypto.25519.scalar
 std.crypto.ecc.Ristretto255.scalar	crypto.25519.scalar
 std.crypto.sign.Ed25519.Curve.scalar	crypto.25519.scalar
 std.crypto.dh.X25519.Curve.scalar.Scalar	crypto.25519.scalar.Scalar
-std.crypto.ecc.Curve25519.scalar.Scalar	crypto.25519.scalar.Scalar
 std.crypto.ecc.Edwards25519.scalar.Scalar	crypto.25519.scalar.Scalar
-std.crypto.ecc.Ristretto255.Curve.scalar.Scalar	crypto.25519.scalar.Scalar
 std.crypto.ecc.Ristretto255.scalar.Scalar	crypto.25519.scalar.Scalar
 std.crypto.dh.X25519.KeyPair	crypto.25519.x25519.X25519.KeyPair
 std.crypto.nacl.Box.KeyPair	crypto.25519.x25519.X25519.KeyPair

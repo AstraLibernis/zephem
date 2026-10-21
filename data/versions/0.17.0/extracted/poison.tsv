@@ -1,5 +1,7 @@
 path	reason
 std.Build.package_map	std/Build.zig:1984:33: error: root source file struct 'x-2-6-7' has no member named 'dependencies'
+std.Build.Cache.Manifest.InputPath.contents.Unwrapped	<gen>: error: struct 'Build.Cache.Manifest.InputPath' has no member named 'contents'
+std.Build.Cache.Manifest.InputPath.contents.Populated	<gen>: error: struct 'Build.Cache.Manifest.InputPath' has no member named 'contents'
 std.Build.abi.fuzz	error: undefined symbol: fuzzer_init
 std.Io.Dispatch	std/debug.zig:442:14: error: reached unreachable code
 std.Io.Dispatch.InitOptions	std/debug.zig:442:14: error: reached unreachable code

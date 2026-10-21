@@ -221,7 +221,7 @@ fn buildKids(a: std.mem.Allocator, index: rel.Table) !Kids {
         const path = r[pi];
         // A const/alias is a container only through its `[…]` variants and is not reflected on
         // its own turn (`valuesFor`), so its parent must descend into it as into any value.
-        if (std.mem.eql(u8, r[ki], "const") or std.mem.eql(u8, r[ki], "alias")) continue;
+        if (std.mem.eql(u8, r[ki], "const") or std.mem.eql(u8, r[ki], "alias") or std.mem.eql(u8, r[ki], "field")) continue;
         const par = util.dottedParent(path);
         const child = util.lastSeg(path);
         const gop = try kids.getOrPut(par);
@@ -264,7 +264,14 @@ fn valuesFor(a: std.mem.Allocator, targets: []const []const u8, index: rel.Table
     const out = try a.alloc(bool, targets.len);
     for (targets, out) |t, *o| {
         const k = kind.get(t) orelse "";
-        o.* = std.mem.eql(u8, k, "const") or std.mem.eql(u8, k, "alias");
+        o.* = std.mem.eql(u8, k, "const") or std.mem.eql(u8, k, "alias") or std.mem.eql(u8, k, "field");
+        // under a field whose type is a container literal (`contents: union { pub const X … }`):
+        // no expression reaches it either; its members are reflected through the field's type
+        var p = util.dottedParent(t);
+        while (!o.* and p.len > 0) : (p = util.dottedParent(p)) {
+            if (std.mem.eql(u8, kind.get(p) orelse "", "field")) o.* = true;
+            if (std.mem.findScalar(u8, p, '.') == null) break;
+        }
     }
     return out;
 }
