@@ -146,9 +146,11 @@ below and in each engine's README.
 
 **One folder per Zig version.** `data/std/` is always the map of the Zig on `PATH`, and a
 regenerate overwrites it. `zephem snapshot` freezes it — after proving every manifest in it
-matches the files on disk — into `data/versions/<zig-version>/`, a complete copy of the map
-that is committed and never rewritten, so every release of std zephem has mapped sits beside
-the others and two of them can be compared directly: `diff -r data/versions/0.16.0
+matches the files on disk, and that each later stage was built from the core beside it — into
+`data/versions/<zig-version>/`, a complete committed copy of the map. Every version is mapped
+by the same extractor, built with that version's own Zig (`ZIG=<that zig> zephem std`, then
+`depth --commit`, `overlays`, `snapshot`), so an extractor fix is applied by regenerating every
+folder, and two of them compare like with like: `diff -r data/versions/0.16.0
 data/versions/0.17.0`, or `zephem diff 0.16.0 0.17.0`, which reports the public declarations
 removed, changed (kind, visibility, signature: old → new) and added, grouped by module, plus
 moves (inferred: a unique name + kind + signature, or for signature-less declarations their

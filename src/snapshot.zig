@@ -6,8 +6,9 @@
 //!
 //! `data/std/` is always the map of the Zig on PATH and is overwritten by every regeneration,
 //! so on its own it answers "what is std now" but never "what changed". The version folders
-//! keep every snapshot side by side, byte-identical to what `data/std/` held when that Zig was
-//! current, so two versions can be compared directly (`diff -r`, or `zephem diff`).
+//! keep every snapshot side by side, each made by the current extractor with that Zig
+//! (`ZIG=<that zig>`; see docs/release-diff.md for regenerating them all after an extractor
+//! change), so two versions can be compared directly (`diff -r`, or `zephem diff`).
 //!
 //! A snapshot is only taken from a map that proves itself: every manifest in `data/std/`
 //! (SHA256SUMS for the core, SHA256SUMS.depth for the reflection sweep, SHA256SUMS.<overlay>

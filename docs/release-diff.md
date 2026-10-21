@@ -8,7 +8,15 @@ each item comes from, and whether `zephem diff` reports it yet.
 
 Procedure for a new release: install the Zig, then `zig build std`, `zig build depth --
 --commit`, `zig build overlays`, `zig build lookup`, `zig build docs`, `zig build snapshot`;
-then `zephem diff <previous> <new>`.
+then `zephem diff <previous> <new>`. If the extractor (`parse/`) or the reflection template
+(`reflect/resolve.zig`) does not compile with the new Zig, `zephem std` / `zephem depth` stop
+and say so: extend `parse/compat.zig` (or the template) so it builds on every supported release.
+
+After a change to the extractor or the template, regenerate every version folder, oldest first
+and the current Zig last (so `data/std` ends on it): for each, `ZIG=<that zig> zephem std`,
+`zephem depth --commit`, `zephem overlays`, `zephem snapshot`; then `zephem lookup` and
+`zephem docs`. Every folder is then made by the same extractor, and the diff shows std's
+changes, not the extractor's.
 
 ## Exact facts — read from the datasets, never inferred
 
@@ -23,7 +31,7 @@ then `zephem diff <previous> <new>`.
 | 7 | **enum tag sets** (`Debug` → `debug`), summarised per enum | `extracted/nodes.tsv` (`tag`) | otherwise fifty removals and fifty additions | yes |
 | 8 | **builtins** added, removed, signature or doc changed | `extracted/builtins.tsv` | `@splat` grew a job; `@bitCast` lost one | yes (added / removed / re-signed / same signature with new langref text) |
 | 9 | **resolved values** that changed (a `max_path_bytes`) | `extracted/resolved.tsv` | code that hard-codes the old value is silently wrong | yes (const_int / const_bool) |
-| 10 | **alias / delegation targets** (what `std.ArrayList` resolves to now) | `extracted/edges.tsv` (`alias`, `delegates`) | member lookups follow these hops | yes — for declarations on both sides: retargeted (`target_moved` when the old → new target is itself an inferred move), gained (the name became an alias; its definition now lives at the target), lost. **Blind spot:** an alias written through an import (`std.Build.Configuration.…`) is extracted with scope `module` and target `std` alone (`parse/walk.zig` `resolve`), so a retarget among those ~1,240 edges per version is not seen |
+| 10 | **alias / delegation targets** (what `std.ArrayList` resolves to now) | `extracted/edges.tsv` (`alias`, `delegates`) | member lookups follow these hops | yes — for declarations on both sides: retargeted (`target_moved` when the old → new target is itself an inferred move), gained (the name became an alias; its definition now lives at the target), lost. An alias written through an import (`std.Build.Configuration.…`) resolves to its node (it used to be cut to the bare `std`, hiding ~1,240 aliases per version) |
 | 11 | **doc text changed, signature unchanged** — count it; flag docs that gain "no longer" / "now" | `extracted/attrs.tsv` (`doc`) | the only signal for a semantics change | yes — counted; flagged rows listed (`doc_changed … hint`) |
 
 ## Inferences — always labelled as such
