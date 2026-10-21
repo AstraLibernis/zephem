@@ -482,6 +482,43 @@ fn writeHelpers(w: *std.Io.Writer, template: []const u8) !usize {
     return lines_out;
 }
 
+/// Run the template once on a struct defined in the generated file itself, before a sweep. The
+/// template is compiled by the Zig whose std is reflected; if it does not build or run with that
+/// Zig (a release changed `@typeInfo`, `std.Io.Writer`, `std.process.Init`, …), every container
+/// would come back as poison and the sweep would still reconcile. Returns null when the template
+/// works, else what went wrong.
+pub fn selfTest(c: Ctx, zig_exe: []const u8, template: []const u8, scratch_dir: []const u8, timeout_s: u32) !?[]const u8 {
+    try std.Io.Dir.cwd().createDirPath(c.io, scratch_dir);
+    var w: std.Io.Writer.Allocating = .init(c.a);
+    _ = try writeHelpers(&w.writer, template);
+    try w.writer.writeAll(
+        \\const ZephemSelfTest = struct {
+        \\    pub const n: u32 = 7;
+        \\    pub const flag = true;
+        \\    pub const T = u8;
+        \\    pub fn f() void {}
+        \\};
+        \\const SELFTEST_SKIP = [_][]const u8{};
+        \\pub fn main(init: std.process.Init) !void {
+        \\    var wbuf: [4096]u8 = undefined;
+        \\    var fw = std.Io.File.stdout().writerStreaming(init.io, &wbuf);
+        \\    const w = &fw.interface;
+        \\    try emit(w, &SELFTEST_SKIP, "selftest", ZephemSelfTest, DESCEND, true);
+        \\    try w.flush();
+        \\}
+        \\
+    );
+    const file = try std.fs.path.join(c.a, &.{ scratch_dir, "selftest.zig" });
+    try util.writeFile(c.io, file, w.written());
+    const res = try proc.runTimed(c.a, c.io, &.{ zig_exe, "run", file }, timeout_s);
+    if (res.exit_code != 0) return if (res.stderr.len > 0) res.stderr else try c.a.print("exit {d}", .{res.exit_code});
+    const want = [_][]const u8{ "selftest.n\tconst_int\t7\n", "selftest.flag\tconst_bool\ttrue\n", "selftest.T\ttype\tu8\n", "selftest.f\tfn\t" };
+    for (want) |row| if (std.mem.find(u8, res.stdout, row) == null) {
+        return try c.a.print("the template ran but did not emit `{s}`; it printed:\n{s}", .{ std.mem.trimEnd(u8, row, "\n"), res.stdout });
+    };
+    return null;
+}
+
 fn scratchName(a: std.mem.Allocator, s: SweepCtx, kind: []const u8, g: usize, depth: usize, first: usize) ![]const u8 {
     return std.fmt.allocPrint(a, "{s}/{s}-{d}-{d}-{d}.zig", .{ s.scratch_dir, kind, g, depth, first });
 }

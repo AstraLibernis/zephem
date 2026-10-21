@@ -62,6 +62,11 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         } else argv.reject(c, arg, usage);
     }
 
+    if (commit and (only != null or filter != null or list != null or limit != 0)) {
+        try argv.diag(c, "zephem depth: --commit replaces the whole overlay; it cannot be combined with --only, --filter, --list or --limit (use --out DIR for a partial sweep)\n", .{});
+        std.process.exit(2);
+    }
+
     const a = c.a;
     const data_dir = try vars.dataDir(c);
     const index_path = try std.fs.path.join(a, &.{ data_dir, "derived/index.tsv" });
@@ -78,6 +83,17 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // as the Nushell built it — quote edge cases included).
     const kids = try buildKids(a, index);
 
+    // The overlay is keyed onto the core map and reflected with the compiler: both must be the
+    // same Zig, or every row describes a different std than the map it is attached to.
+    if (commit or check) if (try toolchain.staleness(c, data_dir)) |msg| {
+        try argv.diag(c, "zephem depth: ✗ {s}\n  (the core map in {s} and the compiler doing the reflection must be the same Zig)\n", .{ msg, data_dir });
+        std.process.exit(1);
+    };
+    if (try depth.selfTest(c, env.zig_exe, template, try std.fs.path.join(a, &.{ scratch_root, "selftest" }), timeout_s)) |err| {
+        try argv.diag(c, "zephem depth: ✗ the reflection template (reflect/resolve.zig) does not work with zig {s} — port it before sweeping:\n{s}\n", .{ env.version, err });
+        std.process.exit(1);
+    }
+
     if (check) {
         try proveReproducible(c, index, kids, env, template, data_dir, timeout_s, jcount, mode, w);
         return;
@@ -85,7 +101,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     const all_targets = try selectTargets(a, c, index, only, filter, list, limit);
     const skips = try skipsFor(a, all_targets, kids);
-    const outdir = if (commit) data_dir else (out orelse try std.fs.path.join(a, &.{ scratch_root, "out" }));
+    // --commit sweeps into a staging dir and installs into data_dir only after verify passes, so a
+    // rejected sweep leaves the committed overlay untouched.
+    const outdir = if (commit) try std.fs.path.join(a, &.{ scratch_root, "commit" }) else (out orelse try std.fs.path.join(a, &.{ scratch_root, "out" }));
 
     try w.print("[L5] reflecting {d} container(s) — {s}, {d} lanes, {d}s timeout per compile\n", .{ all_targets.len, @tagName(mode), jcount, timeout_s });
     const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount, mode);
@@ -100,6 +118,10 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     }
 
     if (commit) {
+        const cwd = std.Io.Dir.cwd();
+        for (names) |name| {
+            try cwd.copyFile(try std.fs.path.join(a, &.{ outdir, name }), cwd, try std.fs.path.join(a, &.{ data_dir, name }), c.io, .{});
+        }
         try writeManifest(c, data_dir, try std.fs.path.join(a, &.{ data_dir, "SHA256SUMS.depth" }));
         try w.writeAll("[L5] manifest → SHA256SUMS.depth  (run --check to prove it rebuilds — SLOW)\n");
     }
@@ -213,9 +235,13 @@ fn skipsFor(a: std.mem.Allocator, targets: []const []const u8, kids: Kids) ![]co
 
 // ── misc ────────────────────────────────────────────────────────────────────
 
+/// The sweep's files, then the core manifest it reflected against: if the core is regenerated
+/// with a different result afterwards, that line no longer matches and `snapshot` refuses to
+/// freeze the mix.
 fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
-    var entries: [names.len]manifest.Entry = undefined;
+    var entries: [names.len + 1]manifest.Entry = undefined;
     for (names, 0..) |name, k| entries[k] = .{ .path = name, .hex = try manifest.sha256File(c.io, c.a, try std.fs.path.join(c.a, &.{ data_dir, name })) };
+    entries[names.len] = .{ .path = "SHA256SUMS", .hex = try manifest.sha256File(c.io, c.a, try std.fs.path.join(c.a, &.{ data_dir, "SHA256SUMS" })) };
     try manifest.writeManifest(c.io, &entries, out_path);
 }
 

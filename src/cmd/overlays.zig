@@ -83,8 +83,19 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         } else {
             const out_path = try std.fmt.allocPrint(a, "{s}/derived/{s}.tsv", .{ dir, ov.name });
             try writeBytes(c, out_path, tsv);
-            var entry = [_]manifest.Entry{.{ .path = try std.fmt.allocPrint(a, "derived/{s}.tsv", .{ov.name}), .hex = manifest.sha256Hex(tsv) }};
-            try manifest.writeManifest(c.io, &entry, man_path);
+            // The overlay's own file first (`--check` reads that line), then the manifests of the
+            // stages it was derived from: if the core or the depth sweep is regenerated with a
+            // different result afterwards, these no longer match and `snapshot` refuses the mix.
+            var entries: std.ArrayList(manifest.Entry) = .empty;
+            try entries.append(a, .{ .path = try a.print("derived/{s}.tsv", .{ov.name}), .hex = manifest.sha256Hex(tsv) });
+            for ([_][]const u8{ "SHA256SUMS", "SHA256SUMS.depth" }) |input| {
+                const hex = manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ dir, input })) catch |e| switch (e) {
+                    error.FileNotFound => continue, // a map without that stage
+                    else => return e,
+                };
+                try entries.append(a, .{ .path = input, .hex = hex });
+            }
+            try manifest.writeManifest(c.io, entries.items, man_path);
             try w.print("[{s}] {d} rows → derived/{s}.tsv  (manifest → SHA256SUMS.{s})\n", .{ ov.name, table.rows.len, ov.name, ov.name });
         }
     }

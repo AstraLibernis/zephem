@@ -71,14 +71,21 @@ fn inSkip(comptime skip_list: []const []const u8, comptime name: []const u8) boo
 }
 
 /// The public decls of a container type, or null if `T` is not a decl-bearing container.
+/// This file is compiled by the Zig whose std is reflected, so it must build on every supported
+/// release: 0.17 lists `decl_names`, 0.16 lists `decls` (each with a `.name`).
 fn declsOf(comptime T: type) ?[]const [:0]const u8 {
     return switch (@typeInfo(T)) {
-        .@"struct" => |s| s.decl_names,
-        .@"enum" => |e| e.decl_names,
-        .@"union" => |u| u.decl_names,
-        .@"opaque" => |o| o.decl_names,
+        inline .@"struct", .@"enum", .@"union", .@"opaque" => |info| namesOf(info),
         else => null,
     };
+}
+
+fn namesOf(comptime info: anytype) []const [:0]const u8 {
+    if (comptime @hasField(@TypeOf(info), "decl_names")) return info.decl_names;
+    comptime var names: [info.decls.len][:0]const u8 = undefined;
+    inline for (info.decls, 0..) |d, i| names[i] = d.name;
+    const frozen = names;
+    return &frozen;
 }
 
 fn isContainer(comptime T: type) bool {

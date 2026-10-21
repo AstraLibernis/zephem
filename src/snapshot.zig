@@ -64,8 +64,9 @@ pub fn verifiedFiles(c: Ctx, dir: []const u8, report: *std.Io.Writer) ![]const F
     std.Io.Dir.cwd().access(c.io, try util.join(c.a, dir, "PINNED"), .{}) catch return error.NoPinned;
 
     var ok = true;
-    for (try manifestNames(c, dir)) |man| {
-        try files.append(c.a, .{ .rel = man });
+    const mans = try manifestNames(c, dir);
+    for (mans) |man| try files.append(c.a, .{ .rel = man });
+    for (mans) |man| {
         const bytes = try std.Io.Dir.cwd().readFileAlloc(c.io, try util.join(c.a, dir, man), c.a, .unlimited);
         for (try manifest.parse(c.a, bytes)) |rec| {
             const got = manifest.sha256File(c.io, c.a, try util.join(c.a, dir, rec.path)) catch {
@@ -78,7 +79,12 @@ pub fn verifiedFiles(c: Ctx, dir: []const u8, report: *std.Io.Writer) ![]const F
                 ok = false;
                 continue;
             }
-            try files.append(c.a, .{ .rel = try c.a.dupe(u8, rec.path) });
+            // A later stage's manifest also lists the manifests it was derived from; those are
+            // already in the list.
+            const seen = for (files.items) |f| {
+                if (std.mem.eql(u8, f.rel, rec.path)) break true;
+            } else false;
+            if (!seen) try files.append(c.a, .{ .rel = try c.a.dupe(u8, rec.path) });
         }
     }
     if (!ok) return error.ManifestMismatch;
