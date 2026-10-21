@@ -42,8 +42,8 @@ never folded into the base.
 5. **the shape model** (2026-07) — the parser was rebuilt around the insight that every node has
    exactly three kinds of fact: the **Tree** (where it sits), its **Attributes** (facts it carries),
    and its **Edges** (typed references it makes). The old side-files (`sigs`/`docs`/`fields`/
-   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (185,340 facts) and
-   `edges.tsv` (71,312 resolved references) — keyed to `nodes.tsv` by `path`. The parser now
+   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (185,369 facts) and
+   `edges.tsv` (71,692 resolved references) — keyed to `nodes.tsv` by `path`. The parser now
    **follows `@import`** (one organism), **includes private decls** (`vis`), and **resolves each
    edge's reach** in a second pass. The `n_children` conservation law is retired; integrity is now
    referential (connected tree · attrs key on nodes · edges resolve to nodes).
@@ -92,8 +92,8 @@ Everything below is self-verifying and byte-identical on rerun.
 | piece | built by | status |
 |---|---|---|
 | **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, 86,046 nodes (77,266 pub / 8,780 priv) / 484 files, depth 8; connectivity-checked |
-| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 185,340 facts keyed by `path`: 12,421 sigs · 15,618 `///` docs · 44,065 field/const values · 86,045 locations · 1,927 test bodies · 1,376 modifiers · 490 error members; each keys onto a real node |
-| **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 71,312 typed refs (60,256 has_type · 5,200 alias · 4,076 error_set · 1,025 imports · 31 delegates), resolved to a scope; 98% of resolvable ones land on a node/primitive; local/cross verified to resolve |
+| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 185,369 facts keyed by `path`: 12,421 sigs · 15,618 `///` docs · 44,093 field/const values · 86,045 locations · 1,927 test bodies · 1,376 modifiers · 491 error members; each keys onto a real node |
+| **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 71,692 typed refs (60,256 has_type · 5,536 alias · 4,086 error_set · 1,025 imports · 31 delegates), resolved to a scope; 98% of resolvable ones land on a node/primitive; local/cross verified to resolve |
 | **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,927 `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 5,959 containers, self-checked both ways |

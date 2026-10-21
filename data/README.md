@@ -20,9 +20,9 @@ derived/ is what zephem computes from it, and can be deleted and rebuilt from ex
 alone.**
 
 At a glance — the parser's shape model is **86,046 nodes across 484 files**
-(the tree), **185,340 attributes** (15,618 docs, 12,421 sigs, 44,065 values,
-86,045 locations, 1,927 test bodies, 1,376 modifiers, 490 error members),
-and **71,312 typed edges**; reflect adds
+(the tree), **185,369 attributes** (15,618 docs, 12,421 sigs, 44,093 values,
+86,045 locations, 1,927 test bodies, 1,376 modifiers, 491 error members),
+and **71,692 typed edges**; reflect adds
 3,162 containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## versions/ — one frozen folder per Zig version

@@ -35,7 +35,9 @@
 //! datasets the bake came from. `look` and `map` call `ensure` and rebuild all three when the
 //! stamp no longer matches, so a query never answers from an index older than the map.
 //!
-//! A pure left-join over the node set — same symbol universe as nodes.tsv, enriched — plus one
+//! A left-join over the node set — same symbol universe as nodes.tsv, enriched — plus a row of
+//! kind `resolved` for each path the compiler resolved that the map does not reach (an arm of a
+//! per-platform const: the type or value for the PINNED target, nothing from source), plus one
 //! row per builtin from builtins.tsv (kind `builtin`), so `look` finds `@intCast` too. Assembled
 //! directly with hash maps (build each right side once, probe per node) rather than chained table
 //! joins — one O(n) pass instead of ten table rebuilds.
@@ -293,6 +295,33 @@ fn mapRows(c: Ctx, dir: []const u8, rows: *std.ArrayList(rel.Row), examples: *st
         row[18] = errm.get(path) orelse "";
         row[19] = "";
         try rows.append(a, row);
+    }
+
+    // A path the compiler resolved for this target that the source map does not reach: a member
+    // of a const chosen per platform (`std.posix.SO.REUSEADDR`, under `system = switch (…)`),
+    // where the map holds every arm but parsing cannot say which one this target takes. Kind
+    // `resolved`: the compiler's type or value, for the PINNED target, and nothing from source.
+    // Paths the map reaches through an alias or factory keep their node's row instead.
+    {
+        var nodeset = std.StringHashMap(void).init(a);
+        for (nodes.rows) |r| try nodeset.put(r[np], {});
+        const rp = resolved.col("path");
+        var seen = std.StringHashMap(void).init(a);
+        for (resolved.rows) |r| {
+            const path = r[rp];
+            if (nodeset.contains(path) or (try seen.getOrPut(path)).found_existing) continue;
+            if (try redirect.rewrite(a, &redirects, path) != null) continue;
+            const row = try a.alloc([]const u8, ncols);
+            @memset(row, "");
+            row[0] = path;
+            row[1] = try depthStr(a, path);
+            row[2] = "resolved";
+            row[3] = util.lastSeg(path);
+            row[8] = rkind.get(path).?;
+            row[9] = rdetail.get(path).?;
+            row[14] = "pub";
+            try rows.append(a, row);
+        }
     }
 }
 

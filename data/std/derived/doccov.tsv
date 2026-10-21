@@ -13121,7 +13121,7 @@ std.bit_set.testSupersetOf	fn	no
 std.bit_set.testing	alias	no
 std.builtin	alias	yes
 std.c	ns	no
-std.c.@"close$NOCANCEL"	const	no
+std.c.@"close$NOCANCEL"	alias	no
 std.c.AF	const	no
 std.c.AF.[else]	const	no
 std.c.AF.[else].[dragonfly]	struct	no
@@ -16361,7 +16361,7 @@ std.c.PF.[else].[haiku].ROUTE	alias	no
 std.c.PF.[else].[haiku].UNIX	alias	no
 std.c.PF.[else].[haiku].UNSPEC	alias	no
 std.c.PF.[else].[illumos]	struct	no
-std.c.PF.[else].[illumos].@"802"	const	no
+std.c.PF.[else].[illumos].@"802"	alias	no
 std.c.PF.[else].[illumos].APPLETALK	alias	no
 std.c.PF.[else].[illumos].CCITT	alias	no
 std.c.PF.[else].[illumos].CHAOS	alias	no
@@ -19125,7 +19125,7 @@ std.c.clockid_t.[serenity].REALTIME	tag	no
 std.c.clockid_t.[serenity].REALTIME_COARSE	tag	no
 std.c.clockid_t.[wasi]	alias	no
 std.c.close	const	no
-std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	no
+std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	alias	no
 std.c.close.[else]	alias	no
 std.c.closedir	fn	no
 std.c.closelog	fn	no
@@ -21393,14 +21393,14 @@ std.c.fsfilcnt_t	alias	no
 std.c.fstat	const	no
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	no
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	no
-std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	no
+std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	no
 std.c.fstat.[else]	alias	no
 std.c.fstat.[linux]	const	no
 std.c.fstat.[netbsd]	alias	no
 std.c.fstatat	const	no
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	no
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	no
-std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	no
+std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	no
 std.c.fstatat.[else]	alias	no
 std.c.fstatat.[linux]	const	no
 std.c.fsync	fn	no
@@ -23483,7 +23483,7 @@ std.c.read	fn	no
 std.c.readdir	const	no
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	no
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	no
-std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	no
+std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	no
 std.c.readdir.[else]	alias	no
 std.c.readdir.[windows]	const	no
 std.c.readlink	fn	no
@@ -23492,7 +23492,7 @@ std.c.readv	fn	no
 std.c.readv_pos	alias	no
 std.c.realloc	fn	no
 std.c.realpath	const	no
-std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	no
+std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	alias	no
 std.c.realpath.[else]	alias	no
 std.c.recv	fn	no
 std.c.recvfrom	fn	no
@@ -24404,7 +24404,7 @@ std.c.stack_t.[serenity].sp	field	no
 std.c.stat	const	no
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	no
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	no
-std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	no
+std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	no
 std.c.stat.[else]	alias	no
 std.c.status_t	alias	no
 std.c.statx	fn	no
@@ -26324,8 +26324,8 @@ std.compress.xz.Decompress.Check.crc32	tag	no
 std.compress.xz.Decompress.Check.crc64	tag	no
 std.compress.xz.Decompress.Check.none	tag	no
 std.compress.xz.Decompress.Check.sha256	tag	no
-std.compress.xz.Decompress.Crc32	const	no
-std.compress.xz.Decompress.Crc64	const	no
+std.compress.xz.Decompress.Crc32	alias	no
+std.compress.xz.Decompress.Crc64	alias	no
 std.compress.xz.Decompress.Decompress	alias	no
 std.compress.xz.Decompress.Error	const	no
 std.compress.xz.Decompress.InitError	const	no
@@ -36013,7 +36013,7 @@ std.hash.Adler32.testing	alias	no
 std.hash.Adler32.update	fn	no
 std.hash.CityHash32	alias	no
 std.hash.CityHash64	alias	no
-std.hash.Crc32	const	no
+std.hash.Crc32	alias	no
 std.hash.Fnv1a_128	alias	no
 std.hash.Fnv1a_32	alias	no
 std.hash.Fnv1a_64	alias	no

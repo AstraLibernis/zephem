@@ -48708,7 +48708,6 @@ std.c.PF.[else].[illumos].HYLINK	loc	c.zig:5614
 std.c.PF.[else].[illumos].APPLETALK	loc	c.zig:5615
 std.c.PF.[else].[illumos].NIT	loc	c.zig:5616
 std.c.PF.[else].[illumos].@"802"	loc	c.zig:5617
-std.c.PF.[else].[illumos].@"802"	value	AF.@"802"
 std.c.PF.[else].[illumos].OSI	loc	c.zig:5618
 std.c.PF.[else].[illumos].X25	loc	c.zig:5619
 std.c.PF.[else].[illumos].OSINET	loc	c.zig:5620
@@ -57110,7 +57109,6 @@ std.c.close	loc	c.zig:10285
 std.c.close	value	switch (native_os) { .driverkit, .ios, .maccatalyst, .macos, .tvos, .visionos, .watchos => darwin.@"close$NOCANCEL", else => private.close, }
 std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	loc	c.zig:10286
 std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	when	.driverkit, .ios, .maccatalyst, .macos, .tvos, .visionos, .watchos
-std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	value	darwin.@"close$NOCANCEL"
 std.c.close.[else]	loc	c.zig:10287
 std.c.close.[else]	when	else
 std.c.clock_getres	loc	c.zig:10290
@@ -57132,7 +57130,6 @@ std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	when	.driver
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	value	switch (native_arch) { .x86_64 => private.@"fstat$INODE64", else => private.fstat, }
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	loc	c.zig:10302
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	when	.x86_64
-std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	value	private.@"fstat$INODE64"
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	loc	c.zig:10303
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	when	else
 std.c.fstat.[netbsd]	loc	c.zig:10305
@@ -57149,7 +57146,6 @@ std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	when	.driv
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	value	switch (native_arch) { .x86_64 => private.@"fstatat$INODE64", else => private.fstatat, }
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	loc	c.zig:10312
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	when	.x86_64
-std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	value	private.@"fstatat$INODE64"
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	loc	c.zig:10313
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	when	else
 std.c.fstatat.[linux]	loc	c.zig:10315
@@ -57461,7 +57457,6 @@ std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	when	.driv
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	value	switch (native_arch) { .x86_64 => private.@"readdir$INODE64", else => private.readdir, }
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	loc	c.zig:10500
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	when	.x86_64
-std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	value	private.@"readdir$INODE64"
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	loc	c.zig:10501
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	when	else
 std.c.readdir.[windows]	loc	c.zig:10503
@@ -57473,7 +57468,6 @@ std.c.realpath	loc	c.zig:10507
 std.c.realpath	value	switch (native_os) { .driverkit, .ios, .maccatalyst, .macos, .tvos, .visionos, .watchos => private.@"realpath$DARWIN_EXTSN", else => private.realpath, }
 std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	loc	c.zig:10508
 std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	when	.driverkit, .ios, .maccatalyst, .macos, .tvos, .visionos, .watchos
-std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	value	private.@"realpath$DARWIN_EXTSN"
 std.c.realpath.[else]	loc	c.zig:10509
 std.c.realpath.[else]	when	else
 std.c.sched_yield	loc	c.zig:10512
@@ -57550,7 +57544,6 @@ std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	when	.driverk
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	value	switch (native_arch) { .x86_64 => private.@"stat$INODE64", else => private.stat, }
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	loc	c.zig:10585
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	when	.x86_64
-std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	value	private.@"stat$INODE64"
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	loc	c.zig:10586
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	when	else
 std.c.stat.[else]	loc	c.zig:10588
@@ -58601,7 +58594,6 @@ std.c.clock_get_time	loc	c.zig:11281
 std.c.clock_serv_t	loc	c.zig:11282
 std.c.clock_res_t	loc	c.zig:11283
 std.c.@"close$NOCANCEL"	loc	c.zig:11284
-std.c.@"close$NOCANCEL"	value	darwin.@"close$NOCANCEL"
 std.c.dispatch	loc	c.zig:11285
 std.c.fcopyfile	loc	c.zig:11286
 std.c.host_t	loc	c.zig:11287
@@ -62880,16 +62872,24 @@ std.crypto.aead.aegis.Aegis256X2_256	loc	crypto.zig:25
 std.crypto.aead.aegis.Aegis256_256	loc	crypto.zig:26
 std.crypto.aead.aes_gcm	loc	crypto.zig:29
 std.crypto.aead.aes_gcm.Aes128Gcm	loc	crypto/aes_gcm.zig:11
+std.crypto.aead.aes_gcm.Aes128Gcm	value	AesGcm(crypto.core.aes.Aes128)
 std.crypto.aead.aes_gcm.Aes256Gcm	loc	crypto/aes_gcm.zig:12
+std.crypto.aead.aes_gcm.Aes256Gcm	value	AesGcm(crypto.core.aes.Aes256)
 std.crypto.aead.aes_gcm_siv	loc	crypto.zig:34
 std.crypto.aead.aes_gcm_siv.Aes128GcmSiv	loc	crypto/aes_gcm_siv.zig:11
+std.crypto.aead.aes_gcm_siv.Aes128GcmSiv	value	AesGcmSiv(crypto.core.aes.Aes128)
 std.crypto.aead.aes_gcm_siv.Aes256GcmSiv	loc	crypto/aes_gcm_siv.zig:12
+std.crypto.aead.aes_gcm_siv.Aes256GcmSiv	value	AesGcmSiv(crypto.core.aes.Aes256)
 std.crypto.aead.aes_siv	loc	crypto.zig:39
 std.crypto.aead.aes_siv.Aes128Siv	loc	crypto/aes_siv.zig:11
+std.crypto.aead.aes_siv.Aes128Siv	value	AesSiv(crypto.core.aes.Aes128)
 std.crypto.aead.aes_siv.Aes256Siv	loc	crypto/aes_siv.zig:12
+std.crypto.aead.aes_siv.Aes256Siv	value	AesSiv(crypto.core.aes.Aes256)
 std.crypto.aead.aes_ocb	loc	crypto.zig:44
 std.crypto.aead.aes_ocb.Aes128Ocb	loc	crypto/aes_ocb.zig:10
+std.crypto.aead.aes_ocb.Aes128Ocb	value	AesOcb(aes.Aes128)
 std.crypto.aead.aes_ocb.Aes256Ocb	loc	crypto/aes_ocb.zig:11
+std.crypto.aead.aes_ocb.Aes256Ocb	value	AesOcb(aes.Aes256)
 std.crypto.aead.aes_ccm	loc	crypto.zig:49
 std.crypto.aead.aes_ccm	doc	AES-CCM (Counter with CBC-MAC) authenticated encryption. AES-CCM* extends CCM to support encryption-only mode (tag_len=0). References: - NIST SP 800-38C: https://csrc.nist.gov/publications/detail/sp/800-38c/final - RFC 3610: https://datatracker.ietf.org/doc/html/rfc3610
 std.crypto.aead.aes_ccm.std	loc	crypto/aes_ccm.zig:8
@@ -63043,16 +63043,22 @@ std.crypto.aead.ascon.AsconAead128.decrypt	sig	fn decrypt(m: []u8, c: []const u8
 std.crypto.aead.chacha_poly	loc	crypto.zig:55
 std.crypto.aead.chacha_poly.ChaCha20Poly1305	loc	crypto/chacha20.zig:54
 std.crypto.aead.chacha_poly.ChaCha20Poly1305	doc	ChaCha20-Poly1305 authenticated cipher, as designed for TLS
+std.crypto.aead.chacha_poly.ChaCha20Poly1305	value	ChaChaPoly1305(20)
 std.crypto.aead.chacha_poly.ChaCha12Poly1305	loc	crypto/chacha20.zig:59
 std.crypto.aead.chacha_poly.ChaCha12Poly1305	doc	ChaCha20-Poly1305 authenticated cipher, reduced to 12 rounds Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.aead.chacha_poly.ChaCha12Poly1305	value	ChaChaPoly1305(12)
 std.crypto.aead.chacha_poly.ChaCha8Poly1305	loc	crypto/chacha20.zig:64
 std.crypto.aead.chacha_poly.ChaCha8Poly1305	doc	ChaCha20-Poly1305 authenticated cipher, reduced to 8 rounds Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.aead.chacha_poly.ChaCha8Poly1305	value	ChaChaPoly1305(8)
 std.crypto.aead.chacha_poly.XChaCha20Poly1305	loc	crypto/chacha20.zig:67
 std.crypto.aead.chacha_poly.XChaCha20Poly1305	doc	XChaCha20-Poly1305 authenticated cipher
+std.crypto.aead.chacha_poly.XChaCha20Poly1305	value	XChaChaPoly1305(20)
 std.crypto.aead.chacha_poly.XChaCha12Poly1305	loc	crypto/chacha20.zig:72
 std.crypto.aead.chacha_poly.XChaCha12Poly1305	doc	XChaCha20-Poly1305 authenticated cipher Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.aead.chacha_poly.XChaCha12Poly1305	value	XChaChaPoly1305(12)
 std.crypto.aead.chacha_poly.XChaCha8Poly1305	loc	crypto/chacha20.zig:77
 std.crypto.aead.chacha_poly.XChaCha8Poly1305	doc	XChaCha20-Poly1305 authenticated cipher Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.aead.chacha_poly.XChaCha8Poly1305	value	XChaChaPoly1305(8)
 std.crypto.aead.isap	loc	crypto.zig:64
 std.crypto.aead.isap.std	loc	crypto/isap.zig:1
 std.crypto.aead.isap.crypto	loc	crypto/isap.zig:2
@@ -64449,6 +64455,7 @@ std.crypto.ecc.P256	loc	crypto/pcurves/p256.zig:12
 std.crypto.ecc.P256	doc	Group operations over P256.
 std.crypto.ecc.P256.Fe	loc	crypto/pcurves/p256/field.zig:6
 std.crypto.ecc.P256.Fe	doc	The underlying prime field.
+std.crypto.ecc.P256.Fe	value	Field(.{ .fiat = @import("p256_64.zig"), .field_order = 115792089210356248762697446949407573530086143415290314195533631308867097853951, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32, })
 std.crypto.ecc.P256.scalar	loc	crypto/pcurves/p256.zig:16
 std.crypto.ecc.P256.scalar	doc	Field arithmetic mod the order of the main subgroup.
 std.crypto.ecc.P256.scalar.std	loc	crypto/pcurves/p256/scalar.zig:1
@@ -64774,6 +64781,7 @@ std.crypto.ecc.P384	loc	crypto/pcurves/p384.zig:12
 std.crypto.ecc.P384	doc	Group operations over P384.
 std.crypto.ecc.P384.Fe	loc	crypto/pcurves/p384/field.zig:6
 std.crypto.ecc.P384.Fe	doc	The underlying prime field.
+std.crypto.ecc.P384.Fe	value	Field(.{ .fiat = @import("p384_64.zig"), .field_order = 39402006196394479212279040100143613805079739270465446667948293404245721771496870329047266088258938001861606973112319, .field_bits = 384, .saturated_bits = 384, .encoded_length = 48, })
 std.crypto.ecc.P384.scalar	loc	crypto/pcurves/p384.zig:16
 std.crypto.ecc.P384.scalar	doc	Field arithmetic mod the order of the main subgroup.
 std.crypto.ecc.P384.scalar.std	loc	crypto/pcurves/p384/scalar.zig:1
@@ -65259,6 +65267,7 @@ std.crypto.ecc.Secp256k1	loc	crypto/pcurves/secp256k1.zig:13
 std.crypto.ecc.Secp256k1	doc	Group operations over secp256k1.
 std.crypto.ecc.Secp256k1.Fe	loc	crypto/pcurves/secp256k1/field.zig:6
 std.crypto.ecc.Secp256k1.Fe	doc	The underlying prime field.
+std.crypto.ecc.Secp256k1.Fe	value	Field(.{ .fiat = @import("secp256k1_64.zig"), .field_order = 115792089237316195423570985008687907853269984665640564039457584007908834671663, .field_bits = 256, .saturated_bits = 256, .encoded_length = 32, })
 std.crypto.ecc.Secp256k1.scalar	loc	crypto/pcurves/secp256k1.zig:17
 std.crypto.ecc.Secp256k1.scalar	doc	Field arithmetic mod the order of the main subgroup.
 std.crypto.ecc.Secp256k1.scalar.std	loc	crypto/pcurves/secp256k1/scalar.zig:1
@@ -66829,8 +66838,10 @@ std.crypto.onetimeauth	loc	crypto.zig:157
 std.crypto.onetimeauth	doc	MAC functions requiring single-use secret keys.
 std.crypto.onetimeauth.Ghash	loc	crypto/ghash_polyval.zig:15
 std.crypto.onetimeauth.Ghash	doc	GHASH is a universal hash function that uses multiplication by a fixed parameter within a Galois field. It is not a general purpose hash function - The key must be secret, unpredictable and never reused. GHASH is typically used to compute the authentication tag in the AES-GCM construction.
+std.crypto.onetimeauth.Ghash	value	Hash(.big, true)
 std.crypto.onetimeauth.Polyval	loc	crypto/ghash_polyval.zig:23
 std.crypto.onetimeauth.Polyval	doc	POLYVAL is a universal hash function that uses multiplication by a fixed parameter within a Galois field. It is not a general purpose hash function - The key must be secret, unpredictable and never reused. POLYVAL is typically used to compute the authentication tag in the AES-GCM-SIV construction.
+std.crypto.onetimeauth.Polyval	value	Hash(.little, false)
 std.crypto.onetimeauth.Poly1305	loc	crypto/poly1305.zig:5
 std.crypto.onetimeauth.Poly1305.block_length	type	usize
 std.crypto.onetimeauth.Poly1305.block_length	loc	crypto/poly1305.zig:6
@@ -68533,22 +68544,31 @@ std.crypto.stream	doc	Stream ciphers. These do not provide any kind of authentic
 std.crypto.stream.chacha	loc	crypto.zig:207
 std.crypto.stream.chacha.ChaCha20IETF	loc	crypto/chacha20.zig:15
 std.crypto.stream.chacha.ChaCha20IETF	doc	IETF-variant of the ChaCha20 stream cipher, as designed for TLS.
+std.crypto.stream.chacha.ChaCha20IETF	value	ChaChaIETF(20)
 std.crypto.stream.chacha.ChaCha12IETF	loc	crypto/chacha20.zig:20
 std.crypto.stream.chacha.ChaCha12IETF	doc	IETF-variant of the ChaCha20 stream cipher, reduced to 12 rounds. Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.stream.chacha.ChaCha12IETF	value	ChaChaIETF(12)
 std.crypto.stream.chacha.ChaCha8IETF	loc	crypto/chacha20.zig:25
 std.crypto.stream.chacha.ChaCha8IETF	doc	IETF-variant of the ChaCha20 stream cipher, reduced to 8 rounds. Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.stream.chacha.ChaCha8IETF	value	ChaChaIETF(8)
 std.crypto.stream.chacha.ChaCha20With64BitNonce	loc	crypto/chacha20.zig:28
 std.crypto.stream.chacha.ChaCha20With64BitNonce	doc	Original ChaCha20 stream cipher.
+std.crypto.stream.chacha.ChaCha20With64BitNonce	value	ChaChaWith64BitNonce(20)
 std.crypto.stream.chacha.ChaCha12With64BitNonce	loc	crypto/chacha20.zig:33
 std.crypto.stream.chacha.ChaCha12With64BitNonce	doc	Original ChaCha20 stream cipher, reduced to 12 rounds. Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.stream.chacha.ChaCha12With64BitNonce	value	ChaChaWith64BitNonce(12)
 std.crypto.stream.chacha.ChaCha8With64BitNonce	loc	crypto/chacha20.zig:38
 std.crypto.stream.chacha.ChaCha8With64BitNonce	doc	Original ChaCha20 stream cipher, reduced to 8 rounds. Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.stream.chacha.ChaCha8With64BitNonce	value	ChaChaWith64BitNonce(8)
 std.crypto.stream.chacha.XChaCha20IETF	loc	crypto/chacha20.zig:41
 std.crypto.stream.chacha.XChaCha20IETF	doc	XChaCha20 (nonce-extended version of the IETF ChaCha20 variant) stream cipher
+std.crypto.stream.chacha.XChaCha20IETF	value	XChaChaIETF(20)
 std.crypto.stream.chacha.XChaCha12IETF	loc	crypto/chacha20.zig:46
 std.crypto.stream.chacha.XChaCha12IETF	doc	XChaCha20 (nonce-extended version of the IETF ChaCha20 variant) stream cipher, reduced to 12 rounds Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.stream.chacha.XChaCha12IETF	value	XChaChaIETF(12)
 std.crypto.stream.chacha.XChaCha8IETF	loc	crypto/chacha20.zig:51
 std.crypto.stream.chacha.XChaCha8IETF	doc	XChaCha20 (nonce-extended version of the IETF ChaCha20 variant) stream cipher, reduced to 8 rounds Reduced-rounds versions are faster than the full-round version, but have a lower security margin. However, ChaCha is still believed to have a comfortable security even with only 8 rounds.
+std.crypto.stream.chacha.XChaCha8IETF	value	XChaChaIETF(8)
 std.crypto.stream.salsa	loc	crypto.zig:219
 std.crypto.stream.salsa.Salsa	loc	crypto/salsa20.zig:326
 std.crypto.stream.salsa.Salsa	doc	The Salsa stream cipher.
@@ -68578,8 +68598,10 @@ std.crypto.stream.salsa.XSalsa().xor	doc	Add the output of the XSalsa stream cip
 std.crypto.stream.salsa.XSalsa().xor	sig	fn xor(out: []u8, in: []const u8, counter: u64, key: [key_length]u8, nonce: [nonce_length]u8) void
 std.crypto.stream.salsa.Salsa20	loc	crypto/salsa20.zig:17
 std.crypto.stream.salsa.Salsa20	doc	The Salsa cipher with 20 rounds.
+std.crypto.stream.salsa.Salsa20	value	Salsa(20)
 std.crypto.stream.salsa.XSalsa20	loc	crypto/salsa20.zig:20
 std.crypto.stream.salsa.XSalsa20	doc	The XSalsa cipher with 20 rounds.
+std.crypto.stream.salsa.XSalsa20	value	XSalsa(20)
 std.crypto.nacl	loc	crypto.zig:227
 std.crypto.nacl.salsa20	loc	crypto.zig:228
 std.crypto.nacl.salsa20.std	loc	crypto/salsa20.zig:1
@@ -70404,6 +70426,7 @@ std.crypto.Certificate.Bundle.rescan	sig	fn rescan(cb: *Bundle, gpa: Allocator, 
 std.crypto.Certificate.Bundle.rescanMac	loc	crypto/Certificate/Bundle/macos.zig:11
 std.crypto.Certificate.Bundle.rescanMac	sig	fn rescanMac(cb: *Bundle, gpa: Allocator, io: Io, now: Io.Timestamp) RescanMacError!void
 std.crypto.Certificate.Bundle.RescanMacError	loc	crypto/Certificate/Bundle/macos.zig:9
+std.crypto.Certificate.Bundle.RescanMacError	value	Allocator.Error || Io.File.OpenError || Io.File.Reader.Error || Io.File.SeekError || Bundle.ParseCertError || error{EndOfStream}
 std.crypto.Certificate.Bundle.RescanLinuxError	loc	crypto/Certificate/Bundle.zig:94
 std.crypto.Certificate.Bundle.RescanLinuxError	value	AddCertsFromFilePathError || AddCertsFromDirPathError
 std.crypto.Certificate.Bundle.rescanLinux	loc	crypto/Certificate/Bundle.zig:96
@@ -75173,6 +75196,7 @@ std.elf.mem	loc	elf.zig:6
 std.elf.assert	loc	elf.zig:7
 std.elf.Endian	loc	elf.zig:8
 std.elf.native_endian	loc	elf.zig:9
+std.elf.native_endian	value	@import("builtin").target.cpu.arch.endian()
 std.elf.AT_NULL	loc	elf.zig:11
 std.elf.AT_NULL	value	0
 std.elf.AT_IGNORE	loc	elf.zig:12
@@ -79922,7 +79946,9 @@ std.fmt.parseIntSizeSuffix	sig	fn parseIntSizeSuffix(buf: []const u8, digit_base
 std.fmt.parseIntSizeSuffix	example	test parseIntSizeSuffix {\n    try std.testing.expectEqual(2, try parseIntSizeSuffix("2", 10));\n    try std.testing.expectEqual(2, try parseIntSizeSuffix("2B", 10));\n    try std.testing.expectEqual(2000, try parseIntSizeSuffix("2kB", 10));\n    try std.testing.expectEqual(2000, try parseIntSizeSuffix("2k", 10));\n    try std.testing.expectEqual(2048, try parseIntSizeSuffix("2KiB", 10));\n    try std.testing.expectEqual(2048, try parseIntSizeSuffix("2Ki", 10));\n    try std.testing.expectEqual(10240, try parseIntSizeSuffix("aKiB", 16));\n    try std.testing.expectError(error.InvalidCharacter, parseIntSizeSuffix("", 10));\n    try std.testing.expectError(error.InvalidCharacter, parseIntSizeSuffix("2iB", 10));\n}
 std.fmt.parseFloat	loc	fmt/parse_float.zig:19
 std.fmt.parseFloat	sig	fn parseFloat(comptime T: type, s: []const u8) ParseFloatError!T
+std.fmt.ParseFloatError	errmember	InvalidCharacter
 std.fmt.ParseFloatError	loc	fmt/parse_float.zig:15
+std.fmt.ParseFloatError	value	error{ InvalidCharacter, }
 std.fmt	example	test {\n    _ = &parseFloat;\n}
 std.fmt.charToDigit	loc	fmt.zig:570
 std.fmt.charToDigit	sig	fn charToDigit(c: u8, base: u8) (error{InvalidCharacter}!u8)
@@ -84640,7 +84666,9 @@ std.json.parseFromSlice	example	test parseFromSlice {\n    var parsed_str = try 
 std.json.Value	example	test Value {\n    var parsed = try parseFromSlice(Value, testing.allocator, "{\\"anything\\": \\"goes\\"}", .{});\n    defer parsed.deinit();\n    try testing.expectEqualSlices(u8, "goes", parsed.value.object.get("anything").?.string);\n}
 std.json.Stringify	example	test Stringify {\n    var out: std.Io.Writer.Allocating = .init(testing.allocator);\n    var write_stream: Stringify = .{\n        .writer = &out.writer,\n        .options = .{ .whitespace = .indent_2 },\n    };\n    defer out.deinit();\n    try write_stream.beginObject();\n    try write_stream.objectField("foo");\n    try write_stream.write(123);\n    try write_stream.endObject();\n    const expected =\n        \\\\{\n        \\\\  "foo": 123\n        \\\\}\n    ;\n    try testing.expectEqualSlices(u8, expected, out.written());\n}
 std.json.ObjectMap	loc	json/dynamic.zig:13
+std.json.ObjectMap	value	StringArrayHashMap(Value)
 std.json.Array	loc	json/dynamic.zig:14
+std.json.Array	value	std.array_list.Managed(Value)
 std.json.Value	loc	json/dynamic.zig:20
 std.json.Value	doc	Represents any JSON value, potentially containing other JSON values. A .float value may be an approximation of the original value. Arbitrary precision numbers can be represented by .number_string values. See also `std.json.ParseOptions.parse_numbers`.
 std.json.Value.null	loc	json/dynamic.zig:21
@@ -85047,6 +85075,7 @@ std.json.ParseError	loc	json/static.zig:191
 std.json.ParseError	doc	The error set that will be returned when parsing from `*Source`. Note that this may contain `error.BufferUnderrun`, but that error will never actually be returned.
 std.json.ParseError	sig	fn ParseError(comptime Source: type) type
 std.json.ParseFromValueError	loc	json/static.zig:197
+std.json.ParseFromValueError	value	std.fmt.ParseIntError || std.fmt.ParseFloatError || Allocator.Error || error{ UnexpectedToken, InvalidNumber, Overflow, InvalidEnumTag, DuplicateField, UnknownField, MissingField, LengthMismatch, }
 std.json.Stringify	loc	json.zig:94
 std.json.Stringify	doc	Writes JSON ([RFC8259](https://tools.ietf.org/html/rfc8259)) formatted data to a stream. The sequence of method calls to write JSON content must follow this grammar: ``` <once> = <value> <value> = | <object> | <array> | write | print | <writeRawStream> <object> = beginObject ( <field> <value> )* endObject <field> = objectField | objectFieldRaw | <objectFieldRawStream> <array> = beginArray ( <value> )* endArray <writeRawStream> = beginWriteRaw ( stream.writeAll )* endWriteRaw <objectFieldRawStream> = beginObjectFieldRaw ( stream.writeAll )* endObjectFieldRaw ```
 std.json.Stringify.std	loc	json/Stringify.zig:20
@@ -126611,8 +126640,10 @@ std.os.uefi.efi_pool_memory_type	doc	The memory type to allocate when using the 
 std.os.uefi.efi_pool_memory_type	value	.loader_data
 std.os.uefi.pool_allocator	loc	os/uefi/pool_allocator.zig:87
 std.os.uefi.pool_allocator	doc	Supports the full Allocator interface, including alignment. For a direct call of `allocatePool`, see `raw_pool_allocator`.
+std.os.uefi.pool_allocator	value	Allocator{ .ptr = undefined, .vtable = &pool_allocator_vtable, }
 std.os.uefi.raw_pool_allocator	loc	os/uefi/pool_allocator.zig:100
 std.os.uefi.raw_pool_allocator	doc	Asserts allocations are 8 byte aligned and calls `boot_services.allocatePool`.
+std.os.uefi.raw_pool_allocator	value	Allocator{ .ptr = undefined, .vtable = &raw_pool_allocator_table, }
 std.os.uefi.handle	mod	var
 std.os.uefi.handle	type	Handle
 std.os.uefi.handle	loc	os/uefi.zig:22
@@ -168956,6 +168987,7 @@ std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".math	loc	crypto/aes_gcm_siv.zig:6
 std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".modes	loc	crypto/aes_gcm_siv.zig:7
 std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".Polyval	loc	crypto/ghash_polyval.zig:23
 std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".Polyval	doc	POLYVAL is a universal hash function that uses multiplication by a fixed parameter within a Galois field. It is not a general purpose hash function - The key must be secret, unpredictable and never reused. POLYVAL is typically used to compute the authentication tag in the AES-GCM-SIV construction.
+std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".Polyval	value	Hash(.little, false)
 std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".AuthenticationError	loc	crypto/aes_gcm_siv.zig:9
 std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".Aes256GcmSiv	loc	crypto/aes_gcm_siv.zig:12
 std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".Aes256GcmSiv	value	AesGcmSiv(crypto.core.aes.Aes256)
@@ -170994,6 +171026,7 @@ std.json.@"static.zig".Value.jsonParse	sig	fn jsonParse(allocator: Allocator, so
 std.json.@"static.zig".Value.jsonParseFromValue	loc	json/dynamic.zig:126
 std.json.@"static.zig".Value.jsonParseFromValue	sig	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()
 std.json.@"static.zig".Array	loc	json/dynamic.zig:14
+std.json.@"static.zig".Array	value	std.array_list.Managed(Value)
 std.json.@"static.zig".Parsed	loc	json/static.zig:56
 std.json.@"static.zig".Parsed	sig	fn Parsed(comptime T: type) type
 std.json.@"static.zig".Parsed()	loc	json/static.zig:57

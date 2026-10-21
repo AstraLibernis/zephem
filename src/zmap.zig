@@ -303,7 +303,7 @@ fn cmdShow(c: Ctx, out: *std.Io.Writer, map: *const Map, prefix_in: []const u8) 
 
 fn printHops(out: *std.Io.Writer, from: []const u8, hops: []const redirect.Hop) !void {
     try out.print("  {s}", .{from});
-    for (hops) |h| try out.print(" ─{s}→ {s}", .{ if (std.mem.eql(u8, h.kind, "alias")) "alias" else "delegates", h.target });
+    for (hops) |h| try out.print(" ─{s}→ {s}", .{ h.kind, h.target });
     try out.writeAll("\n\n");
 }
 
@@ -330,6 +330,7 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: *const Map, path_in: []const u8) !Ou
         // The compiler-resolved type, in full — the one place a whole inferred error set shows
         // (`look` folds it to a count).
         if (n.rdetail.len > 0) try out.print("  → {s}\n", .{n.rdetail});
+        if (std.mem.eql(u8, n.kind, "resolved")) try out.writeAll("  (the compiler's answer for the map's target: a member of a const chosen per platform, whose\n   arms the map lists as `[…]` variants; which arm this target takes is the compiler's to say)\n");
         if (n.doc.len > 0) try out.print("\n  {s}\n", .{n.doc});
         const examples = try loadExamples(c);
         if (try exampleFor(a, examples, n)) |ex| {

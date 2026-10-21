@@ -38,6 +38,11 @@ const Edge = struct { src: []const u8, etype: []const u8, target: []const u8 };
 
 const MAX_DEPTH: u32 = 24;
 
+/// Hops one edge may take through aliases, factory instances and forwarding factories
+/// (`BufSetHashMap` → `StringHashMap` → `std.StringHashMap` → `hash_map.StringHashMap` →
+/// `HashMap()`, each lookup costing one); a bound against cycles, not a depth anything needs.
+const resolve_fuel: u8 = 16;
+
 const W = struct {
     arena: std.mem.Allocator,
     io: std.Io,
@@ -47,6 +52,8 @@ const W = struct {
     imports: std.StringHashMap([]const u8), // modref node path → module path (`std`, `std.os.uefi`), for NON-followed imports only
     visited: std.StringHashMap(void), // abs file paths already expanded (walk each file once)
     aliases: std.StringHashMap([]const u8), // alias-node path → its RHS target text (for chasing)
+    instances: std.StringHashMap([]const u8), // const built by a call → the callee as written (`StringHashMap`)
+    forwards: std.StringHashMap([]const u8), // forwarding factory fn → the call it returns (`SipHash(u128, c, d)`)
     generics: std.StringHashMap(void), // "<factory()path>#<paramname>" — comptime type params in scope
     root_dir: []const u8, // std root dir, for machine-independent relative loc paths
     root_name: []const u8, // the root module's name (`std`): an import of it points back into the tree
@@ -59,6 +66,7 @@ const W = struct {
     file_home: std.StringHashMap([]const u8), // abs file path → the node its declarations live under
     lexical: std.StringHashMap([]const u8), // node path → the scope its names resolve in, when that is not its parent
     lexical_names: std.StringHashMap([]const u8), // `<file node>.Sel` → Sel's re-export path (where its tests belong)
+    nsrefs: std.ArrayList([2][]const u8), // (nsref path, abs file): linked to the file's home after the walk
 
     fn node(w: *W, path: []const u8, kind: []const u8, name: []const u8, vis: []const u8) !void {
         try w.nodes.print("{s}\t{s}\t{s}\t{s}\n", .{ path, kind, name, vis });
@@ -327,8 +335,25 @@ fn parseChild(w: *W, abs: []const u8) ?*Ast {
 fn isAliasChain(s: []const u8) bool {
     if (s.len == 0) return false;
     if (!(std.ascii.isAlphabetic(s[0]) or s[0] == '_')) return false;
-    for (s) |c| if (!(std.ascii.isAlphanumeric(c) or c == '_' or c == '.')) return false;
+    var i: usize = 0;
+    while (i < s.len) : (i += 1) {
+        const c = s[i];
+        if (std.ascii.isAlphanumeric(c) or c == '_' or c == '.') continue;
+        // a quoted segment, `crc.@"CRC-32/ISO-HDLC"`, is a name like any other
+        if (c == '@' and i > 0 and s[i - 1] == '.') if (quotedEnd(s, i)) |e| {
+            i = e - 1;
+            continue;
+        };
+        return false;
+    }
     return true;
+}
+
+/// Past the `@"…"` identifier starting at `s[i]`, or null when there is none.
+fn quotedEnd(s: []const u8, i: usize) ?usize {
+    if (i + 1 >= s.len or s[i] != '@' or s[i + 1] != '"') return null;
+    const close = std.mem.findScalarPos(u8, s, i + 2, '"') orelse return null;
+    return close + 1;
 }
 
 fn containerKind(ast: *const Ast, n: Ast.Node.Index) ?[]const u8 {
@@ -379,7 +404,13 @@ fn extractBase(s: []const u8) []const u8 {
         // start of an identifier or @builtin
         if (std.ascii.isAlphabetic(s[i]) or s[i] == '_' or s[i] == '@') {
             var j = i + 1;
-            while (j < s.len and (std.ascii.isAlphanumeric(s[j]) or s[j] == '_' or s[j] == '.')) j += 1;
+            while (j < s.len) {
+                if (std.ascii.isAlphanumeric(s[j]) or s[j] == '_' or s[j] == '.') {
+                    j += 1;
+                } else if (s[j] == '@' and s[j - 1] == '.') { // `OptionalHeader.@"PE32+"`
+                    j = quotedEnd(s, j) orelse break;
+                } else break;
+            }
             const word = s[i..j];
             // decoration keywords are not the referenced type — skip and keep scanning
             if (std.mem.eql(u8, word, "const") or std.mem.eql(u8, word, "volatile") or
@@ -489,9 +520,56 @@ fn placed(container: []const u8, p: []const u8) Res {
     return Res{ .scope = if (inside) .local else .cross, .target = p };
 }
 
+/// `rest` (`.Error`, `.KeyIterator.next`) below the node `b`, following what `b` is defined as when
+/// the member is not a node under `b` itself: an alias's target, the type a const built by a call
+/// is (`BufSetHashMap = StringHashMap(void)` → `StringHashMap().KeyIterator`), each followed in its
+/// own scope. Null when nothing is left to follow or `fuel` runs out.
+fn memberOf(w: *W, b: []const u8, rest: []const u8, fuel: u8) ?[]const u8 {
+    const direct = std.fmt.allocPrint(w.arena, "{s}{s}", .{ b, rest }) catch return null;
+    if (w.node_set.contains(direct)) return direct;
+    if (fuel == 0) return null;
+    if (w.aliases.get(b)) |t| {
+        const r = resolve(w, b, t, fuel - 1);
+        if (r.scope != .local and r.scope != .cross) return null;
+        return memberOf(w, r.target, rest, fuel - 1);
+    }
+    if (w.instances.get(b)) |callee| {
+        const r = resolve(w, b, callee, fuel - 1);
+        if (r.scope != .local and r.scope != .cross) return null;
+        const produced = instanceOf(w, r.target, fuel - 1) orelse return null;
+        return memberOf(w, produced, rest, fuel - 1);
+    }
+    return null;
+}
+
+/// The node of the type a factory fn returns: `<f>()` when the walk descended it; through an
+/// alias of the fn; or, for a factory that forwards (`fn SipHash128() type { return SipHash(…); }`),
+/// the type of the one it forwards to.
+fn instanceOf(w: *W, f: []const u8, fuel: u8) ?[]const u8 {
+    const produced = std.fmt.allocPrint(w.arena, "{s}()", .{f}) catch return null;
+    if (w.node_set.contains(produced)) return produced;
+    if (fuel == 0) return null;
+    const next = w.aliases.get(f) orelse w.forwards.get(f) orelse return null;
+    const r = resolve(w, f, next, fuel - 1);
+    if (r.scope != .local and r.scope != .cross) return null;
+    return instanceOf(w, r.target, fuel - 1);
+}
+
+/// `base` (`head.rest`, not a node itself) through its longest prefix that is: from there,
+/// `memberOf`. Null when no prefix resolves or the member is not found that way.
+fn resolvePrefixed(w: *W, container: []const u8, base: []const u8, fuel: u8) ?[]const u8 {
+    var k = base.len;
+    while (std.mem.findScalarLast(u8, base[0..k], '.')) |d| {
+        k = d;
+        const p = resolveBare(w, container, base[0..k]) orelse continue;
+        return memberOf(w, p, base[k..], fuel);
+    }
+    return null;
+}
+
 /// Resolve `full`, a path written from the tree's root (`std.mem.Allocator.Error`). When the path
-/// is not a node itself, its longest walked prefix may be an alias: follow that alias in its own
-/// scope and resolve the rest of the path from where it lands.
+/// is not a node itself, its longest walked prefix is, and the rest is found from there
+/// (`memberOf`: through aliases and factory instances, each in its own scope).
 fn resolveRooted(w: *W, src: []const u8, full: []const u8, fuel: u8) ?Res {
     if (w.node_set.contains(full)) return placed(parent(src), full);
     var k = full.len;
@@ -499,12 +577,8 @@ fn resolveRooted(w: *W, src: []const u8, full: []const u8, fuel: u8) ?Res {
         k = d;
         const p = full[0..k];
         if (!w.node_set.contains(p)) continue;
-        if (fuel == 0) return null;
-        const at = w.aliases.get(p) orelse return null;
-        const chased = std.fmt.allocPrint(w.arena, "{s}{s}", .{ at, full[k..] }) catch return null;
-        const r = resolve(w, p, chased, fuel - 1);
-        if (r.scope != .local and r.scope != .cross) return null;
-        return placed(parent(src), r.target);
+        const t = memberOf(w, p, full[k..], fuel) orelse return null;
+        return placed(parent(src), t);
     }
     return null;
 }
@@ -543,16 +617,10 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
         }
     }
     if (resolveBare(w, container, base)) |p| return placed(container, p);
-    // ALIAS-CHASING: base is `head.rest` and head resolves to an alias — follow it, then retry.
-    // (`Allocator.Error` → `Allocator` is a private alias to `mem.Allocator` → `mem.Allocator.Error`.)
+    // A member through an alias or a factory instance: `Allocator.Error` (`Allocator` a private
+    // alias of `mem.Allocator`), `BufSetHashMap.KeyIterator` (`BufSetHashMap = StringHashMap(void)`).
     if (dotted and fuel > 0) {
-        const dot = std.mem.findScalar(u8, base, '.').?;
-        if (resolveBare(w, container, base[0..dot])) |ph| {
-            if (w.aliases.get(ph)) |tgt| {
-                const chased = std.fmt.allocPrint(w.arena, "{s}{s}", .{ tgt, base[dot..] }) catch return Res{ .scope = .unresolved, .target = raw };
-                return resolve(w, src, chased, fuel - 1);
-            }
-        }
+        if (resolvePrefixed(w, container, base, fuel - 1)) |p| return placed(container, p);
     }
     // GENERIC PARAM: a comptime type param (T/K/V) declared by a factory ancestor.
     if (!dotted and isGenericParam(w, src, base)) return Res{ .scope = .generic, .target = base };
@@ -581,7 +649,11 @@ fn fnEdges(w: *W, ast: *const Ast, cp: []const u8, m: Ast.Node.Index, proto: *co
         if (p.type_expr) |te| try w.edge(cp, "has_type", try typeText(w, ast, te));
     }
     if (ast.nodeTag(m) == .fn_decl) switch (classifyFactory(ast, m, proto)) {
-        .delegate => |tgt| try w.edge(cp, "delegates", try collapse(w.arena, tgt)),
+        .delegate => |tgt| {
+            const t = try collapse(w.arena, tgt);
+            try w.edge(cp, "delegates", t);
+            try w.forwards.put(cp, t);
+        },
         else => {},
     };
 }
@@ -677,12 +749,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         const name = ast.tokenSlice(vd.ast.mut_token + 1);
         const vis = if (vd.visib_token != null) "pub" else "priv";
         const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
-        try w.attr(cp, "mod", try varMod(w, ast, vd)); // var/extern/export/threadlocal/comptime (sparse)
-        if (vd.ast.type_node.unwrap()) |tn| { // `const x: T = …` — the declared type, as written
-            const tt = try typeText(w, ast, tn);
-            try w.attr(cp, "type", tt);
-            try w.edge(cp, "has_type", tt);
-        }
+        try varFacts(w, ast, vd, cp);
         // Declaration-site facts. Used for every kind EXCEPT a followed selective re-export,
         // whose loc/doc come from the target it resolves to (emitReexport owns them, falling
         // back to these only when the target can't be reached).
@@ -701,7 +768,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             // parsing (it needs the compiler). Neither a namespace nor a plain re-export: a const.
             if (std.mem.findScalar(u8, sel, '(') != null) {
                 try declFacts(w, cp, decl_loc, decl_doc);
-                try w.node(cp, "const", name, vis);
+                try emitInit(w, ast, init, cp, name, vis, path, base_dir, depth, rel);
                 continue;
             }
             const bare = sel.len == 0; // `@import("x")` vs `@import("x").Sel`
@@ -745,6 +812,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             if (w.visited.contains(abs) or depth >= MAX_DEPTH) {
                 try declFacts(w, cp, decl_loc, decl_doc);
                 try w.node(cp, "nsref", name, vis); // already expanded elsewhere (its canonical home)
+                try w.nsrefs.append(w.arena, .{ cp, abs });
                 continue;
             }
             if (parseChild(w, abs)) |child| {
@@ -761,33 +829,56 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             continue;
         }
         try declFacts(w, cp, decl_loc, decl_doc);
-        if (containerKind(ast, init)) |ck| {
-            try w.node(cp, ck, name, vis);
-            var cbuf: [2]Ast.Node.Index = undefined;
-            const cd = ast.fullContainerDecl(&cbuf, init).?;
-            try walk(w, ast, cd.ast.members, cp, ck, base_dir, depth + 1, rel);
-            continue;
-        }
-        const trimmed = std.mem.trim(u8, init_src, " \t\r\n");
-        if (isAliasChain(trimmed)) {
-            try w.node(cp, "alias", name, vis);
-            try w.edge(cp, "alias", trimmed);
-            try w.aliases.put(cp, trimmed);
-        } else if (std.mem.eql(u8, trimmed, "@This()")) {
-            // `const Self = @This();` names its own container
-            try w.node(cp, "alias", name, vis);
-            try w.edge(cp, "alias", trimmed);
-            try w.aliases.put(cp, path);
+        try emitInit(w, ast, init, cp, name, vis, path, base_dir, depth, rel);
+    }
+}
+
+/// A var/const's own qualifiers (`mod`) and declared type (`const x: T`), shared by `walk` and
+/// `emitReexport`.
+fn varFacts(w: *W, ast: *const Ast, vd: Ast.full.VarDecl, cp: []const u8) !void {
+    try w.attr(cp, "mod", try varMod(w, ast, vd)); // var/extern/export/threadlocal/comptime (sparse)
+    if (vd.ast.type_node.unwrap()) |tn| { // `const x: T = …` — the declared type, as written
+        const tt = try typeText(w, ast, tn);
+        try w.attr(cp, "type", tt);
+        try w.edge(cp, "has_type", tt);
+    }
+}
+
+/// What a const's initializer makes it — a container (walked), an alias, `@This()` (an alias of
+/// `container`), or a value: its text, and the error sets it merges, the factory it calls, or
+/// the arms it chooses between. The one place for this, shared by declarations in place (`walk`)
+/// and followed re-exports (`emitReexport`), so the two cannot record a const differently.
+fn emitInit(w: *W, ast: *const Ast, init: Ast.Node.Index, cp: []const u8, name: []const u8, vis: []const u8, container: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) anyerror!void {
+    if (containerKind(ast, init)) |ck| {
+        try w.node(cp, ck, name, vis);
+        var cbuf: [2]Ast.Node.Index = undefined;
+        const cd = ast.fullContainerDecl(&cbuf, init).?;
+        try walk(w, ast, cd.ast.members, cp, ck, base_dir, depth + 1, rel);
+        return;
+    }
+    const trimmed = std.mem.trim(u8, ast.getNodeSource(init), " \t\r\n");
+    if (isAliasChain(trimmed)) {
+        try w.node(cp, "alias", name, vis);
+        try w.edge(cp, "alias", trimmed);
+        try w.aliases.put(cp, trimmed);
+    } else if (std.mem.eql(u8, trimmed, "@This()")) {
+        // `const Self = @This();` names its own container
+        try w.node(cp, "alias", name, vis);
+        try w.edge(cp, "alias", trimmed);
+        try w.aliases.put(cp, container);
+    } else {
+        try w.node(cp, "const", name, vis);
+        try w.attr(cp, "value", try collapse(w.arena, trimmed)); // the initializer as written
+        try emitVariants(w, ast, init, cp, base_dir, depth, rel); // `switch (native_os) {…}`
+        if (ast.nodeTag(init) == .merge_error_sets) {
+            try errorSetEdges(w, ast, cp, init); // `Error = A || B`
         } else {
-            try w.node(cp, "const", name, vis);
-            try w.attr(cp, "value", try collapse(w.arena, trimmed)); // the initializer as written
-            try emitVariants(w, ast, init, cp, base_dir, depth, rel); // `switch (native_os) {…}`
-            if (ast.nodeTag(init) == .merge_error_sets) {
-                try errorSetEdges(w, ast, cp, init); // `Error = A || B`
-            } else {
-                // `Sha256 = Sha2x32(iv256, 256)`: the const is what that factory returns
-                var cbuf: [1]Ast.Node.Index = undefined;
-                if (ast.fullCall(&cbuf, init)) |call| try w.edge(cp, "instantiates", try typeText(w, ast, call.ast.fn_expr));
+            // `Sha256 = Sha2x32(iv256, 256)`: the const is what that factory returns
+            var cbuf: [1]Ast.Node.Index = undefined;
+            if (ast.fullCall(&cbuf, init)) |call| {
+                const callee = try typeText(w, ast, call.ast.fn_expr);
+                try w.edge(cp, "instantiates", callee);
+                try w.instances.put(cp, callee);
             }
         }
     }
@@ -950,6 +1041,19 @@ fn scopeFiles(w: *W) !void {
     }
 }
 
+/// An `nsref` is a file imported again where it was already walked: link it to that walk (its
+/// home) with an alias edge, so a name through it (`common.Field`, where `common` is an nsref of
+/// common.zig) resolves like through any alias. After the walk and `scopeFiles`, when every file
+/// has its home. A file with no home (never walked: a parse failure) stays unlinked.
+fn linkNsrefs(w: *W) !void {
+    for (w.nsrefs.items) |r| {
+        const home = w.file_home.get(r[1]) orelse continue;
+        if (std.mem.eql(u8, home, r[0])) continue;
+        try w.edge(r[0], "alias", home);
+        try w.aliases.put(r[0], home);
+    }
+}
+
 /// A selective re-export `pub const X = @import("f").Sel` — follow into `f`, find `Sel`, and place
 /// IT (its members, if a container) under `cp`. Selective-only files have no other home, so this is
 /// option B's single canonical home, not duplication. The node takes the TARGET's loc/doc (that is
@@ -988,17 +1092,19 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     const found_doc = try docComment(w, ast, found);
     const tgt_doc = if (found_doc.len != 0) found_doc else decl_doc;
     const vd = ast.fullVarDecl(found).?;
+    try varFacts(w, ast, vd, cp);
     const init = vd.ast.init_node.unwrap() orelse {
         try declFacts(w, cp, tgt_loc, tgt_doc);
         return w.node(cp, "const", name, vis);
     };
     const isrc = ast.getNodeSource(init);
+    if (ast.nodeTag(init) == .error_set_decl) try emitErrMembers(w, cp, isrc); // errmember attrs
     if (importTarget(isrc)) |t2| {
         const isrc_sel = selectorOf(isrc);
         // `@import("f").foo()` — a CALL selector is a computed const, not a followable namespace.
         if (std.mem.findScalar(u8, isrc_sel, '(') != null) {
             try declFacts(w, cp, tgt_loc, tgt_doc);
-            return w.node(cp, "const", name, vis);
+            return emitInit(w, ast, init, cp, name, vis, parent(cp), dir, depth, rel);
         }
         if (std.mem.endsWith(u8, t2, ".zig")) {
             const abs2 = std.fs.path.resolve(w.arena, &.{ dir, t2 }) catch {
@@ -1009,7 +1115,10 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
             if (!bare2) return emitReexport(w, abs2, isrc_sel, cp, name, vis, depth + 1, tgt_loc, tgt_doc);
             try declFacts(w, cp, tgt_loc, tgt_doc);
             try w.edge(cp, "imports", t2);
-            if (w.visited.contains(abs2) or depth >= MAX_DEPTH) return w.node(cp, "nsref", name, vis);
+            if (w.visited.contains(abs2) or depth >= MAX_DEPTH) {
+                try w.nsrefs.append(w.arena, .{ cp, abs2 });
+                return w.node(cp, "nsref", name, vis);
+            }
             if (parseChild(w, abs2)) |c2| {
                 try w.visited.put(abs2, {}); // mark visited only on a successful parse
                 try w.file_home.put(abs2, cp);
@@ -1019,18 +1128,8 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
             return;
         }
     }
-    if (containerKind(ast, init)) |ck| {
-        try declFacts(w, cp, tgt_loc, tgt_doc);
-        try w.node(cp, ck, name, vis);
-        var cb: [2]Ast.Node.Index = undefined;
-        const cd = ast.fullContainerDecl(&cb, init).?;
-        try walk(w, ast, cd.ast.members, cp, ck, dir, depth + 1, rel);
-        return;
-    }
-    const trimmed = std.mem.trim(u8, isrc, " \t\r\n");
-    if (isAliasChain(trimmed)) return leaf(w, cp, name, vis, trimmed, tgt_loc, tgt_doc);
     try declFacts(w, cp, tgt_loc, tgt_doc);
-    try w.node(cp, "const", name, vis);
+    try emitInit(w, ast, init, cp, name, vis, parent(cp), dir, depth, rel);
 }
 
 /// Scope tallies from edge resolution — returned so the caller can report without re-reading.
@@ -1072,6 +1171,8 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         .imports = std.StringHashMap([]const u8).init(arena),
         .visited = std.StringHashMap(void).init(arena),
         .aliases = std.StringHashMap([]const u8).init(arena),
+        .instances = std.StringHashMap([]const u8).init(arena),
+        .forwards = std.StringHashMap([]const u8).init(arena),
         .generics = std.StringHashMap(void).init(arena),
         .edges = .empty,
         .root_dir = std.fs.path.dirname(root) orelse ".",
@@ -1082,6 +1183,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         .file_home = std.StringHashMap([]const u8).init(arena),
         .lexical = std.StringHashMap([]const u8).init(arena),
         .lexical_names = std.StringHashMap([]const u8).init(arena),
+        .nsrefs = .empty,
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
@@ -1093,7 +1195,9 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     // Phase 1 — walk the whole organism: follow every @import, building the complete node set.
     const root_dir = std.fs.path.dirname(root) orelse ".";
     try walk(&w, &ast, ast.rootDecls(), root_name, "root", root_dir, 0, std.fs.path.basename(root));
+    try w.file_home.put(try std.fs.path.resolve(arena, &.{root}), root_name);
     try scopeFiles(&w);
+    try linkNsrefs(&w);
     try w.nodes.flush();
     try w.attrs.flush();
 
@@ -1111,7 +1215,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         const r = if (std.mem.eql(u8, e.etype, "imports"))
             Res{ .scope = Scope.module, .target = e.target }
         else
-            resolve(&w, e.src, e.target, 4);
+            resolve(&w, e.src, e.target, resolve_fuel);
         counts.getPtr(r.scope).* += 1;
         try ew.print("{s}\t{s}\t{s}\t{s}\n", .{ e.src, e.etype, r.target, @tagName(r.scope) });
     }

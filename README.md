@@ -168,7 +168,9 @@ sequence for a new Zig is therefore `std → depth --commit → overlays → loo
 snapshot`.
 
 **Everything zephem writes stays inside the checkout.** Both query commands (and zcanon) read
-`data/lookup.tsv`, one pre-joined row per declaration, with `data/examples.tsv` and
+`data/lookup.tsv`, one pre-joined row per declaration (plus, kind `resolved`, each path the
+compiler resolved for the map's target that the source map does not reach — a member of a
+per-platform const, whose arms the map lists as `[…]` variants), with `data/examples.tsv` and
 `data/lookup.stamp` beside it. All three are derived from the map and git-ignored. `look` and
 `map` rebuild them automatically (about 80 ms) when they are missing or older than the datasets,
 checked against the datasets' manifests, so a query never answers from a stale index; `zephem
@@ -207,8 +209,8 @@ query rebakes the lookup table once (≈90 ms).
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to
 `data/std/extracted/`. On zig 0.17.0 that is **86,046 nodes across 484 files**
-(77,266 public, 8,780 private), max nesting depth 8 — carrying 185,340
-attributes and 71,312 typed edges.
+(77,266 public, 8,780 private), max nesting depth 8 — carrying 185,369
+attributes and 71,692 typed edges.
 
 ```sh
 awk -F'\t' '$2=="ns"' data/std/extracted/nodes.tsv                        # every std source file
@@ -237,8 +239,8 @@ $ zig build std
 [forward]  scanning .../std.zig  (zig 0.17.0, depth 8)
            rows: 86046   files: 484   private: 8780
 [index]    containers: 5959   root span: 86046   max depth: 8
-[attrs]    185340 rows — doc 15618 · sig 12421 · value 44065 · example 1927
-[edges]    71312 rows — resolved 67735 / unresolved 1555
+[attrs]    185369 rows — doc 15618 · sig 12421 · value 44093 · example 1927
+[edges]    71692 rows — resolved 68262 / unresolved 1416
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.
@@ -354,9 +356,9 @@ The extractor is **three engines**, split by *what each reads*:
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
   [parse/README.md](parse/README.md)). `parse/walk.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
-  the Attributes (`attrs.tsv` — 12,421 signatures, 15,618 `///` docs, 44,065 field/const
-  values, 86,045 locations, 1,927 test bodies, 1,376 modifiers, 490 error
-  members), and the Edges (`edges.tsv` — 71,312
+  the Attributes (`attrs.tsv` — 12,421 signatures, 15,618 `///` docs, 44,093 field/const
+  values, 86,045 locations, 1,927 test bodies, 1,376 modifiers, 491 error
+  members), and the Edges (`edges.tsv` — 71,692
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
   `return struct {…}` gets its members under `<fn>()`, e.g. `std.hash_map.HashMap().get`) and gives each
   selective re-export a single canonical home. It reads source as text and never runs the compiler,

@@ -167,7 +167,9 @@ sequence for a new Zig is therefore `std → depth --commit → overlays → loo
 snapshot`.
 
 **Everything zephem writes stays inside the checkout.** Both query commands (and zcanon) read
-`data/lookup.tsv`, one pre-joined row per declaration, with `data/examples.tsv` and
+`data/lookup.tsv`, one pre-joined row per declaration (plus, kind `resolved`, each path the
+compiler resolved for the map's target that the source map does not reach — a member of a
+per-platform const, whose arms the map lists as `[…]` variants), with `data/examples.tsv` and
 `data/lookup.stamp` beside it. All three are derived from the map and git-ignored. `look` and
 `map` rebuild them automatically (about 80 ms) when they are missing or older than the datasets,
 checked against the datasets' manifests, so a query never answers from a stale index; `zephem

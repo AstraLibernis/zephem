@@ -42,9 +42,17 @@ const mem_zig =
     \\pub const pi = 3.14;
     \\pub const Both = Allocator.Error || error{Extra};
     \\pub fn Box(comptime T: type) type {
-    \\    return struct { v: T };
+    \\    return struct {
+    \\        v: T,
+    \\        pub const Kind = u8;
+    \\    };
     \\}
     \\pub const IntBox = Box(u32);
+    \\pub const BoxKind = IntBox.Kind;
+    \\pub const Q = struct {
+    \\    pub const @"a-b" = 1;
+    \\};
+    \\pub const QA = Q.@"a-b";
     \\pub fn first(comptime T: type, xs: []const T) T {
     \\    return xs[0];
     \\}
@@ -73,6 +81,8 @@ const mem_zig =
 const other_zig =
     \\const uefi = @import("std").mem;
     \\pub const UseA = uefi.Allocator;
+    \\const m = @import("mem.zig");
+    \\pub const UseC = m.Allocator;
     \\
 ;
 
@@ -186,4 +196,11 @@ test "extractor: every fixed case produces its row" {
     try expectRow(o.edges, "std.DynLib.Error\terror_set\tstd.@\"dl.zig\".ElfErr\tcross");
     try expectRow(o.attrs, "std.DynLib\texample\ttest DynLib {}");
     try expectNoRow(o.nodes, "std.@\"dl.zig\".DynLib\tstruct\tDynLib\tpub");
+    // A member reached through a const built by a factory call lands in what the factory returns.
+    try expectRow(o.edges, "std.mem.BoxKind\talias\tstd.mem.Box().Kind\tlocal");
+    // A quoted name is a name: `Q.@"a-b"` is an alias, not an opaque value.
+    try expectRow(o.edges, "std.mem.QA\talias\tstd.mem.Q.@\"a-b\"\tlocal");
+    // A file imported again where it was already walked links to that walk, and names go through.
+    try expectRow(o.edges, "std.Other.m\talias\tstd.mem\tcross");
+    try expectRow(o.edges, "std.Other.UseC\talias\tstd.mem.Allocator\tcross");
 }

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 AstraLibernis
 
-//! redirect.zig — follow `alias` and `delegates` edges from a name to where its members live.
+//! redirect.zig — follow `alias`, `delegates` and `instantiates` edges from a name to where its
+//! members live (`std.Build.Cache.Hasher = SipHash128(1, 3)` → `siphash.SipHash()`).
 //!
 //! The most-used std types are thin names over something else. `std.ArrayList` is
 //! `fn ArrayList(T) type { return array_list.Aligned(T, null); }`, so its members sit under
@@ -15,7 +16,7 @@
 const std = @import("std");
 const rel = @import("relation.zig");
 
-/// Longest chain followed. The longest real chain in 0.16 std is 3 hops; the cap only exists
+/// Longest chain followed. Real chains are a few hops; the cap only exists
 /// so a cycle cannot loop forever.
 const max_hops = 8;
 
@@ -62,7 +63,7 @@ pub const Redirects = struct {
         const esc = edges.col("scope");
         for (edges.rows) |row| {
             const t = row[et];
-            if (!std.mem.eql(u8, t, "alias") and !std.mem.eql(u8, t, "delegates")) continue;
+            if (!std.mem.eql(u8, t, "alias") and !std.mem.eql(u8, t, "delegates") and !std.mem.eql(u8, t, "instantiates")) continue;
             const scope = row[esc];
             if (!std.mem.eql(u8, scope, "local") and !std.mem.eql(u8, scope, "cross")) continue;
             if (!r.paths.contains(row[eg])) continue;
@@ -103,11 +104,14 @@ pub const Redirects = struct {
         return out.items;
     }
 
-    /// target → the names that redirect straight to it.
+    /// target → the names that redirect straight to it. An `instantiates` hop is not one: a
+    /// const built by a call (`Array = ArrayList(Value)`) reaches the factory's members, but is
+    /// not another name for them, and dozens of such consts would bury the real aliases.
     pub fn reverseMap(r: *const Redirects) !std.StringHashMap(std.ArrayList([]const u8)) {
         var m = std.StringHashMap(std.ArrayList([]const u8)).init(r.a);
         var it = r.hop_of.iterator();
         while (it.next()) |e| {
+            if (std.mem.eql(u8, e.value_ptr.kind, "instantiates")) continue;
             const gop = try m.getOrPut(e.value_ptr.target);
             if (!gop.found_existing) gop.value_ptr.* = .empty;
             try gop.value_ptr.append(r.a, e.key_ptr.*);

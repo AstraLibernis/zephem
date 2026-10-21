@@ -22288,7 +22288,7 @@ std.c.PF.[else].[illumos].LAT	alias	LAT	pub
 std.c.PF.[else].[illumos].HYLINK	alias	HYLINK	pub
 std.c.PF.[else].[illumos].APPLETALK	alias	APPLETALK	pub
 std.c.PF.[else].[illumos].NIT	alias	NIT	pub
-std.c.PF.[else].[illumos].@"802"	const	@"802"	pub
+std.c.PF.[else].[illumos].@"802"	alias	@"802"	pub
 std.c.PF.[else].[illumos].OSI	alias	OSI	pub
 std.c.PF.[else].[illumos].X25	alias	X25	pub
 std.c.PF.[else].[illumos].OSINET	alias	OSINET	pub
@@ -25818,7 +25818,7 @@ std.c.seekdir	fn	seekdir	pub
 std.c.sigwait	fn	sigwait	pub
 std.c.alarm	fn	alarm	pub
 std.c.close	const	close	pub
-std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
+std.c.close.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	alias	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
 std.c.close.[else]	alias	[else]	pub
 std.c.clock_getres	const	clock_getres	pub
 std.c.clock_getres.[netbsd]	alias	[netbsd]	pub
@@ -25828,14 +25828,14 @@ std.c.clock_gettime.[netbsd]	alias	[netbsd]	pub
 std.c.clock_gettime.[else]	alias	[else]	pub
 std.c.fstat	const	fstat	pub
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
-std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	[x86_64]	pub
+std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	[x86_64]	pub
 std.c.fstat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	[else]	pub
 std.c.fstat.[netbsd]	alias	[netbsd]	pub
 std.c.fstat.[linux]	const	[linux]	pub
 std.c.fstat.[else]	alias	[else]	pub
 std.c.fstatat	const	fstatat	pub
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
-std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	[x86_64]	pub
+std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	[x86_64]	pub
 std.c.fstatat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	[else]	pub
 std.c.fstatat.[linux]	const	[linux]	pub
 std.c.fstatat.[else]	alias	[else]	pub
@@ -25956,12 +25956,12 @@ std.c.nanosleep.[netbsd]	alias	[netbsd]	pub
 std.c.nanosleep.[else]	alias	[else]	pub
 std.c.readdir	const	readdir	pub
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
-std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	[x86_64]	pub
+std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	[x86_64]	pub
 std.c.readdir.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	[else]	pub
 std.c.readdir.[windows]	const	[windows]	pub
 std.c.readdir.[else]	alias	[else]	pub
 std.c.realpath	const	realpath	pub
-std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
+std.c.realpath.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	alias	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
 std.c.realpath.[else]	alias	[else]	pub
 std.c.sched_yield	const	sched_yield	pub
 std.c.sched_yield.[netbsd]	alias	[netbsd]	pub
@@ -25998,7 +25998,7 @@ std.c.socketpair.[windows]	const	[windows]	pub
 std.c.socketpair.[else]	alias	[else]	pub
 std.c.stat	const	stat	pub
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	const	[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	pub
-std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	const	[x86_64]	pub
+std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[x86_64]	alias	[x86_64]	pub
 std.c.stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].[else]	alias	[else]	pub
 std.c.stat.[else]	alias	[else]	pub
 std.c._msize	const	_msize	pub
@@ -26506,7 +26506,7 @@ std.c.boolean_t	alias	boolean_t	pub
 std.c.clock_get_time	alias	clock_get_time	pub
 std.c.clock_serv_t	alias	clock_serv_t	pub
 std.c.clock_res_t	alias	clock_res_t	pub
-std.c.@"close$NOCANCEL"	const	@"close$NOCANCEL"	pub
+std.c.@"close$NOCANCEL"	alias	@"close$NOCANCEL"	pub
 std.c.dispatch	alias	dispatch	pub
 std.c.fcopyfile	alias	fcopyfile	pub
 std.c.host_t	alias	host_t	pub
