@@ -32,6 +32,7 @@
 const std = @import("std");
 const Ast = std.zig.Ast;
 const compat = @import("compat.zig");
+// zsnag:allow R011 — this file is compiled by every supported Zig (see compat.zig); it keeps std names that exist in all of them, even where the newest deprecates them.
 
 const Edge = struct { src: []const u8, etype: []const u8, target: []const u8 };
 
@@ -43,11 +44,12 @@ const W = struct {
     nodes: *std.Io.Writer,
     attrs: *std.Io.Writer, // path · attr · value — the node's own facts (doc / sig / value)
     node_set: std.StringHashMap(void), // every emitted path — the resolution target set
-    imports: std.StringHashMap([]const u8), // alias → target, for NON-followed imports only (modules)
+    imports: std.StringHashMap([]const u8), // modref node path → module path (`std`, `std.os.uefi`), for NON-followed imports only
     visited: std.StringHashMap(void), // abs file paths already expanded (walk each file once)
     aliases: std.StringHashMap([]const u8), // alias-node path → its RHS target text (for chasing)
     generics: std.StringHashMap(void), // "<factory()path>#<paramname>" — comptime type params in scope
     root_dir: []const u8, // std root dir, for machine-independent relative loc paths
+    root_name: []const u8, // the root module's name (`std`): an import of it points back into the tree
     ast_cache: std.StringHashMap(*Ast), // abs file path → parsed Ast — parse each file once per build
     line_cache: std.StringHashMap([]usize), // rel file → sorted newline offsets (fast line lookup)
     edges: std.ArrayList(Edge), // raw edges, resolved in phase 2
@@ -142,11 +144,20 @@ fn escapeTsv(arena: std.mem.Allocator, s: []const u8) ![]const u8 {
 
 /// A decl's `///` doc-comment run, whitespace-collapsed; "" when undocumented.
 fn docComment(w: *W, ast: *const Ast, node: Ast.Node.Index) ![]const u8 {
-    const first = ast.firstToken(node);
-    var start = first;
+    var start = ast.firstToken(node);
     while (start > 0 and ast.tokenTag(start - 1) == .doc_comment) start -= 1;
+    return docRun(w, ast, start, .doc_comment, "///");
+}
+
+/// A file's own `//!` doc: the container doc comments it opens with ("" if none).
+fn fileDoc(w: *W, ast: *const Ast) ![]const u8 {
+    return docRun(w, ast, 0, .container_doc_comment, "//!");
+}
+
+/// The run of `tag` comment tokens starting at `start`, markers stripped, whitespace-collapsed.
+fn docRun(w: *W, ast: *const Ast, start: Ast.TokenIndex, tag: std.zig.Token.Tag, marker: []const u8) ![]const u8 {
     var end = start;
-    while (ast.tokenTag(end) == .doc_comment) end += 1;
+    while (end < ast.tokens.len and ast.tokenTag(end) == tag) end += 1;
     if (start == end) return "";
     var total: usize = 0;
     var t = start;
@@ -156,13 +167,20 @@ fn docComment(w: *W, ast: *const Ast, node: Ast.Node.Index) ![]const u8 {
     t = start;
     while (t < end) : (t += 1) {
         var txt = ast.tokenSlice(t);
-        if (std.mem.startsWith(u8, txt, "///")) txt = txt[3..];
+        if (std.mem.startsWith(u8, txt, marker)) txt = txt[marker.len..];
         @memcpy(raw[n..][0..txt.len], txt);
         n += txt.len;
         raw[n] = ' ';
         n += 1;
     }
     return collapse(w.arena, raw[0..n]);
+}
+
+/// A namespace's doc: the `///` on the line that imports it, then the file's own `//!`.
+fn joinDocs(w: *W, decl_doc: []const u8, file_doc: []const u8) ![]const u8 {
+    if (decl_doc.len == 0) return file_doc;
+    if (file_doc.len == 0) return decl_doc;
+    return std.fmt.allocPrint(w.arena, "{s} {s}", .{ decl_doc, file_doc });
 }
 
 /// A fn's as-written signature: the `fn` keyword through the return type, whitespace-collapsed.
@@ -172,7 +190,43 @@ fn fnSig(w: *W, ast: *const Ast, proto: *const Ast.full.FnProto) !?[]const u8 {
     const last = ast.lastToken(ret);
     const start = starts[proto.ast.fn_token];
     const end = starts[last] + @as(u32, @intCast(ast.tokenSlice(last).len)); // zsnag:ok — R007: a token is shorter than the source, and Ast offsets are u32
-    return try collapse(w.arena, ast.source[start..end]);
+    // drop `//` and `///` comments first: collapsed onto one line, a comment would swallow the rest
+    return try collapse(w.arena, try stripComments(w.arena, ast.source[start..end]));
+}
+
+/// `s` without its `//` comments (to the end of each line). A `//` inside a string or character
+/// literal is kept.
+fn stripComments(arena: std.mem.Allocator, s: []const u8) ![]const u8 {
+    if (std.mem.find(u8, s, "//") == null) return s;
+    const out = try arena.alloc(u8, s.len);
+    var n: usize = 0;
+    var quote: u8 = 0; // the open literal's delimiter, or 0
+    var i: usize = 0;
+    while (i < s.len) : (i += 1) {
+        const c = s[i];
+        if (quote != 0) {
+            if (c == '\\' and i + 1 < s.len) {
+                out[n] = c;
+                out[n + 1] = s[i + 1];
+                n += 2;
+                i += 1;
+                continue;
+            }
+            if (c == quote) quote = 0;
+        } else if (c == '"' or c == '\'') {
+            quote = c;
+        } else if (c == '/' and i + 1 < s.len and s[i + 1] == '/') {
+            while (i < s.len and s[i] != '\n') i += 1;
+            if (i < s.len) {
+                out[n] = '\n';
+                n += 1;
+            }
+            continue;
+        }
+        out[n] = c;
+        n += 1;
+    }
+    return out[0..n];
 }
 
 /// Space-joined modifier keywords on a var/const decl — `extern`/`export` · `threadlocal` ·
@@ -199,10 +253,13 @@ fn varMod(w: *W, ast: *const Ast, vd: Ast.full.VarDecl) ![]const u8 {
     return if (n == 0) "" else std.mem.join(w.arena, " ", parts[0..n]);
 }
 
-/// A fn's leading qualifier — `extern` / `export` / `inline` — or "" (the `sig` attr starts at the
-/// `fn` keyword, so these, which precede it, would otherwise be lost).
-fn fnMod(ast: *const Ast, proto: *const Ast.full.FnProto) []const u8 {
-    return if (proto.extern_export_inline_token) |t| ast.tokenSlice(t) else "";
+/// A fn's leading qualifier — `extern` / `export` / `inline`, an extern with its library
+/// (`extern "kernel32"`) — or "" (the `sig` attr starts at the `fn` keyword, so these, which
+/// precede it, would otherwise be lost).
+fn fnMod(w: *W, ast: *const Ast, proto: *const Ast.full.FnProto) ![]const u8 {
+    const t = proto.extern_export_inline_token orelse return "";
+    const lib = proto.lib_name orelse return ast.tokenSlice(t);
+    return std.fmt.allocPrint(w.arena, "{s} {s}", .{ ast.tokenSlice(t), ast.tokenSlice(lib) });
 }
 
 /// Emit each member of a named `error{A, B, C}` literal as an `errmember` attr on the decl. Members
@@ -301,10 +358,16 @@ fn classifyFactory(ast: *const Ast, fn_decl: Ast.Node.Index, proto: *const Ast.f
 }
 
 /// Peel a type expression down to the leading referenced name: `[]const u8`→`u8`,
-/// `?Node.Index`→`Node.Index`, `ArrayList(u8)`→`ArrayList`, `@This()`→`@This`. "" if none.
+/// `[N]Elem`→`Elem`, `[]align(4) u8`→`u8`, `?Node.Index`→`Node.Index`, `ArrayList(u8)`→`ArrayList`,
+/// `@This()`→`@This`. "" if none. A `[…]` group (array length, sentinel) and an `align(…)` /
+/// `addrspace(…)` qualifier hold values, not the referenced type, so they are skipped whole.
 fn extractBase(s: []const u8) []const u8 {
     var i: usize = 0;
     while (i < s.len) {
+        if (s[i] == '[') {
+            i = skipGroup(s, i, '[', ']');
+            continue;
+        }
         // start of an identifier or @builtin
         if (std.ascii.isAlphabetic(s[i]) or s[i] == '_' or s[i] == '@') {
             var j = i + 1;
@@ -318,11 +381,32 @@ fn extractBase(s: []const u8) []const u8 {
                 i = j;
                 continue;
             }
+            if (std.mem.eql(u8, word, "align") or std.mem.eql(u8, word, "addrspace")) {
+                var k = j;
+                while (k < s.len and s[k] == ' ') k += 1;
+                if (k < s.len and s[k] == '(') {
+                    i = skipGroup(s, k, '(', ')');
+                    continue;
+                }
+            }
             return word;
         }
         i += 1;
     }
     return "";
+}
+
+/// The index just past the group that opens at `s[start]`, nesting included (or `s.len`).
+fn skipGroup(s: []const u8, start: usize, open: u8, close: u8) usize {
+    var depth: usize = 0;
+    var i = start;
+    while (i < s.len) : (i += 1) {
+        if (s[i] == open) depth += 1 else if (s[i] == close) {
+            depth -= 1;
+            if (depth == 0) return i + 1;
+        }
+    }
+    return s.len;
 }
 
 /// True when `raw` is an anonymous container literal in type position — `struct {…}`,
@@ -363,17 +447,57 @@ fn resolveBare(w: *W, container: []const u8, name: []const u8) ?[]const u8 {
     }
 }
 
-/// True if `base` is a comptime type param in scope — declared by a factory ancestor (`…()` node).
-fn isGenericParam(w: *W, container: []const u8, base: []const u8) bool {
-    var a = container;
+/// True if `base` is a comptime type param in scope at `src`: declared by `src` itself (a fn's
+/// own `comptime T: type`) or by an ancestor (a factory, whose params cover all of `<fn>()`).
+fn isGenericParam(w: *W, src: []const u8, base: []const u8) bool {
+    var a = src;
     while (true) {
-        if (std.mem.endsWith(u8, a, "()")) {
-            const key = std.fmt.allocPrint(w.arena, "{s}#{s}", .{ a, base }) catch return false;
-            if (w.generics.contains(key)) return true;
-        }
+        const key = std.fmt.allocPrint(w.arena, "{s}#{s}", .{ a, base }) catch return false;
+        if (w.generics.contains(key)) return true;
         if (a.len == 0) return false;
         a = parent(a);
     }
+}
+
+/// Record a fn's comptime type params (`comptime T: type`, `anytype`) under `owner`, so a
+/// reference to `T` from `owner` or below resolves to a `generic` scope, not unresolved.
+fn registerTypeParams(w: *W, ast: *const Ast, proto: *const Ast.full.FnProto, owner: []const u8) !void {
+    var pit = proto.iterate(ast);
+    while (pit.next()) |p| {
+        const is_type_param = p.anytype_ellipsis3 != null or
+            (p.type_expr != null and std.mem.eql(u8, std.mem.trim(u8, ast.getNodeSource(p.type_expr.?), " \t\r\n"), "type"));
+        if (is_type_param) if (p.name_token) |nt| {
+            const key = try std.fmt.allocPrint(w.arena, "{s}#{s}", .{ owner, ast.tokenSlice(nt) });
+            try w.generics.put(key, {});
+        };
+    }
+}
+
+/// A resolved node, `local` when it lies inside `container`, else `cross`.
+fn placed(container: []const u8, p: []const u8) Res {
+    const inside = std.mem.eql(u8, p, container) or
+        (p.len > container.len and container.len > 0 and std.mem.startsWith(u8, p, container) and p[container.len] == '.');
+    return Res{ .scope = if (inside) .local else .cross, .target = p };
+}
+
+/// Resolve `full`, a path written from the tree's root (`std.mem.Allocator.Error`). When the path
+/// is not a node itself, its longest walked prefix may be an alias: follow that alias in its own
+/// scope and resolve the rest of the path from where it lands.
+fn resolveRooted(w: *W, src: []const u8, full: []const u8, fuel: u8) ?Res {
+    if (w.node_set.contains(full)) return placed(parent(src), full);
+    var k = full.len;
+    while (std.mem.findScalarLast(u8, full[0..k], '.')) |d| {
+        k = d;
+        const p = full[0..k];
+        if (!w.node_set.contains(p)) continue;
+        if (fuel == 0) return null;
+        const at = w.aliases.get(p) orelse return null;
+        const chased = std.fmt.allocPrint(w.arena, "{s}{s}", .{ at, full[k..] }) catch return null;
+        const r = resolve(w, p, chased, fuel - 1);
+        if (r.scope != .local and r.scope != .cross) return null;
+        return placed(parent(src), r.target);
+    }
+    return null;
 }
 
 /// Classify (and where possible canonicalize) one edge target. `fuel` bounds alias-chasing.
@@ -396,13 +520,20 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
 
     if (dotted) {
         const head = base[0..std.mem.findScalar(u8, base, '.').?];
-        if (w.imports.get(head)) |tgt| return Res{ .scope = .module, .target = tgt };
+        const head_node = resolveBare(w, container, head) orelse "";
+        if (w.imports.get(head_node)) |tgt| {
+            const full = std.fmt.allocPrint(w.arena, "{s}{s}", .{ tgt, base[head.len..] }) catch return Res{ .scope = .unresolved, .target = raw };
+            // The import is the tree being walked (`std`, or `std.os.uefi` inside std): the rest of
+            // the path names a walked node, so resolve it from the root rather than stopping there.
+            if (std.mem.eql(u8, tgt, w.root_name) or (std.mem.startsWith(u8, tgt, w.root_name) and tgt.len > w.root_name.len and tgt[w.root_name.len] == '.')) {
+                if (resolveRooted(w, src, full, fuel)) |r| return r;
+                return Res{ .scope = .unresolved, .target = full };
+            }
+            // A module outside the tree (`builtin`): keep the whole path, not just its name.
+            return Res{ .scope = .module, .target = full };
+        }
     }
-    if (resolveBare(w, container, base)) |p| {
-        const inside = std.mem.eql(u8, p, container) or
-            (p.len > container.len and container.len > 0 and std.mem.startsWith(u8, p, container) and p[container.len] == '.');
-        return Res{ .scope = if (inside) .local else .cross, .target = p };
-    }
+    if (resolveBare(w, container, base)) |p| return placed(container, p);
     // ALIAS-CHASING: base is `head.rest` and head resolves to an alias — follow it, then retry.
     // (`Allocator.Error` → `Allocator` is a private alias to `mem.Allocator` → `mem.Allocator.Error`.)
     if (dotted and fuel > 0) {
@@ -415,15 +546,24 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
         }
     }
     // GENERIC PARAM: a comptime type param (T/K/V) declared by a factory ancestor.
-    if (!dotted and isGenericParam(w, container, base)) return Res{ .scope = .generic, .target = base };
+    if (!dotted and isGenericParam(w, src, base)) return Res{ .scope = .generic, .target = base };
     return Res{ .scope = .unresolved, .target = raw };
+}
+
+/// One `error_set` edge per set in `n`: `A || B || C` names three sets, not one.
+fn errorSetEdges(w: *W, ast: *const Ast, cp: []const u8, n: Ast.Node.Index) !void {
+    if (ast.nodeTag(n) == .merge_error_sets) {
+        const d = ast.nodeData(n).node_and_node;
+        try errorSetEdges(w, ast, cp, d[0]);
+        try errorSetEdges(w, ast, cp, d[1]);
+    } else try w.edge(cp, "error_set", try typeText(w, ast, n));
 }
 
 fn fnEdges(w: *W, ast: *const Ast, cp: []const u8, m: Ast.Node.Index, proto: *const Ast.full.FnProto) !void {
     if (proto.ast.return_type.unwrap()) |rt| {
         if (ast.nodeTag(rt) == .error_union) {
             const d = ast.nodeData(rt).node_and_node;
-            try w.edge(cp, "error_set", try typeText(w, ast, d[0]));
+            try errorSetEdges(w, ast, cp, d[0]);
             try w.edge(cp, "has_type", try typeText(w, ast, d[1]));
         } else try w.edge(cp, "has_type", try typeText(w, ast, rt));
     }
@@ -453,7 +593,8 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
     const own_doc = try docComment(w, ast, node);
     try declFacts(w, cp, try locOf(w, ast, node, rel), if (own_doc.len != 0) own_doc else fallback_doc);
     if (try fnSig(w, ast, proto)) |sg| try w.attr(cp, "sig", sg);
-    try w.attr(cp, "mod", fnMod(ast, proto)); // extern/export/inline (sparse; sig starts at `fn`)
+    try w.attr(cp, "mod", try fnMod(w, ast, proto)); // extern/export/inline (sparse; sig starts at `fn`)
+    try registerTypeParams(w, ast, proto, cp); // `fn f(comptime T: type, x: T)`: T is the fn's own
     try fnEdges(w, ast, cp, node, proto);
     if (ast.nodeTag(node) != .fn_decl) return;
     switch (classifyFactory(ast, node, proto)) {
@@ -464,17 +605,8 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
             const ck = ast.tokenSlice(cd.ast.main_token);
             try w.node(child, ck, name, vis);
             try w.attr(child, "loc", try locOf(w, ast, d, rel)); // the produced type's own location
-            // record this factory's comptime type params (`comptime T: type`, `anytype`) so
-            // references to T/K/V inside `<fn>()` resolve to a `generic` scope, not unresolved.
-            var pit = proto.iterate(ast);
-            while (pit.next()) |p| {
-                const is_type_param = p.anytype_ellipsis3 != null or
-                    (p.type_expr != null and std.mem.eql(u8, std.mem.trim(u8, ast.getNodeSource(p.type_expr.?), " \t\r\n"), "type"));
-                if (is_type_param) if (p.name_token) |nt| {
-                    const key = try std.fmt.allocPrint(w.arena, "{s}#{s}", .{ child, ast.tokenSlice(nt) });
-                    try w.generics.put(key, {});
-                };
-            }
+            // the factory's type params are in scope for every member of `<fn>()`
+            try registerTypeParams(w, ast, proto, child);
             try walk(w, ast, cd.ast.members, child, ck, dir, depth + 1, rel);
         },
         else => {},
@@ -521,7 +653,12 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             try w.node(cp, if (std.mem.eql(u8, parent_kind, "enum")) "tag" else "field", name, "pub");
             try w.attr(cp, "loc", try locOf(w, ast, m, rel));
             try w.attr(cp, "doc", try docComment(w, ast, m));
-            if (field.ast.type_expr.unwrap()) |te| try w.edge(cp, "has_type", try typeText(w, ast, te));
+            if (field.ast.type_expr.unwrap()) |te| {
+                // the edge names the referenced type (`?*Node` → Node); the attr keeps the type as written
+                const tt = try typeText(w, ast, te);
+                try w.edge(cp, "has_type", tt);
+                try w.attr(cp, "type", tt);
+            }
             if (field.ast.value_expr.unwrap()) |ve| try w.attr(cp, "value", try typeText(w, ast, ve));
             continue;
         }
@@ -531,6 +668,11 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         const vis = if (vd.visib_token != null) "pub" else "priv";
         const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, name });
         try w.attr(cp, "mod", try varMod(w, ast, vd)); // var/extern/export/threadlocal/comptime (sparse)
+        if (vd.ast.type_node.unwrap()) |tn| { // `const x: T = …` — the declared type, as written
+            const tt = try typeText(w, ast, tn);
+            try w.attr(cp, "type", tt);
+            try w.edge(cp, "has_type", tt);
+        }
         // Declaration-site facts. Used for every kind EXCEPT a followed selective re-export,
         // whose loc/doc come from the target it resolves to (emitReexport owns them, falling
         // back to these only when the target can't be reached).
@@ -554,10 +696,21 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             }
             const bare = sel.len == 0; // `@import("x")` vs `@import("x").Sel`
             if (!std.mem.endsWith(u8, tgt, ".zig")) {
-                // a MODULE we don't own (std / builtin / root) — external, never followed.
+                // An expression on a module (`@import("builtin").mode == .debug`) is a value, not a
+                // reference to the module: a const with its initializer.
+                if (!bare and !isAliasChain(sel)) {
+                    try declFacts(w, cp, decl_loc, decl_doc);
+                    try w.node(cp, "const", name, vis);
+                    try w.attr(cp, "value", try collapse(w.arena, std.mem.trim(u8, init_src, " \t\r\n")));
+                    continue;
+                }
+                // a MODULE we don't own (std / builtin / root) — external, never followed. Keyed by
+                // this node's path, so the name resolves lexically like any other declaration (one
+                // file's `uefi = @import("std").os.uefi` must not redefine `uefi` in another file),
+                // with the selector kept: `uefi.tables` is `std.os.uefi.tables`.
                 try declFacts(w, cp, decl_loc, decl_doc);
                 try w.node(cp, "modref", name, vis);
-                try w.imports.put(name, tgt);
+                try w.imports.put(cp, if (bare) tgt else try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ tgt, sel }));
                 try w.edge(cp, "imports", tgt);
                 continue;
             }
@@ -573,22 +726,27 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                 continue;
             }
             // an OWNED .zig file — FOLLOW it, once, building the full tree.
-            try declFacts(w, cp, decl_loc, decl_doc);
             const abs = std.fs.path.resolve(w.arena, &.{ base_dir, tgt }) catch {
+                try declFacts(w, cp, decl_loc, decl_doc);
                 try w.node(cp, "nserr", name, vis);
                 continue;
             };
             try w.edge(cp, "imports", tgt);
             if (w.visited.contains(abs) or depth >= MAX_DEPTH) {
+                try declFacts(w, cp, decl_loc, decl_doc);
                 try w.node(cp, "nsref", name, vis); // already expanded elsewhere (its canonical home)
                 continue;
             }
             if (parseChild(w, abs)) |child| {
+                try declFacts(w, cp, decl_loc, try joinDocs(w, decl_doc, try fileDoc(w, child)));
                 try w.visited.put(abs, {}); // mark visited only on a successful parse — a failed
                 try w.node(cp, "ns", name, vis); // read stays `nserr` and can be retried elsewhere
                 const child_dir = std.fs.path.dirname(abs) orelse ".";
                 try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
-            } else try w.node(cp, "nserr", name, vis);
+            } else {
+                try declFacts(w, cp, decl_loc, decl_doc);
+                try w.node(cp, "nserr", name, vis);
+            }
             continue;
         }
         try declFacts(w, cp, decl_loc, decl_doc);
@@ -604,7 +762,22 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             try w.node(cp, "alias", name, vis);
             try w.edge(cp, "alias", trimmed);
             try w.aliases.put(cp, trimmed);
-        } else try w.node(cp, "const", name, vis);
+        } else if (std.mem.eql(u8, trimmed, "@This()")) {
+            // `const Self = @This();` names its own container
+            try w.node(cp, "alias", name, vis);
+            try w.edge(cp, "alias", trimmed);
+            try w.aliases.put(cp, path);
+        } else {
+            try w.node(cp, "const", name, vis);
+            try w.attr(cp, "value", try collapse(w.arena, trimmed)); // the initializer as written
+            if (ast.nodeTag(init) == .merge_error_sets) {
+                try errorSetEdges(w, ast, cp, init); // `Error = A || B`
+            } else {
+                // `Sha256 = Sha2x32(iv256, 256)`: the const is what that factory returns
+                var cbuf: [1]Ast.Node.Index = undefined;
+                if (ast.fullCall(&cbuf, init)) |call| try w.edge(cp, "instantiates", try typeText(w, ast, call.ast.fn_expr));
+            }
+        }
     }
 }
 
@@ -787,12 +960,14 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         .generics = std.StringHashMap(void).init(arena),
         .edges = .empty,
         .root_dir = std.fs.path.dirname(root) orelse ".",
+        .root_name = root_name,
         .ast_cache = std.StringHashMap(*Ast).init(arena),
         .line_cache = std.StringHashMap([]usize).init(arena),
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
     try w.node(root_name, "ns", root_name, "pub");
+    try w.attr(root_name, "doc", try fileDoc(&w, &ast));
     const root_abs = std.fs.path.resolve(arena, &.{root}) catch root;
     try w.visited.put(root_abs, {});
 

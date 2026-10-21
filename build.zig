@@ -87,6 +87,16 @@ pub fn build(b: *std.Build) void {
     });
     const test_step = b.step("test", "run unit tests");
     {
+        // The extractor engine, on a fixture std written to a temp dir.
+        const t = b.addTest(.{ .root_module = b.createModule(.{
+            .root_source_file = b.path("src/test/parse_test.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = &.{.{ .name = "parse", .module = parse_mod }},
+        }) });
+        test_step.dependOn(&b.addRunArtifact(t).step);
+    }
+    {
         // The langref extractor is its own module (like the engines), so it is tested directly.
         const t = b.addTest(.{ .root_module = b.createModule(.{
             .root_source_file = b.path("src/test/langref_test.zig"),

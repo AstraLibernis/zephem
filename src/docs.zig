@@ -176,6 +176,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_EXAMPLES@@", try commafy(a, a_ex));
     try add(&list, a, "@@N_MOD@@", try commafy(a, eqCount(attrs, "attr", "mod")));
     try add(&list, a, "@@N_ERRMEMBER@@", try commafy(a, eqCount(attrs, "attr", "errmember")));
+    try add(&list, a, "@@N_TYPES@@", try commafy(a, eqCount(attrs, "attr", "type")));
     try add(&list, a, "@@N_FIELDS@@", try commafy(a, fields));
     try add(&list, a, "@@N_EDGES@@", try commafy(a, edges.rows.len));
     try add(&list, a, "@@N_BUILTINS@@", try commafy(a, builtins.rows.len));
@@ -187,6 +188,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_ERRSET@@", try commafy(a, eqCount(edges, "type", "error_set")));
     try add(&list, a, "@@N_IMPORTS@@", try commafy(a, eqCount(edges, "type", "imports")));
     try add(&list, a, "@@N_DELEGATES@@", try commafy(a, eqCount(edges, "type", "delegates")));
+    try add(&list, a, "@@N_INSTANTIATES@@", try commafy(a, eqCount(edges, "type", "instantiates")));
     try add(&list, a, "@@E_LOCAL@@", try commafy(a, e_local));
     try add(&list, a, "@@E_CROSS@@", try commafy(a, e_cross));
     try add(&list, a, "@@E_PRIM@@", try commafy(a, e_prim));

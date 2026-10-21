@@ -3,7 +3,7 @@ std	ns	std	pub
 std.AutoHashMap	alias	AutoHashMap	pub
 std.AutoHashMapUnmanaged	alias	AutoHashMapUnmanaged	pub
 std.BitStack	ns	BitStack	pub
-std.BitStack.BitStack	const	BitStack	priv
+std.BitStack.BitStack	alias	BitStack	priv
 std.BitStack.std	modref	std	priv
 std.BitStack.Allocator	alias	Allocator	priv
 std.BitStack.ArrayList	alias	ArrayList	priv
@@ -20,7 +20,7 @@ std.BitStack.peekWithState	fn	peekWithState	pub
 std.BitStack.popWithState	fn	popWithState	pub
 std.BitStack.testing	alias	testing	priv
 std.Build	ns	Build	pub
-std.Build.Build	const	Build	priv
+std.Build.Build	alias	Build	priv
 std.Build.builtin	modref	builtin	priv
 std.Build.std	nsref	std	priv
 std.Build.Io	alias	Io	priv
@@ -37,7 +37,7 @@ std.Build.File	alias	File	priv
 std.Build.Sha256	alias	Sha256	priv
 std.Build.ArrayList	alias	ArrayList	priv
 std.Build.Cache	ns	Cache	pub
-std.Build.Cache.Cache	const	Cache	priv
+std.Build.Cache.Cache	alias	Cache	priv
 std.Build.Cache.builtin	modref	builtin	priv
 std.Build.Cache.std	modref	std	priv
 std.Build.Cache.Io	alias	Io	priv
@@ -58,7 +58,7 @@ std.Build.Cache.prefixes_buffer	field	prefixes_buffer	pub
 std.Build.Cache.prefixes_len	field	prefixes_len	pub
 std.Build.Cache.cwd	field	cwd	pub
 std.Build.Cache.Path	ns	Path	pub
-std.Build.Cache.Path.Path	const	Path	priv
+std.Build.Cache.Path.Path	alias	Path	priv
 std.Build.Cache.Path.std	nsref	std	priv
 std.Build.Cache.Path.Io	alias	Io	priv
 std.Build.Cache.Path.fs	alias	fs	priv
@@ -98,7 +98,7 @@ std.Build.Cache.Path.TableAdapter.Hash	alias	Hash	pub
 std.Build.Cache.Path.TableAdapter.hash	fn	hash	pub
 std.Build.Cache.Path.TableAdapter.eql	fn	eql	pub
 std.Build.Cache.Directory	ns	Directory	pub
-std.Build.Cache.Directory.Directory	const	Directory	priv
+std.Build.Cache.Directory.Directory	alias	Directory	priv
 std.Build.Cache.Directory.std	nsref	std	priv
 std.Build.Cache.Directory.Io	alias	Io	priv
 std.Build.Cache.Directory.fs	alias	fs	priv
@@ -115,7 +115,7 @@ std.Build.Cache.Directory.closeAndFree	fn	closeAndFree	pub
 std.Build.Cache.Directory.format	fn	format	pub
 std.Build.Cache.Directory.eql	fn	eql	pub
 std.Build.Cache.DepTokenizer	ns	DepTokenizer	pub
-std.Build.Cache.DepTokenizer.Tokenizer	const	Tokenizer	priv
+std.Build.Cache.DepTokenizer.Tokenizer	alias	Tokenizer	priv
 std.Build.Cache.DepTokenizer.index	field	index	pub
 std.Build.Cache.DepTokenizer.bytes	field	bytes	pub
 std.Build.Cache.DepTokenizer.state	field	state	pub
@@ -283,7 +283,7 @@ std.Build.Cache.Manifest.populateOtherManifest	fn	populateOtherManifest	pub
 std.Build.Cache.hashFile	fn	hashFile	priv
 std.Build.Cache.testGetCurrentFileTimestamp	fn	testGetCurrentFileTimestamp	priv
 std.Build.Step	ns	Step	pub
-std.Build.Step.Step	const	Step	priv
+std.Build.Step.Step	alias	Step	priv
 std.Build.Step.builtin	modref	builtin	priv
 std.Build.Step.std	nsref	std	priv
 std.Build.Step.Io	alias	Io	priv
@@ -359,7 +359,7 @@ std.Build.Step.Id.options	tag	options	pub
 std.Build.Step.Id.custom	tag	custom	pub
 std.Build.Step.Id.Type	fn	Type	pub
 std.Build.Step.CheckFile	ns	CheckFile	pub
-std.Build.Step.CheckFile.CheckFile	const	CheckFile	priv
+std.Build.Step.CheckFile.CheckFile	alias	CheckFile	priv
 std.Build.Step.CheckFile.std	modref	std	priv
 std.Build.Step.CheckFile.Io	alias	Io	priv
 std.Build.Step.CheckFile.Step	alias	Step	priv
@@ -387,7 +387,7 @@ std.Build.Step.CheckObject.math	alias	math	priv
 std.Build.Step.CheckObject.mem	alias	mem	priv
 std.Build.Step.CheckObject.testing	alias	testing	priv
 std.Build.Step.CheckObject.Writer	alias	Writer	priv
-std.Build.Step.CheckObject.CheckObject	const	CheckObject	priv
+std.Build.Step.CheckObject.CheckObject	alias	CheckObject	priv
 std.Build.Step.CheckObject.Allocator	alias	Allocator	priv
 std.Build.Step.CheckObject.Step	alias	Step	priv
 std.Build.Step.CheckObject.base_id	const	base_id	pub
@@ -595,7 +595,7 @@ std.Build.Step.CheckObject.WasmDumper.parseDumpNames	fn	parseDumpNames	priv
 std.Build.Step.CheckObject.WasmDumper.parseDumpProducers	fn	parseDumpProducers	priv
 std.Build.Step.CheckObject.WasmDumper.parseDumpFeatures	fn	parseDumpFeatures	priv
 std.Build.Step.ConfigHeader	ns	ConfigHeader	pub
-std.Build.Step.ConfigHeader.ConfigHeader	const	ConfigHeader	priv
+std.Build.Step.ConfigHeader.ConfigHeader	alias	ConfigHeader	priv
 std.Build.Step.ConfigHeader.std	modref	std	priv
 std.Build.Step.ConfigHeader.Io	alias	Io	priv
 std.Build.Step.ConfigHeader.Step	alias	Step	priv
@@ -651,7 +651,7 @@ std.Build.Step.ConfigHeader.testReplaceVariablesCMake	fn	testReplaceVariablesCMa
 std.Build.Step.Fail	ns	Fail	pub
 std.Build.Step.Fail.std	modref	std	priv
 std.Build.Step.Fail.Step	alias	Step	priv
-std.Build.Step.Fail.Fail	const	Fail	priv
+std.Build.Step.Fail.Fail	alias	Fail	priv
 std.Build.Step.Fail.step	field	step	pub
 std.Build.Step.Fail.error_msg	field	error_msg	pub
 std.Build.Step.Fail.base_id	const	base_id	pub
@@ -660,7 +660,7 @@ std.Build.Step.Fail.make	fn	make	priv
 std.Build.Step.Fmt	ns	Fmt	pub
 std.Build.Step.Fmt.std	modref	std	priv
 std.Build.Step.Fmt.Step	alias	Step	priv
-std.Build.Step.Fmt.Fmt	const	Fmt	priv
+std.Build.Step.Fmt.Fmt	alias	Fmt	priv
 std.Build.Step.Fmt.step	field	step	pub
 std.Build.Step.Fmt.paths	field	paths	pub
 std.Build.Step.Fmt.exclude_paths	field	exclude_paths	pub
@@ -676,7 +676,7 @@ std.Build.Step.InstallArtifact	ns	InstallArtifact	pub
 std.Build.Step.InstallArtifact.std	modref	std	priv
 std.Build.Step.InstallArtifact.Step	alias	Step	priv
 std.Build.Step.InstallArtifact.InstallDir	alias	InstallDir	priv
-std.Build.Step.InstallArtifact.InstallArtifact	const	InstallArtifact	priv
+std.Build.Step.InstallArtifact.InstallArtifact	alias	InstallArtifact	priv
 std.Build.Step.InstallArtifact.fs	alias	fs	priv
 std.Build.Step.InstallArtifact.LazyPath	alias	LazyPath	priv
 std.Build.Step.InstallArtifact.step	field	step	pub
@@ -717,7 +717,7 @@ std.Build.Step.InstallDir.mem	alias	mem	priv
 std.Build.Step.InstallDir.fs	alias	fs	priv
 std.Build.Step.InstallDir.Step	alias	Step	priv
 std.Build.Step.InstallDir.LazyPath	alias	LazyPath	priv
-std.Build.Step.InstallDir.InstallDir	const	InstallDir	priv
+std.Build.Step.InstallDir.InstallDir	alias	InstallDir	priv
 std.Build.Step.InstallDir.step	field	step	pub
 std.Build.Step.InstallDir.options	field	options	pub
 std.Build.Step.InstallDir.base_id	const	base_id	pub
@@ -736,7 +736,7 @@ std.Build.Step.InstallFile.std	modref	std	priv
 std.Build.Step.InstallFile.Step	alias	Step	priv
 std.Build.Step.InstallFile.LazyPath	alias	LazyPath	priv
 std.Build.Step.InstallFile.InstallDir	alias	InstallDir	priv
-std.Build.Step.InstallFile.InstallFile	const	InstallFile	priv
+std.Build.Step.InstallFile.InstallFile	alias	InstallFile	priv
 std.Build.Step.InstallFile.assert	alias	assert	priv
 std.Build.Step.InstallFile.base_id	const	base_id	pub
 std.Build.Step.InstallFile.step	field	step	pub
@@ -747,7 +747,7 @@ std.Build.Step.InstallFile.create	fn	create	pub
 std.Build.Step.InstallFile.make	fn	make	priv
 std.Build.Step.ObjCopy	ns	ObjCopy	pub
 std.Build.Step.ObjCopy.std	modref	std	priv
-std.Build.Step.ObjCopy.ObjCopy	const	ObjCopy	priv
+std.Build.Step.ObjCopy.ObjCopy	alias	ObjCopy	priv
 std.Build.Step.ObjCopy.Allocator	alias	Allocator	priv
 std.Build.Step.ObjCopy.ArenaAllocator	alias	ArenaAllocator	priv
 std.Build.Step.ObjCopy.File	alias	File	priv
@@ -813,7 +813,7 @@ std.Build.Step.ObjCopy.getOutput	fn	getOutput	pub
 std.Build.Step.ObjCopy.getOutputSeparatedDebug	fn	getOutputSeparatedDebug	pub
 std.Build.Step.ObjCopy.make	fn	make	priv
 std.Build.Step.Compile	ns	Compile	pub
-std.Build.Step.Compile.Compile	const	Compile	priv
+std.Build.Step.Compile.Compile	alias	Compile	priv
 std.Build.Step.Compile.builtin	modref	builtin	priv
 std.Build.Step.Compile.std	modref	std	priv
 std.Build.Step.Compile.Io	alias	Io	priv
@@ -1037,7 +1037,7 @@ std.Build.Step.Compile.rootModuleTarget	fn	rootModuleTarget	pub
 std.Build.Step.Compile.moduleNeedsCliArg	fn	moduleNeedsCliArg	priv
 std.Build.Step.Compile.getCompileDependencies	fn	getCompileDependencies	pub
 std.Build.Step.Options	ns	Options	pub
-std.Build.Step.Options.Options	const	Options	priv
+std.Build.Step.Options.Options	alias	Options	priv
 std.Build.Step.Options.builtin	modref	builtin	priv
 std.Build.Step.Options.std	modref	std	priv
 std.Build.Step.Options.Io	alias	Io	priv
@@ -1067,7 +1067,7 @@ std.Build.Step.Options.Arg	struct	Arg	priv
 std.Build.Step.Options.Arg.name	field	name	pub
 std.Build.Step.Options.Arg.path	field	path	pub
 std.Build.Step.Run	ns	Run	pub
-std.Build.Step.Run.Run	const	Run	priv
+std.Build.Step.Run.Run	alias	Run	priv
 std.Build.Step.Run.builtin	modref	builtin	priv
 std.Build.Step.Run.std	modref	std	priv
 std.Build.Step.Run.Io	alias	Io	priv
@@ -1292,7 +1292,7 @@ std.Build.Step.TranslateC.Step	alias	Step	priv
 std.Build.Step.TranslateC.LazyPath	alias	LazyPath	priv
 std.Build.Step.TranslateC.fs	alias	fs	priv
 std.Build.Step.TranslateC.mem	alias	mem	priv
-std.Build.Step.TranslateC.TranslateC	const	TranslateC	priv
+std.Build.Step.TranslateC.TranslateC	alias	TranslateC	priv
 std.Build.Step.TranslateC.base_id	const	base_id	pub
 std.Build.Step.TranslateC.step	field	step	pub
 std.Build.Step.TranslateC.source	field	source	pub
@@ -1332,7 +1332,7 @@ std.Build.Step.TranslateC.defineCMacroRaw	fn	defineCMacroRaw	pub
 std.Build.Step.TranslateC.make	fn	make	priv
 std.Build.Step.TranslateC.linkSystemLibrary	fn	linkSystemLibrary	pub
 std.Build.Step.WriteFile	ns	WriteFile	pub
-std.Build.Step.WriteFile.WriteFile	const	WriteFile	priv
+std.Build.Step.WriteFile.WriteFile	alias	WriteFile	priv
 std.Build.Step.WriteFile.std	modref	std	priv
 std.Build.Step.WriteFile.Io	alias	Io	priv
 std.Build.Step.WriteFile.Dir	alias	Dir	priv
@@ -1373,7 +1373,7 @@ std.Build.Step.WriteFile.maybeUpdateName	fn	maybeUpdateName	priv
 std.Build.Step.WriteFile.make	fn	make	priv
 std.Build.Step.WriteFile.operate	fn	operate	priv
 std.Build.Step.UpdateSourceFiles	ns	UpdateSourceFiles	pub
-std.Build.Step.UpdateSourceFiles.UpdateSourceFiles	const	UpdateSourceFiles	priv
+std.Build.Step.UpdateSourceFiles.UpdateSourceFiles	alias	UpdateSourceFiles	priv
 std.Build.Step.UpdateSourceFiles.std	modref	std	priv
 std.Build.Step.UpdateSourceFiles.Io	alias	Io	priv
 std.Build.Step.UpdateSourceFiles.Step	alias	Step	priv
@@ -1616,7 +1616,7 @@ std.Build.Module.Graph	struct	Graph	pub
 std.Build.Module.Graph.modules	field	modules	pub
 std.Build.Module.Graph.names	field	names	pub
 std.Build.Module.getGraph	fn	getGraph	pub
-std.Build.Module.Module	const	Module	priv
+std.Build.Module.Module	alias	Module	priv
 std.Build.Module.std	modref	std	priv
 std.Build.Module.assert	alias	assert	priv
 std.Build.Module.LazyPath	alias	LazyPath	priv
@@ -1630,7 +1630,7 @@ std.Build.Watch.Step	alias	Step	priv
 std.Build.Watch.Allocator	alias	Allocator	priv
 std.Build.Watch.assert	alias	assert	priv
 std.Build.Watch.fatal	alias	fatal	priv
-std.Build.Watch.Watch	const	Watch	priv
+std.Build.Watch.Watch	alias	Watch	priv
 std.Build.Watch.FsEvents	ns	FsEvents	priv
 std.Build.Watch.FsEvents.enable_debug_logs	alias	enable_debug_logs	priv
 std.Build.Watch.FsEvents.core_services	field	core_services	pub
@@ -1740,7 +1740,7 @@ std.Build.Watch.FsEvents.Io	alias	Io	priv
 std.Build.Watch.FsEvents.assert	alias	assert	priv
 std.Build.Watch.FsEvents.Allocator	alias	Allocator	priv
 std.Build.Watch.FsEvents.watch_log	const	watch_log	priv
-std.Build.Watch.FsEvents.FsEvents	const	FsEvents	priv
+std.Build.Watch.FsEvents.FsEvents	alias	FsEvents	priv
 std.Build.Watch.os	field	os	pub
 std.Build.Watch.dir_count	field	dir_count	pub
 std.Build.Watch.dir_table	field	dir_table	pub
@@ -1785,7 +1785,7 @@ std.Build.Fuzz.Allocator	alias	Allocator	priv
 std.Build.Fuzz.log	alias	log	priv
 std.Build.Fuzz.Coverage	alias	Coverage	priv
 std.Build.Fuzz.abi	alias	abi	priv
-std.Build.Fuzz.Fuzz	const	Fuzz	priv
+std.Build.Fuzz.Fuzz	alias	Fuzz	priv
 std.Build.Fuzz.build_runner	modref	build_runner	priv
 std.Build.Fuzz.gpa	field	gpa	pub
 std.Build.Fuzz.io	field	io	pub
@@ -1905,7 +1905,7 @@ std.Build.WebServer.Cache	alias	Cache	priv
 std.Build.WebServer.Fuzz	alias	Fuzz	priv
 std.Build.WebServer.abi	alias	abi	priv
 std.Build.WebServer.http	alias	http	priv
-std.Build.WebServer.WebServer	const	WebServer	priv
+std.Build.WebServer.WebServer	alias	WebServer	priv
 std.Build.abi	ns	abi	pub
 std.Build.abi.std	modref	std	priv
 std.Build.abi.ToClientTag	enum	ToClientTag	pub
@@ -2452,7 +2452,7 @@ std.StaticStringMap	alias	StaticStringMap	pub
 std.StaticStringMapWithEql	alias	StaticStringMapWithEql	pub
 std.Deque	fn	Deque	pub
 std.Deque()	struct	Deque	pub
-std.Deque().Self	const	Self	priv
+std.Deque().Self	alias	Self	priv
 std.Deque().buffer	field	buffer	pub
 std.Deque().head	field	head	pub
 std.Deque().len	field	len	pub
@@ -2497,7 +2497,7 @@ std.DoublyLinkedList.std	nsref	std	priv
 std.DoublyLinkedList.debug	alias	debug	priv
 std.DoublyLinkedList.assert	alias	assert	priv
 std.DoublyLinkedList.testing	alias	testing	priv
-std.DoublyLinkedList.DoublyLinkedList	const	DoublyLinkedList	priv
+std.DoublyLinkedList.DoublyLinkedList	alias	DoublyLinkedList	priv
 std.DoublyLinkedList.first	field	first	pub
 std.DoublyLinkedList.last	field	last	pub
 std.DoublyLinkedList.Node	struct	Node	pub
@@ -2528,7 +2528,7 @@ std.EnumSet	alias	EnumSet	pub
 std.HashMap	alias	HashMap	pub
 std.HashMapUnmanaged	alias	HashMapUnmanaged	pub
 std.Io	ns	Io	pub
-std.Io.Io	const	Io	priv
+std.Io.Io	alias	Io	priv
 std.Io.builtin	modref	builtin	priv
 std.Io.std	nsref	std	priv
 std.Io.math	alias	math	priv
@@ -2538,7 +2538,7 @@ std.Io.Alignment	alias	Alignment	priv
 std.Io.userdata	field	userdata	pub
 std.Io.vtable	field	vtable	pub
 std.Io.Threaded	ns	Threaded	pub
-std.Io.Threaded.Threaded	const	Threaded	priv
+std.Io.Threaded.Threaded	alias	Threaded	priv
 std.Io.Threaded.builtin	modref	builtin	priv
 std.Io.Threaded.native_os	alias	native_os	priv
 std.Io.Threaded.is_windows	const	is_windows	priv
@@ -3309,7 +3309,7 @@ std.Io.Dispatch.default_PATH	alias	default_PATH	priv
 std.Io.Dispatch.Dir	alias	Dir	priv
 std.Io.Dispatch.Environ	alias	Environ	priv
 std.Io.Dispatch.errnoBug	alias	errnoBug	priv
-std.Io.Dispatch.Evented	const	Evented	priv
+std.Io.Dispatch.Evented	alias	Evented	priv
 std.Io.Dispatch.fallbackSeed	alias	fallbackSeed	priv
 std.Io.Dispatch.File	alias	File	priv
 std.Io.Dispatch.Io	alias	Io	priv
@@ -3756,7 +3756,7 @@ std.Io.Dispatch.iovlen_t	const	iovlen_t	priv
 std.Io.Dispatch.addConstBuf	fn	addConstBuf	priv
 std.Io.Dispatch.addBuf	fn	addBuf	priv
 std.Io.Kqueue	ns	Kqueue	pub
-std.Io.Kqueue.Kqueue	const	Kqueue	priv
+std.Io.Kqueue.Kqueue	alias	Kqueue	priv
 std.Io.Kqueue.builtin	modref	builtin	priv
 std.Io.Kqueue.std	nsref	std	priv
 std.Io.Kqueue.Io	alias	Io	priv
@@ -3942,7 +3942,7 @@ std.Io.Uring.default_PATH	alias	default_PATH	priv
 std.Io.Uring.Dir	alias	Dir	priv
 std.Io.Uring.Environ	alias	Environ	priv
 std.Io.Uring.errnoBug	alias	errnoBug	priv
-std.Io.Uring.Evented	const	Evented	priv
+std.Io.Uring.Evented	alias	Evented	priv
 std.Io.Uring.fallbackSeed	alias	fallbackSeed	priv
 std.Io.Uring.fd_t	alias	fd_t	priv
 std.Io.Uring.File	alias	File	priv
@@ -4364,7 +4364,7 @@ std.Io.Uring.utimensat	fn	utimensat	priv
 std.Io.Uring.writeAllSync	fn	writeAllSync	priv
 std.Io.Uring.writeSync	fn	writeSync	priv
 std.Io.Reader	ns	Reader	pub
-std.Io.Reader.Reader	const	Reader	priv
+std.Io.Reader.Reader	alias	Reader	priv
 std.Io.Reader.builtin	modref	builtin	priv
 std.Io.Reader.native_endian	const	native_endian	priv
 std.Io.Reader.std	nsref	std	priv
@@ -4375,7 +4375,7 @@ std.Io.Reader.testing	alias	testing	priv
 std.Io.Reader.Allocator	alias	Allocator	priv
 std.Io.Reader.ArrayList	alias	ArrayList	priv
 std.Io.Reader.Limited	ns	Limited	pub
-std.Io.Reader.Limited.Limited	const	Limited	priv
+std.Io.Reader.Limited.Limited	alias	Limited	priv
 std.Io.Reader.Limited.std	nsref	std	priv
 std.Io.Reader.Limited.Reader	alias	Reader	priv
 std.Io.Reader.Limited.Writer	alias	Writer	priv
@@ -4500,7 +4500,7 @@ std.Io.Reader.writableVectorWsa	fn	writableVectorWsa	pub
 std.Io.Reader.writableVector	fn	writableVector	pub
 std.Io.Reader.testLeb128	fn	testLeb128	priv
 std.Io.Writer	ns	Writer	pub
-std.Io.Writer.Writer	const	Writer	priv
+std.Io.Writer.Writer	alias	Writer	priv
 std.Io.Writer.builtin	modref	builtin	priv
 std.Io.Writer.native_endian	const	native_endian	priv
 std.Io.Writer.std	nsref	std	priv
@@ -4668,7 +4668,7 @@ std.Io.net.std	nsref	std	priv
 std.Io.net.Io	alias	Io	priv
 std.Io.net.assert	alias	assert	priv
 std.Io.net.HostName	ns	HostName	pub
-std.Io.net.HostName.HostName	const	HostName	priv
+std.Io.net.HostName.HostName	alias	HostName	priv
 std.Io.net.HostName.builtin	modref	builtin	priv
 std.Io.net.HostName.native_os	alias	native_os	priv
 std.Io.net.HostName.std	nsref	std	priv
@@ -4990,7 +4990,7 @@ std.Io.net.Server.accept	fn	accept	pub
 std.Io.net.testIp6Parse	fn	testIp6Parse	priv
 std.Io.net.testIp6ParseTransform	fn	testIp6ParseTransform	priv
 std.Io.Dir	ns	Dir	pub
-std.Io.Dir.Dir	const	Dir	priv
+std.Io.Dir.Dir	alias	Dir	priv
 std.Io.Dir.root	modref	root	priv
 std.Io.Dir.builtin	modref	builtin	priv
 std.Io.Dir.native_os	alias	native_os	priv
@@ -5213,7 +5213,7 @@ std.Io.Dir.SetTimestampsNowOptions	struct	SetTimestampsNowOptions	pub
 std.Io.Dir.SetTimestampsNowOptions.follow_symlinks	field	follow_symlinks	pub
 std.Io.Dir.setTimestampsNow	fn	setTimestampsNow	pub
 std.Io.File	ns	File	pub
-std.Io.File.File	const	File	priv
+std.Io.File.File	alias	File	priv
 std.Io.File.builtin	modref	builtin	priv
 std.Io.File.native_os	alias	native_os	priv
 std.Io.File.is_windows	const	is_windows	priv
@@ -5227,7 +5227,7 @@ std.Io.File.Flags	struct	Flags	pub
 std.Io.File.Flags.nonblocking	field	nonblocking	pub
 std.Io.File.Handle	alias	Handle	pub
 std.Io.File.Reader	ns	Reader	pub
-std.Io.File.Reader.Reader	const	Reader	priv
+std.Io.File.Reader.Reader	alias	Reader	priv
 std.Io.File.Reader.std	nsref	std	priv
 std.Io.File.Reader.Io	alias	Io	priv
 std.Io.File.Reader.File	alias	File	priv
@@ -5270,7 +5270,7 @@ std.Io.File.Reader.readVecStreaming	fn	readVecStreaming	priv
 std.Io.File.Reader.discard	fn	discard	priv
 std.Io.File.Reader.atEnd	fn	atEnd	pub
 std.Io.File.Writer	ns	Writer	pub
-std.Io.File.Writer.Writer	const	Writer	priv
+std.Io.File.Writer.Writer	alias	Writer	priv
 std.Io.File.Writer.builtin	modref	builtin	priv
 std.Io.File.Writer.is_windows	const	is_windows	priv
 std.Io.File.Writer.std	nsref	std	priv
@@ -5307,7 +5307,7 @@ std.Io.File.Writer.EndError	const	EndError	pub
 std.Io.File.Writer.end	fn	end	pub
 std.Io.File.Writer.flush	fn	flush	pub
 std.Io.File.Atomic	ns	Atomic	pub
-std.Io.File.Atomic.Atomic	const	Atomic	priv
+std.Io.File.Atomic.Atomic	alias	Atomic	priv
 std.Io.File.Atomic.std	nsref	std	priv
 std.Io.File.Atomic.Io	alias	Io	priv
 std.Io.File.Atomic.File	alias	File	priv
@@ -5327,7 +5327,7 @@ std.Io.File.Atomic.link	fn	link	pub
 std.Io.File.Atomic.ReplaceError	alias	ReplaceError	pub
 std.Io.File.Atomic.replace	fn	replace	pub
 std.Io.File.MemoryMap	ns	MemoryMap	pub
-std.Io.File.MemoryMap.MemoryMap	const	MemoryMap	priv
+std.Io.File.MemoryMap.MemoryMap	alias	MemoryMap	priv
 std.Io.File.MemoryMap.builtin	modref	builtin	priv
 std.Io.File.MemoryMap.native_os	alias	native_os	priv
 std.Io.File.MemoryMap.is_windows	const	is_windows	priv
@@ -5354,7 +5354,7 @@ std.Io.File.MemoryMap.setLength	fn	setLength	pub
 std.Io.File.MemoryMap.read	fn	read	pub
 std.Io.File.MemoryMap.write	fn	write	pub
 std.Io.File.MultiReader	ns	MultiReader	pub
-std.Io.File.MultiReader.MultiReader	const	MultiReader	priv
+std.Io.File.MultiReader.MultiReader	alias	MultiReader	priv
 std.Io.File.MultiReader.std	nsref	std	priv
 std.Io.File.MultiReader.Io	alias	Io	priv
 std.Io.File.MultiReader.File	alias	File	priv
@@ -5493,7 +5493,7 @@ std.Io.File.HardLinkError	const	HardLinkError	pub
 std.Io.File.hardLink	fn	hardLink	pub
 std.Io.File.createMemoryMap	fn	createMemoryMap	pub
 std.Io.Terminal	ns	Terminal	pub
-std.Io.Terminal.Terminal	const	Terminal	priv
+std.Io.Terminal.Terminal	alias	Terminal	priv
 std.Io.Terminal.builtin	modref	builtin	priv
 std.Io.Terminal.is_windows	const	is_windows	priv
 std.Io.Terminal.std	modref	std	priv
@@ -5530,7 +5530,7 @@ std.Io.Terminal.Mode.detect	fn	detect	pub
 std.Io.Terminal.SetColorError	const	SetColorError	pub
 std.Io.Terminal.setColor	fn	setColor	pub
 std.Io.RwLock	ns	RwLock	pub
-std.Io.RwLock.RwLock	const	RwLock	priv
+std.Io.RwLock.RwLock	alias	RwLock	priv
 std.Io.RwLock.builtin	modref	builtin	priv
 std.Io.RwLock.std	nsref	std	priv
 std.Io.RwLock.Io	alias	Io	priv
@@ -5557,7 +5557,7 @@ std.Io.RwLock.unlockShared	fn	unlockShared	pub
 std.Io.RwLock.semaphoreLockCancel	fn	semaphoreLockCancel	priv
 std.Io.RwLock.mutexLockCancel	fn	mutexLockCancel	priv
 std.Io.Semaphore	ns	Semaphore	pub
-std.Io.Semaphore.Semaphore	const	Semaphore	priv
+std.Io.Semaphore.Semaphore	alias	Semaphore	priv
 std.Io.Semaphore.builtin	modref	builtin	priv
 std.Io.Semaphore.std	nsref	std	priv
 std.Io.Semaphore.Io	alias	Io	priv
@@ -5869,7 +5869,7 @@ std.Io.Select()	struct	Select	pub
 std.Io.Select().io	field	io	pub
 std.Io.Select().group	field	group	pub
 std.Io.Select().queue	field	queue	pub
-std.Io.Select().S	const	S	priv
+std.Io.Select().S	alias	S	priv
 std.Io.Select().Union	alias	Union	pub
 std.Io.Select().Field	const	Field	pub
 std.Io.Select().init	fn	init	pub
@@ -6108,7 +6108,7 @@ std.MultiArrayList().Slice.toMultiArrayList	fn	toMultiArrayList	pub
 std.MultiArrayList().Slice.deinit	fn	deinit	pub
 std.MultiArrayList().Slice.subslice	fn	subslice	pub
 std.MultiArrayList().Slice.dbHelper	fn	dbHelper	priv
-std.MultiArrayList().Self	const	Self	priv
+std.MultiArrayList().Self	alias	Self	priv
 std.MultiArrayList().fields	const	fields	priv
 std.MultiArrayList().sizes	const	sizes	priv
 std.MultiArrayList().deinit	fn	deinit	pub
@@ -6153,7 +6153,7 @@ std.MultiArrayList().Entry	const	Entry	priv
 std.MultiArrayList().dbHelper	fn	dbHelper	priv
 std.PriorityQueue	fn	PriorityQueue	pub
 std.PriorityQueue()	struct	PriorityQueue	pub
-std.PriorityQueue().Self	const	Self	priv
+std.PriorityQueue().Self	alias	Self	priv
 std.PriorityQueue().items	field	items	pub
 std.PriorityQueue().cap	field	cap	pub
 std.PriorityQueue().context	field	context	pub
@@ -6187,7 +6187,7 @@ std.PriorityQueue().Iterator.reset	fn	reset	pub
 std.PriorityQueue().iterator	fn	iterator	pub
 std.PriorityDequeue	fn	PriorityDequeue	pub
 std.PriorityDequeue()	struct	PriorityDequeue	pub
-std.PriorityDequeue().Self	const	Self	priv
+std.PriorityDequeue().Self	alias	Self	priv
 std.PriorityDequeue().items	field	items	pub
 std.PriorityDequeue().len	field	len	pub
 std.PriorityDequeue().context	field	context	pub
@@ -6240,7 +6240,7 @@ std.PriorityDequeue().grandparentIndex	fn	grandparentIndex	priv
 std.PriorityDequeue().firstChildIndex	fn	firstChildIndex	priv
 std.PriorityDequeue().firstGrandchildIndex	fn	firstGrandchildIndex	priv
 std.Progress	ns	Progress	pub
-std.Progress.Progress	const	Progress	priv
+std.Progress.Progress	alias	Progress	priv
 std.Progress.builtin	modref	builtin	priv
 std.Progress.is_big_endian	const	is_big_endian	priv
 std.Progress.is_windows	const	is_windows	priv
@@ -6442,7 +6442,7 @@ std.Progress.have_sigwinch	const	have_sigwinch	priv
 std.Progress.copyAtomicStore	fn	copyAtomicStore	priv
 std.Progress.copyAtomicLoad	fn	copyAtomicLoad	priv
 std.Random	ns	Random	pub
-std.Random.Random	const	Random	priv
+std.Random.Random	alias	Random	priv
 std.Random.std	nsref	std	priv
 std.Random.math	alias	math	priv
 std.Random.mem	alias	mem	priv
@@ -6453,7 +6453,7 @@ std.Random.DefaultCsprng	alias	DefaultCsprng	pub
 std.Random.Ascon	ns	Ascon	pub
 std.Random.Ascon.std	modref	std	priv
 std.Random.Ascon.mem	alias	mem	priv
-std.Random.Ascon.Self	const	Self	priv
+std.Random.Ascon.Self	alias	Self	priv
 std.Random.Ascon.Ascon	const	Ascon	priv
 std.Random.Ascon.state	field	state	pub
 std.Random.Ascon.rate	const	rate	priv
@@ -6465,7 +6465,7 @@ std.Random.Ascon.fill	fn	fill	pub
 std.Random.ChaCha	ns	ChaCha	pub
 std.Random.ChaCha.std	modref	std	priv
 std.Random.ChaCha.mem	alias	mem	priv
-std.Random.ChaCha.Self	const	Self	priv
+std.Random.ChaCha.Self	alias	Self	priv
 std.Random.ChaCha.Cipher	alias	Cipher	priv
 std.Random.ChaCha.State	const	State	priv
 std.Random.ChaCha.state	field	state	pub
@@ -6480,7 +6480,7 @@ std.Random.ChaCha.fill	fn	fill	pub
 std.Random.Isaac64	ns	Isaac64	pub
 std.Random.Isaac64.std	modref	std	priv
 std.Random.Isaac64.mem	alias	mem	priv
-std.Random.Isaac64.Isaac64	const	Isaac64	priv
+std.Random.Isaac64.Isaac64	alias	Isaac64	priv
 std.Random.Isaac64.r	field	r	pub
 std.Random.Isaac64.m	field	m	pub
 std.Random.Isaac64.a	field	a	pub
@@ -6496,7 +6496,7 @@ std.Random.Isaac64.seed	fn	seed	priv
 std.Random.Isaac64.fill	fn	fill	pub
 std.Random.Pcg	ns	Pcg	pub
 std.Random.Pcg.std	modref	std	priv
-std.Random.Pcg.Pcg	const	Pcg	priv
+std.Random.Pcg.Pcg	alias	Pcg	priv
 std.Random.Pcg.default_multiplier	const	default_multiplier	priv
 std.Random.Pcg.s	field	s	pub
 std.Random.Pcg.i	field	i	pub
@@ -6509,7 +6509,7 @@ std.Random.Pcg.fill	fn	fill	pub
 std.Random.Xoroshiro128	ns	Xoroshiro128	pub
 std.Random.Xoroshiro128.std	modref	std	priv
 std.Random.Xoroshiro128.math	alias	math	priv
-std.Random.Xoroshiro128.Xoroshiro128	const	Xoroshiro128	priv
+std.Random.Xoroshiro128.Xoroshiro128	alias	Xoroshiro128	priv
 std.Random.Xoroshiro128.s	field	s	pub
 std.Random.Xoroshiro128.init	fn	init	pub
 std.Random.Xoroshiro128.random	fn	random	pub
@@ -6520,7 +6520,7 @@ std.Random.Xoroshiro128.fill	fn	fill	pub
 std.Random.Xoshiro256	ns	Xoshiro256	pub
 std.Random.Xoshiro256.std	modref	std	priv
 std.Random.Xoshiro256.math	alias	math	priv
-std.Random.Xoshiro256.Xoshiro256	const	Xoshiro256	priv
+std.Random.Xoshiro256.Xoshiro256	alias	Xoshiro256	priv
 std.Random.Xoshiro256.s	field	s	pub
 std.Random.Xoshiro256.init	fn	init	pub
 std.Random.Xoshiro256.random	fn	random	pub
@@ -6531,7 +6531,7 @@ std.Random.Xoshiro256.fill	fn	fill	pub
 std.Random.Sfc64	ns	Sfc64	pub
 std.Random.Sfc64.std	modref	std	priv
 std.Random.Sfc64.math	alias	math	priv
-std.Random.Sfc64.Sfc64	const	Sfc64	priv
+std.Random.Sfc64.Sfc64	alias	Sfc64	priv
 std.Random.Sfc64.a	field	a	pub
 std.Random.Sfc64.b	field	b	pub
 std.Random.Sfc64.c	field	c	pub
@@ -6547,7 +6547,7 @@ std.Random.Sfc64.fill	fn	fill	pub
 std.Random.RomuTrio	ns	RomuTrio	pub
 std.Random.RomuTrio.std	modref	std	priv
 std.Random.RomuTrio.math	alias	math	priv
-std.Random.RomuTrio.RomuTrio	const	RomuTrio	priv
+std.Random.RomuTrio.RomuTrio	alias	RomuTrio	priv
 std.Random.RomuTrio.x_state	field	x_state	pub
 std.Random.RomuTrio.y_state	field	y_state	pub
 std.Random.RomuTrio.z_state	field	z_state	pub
@@ -6558,7 +6558,7 @@ std.Random.RomuTrio.seedWithBuf	fn	seedWithBuf	pub
 std.Random.RomuTrio.seed	fn	seed	pub
 std.Random.RomuTrio.fill	fn	fill	pub
 std.Random.SplitMix64	ns	SplitMix64	pub
-std.Random.SplitMix64.SplitMix64	const	SplitMix64	priv
+std.Random.SplitMix64.SplitMix64	alias	SplitMix64	priv
 std.Random.SplitMix64.s	field	s	pub
 std.Random.SplitMix64.init	fn	init	pub
 std.Random.SplitMix64.next	fn	next	pub
@@ -6597,7 +6597,7 @@ std.Random.lcg.Wrapping().a	field	a	pub
 std.Random.lcg.Wrapping().c	field	c	pub
 std.Random.lcg.Wrapping().init	fn	init	pub
 std.Random.lcg.Wrapping().next	fn	next	pub
-std.Random.lcg.Wrapping().LcgSelf	const	LcgSelf	priv
+std.Random.lcg.Wrapping().LcgSelf	alias	LcgSelf	priv
 std.Random.ptr	field	ptr	pub
 std.Random.fillFn	field	fillFn	pub
 std.Random.IoSource	struct	IoSource	pub
@@ -6629,7 +6629,7 @@ std.Random.limitRangeBiased	fn	limitRangeBiased	pub
 std.Random.MinArrayIndex	fn	MinArrayIndex	priv
 std.SemanticVersion	ns	SemanticVersion	pub
 std.SemanticVersion.std	modref	std	priv
-std.SemanticVersion.Version	const	Version	priv
+std.SemanticVersion.Version	alias	Version	priv
 std.SemanticVersion.major	field	major	pub
 std.SemanticVersion.minor	field	minor	pub
 std.SemanticVersion.patch	field	patch	pub
@@ -6651,7 +6651,7 @@ std.SinglyLinkedList.std	nsref	std	priv
 std.SinglyLinkedList.debug	alias	debug	priv
 std.SinglyLinkedList.assert	alias	assert	priv
 std.SinglyLinkedList.testing	alias	testing	priv
-std.SinglyLinkedList.SinglyLinkedList	const	SinglyLinkedList	priv
+std.SinglyLinkedList.SinglyLinkedList	alias	SinglyLinkedList	priv
 std.SinglyLinkedList.first	field	first	pub
 std.SinglyLinkedList.Node	struct	Node	pub
 std.SinglyLinkedList.Node.next	field	next	pub
@@ -6674,7 +6674,7 @@ std.Target.abi	field	abi	pub
 std.Target.ofmt	field	ofmt	pub
 std.Target.dynamic_linker	field	dynamic_linker	pub
 std.Target.Query	ns	Query	pub
-std.Target.Query.Query	const	Query	priv
+std.Target.Query.Query	alias	Query	priv
 std.Target.Query.std	nsref	std	priv
 std.Target.Query.builtin	modref	builtin	priv
 std.Target.Query.assert	alias	assert	priv
@@ -10443,13 +10443,13 @@ std.Target.cTypeAlignment	fn	cTypeAlignment	pub
 std.Target.cTypePreferredAlignment	fn	cTypePreferredAlignment	pub
 std.Target.cMaxIntAlignment	fn	cMaxIntAlignment	pub
 std.Target.cCallingConvention	fn	cCallingConvention	pub
-std.Target.Target	const	Target	priv
+std.Target.Target	alias	Target	priv
 std.Target.std	nsref	std	priv
 std.Target.builtin	modref	builtin	priv
 std.Target.Allocator	alias	Allocator	priv
 std.Target.assert	alias	assert	priv
 std.Thread	ns	Thread	pub
-std.Thread.Thread	const	Thread	priv
+std.Thread.Thread	alias	Thread	priv
 std.Thread.builtin	modref	builtin	priv
 std.Thread.target	alias	target	priv
 std.Thread.native_os	alias	native_os	priv
@@ -10577,7 +10577,7 @@ std.Thread.testTls	fn	testTls	priv
 std.Thread.maybeAttachSignalStack	fn	maybeAttachSignalStack	pub
 std.Treap	fn	Treap	pub
 std.Treap()	struct	Treap	pub
-std.Treap().Self	const	Self	priv
+std.Treap().Self	alias	Self	priv
 std.Treap().compare	fn	compare	priv
 std.Treap().root	field	root	pub
 std.Treap().prng	field	prng	pub
@@ -10616,7 +10616,7 @@ std.Tz	alias	Tz	pub
 std.Uri	ns	Uri	pub
 std.Uri.std	nsref	std	priv
 std.Uri.testing	alias	testing	priv
-std.Uri.Uri	const	Uri	priv
+std.Uri.Uri	alias	Uri	priv
 std.Uri.Allocator	alias	Allocator	priv
 std.Uri.Writer	alias	Writer	priv
 std.Uri.HostName	alias	HostName	priv
@@ -10702,7 +10702,7 @@ std.array_list.ArrayList	alias	ArrayList	priv
 std.array_list.Managed	fn	Managed	pub
 std.array_list.AlignedManaged	fn	AlignedManaged	pub
 std.array_list.AlignedManaged()	struct	AlignedManaged	pub
-std.array_list.AlignedManaged().Self	const	Self	priv
+std.array_list.AlignedManaged().Self	alias	Self	priv
 std.array_list.AlignedManaged().items	field	items	pub
 std.array_list.AlignedManaged().capacity	field	capacity	pub
 std.array_list.AlignedManaged().allocator	field	allocator	pub
@@ -10757,7 +10757,7 @@ std.array_list.AlignedManaged().getLast	fn	getLast	pub
 std.array_list.AlignedManaged().getLastOrNull	fn	getLastOrNull	pub
 std.array_list.Aligned	fn	Aligned	pub
 std.array_list.Aligned()	struct	Aligned	pub
-std.array_list.Aligned().Self	const	Self	priv
+std.array_list.Aligned().Self	alias	Self	priv
 std.array_list.Aligned().items	field	items	pub
 std.array_list.Aligned().capacity	field	capacity	pub
 std.array_list.Aligned().empty	const	empty	pub
@@ -10851,7 +10851,7 @@ std.array_hash_map.mem	alias	mem	priv
 std.array_hash_map.autoHash	alias	autoHash	priv
 std.array_hash_map.Wyhash	alias	Wyhash	priv
 std.array_hash_map.Allocator	alias	Allocator	priv
-std.array_hash_map.hash_map	const	hash_map	priv
+std.array_hash_map.hash_map	alias	hash_map	priv
 std.array_hash_map.Auto	fn	Auto	pub
 std.array_hash_map.String	fn	String	pub
 std.array_hash_map.StringContext	struct	StringContext	pub
@@ -10884,7 +10884,7 @@ std.array_hash_map.Custom().GetOrPutResult.value_ptr	field	value_ptr	pub
 std.array_hash_map.Custom().GetOrPutResult.found_existing	field	found_existing	pub
 std.array_hash_map.Custom().GetOrPutResult.index	field	index	pub
 std.array_hash_map.Custom().ByIndexContext	const	ByIndexContext	priv
-std.array_hash_map.Custom().Self	const	Self	priv
+std.array_hash_map.Custom().Self	alias	Self	priv
 std.array_hash_map.Custom().linear_scan_max	const	linear_scan_max	priv
 std.array_hash_map.Custom().RemovalType	enum	RemovalType	priv
 std.array_hash_map.Custom().RemovalType.swap	tag	swap	pub
@@ -11028,7 +11028,7 @@ std.array_hash_map.capacityIndexSize	fn	capacityIndexSize	priv
 std.array_hash_map.safeTruncate	fn	safeTruncate	priv
 std.array_hash_map.Index	fn	Index	priv
 std.array_hash_map.Index()	struct	Index	priv
-std.array_hash_map.Index().Self	const	Self	priv
+std.array_hash_map.Index().Self	alias	Self	priv
 std.array_hash_map.Index().entry_index	field	entry_index	pub
 std.array_hash_map.Index().distance_from_start_index	field	distance_from_start_index	pub
 std.array_hash_map.Index().empty_sentinel	const	empty_sentinel	priv
@@ -11071,7 +11071,7 @@ std.atomic.assert	alias	assert	priv
 std.atomic.Value	fn	Value	pub
 std.atomic.Value()	struct	Value	pub
 std.atomic.Value().raw	field	raw	pub
-std.atomic.Value().Self	const	Self	priv
+std.atomic.Value().Self	alias	Self	priv
 std.atomic.Value().init	fn	init	pub
 std.atomic.Value().load	fn	load	pub
 std.atomic.Value().store	fn	store	pub
@@ -11160,7 +11160,7 @@ std.bit_set.builtin	modref	builtin	priv
 std.bit_set.StaticBitSet	fn	StaticBitSet	pub
 std.bit_set.IntegerBitSet	fn	IntegerBitSet	pub
 std.bit_set.IntegerBitSet()	struct	IntegerBitSet	pub
-std.bit_set.IntegerBitSet().Self	const	Self	priv
+std.bit_set.IntegerBitSet().Self	alias	Self	priv
 std.bit_set.IntegerBitSet().bit_length	alias	bit_length	pub
 std.bit_set.IntegerBitSet().MaskInt	const	MaskInt	pub
 std.bit_set.IntegerBitSet().ShiftInt	const	ShiftInt	pub
@@ -11196,14 +11196,14 @@ std.bit_set.IntegerBitSet().iterator	fn	iterator	pub
 std.bit_set.IntegerBitSet().Iterator	fn	Iterator	pub
 std.bit_set.IntegerBitSet().SingleWordIterator	fn	SingleWordIterator	priv
 std.bit_set.IntegerBitSet().SingleWordIterator()	struct	SingleWordIterator	priv
-std.bit_set.IntegerBitSet().SingleWordIterator().IterSelf	const	IterSelf	priv
+std.bit_set.IntegerBitSet().SingleWordIterator().IterSelf	alias	IterSelf	priv
 std.bit_set.IntegerBitSet().SingleWordIterator().bits_remain	field	bits_remain	pub
 std.bit_set.IntegerBitSet().SingleWordIterator().next	fn	next	pub
 std.bit_set.IntegerBitSet().maskBit	fn	maskBit	priv
 std.bit_set.IntegerBitSet().boolMaskBit	fn	boolMaskBit	priv
 std.bit_set.ArrayBitSet	fn	ArrayBitSet	pub
 std.bit_set.ArrayBitSet()	struct	ArrayBitSet	pub
-std.bit_set.ArrayBitSet().Self	const	Self	priv
+std.bit_set.ArrayBitSet().Self	alias	Self	priv
 std.bit_set.ArrayBitSet().bit_length	alias	bit_length	pub
 std.bit_set.ArrayBitSet().MaskInt	alias	MaskInt	pub
 std.bit_set.ArrayBitSet().ShiftInt	const	ShiftInt	pub
@@ -11245,7 +11245,7 @@ std.bit_set.ArrayBitSet().maskBit	fn	maskBit	priv
 std.bit_set.ArrayBitSet().maskIndex	fn	maskIndex	priv
 std.bit_set.ArrayBitSet().boolMaskBit	fn	boolMaskBit	priv
 std.bit_set.DynamicBitSetUnmanaged	struct	DynamicBitSetUnmanaged	pub
-std.bit_set.DynamicBitSetUnmanaged.Self	const	Self	priv
+std.bit_set.DynamicBitSetUnmanaged.Self	alias	Self	priv
 std.bit_set.DynamicBitSetUnmanaged.MaskInt	alias	MaskInt	pub
 std.bit_set.DynamicBitSetUnmanaged.ShiftInt	const	ShiftInt	pub
 std.bit_set.DynamicBitSetUnmanaged.bit_length	field	bit_length	pub
@@ -11284,7 +11284,7 @@ std.bit_set.DynamicBitSetUnmanaged.maskIndex	fn	maskIndex	priv
 std.bit_set.DynamicBitSetUnmanaged.boolMaskBit	fn	boolMaskBit	priv
 std.bit_set.DynamicBitSetUnmanaged.numMasks	fn	numMasks	priv
 std.bit_set.DynamicBitSet	struct	DynamicBitSet	pub
-std.bit_set.DynamicBitSet.Self	const	Self	priv
+std.bit_set.DynamicBitSet.Self	alias	Self	priv
 std.bit_set.DynamicBitSet.MaskInt	alias	MaskInt	pub
 std.bit_set.DynamicBitSet.ShiftInt	const	ShiftInt	pub
 std.bit_set.DynamicBitSet.allocator	field	allocator	pub
@@ -11323,7 +11323,7 @@ std.bit_set.IteratorOptions.Direction.forward	tag	forward	pub
 std.bit_set.IteratorOptions.Direction.reverse	tag	reverse	pub
 std.bit_set.BitSetIterator	fn	BitSetIterator	priv
 std.bit_set.BitSetIterator()	struct	BitSetIterator	priv
-std.bit_set.BitSetIterator().Self	const	Self	priv
+std.bit_set.BitSetIterator().Self	alias	Self	priv
 std.bit_set.BitSetIterator().bits_remain	field	bits_remain	pub
 std.bit_set.BitSetIterator().words_remain	field	words_remain	pub
 std.bit_set.BitSetIterator().bit_offset	field	bit_offset	pub
@@ -11878,7 +11878,7 @@ std.c.native_arch	alias	native_arch	priv
 std.c.native_os	alias	native_os	priv
 std.c.native_endian	const	native_endian	priv
 std.c.std	modref	std	priv
-std.c.c	const	c	priv
+std.c.c	alias	c	priv
 std.c.maxInt	alias	maxInt	priv
 std.c.assert	alias	assert	priv
 std.c.page_size	alias	page_size	priv
@@ -16841,7 +16841,7 @@ std.compress.flate.Compress.math	alias	math	priv
 std.compress.flate.Compress.assert	alias	assert	priv
 std.compress.flate.Compress.Io	alias	Io	priv
 std.compress.flate.Compress.Writer	alias	Writer	priv
-std.compress.flate.Compress.Compress	const	Compress	priv
+std.compress.flate.Compress.Compress	alias	Compress	priv
 std.compress.flate.Compress.token	ns	token	priv
 std.compress.flate.Compress.token.std	modref	std	priv
 std.compress.flate.Compress.token.builtin	modref	builtin	priv
@@ -17030,7 +17030,7 @@ std.compress.flate.Decompress.testing	alias	testing	priv
 std.compress.flate.Decompress.Writer	alias	Writer	priv
 std.compress.flate.Decompress.Reader	alias	Reader	priv
 std.compress.flate.Decompress.Container	alias	Container	priv
-std.compress.flate.Decompress.Decompress	const	Decompress	priv
+std.compress.flate.Decompress.Decompress	alias	Decompress	priv
 std.compress.flate.Decompress.token	nsref	token	priv
 std.compress.flate.Decompress.input	field	input	pub
 std.compress.flate.Decompress.consumed_bits	field	consumed_bits	pub
@@ -17098,7 +17098,7 @@ std.compress.flate.Decompress.HuffmanDecoder	fn	HuffmanDecoder	priv
 std.compress.flate.Decompress.HuffmanDecoder()	struct	HuffmanDecoder	priv
 std.compress.flate.Decompress.HuffmanDecoder().lookup	field	lookup	pub
 std.compress.flate.Decompress.HuffmanDecoder().linked	field	linked	pub
-std.compress.flate.Decompress.HuffmanDecoder().Self	const	Self	priv
+std.compress.flate.Decompress.HuffmanDecoder().Self	alias	Self	priv
 std.compress.flate.Decompress.HuffmanDecoder().reverseIdx	fn	reverseIdx	priv
 std.compress.flate.Decompress.HuffmanDecoder().generate	fn	generate	pub
 std.compress.flate.Decompress.HuffmanDecoder().checkCompleteness	fn	checkCompleteness	priv
@@ -17277,7 +17277,7 @@ std.compress.lzma2.Decode.parseLzma	fn	parseLzma	priv
 std.compress.lzma2.Decode.parseUncompressed	fn	parseUncompressed	priv
 std.compress.xz	ns	xz	pub
 std.compress.xz.Decompress	ns	Decompress	pub
-std.compress.xz.Decompress.Decompress	const	Decompress	priv
+std.compress.xz.Decompress.Decompress	alias	Decompress	priv
 std.compress.xz.Decompress.std	nsref	std	priv
 std.compress.xz.Decompress.Allocator	alias	Allocator	priv
 std.compress.xz.Decompress.ArrayList	alias	ArrayList	priv
@@ -17320,7 +17320,7 @@ std.compress.zstd	ns	zstd	pub
 std.compress.zstd.std	nsref	std	priv
 std.compress.zstd.assert	alias	assert	priv
 std.compress.zstd.Decompress	ns	Decompress	pub
-std.compress.zstd.Decompress.Decompress	const	Decompress	priv
+std.compress.zstd.Decompress.Decompress	alias	Decompress	priv
 std.compress.zstd.Decompress.std	modref	std	priv
 std.compress.zstd.Decompress.assert	alias	assert	priv
 std.compress.zstd.Decompress.Reader	alias	Reader	priv
@@ -17611,7 +17611,7 @@ std.static_string_map.StaticStringMapWithEql().max_len	field	max_len	pub
 std.static_string_map.StaticStringMapWithEql().KV	struct	KV	pub
 std.static_string_map.StaticStringMapWithEql().KV.key	field	key	pub
 std.static_string_map.StaticStringMapWithEql().KV.value	field	value	pub
-std.static_string_map.StaticStringMapWithEql().Self	const	Self	priv
+std.static_string_map.StaticStringMapWithEql().Self	alias	Self	priv
 std.static_string_map.StaticStringMapWithEql().KVs	struct	KVs	priv
 std.static_string_map.StaticStringMapWithEql().KVs.keys	field	keys	pub
 std.static_string_map.StaticStringMapWithEql().KVs.values	field	values	pub
@@ -17693,7 +17693,7 @@ std.crypto.aead.aegis.variants.Aegis256_256	const	Aegis256_256	pub
 std.crypto.aead.aegis.variants.State128X	fn	State128X	priv
 std.crypto.aead.aegis.variants.State128X()	struct	State128X	priv
 std.crypto.aead.aegis.variants.State128X().AesBlockVec	const	AesBlockVec	priv
-std.crypto.aead.aegis.variants.State128X().State	const	State	priv
+std.crypto.aead.aegis.variants.State128X().State	alias	State	priv
 std.crypto.aead.aegis.variants.State128X().blocks	field	blocks	pub
 std.crypto.aead.aegis.variants.State128X().aes_block_length	alias	aes_block_length	priv
 std.crypto.aead.aegis.variants.State128X().rate	const	rate	priv
@@ -17719,7 +17719,7 @@ std.crypto.aead.aegis.variants.Aegis128XGeneric().decrypt	fn	decrypt	pub
 std.crypto.aead.aegis.variants.State256X	fn	State256X	priv
 std.crypto.aead.aegis.variants.State256X()	struct	State256X	priv
 std.crypto.aead.aegis.variants.State256X().AesBlockVec	const	AesBlockVec	priv
-std.crypto.aead.aegis.variants.State256X().State	const	State	priv
+std.crypto.aead.aegis.variants.State256X().State	alias	State	priv
 std.crypto.aead.aegis.variants.State256X().blocks	field	blocks	pub
 std.crypto.aead.aegis.variants.State256X().aes_block_length	alias	aes_block_length	priv
 std.crypto.aead.aegis.variants.State256X().rate	alias	rate	priv
@@ -17756,7 +17756,7 @@ std.crypto.aead.aegis.variants.Aegis256X2Mac_128	const	Aegis256X2Mac_128	pub
 std.crypto.aead.aegis.variants.Aegis256Mac_128	const	Aegis256Mac_128	pub
 std.crypto.aead.aegis.variants.AegisMac	fn	AegisMac	priv
 std.crypto.aead.aegis.variants.AegisMac()	struct	AegisMac	priv
-std.crypto.aead.aegis.variants.AegisMac().Mac	const	Mac	priv
+std.crypto.aead.aegis.variants.AegisMac().Mac	alias	Mac	priv
 std.crypto.aead.aegis.variants.AegisMac().mac_length	alias	mac_length	pub
 std.crypto.aead.aegis.variants.AegisMac().key_length	alias	key_length	pub
 std.crypto.aead.aegis.variants.AegisMac().nonce_length	alias	nonce_length	pub
@@ -17811,7 +17811,7 @@ std.crypto.aead.aes_ccm.cbc_mac.mem	alias	mem	priv
 std.crypto.aead.aes_ccm.cbc_mac.CbcMacAes128	const	CbcMacAes128	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac	fn	CbcMac	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac()	struct	CbcMac	pub
-std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Self	const	Self	priv
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Self	alias	Self	priv
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().key_length	const	key_length	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().block_length	alias	block_length	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().mac_length	alias	mac_length	pub
@@ -17911,7 +17911,7 @@ std.crypto.auth.hmac.sha2.HmacSha384	const	HmacSha384	pub
 std.crypto.auth.hmac.sha2.HmacSha512	const	HmacSha512	pub
 std.crypto.auth.hmac.Hmac	fn	Hmac	pub
 std.crypto.auth.hmac.Hmac()	struct	Hmac	pub
-std.crypto.auth.hmac.Hmac().Self	const	Self	priv
+std.crypto.auth.hmac.Hmac().Self	alias	Self	priv
 std.crypto.auth.hmac.Hmac().mac_length	alias	mac_length	pub
 std.crypto.auth.hmac.Hmac().key_length_min	const	key_length_min	pub
 std.crypto.auth.hmac.Hmac().key_length	alias	key_length	pub
@@ -17932,7 +17932,7 @@ std.crypto.auth.siphash.SipHash64	fn	SipHash64	pub
 std.crypto.auth.siphash.SipHash128	fn	SipHash128	pub
 std.crypto.auth.siphash.SipHashStateless	fn	SipHashStateless	priv
 std.crypto.auth.siphash.SipHashStateless()	struct	SipHashStateless	priv
-std.crypto.auth.siphash.SipHashStateless().Self	const	Self	priv
+std.crypto.auth.siphash.SipHashStateless().Self	alias	Self	priv
 std.crypto.auth.siphash.SipHashStateless().block_length	const	block_length	priv
 std.crypto.auth.siphash.SipHashStateless().key_length	const	key_length	priv
 std.crypto.auth.siphash.SipHashStateless().v0	field	v0	pub
@@ -17949,7 +17949,7 @@ std.crypto.auth.siphash.SipHashStateless().hash	fn	hash	priv
 std.crypto.auth.siphash.SipHash	fn	SipHash	priv
 std.crypto.auth.siphash.SipHash()	struct	SipHash	priv
 std.crypto.auth.siphash.SipHash().State	const	State	priv
-std.crypto.auth.siphash.SipHash().Self	const	Self	priv
+std.crypto.auth.siphash.SipHash().Self	alias	Self	priv
 std.crypto.auth.siphash.SipHash().key_length	const	key_length	pub
 std.crypto.auth.siphash.SipHash().mac_length	const	mac_length	pub
 std.crypto.auth.siphash.SipHash().block_length	const	block_length	pub
@@ -17986,7 +17986,7 @@ std.crypto.auth.cmac.mem	alias	mem	priv
 std.crypto.auth.cmac.CmacAes128	const	CmacAes128	pub
 std.crypto.auth.cmac.Cmac	fn	Cmac	pub
 std.crypto.auth.cmac.Cmac()	struct	Cmac	pub
-std.crypto.auth.cmac.Cmac().Self	const	Self	priv
+std.crypto.auth.cmac.Cmac().Self	alias	Self	priv
 std.crypto.auth.cmac.Cmac().key_length	const	key_length	pub
 std.crypto.auth.cmac.Cmac().block_length	alias	block_length	pub
 std.crypto.auth.cmac.Cmac().mac_length	alias	mac_length	pub
@@ -18028,7 +18028,7 @@ std.crypto.core.keccak.native_endian	const	native_endian	priv
 std.crypto.core.keccak.mode	modref	mode	priv
 std.crypto.core.keccak.KeccakF	fn	KeccakF	pub
 std.crypto.core.keccak.KeccakF()	struct	KeccakF	pub
-std.crypto.core.keccak.KeccakF().Self	const	Self	priv
+std.crypto.core.keccak.KeccakF().Self	alias	Self	priv
 std.crypto.core.keccak.KeccakF().block_bytes	const	block_bytes	pub
 std.crypto.core.keccak.KeccakF().max_rounds	const	max_rounds	pub
 std.crypto.core.keccak.KeccakF().RC	const	RC	priv
@@ -18048,7 +18048,7 @@ std.crypto.core.keccak.KeccakF().permuteR	fn	permuteR	pub
 std.crypto.core.keccak.KeccakF().permute	fn	permute	pub
 std.crypto.core.keccak.State	fn	State	pub
 std.crypto.core.keccak.State()	struct	State	pub
-std.crypto.core.keccak.State().Self	const	Self	priv
+std.crypto.core.keccak.State().Self	alias	Self	priv
 std.crypto.core.keccak.State().rate	const	rate	pub
 std.crypto.core.keccak.State().Options	struct	Options	pub
 std.crypto.core.keccak.State().delim	field	delim	pub
@@ -18064,7 +18064,7 @@ std.crypto.core.keccak.State().pad	fn	pad	pub
 std.crypto.core.keccak.State().squeeze	fn	squeeze	pub
 std.crypto.core.Ascon	fn	Ascon	pub
 std.crypto.core.Ascon()	struct	Ascon	pub
-std.crypto.core.Ascon().Self	const	Self	priv
+std.crypto.core.Ascon().Self	alias	Self	priv
 std.crypto.core.Ascon().block_bytes	const	block_bytes	pub
 std.crypto.core.Ascon().Block	const	Block	priv
 std.crypto.core.Ascon().st	field	st	pub
@@ -18450,7 +18450,7 @@ std.crypto.ecc.P256.scalar.common.FieldParams.saturated_bits	field	saturated_bit
 std.crypto.ecc.P256.scalar.common.FieldParams.encoded_length	field	encoded_length	pub
 std.crypto.ecc.P256.scalar.common.Field	fn	Field	pub
 std.crypto.ecc.P256.scalar.common.Field()	struct	Field	pub
-std.crypto.ecc.P256.scalar.common.Field().Fe	const	Fe	priv
+std.crypto.ecc.P256.scalar.common.Field().Fe	alias	Fe	priv
 std.crypto.ecc.P256.scalar.common.Field().limbs	field	limbs	pub
 std.crypto.ecc.P256.scalar.common.Field().field_order	alias	field_order	pub
 std.crypto.ecc.P256.scalar.common.Field().field_bits	alias	field_bits	pub
@@ -18854,7 +18854,7 @@ std.crypto.hash.ascon.variants.rotr	alias	rotr	priv
 std.crypto.hash.ascon.variants.native_endian	const	native_endian	priv
 std.crypto.hash.ascon.variants.State	fn	State	pub
 std.crypto.hash.ascon.variants.State()	struct	State	pub
-std.crypto.hash.ascon.variants.State().Self	const	Self	priv
+std.crypto.hash.ascon.variants.State().Self	alias	Self	priv
 std.crypto.hash.ascon.variants.State().block_bytes	const	block_bytes	pub
 std.crypto.hash.ascon.variants.State().Block	const	Block	priv
 std.crypto.hash.ascon.variants.State().st	field	st	pub
@@ -18943,7 +18943,7 @@ std.crypto.hash.blake2.Blake2s224	const	Blake2s224	pub
 std.crypto.hash.blake2.Blake2s256	const	Blake2s256	pub
 std.crypto.hash.blake2.Blake2s	fn	Blake2s	pub
 std.crypto.hash.blake2.Blake2s()	struct	Blake2s	pub
-std.crypto.hash.blake2.Blake2s().Self	const	Self	priv
+std.crypto.hash.blake2.Blake2s().Self	alias	Self	priv
 std.crypto.hash.blake2.Blake2s().block_length	const	block_length	pub
 std.crypto.hash.blake2.Blake2s().digest_length	const	digest_length	pub
 std.crypto.hash.blake2.Blake2s().key_length_min	const	key_length_min	pub
@@ -18972,7 +18972,7 @@ std.crypto.hash.blake2.Blake2b384	const	Blake2b384	pub
 std.crypto.hash.blake2.Blake2b512	const	Blake2b512	pub
 std.crypto.hash.blake2.Blake2b	fn	Blake2b	pub
 std.crypto.hash.blake2.Blake2b()	struct	Blake2b	pub
-std.crypto.hash.blake2.Blake2b().Self	const	Self	priv
+std.crypto.hash.blake2.Blake2b().Self	alias	Self	priv
 std.crypto.hash.blake2.Blake2b().block_length	const	block_length	pub
 std.crypto.hash.blake2.Blake2b().digest_length	const	digest_length	pub
 std.crypto.hash.blake2.Blake2b().key_length_min	const	key_length_min	pub
@@ -19017,7 +19017,7 @@ std.crypto.hash.Blake3.final	fn	final	pub
 std.crypto.hash.Blake3.finalizeSeek	fn	finalizeSeek	pub
 std.crypto.hash.Blake3.reset	fn	reset	pub
 std.crypto.hash.Md5	struct	Md5	pub
-std.crypto.hash.Md5.Self	const	Self	priv
+std.crypto.hash.Md5.Self	alias	Self	priv
 std.crypto.hash.Md5.block_length	const	block_length	pub
 std.crypto.hash.Md5.digest_length	const	digest_length	pub
 std.crypto.hash.Md5.Options	struct	Options	pub
@@ -19035,7 +19035,7 @@ std.crypto.hash.Sha1	ns	Sha1	pub
 std.crypto.hash.Sha1.std	nsref	std	priv
 std.crypto.hash.Sha1.mem	alias	mem	priv
 std.crypto.hash.Sha1.math	alias	math	priv
-std.crypto.hash.Sha1.Sha1	const	Sha1	priv
+std.crypto.hash.Sha1.Sha1	alias	Sha1	priv
 std.crypto.hash.Sha1.block_length	const	block_length	pub
 std.crypto.hash.Sha1.digest_length	const	digest_length	pub
 std.crypto.hash.Sha1.Options	struct	Options	pub
@@ -19081,7 +19081,7 @@ std.crypto.hash.sha2.iv512	const	iv512	priv
 std.crypto.hash.sha2.Iv32	const	Iv32	priv
 std.crypto.hash.sha2.Sha2x32	fn	Sha2x32	priv
 std.crypto.hash.sha2.Sha2x32()	struct	Sha2x32	priv
-std.crypto.hash.sha2.Sha2x32().Self	const	Self	priv
+std.crypto.hash.sha2.Sha2x32().Self	alias	Self	priv
 std.crypto.hash.sha2.Sha2x32().block_length	const	block_length	pub
 std.crypto.hash.sha2.Sha2x32().digest_length	const	digest_length	pub
 std.crypto.hash.sha2.Sha2x32().Options	struct	Options	pub
@@ -19111,7 +19111,7 @@ std.crypto.hash.sha2.roundParam256	fn	roundParam256	priv
 std.crypto.hash.sha2.Iv64	const	Iv64	priv
 std.crypto.hash.sha2.Sha2x64	fn	Sha2x64	priv
 std.crypto.hash.sha2.Sha2x64()	struct	Sha2x64	priv
-std.crypto.hash.sha2.Sha2x64().Self	const	Self	priv
+std.crypto.hash.sha2.Sha2x64().Self	alias	Self	priv
 std.crypto.hash.sha2.Sha2x64().block_length	const	block_length	pub
 std.crypto.hash.sha2.Sha2x64().digest_length	const	digest_length	pub
 std.crypto.hash.sha2.Sha2x64().Options	struct	Options	pub
@@ -19233,7 +19233,7 @@ std.crypto.hash.sha3.kangarootwelve.FinalLeafContext().process	fn	process	priv
 std.crypto.hash.sha3.kangarootwelve.ktMultiThreaded	fn	ktMultiThreaded	priv
 std.crypto.hash.sha3.kangarootwelve.KTHash	fn	KTHash	priv
 std.crypto.hash.sha3.kangarootwelve.KTHash()	struct	KTHash	priv
-std.crypto.hash.sha3.kangarootwelve.KTHash().Self	const	Self	priv
+std.crypto.hash.sha3.kangarootwelve.KTHash().Self	alias	Self	priv
 std.crypto.hash.sha3.kangarootwelve.KTHash().StateType	alias	StateType	priv
 std.crypto.hash.sha3.kangarootwelve.KTHash().digest_length	const	digest_length	pub
 std.crypto.hash.sha3.kangarootwelve.KTHash().block_length	alias	block_length	pub
@@ -19279,7 +19279,7 @@ std.crypto.hash.sha3.TurboShake128	fn	TurboShake128	pub
 std.crypto.hash.sha3.TurboShake256	fn	TurboShake256	pub
 std.crypto.hash.sha3.Keccak	fn	Keccak	pub
 std.crypto.hash.sha3.Keccak()	struct	Keccak	pub
-std.crypto.hash.sha3.Keccak().Self	const	Self	priv
+std.crypto.hash.sha3.Keccak().Self	alias	Self	priv
 std.crypto.hash.sha3.Keccak().st	field	st	pub
 std.crypto.hash.sha3.Keccak().digest_length	const	digest_length	pub
 std.crypto.hash.sha3.Keccak().block_length	alias	block_length	pub
@@ -19293,7 +19293,7 @@ std.crypto.hash.sha3.Shake	fn	Shake	pub
 std.crypto.hash.sha3.TurboShake	fn	TurboShake	pub
 std.crypto.hash.sha3.ShakeLike	fn	ShakeLike	priv
 std.crypto.hash.sha3.ShakeLike()	struct	ShakeLike	priv
-std.crypto.hash.sha3.ShakeLike().Self	const	Self	priv
+std.crypto.hash.sha3.ShakeLike().Self	alias	Self	priv
 std.crypto.hash.sha3.ShakeLike().st	field	st	pub
 std.crypto.hash.sha3.ShakeLike().buf	field	buf	pub
 std.crypto.hash.sha3.ShakeLike().offset	field	offset	pub
@@ -19317,7 +19317,7 @@ std.crypto.hash.sha3.CShakeLike().digest_length	alias	digest_length	pub
 std.crypto.hash.sha3.CShakeLike().block_length	alias	block_length	pub
 std.crypto.hash.sha3.CShakeLike().Options	struct	Options	pub
 std.crypto.hash.sha3.CShakeLike().Options.context	field	context	pub
-std.crypto.hash.sha3.CShakeLike().Self	const	Self	priv
+std.crypto.hash.sha3.CShakeLike().Self	alias	Self	priv
 std.crypto.hash.sha3.CShakeLike().init	fn	init	pub
 std.crypto.hash.sha3.CShakeLike().hash	fn	hash	pub
 std.crypto.hash.sha3.CShakeLike().update	fn	update	pub
@@ -19327,7 +19327,7 @@ std.crypto.hash.sha3.CShakeLike().fillBlock	fn	fillBlock	pub
 std.crypto.hash.sha3.KMac	fn	KMac	pub
 std.crypto.hash.sha3.KMacLike	fn	KMacLike	priv
 std.crypto.hash.sha3.KMacLike()	struct	KMacLike	priv
-std.crypto.hash.sha3.KMacLike().Self	const	Self	priv
+std.crypto.hash.sha3.KMacLike().Self	alias	Self	priv
 std.crypto.hash.sha3.KMacLike().mac_length	alias	mac_length	pub
 std.crypto.hash.sha3.KMacLike().mac_length_min	const	mac_length_min	pub
 std.crypto.hash.sha3.KMacLike().key_length	const	key_length	pub
@@ -19347,7 +19347,7 @@ std.crypto.hash.sha3.KMacLike().create	fn	create	pub
 std.crypto.hash.sha3.TupleHash	fn	TupleHash	pub
 std.crypto.hash.sha3.TupleHashLike	fn	TupleHashLike	priv
 std.crypto.hash.sha3.TupleHashLike()	struct	TupleHashLike	priv
-std.crypto.hash.sha3.TupleHashLike().Self	const	Self	priv
+std.crypto.hash.sha3.TupleHashLike().Self	alias	Self	priv
 std.crypto.hash.sha3.TupleHashLike().digest_length	alias	digest_length	pub
 std.crypto.hash.sha3.TupleHashLike().block_length	alias	block_length	pub
 std.crypto.hash.sha3.TupleHashLike().cshaker	field	cshaker	pub
@@ -19374,7 +19374,7 @@ std.crypto.hash.composition.std	nsref	std	priv
 std.crypto.hash.composition.sha2	alias	sha2	priv
 std.crypto.hash.composition.Composition	fn	Composition	pub
 std.crypto.hash.composition.Composition()	struct	Composition	pub
-std.crypto.hash.composition.Composition().Self	const	Self	priv
+std.crypto.hash.composition.Composition().Self	alias	Self	priv
 std.crypto.hash.composition.Composition().H1	field	H1	pub
 std.crypto.hash.composition.Composition().H2	field	H2	pub
 std.crypto.hash.composition.Composition().digest_length	alias	digest_length	pub
@@ -19461,7 +19461,7 @@ std.crypto.pwhash.argon2.Mode.argon2d	tag	argon2d	pub
 std.crypto.pwhash.argon2.Mode.argon2i	tag	argon2i	pub
 std.crypto.pwhash.argon2.Mode.argon2id	tag	argon2id	pub
 std.crypto.pwhash.argon2.Params	struct	Params	pub
-std.crypto.pwhash.argon2.Params.Self	const	Self	priv
+std.crypto.pwhash.argon2.Params.Self	alias	Self	priv
 std.crypto.pwhash.argon2.Params.t	field	t	pub
 std.crypto.pwhash.argon2.Params.m	field	m	pub
 std.crypto.pwhash.argon2.Params.p	field	p	pub
@@ -19547,7 +19547,7 @@ std.crypto.pwhash.bcrypt.phc_format.B64Decoder	alias	B64Decoder	priv
 std.crypto.pwhash.bcrypt.phc_format.B64Encoder	alias	B64Encoder	priv
 std.crypto.pwhash.bcrypt.phc_format.BinValue	fn	BinValue	pub
 std.crypto.pwhash.bcrypt.phc_format.BinValue()	struct	BinValue	pub
-std.crypto.pwhash.bcrypt.phc_format.BinValue().Self	const	Self	priv
+std.crypto.pwhash.bcrypt.phc_format.BinValue().Self	alias	Self	priv
 std.crypto.pwhash.bcrypt.phc_format.BinValue().capacity	alias	capacity	priv
 std.crypto.pwhash.bcrypt.phc_format.BinValue().max_encoded_length	const	max_encoded_length	priv
 std.crypto.pwhash.bcrypt.phc_format.BinValue().buf	field	buf	pub
@@ -19584,14 +19584,14 @@ std.crypto.pwhash.bcrypt.State.halfRound	fn	halfRound	priv
 std.crypto.pwhash.bcrypt.State.encipher	fn	encipher	priv
 std.crypto.pwhash.bcrypt.State.encrypt	fn	encrypt	priv
 std.crypto.pwhash.bcrypt.Params	struct	Params	pub
-std.crypto.pwhash.bcrypt.Params.Self	const	Self	priv
+std.crypto.pwhash.bcrypt.Params.Self	alias	Self	priv
 std.crypto.pwhash.bcrypt.Params.rounds_log	field	rounds_log	pub
 std.crypto.pwhash.bcrypt.Params.silently_truncate_password	field	silently_truncate_password	pub
 std.crypto.pwhash.bcrypt.Params.owasp	const	owasp	pub
 std.crypto.pwhash.bcrypt.bcryptWithTruncation	fn	bcryptWithTruncation	priv
 std.crypto.pwhash.bcrypt.bcrypt	fn	bcrypt	pub
 std.crypto.pwhash.bcrypt.pbkdf_prf	struct	pbkdf_prf	priv
-std.crypto.pwhash.bcrypt.pbkdf_prf.Self	const	Self	priv
+std.crypto.pwhash.bcrypt.pbkdf_prf.Self	alias	Self	priv
 std.crypto.pwhash.bcrypt.pbkdf_prf.mac_length	const	mac_length	pub
 std.crypto.pwhash.bcrypt.pbkdf_prf.hasher	field	hasher	pub
 std.crypto.pwhash.bcrypt.pbkdf_prf.sha2pass	field	sha2pass	pub
@@ -19667,7 +19667,7 @@ std.crypto.pwhash.scrypt.blockMix	fn	blockMix	priv
 std.crypto.pwhash.scrypt.integerify	fn	integerify	priv
 std.crypto.pwhash.scrypt.smix	fn	smix	priv
 std.crypto.pwhash.scrypt.Params	struct	Params	pub
-std.crypto.pwhash.scrypt.Params.Self	const	Self	priv
+std.crypto.pwhash.scrypt.Params.Self	alias	Self	priv
 std.crypto.pwhash.scrypt.Params.ln	field	ln	pub
 std.crypto.pwhash.scrypt.Params.r	field	r	pub
 std.crypto.pwhash.scrypt.Params.p	field	p	pub
@@ -19688,7 +19688,7 @@ std.crypto.pwhash.scrypt.crypt_format.HashResult().hash	field	hash	pub
 std.crypto.pwhash.scrypt.crypt_format.Codec	const	Codec	priv
 std.crypto.pwhash.scrypt.crypt_format.BinValue	fn	BinValue	pub
 std.crypto.pwhash.scrypt.crypt_format.BinValue()	struct	BinValue	pub
-std.crypto.pwhash.scrypt.crypt_format.BinValue().Self	const	Self	priv
+std.crypto.pwhash.scrypt.crypt_format.BinValue().Self	alias	Self	priv
 std.crypto.pwhash.scrypt.crypt_format.BinValue().capacity	alias	capacity	priv
 std.crypto.pwhash.scrypt.crypt_format.BinValue().max_encoded_length	const	max_encoded_length	priv
 std.crypto.pwhash.scrypt.crypt_format.BinValue().buf	field	buf	pub
@@ -19960,7 +19960,7 @@ std.crypto.sign.mldsa.Poly.exceeds	fn	exceeds	priv
 std.crypto.sign.mldsa.PolyVec	fn	PolyVec	priv
 std.crypto.sign.mldsa.PolyVec()	struct	PolyVec	priv
 std.crypto.sign.mldsa.PolyVec().ps	field	ps	pub
-std.crypto.sign.mldsa.PolyVec().Self	const	Self	priv
+std.crypto.sign.mldsa.PolyVec().Self	alias	Self	priv
 std.crypto.sign.mldsa.PolyVec().zero	const	zero	priv
 std.crypto.sign.mldsa.PolyVec().map	fn	map	priv
 std.crypto.sign.mldsa.PolyVec().mapBinary	fn	mapBinary	priv
@@ -19995,7 +19995,7 @@ std.crypto.sign.mldsa.PolyVec().unpackHint	fn	unpackHint	priv
 std.crypto.sign.mldsa.Mat	fn	Mat	priv
 std.crypto.sign.mldsa.Mat()	struct	Mat	priv
 std.crypto.sign.mldsa.Mat().rows	field	rows	pub
-std.crypto.sign.mldsa.Mat().Self	const	Self	priv
+std.crypto.sign.mldsa.Mat().Self	alias	Self	priv
 std.crypto.sign.mldsa.Mat().VecL	const	VecL	priv
 std.crypto.sign.mldsa.Mat().VecK	const	VecK	priv
 std.crypto.sign.mldsa.Mat().derive	fn	derive	priv
@@ -20038,7 +20038,7 @@ std.crypto.sign.mldsa.MLDSAImpl().name	alias	name	pub
 std.crypto.sign.mldsa.MLDSAImpl().gamma1	const	gamma1	pub
 std.crypto.sign.mldsa.MLDSAImpl().beta	const	beta	pub
 std.crypto.sign.mldsa.MLDSAImpl().alpha	const	alpha	pub
-std.crypto.sign.mldsa.MLDSAImpl().Self	const	Self	priv
+std.crypto.sign.mldsa.MLDSAImpl().Self	alias	Self	priv
 std.crypto.sign.mldsa.MLDSAImpl().PolyVecL	const	PolyVecL	priv
 std.crypto.sign.mldsa.MLDSAImpl().PolyVecK	const	PolyVecK	priv
 std.crypto.sign.mldsa.MLDSAImpl().MatKxL	const	MatKxL	priv
@@ -20270,7 +20270,7 @@ std.crypto.ff.RepresentationError	const	RepresentationError	pub
 std.crypto.ff.Error	const	Error	pub
 std.crypto.ff.Uint	fn	Uint	pub
 std.crypto.ff.Uint()	struct	Uint	pub
-std.crypto.ff.Uint().Self	const	Self	priv
+std.crypto.ff.Uint().Self	alias	Self	priv
 std.crypto.ff.Uint().max_limbs_count	const	max_limbs_count	priv
 std.crypto.ff.Uint().limbs_buffer	field	limbs_buffer	pub
 std.crypto.ff.Uint().limbs_len	field	limbs_len	pub
@@ -20294,7 +20294,7 @@ std.crypto.ff.Uint().conditionalAddWithOverflow	fn	conditionalAddWithOverflow	pr
 std.crypto.ff.Uint().conditionalSubWithOverflow	fn	conditionalSubWithOverflow	priv
 std.crypto.ff.Fe_	fn	Fe_	priv
 std.crypto.ff.Fe_()	struct	Fe_	priv
-std.crypto.ff.Fe_().Self	const	Self	priv
+std.crypto.ff.Fe_().Self	alias	Self	priv
 std.crypto.ff.Fe_().FeUint	const	FeUint	priv
 std.crypto.ff.Fe_().v	field	v	pub
 std.crypto.ff.Fe_().montgomery	field	montgomery	pub
@@ -20310,7 +20310,7 @@ std.crypto.ff.Fe_().isZero	fn	isZero	pub
 std.crypto.ff.Fe_().isOdd	fn	isOdd	pub
 std.crypto.ff.Modulus	fn	Modulus	pub
 std.crypto.ff.Modulus()	struct	Modulus	pub
-std.crypto.ff.Modulus().Self	const	Self	priv
+std.crypto.ff.Modulus().Self	alias	Self	priv
 std.crypto.ff.Modulus().Fe	const	Fe	pub
 std.crypto.ff.Modulus().FeUint	alias	FeUint	priv
 std.crypto.ff.Modulus().zero	field	zero	pub
@@ -20397,7 +20397,7 @@ std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap()	struct	StaticMap	pub
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	fn	initComptime	pub
 std.crypto.codecs.asn1.der.Decoder.Oid.hexToBytes	fn	hexToBytes	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.std	modref	std	priv
-std.crypto.codecs.asn1.der.Decoder.Oid.Oid	const	Oid	priv
+std.crypto.codecs.asn1.der.Decoder.Oid.Oid	alias	Oid	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.Arc	alias	Arc	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.encoding_base	const	encoding_base	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.Allocator	alias	Allocator	priv
@@ -20405,7 +20405,7 @@ std.crypto.codecs.asn1.der.Decoder.Oid.der	nsref	der	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.asn1	nsref	asn1	priv
 std.crypto.codecs.asn1.der.Decoder.expectEqual	alias	expectEqual	priv
 std.crypto.codecs.asn1.der.Decoder.expectError	alias	expectError	priv
-std.crypto.codecs.asn1.der.Decoder.Decoder	const	Decoder	priv
+std.crypto.codecs.asn1.der.Decoder.Decoder	alias	Decoder	priv
 std.crypto.codecs.asn1.der.Decoder.Index	alias	Index	priv
 std.crypto.codecs.asn1.der.Decoder.Tag	alias	Tag	priv
 std.crypto.codecs.asn1.der.Decoder.FieldTag	alias	FieldTag	priv
@@ -20435,7 +20435,7 @@ std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.testing	alias	testing	priv
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.data	field	data	pub
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.capacity	field	capacity	pub
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.allocator	field	allocator	pub
-std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.ArrayListReverse	const	ArrayListReverse	priv
+std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.ArrayListReverse	alias	ArrayListReverse	priv
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.Error	alias	Error	priv
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.init	fn	init	pub
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.deinit	fn	deinit	pub
@@ -20447,7 +20447,7 @@ std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.clearAndFree	fn	clearAndFree
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.toOwnedSlice	fn	toOwnedSlice	pub
 std.crypto.codecs.asn1.der.Encoder.Tag	alias	Tag	priv
 std.crypto.codecs.asn1.der.Encoder.FieldTag	alias	FieldTag	priv
-std.crypto.codecs.asn1.der.Encoder.Encoder	const	Encoder	priv
+std.crypto.codecs.asn1.der.Encoder.Encoder	alias	Encoder	priv
 std.crypto.codecs.asn1.der.decode	fn	decode	pub
 std.crypto.codecs.asn1.der.encode	fn	encode	pub
 std.crypto.codecs.asn1.Oid	nsref	Oid	pub
@@ -20606,7 +20606,7 @@ std.crypto.errors.ContextTooLongError	const	ContextTooLongError	pub
 std.crypto.errors.Error	const	Error	pub
 std.crypto.tls	ns	tls	pub
 std.crypto.tls.std	nsref	std	priv
-std.crypto.tls.Tls	const	Tls	priv
+std.crypto.tls.Tls	alias	Tls	priv
 std.crypto.tls.mem	alias	mem	priv
 std.crypto.tls.crypto	alias	crypto	priv
 std.crypto.tls.assert	alias	assert	priv
@@ -20615,7 +20615,7 @@ std.crypto.tls.Client.builtin	modref	builtin	priv
 std.crypto.tls.Client.native_endian	const	native_endian	priv
 std.crypto.tls.Client.std	nsref	std	priv
 std.crypto.tls.Client.tls	alias	tls	priv
-std.crypto.tls.Client.Client	const	Client	priv
+std.crypto.tls.Client.Client	alias	Client	priv
 std.crypto.tls.Client.mem	alias	mem	priv
 std.crypto.tls.Client.crypto	alias	crypto	priv
 std.crypto.tls.Client.assert	alias	assert	priv
@@ -20982,7 +20982,7 @@ std.crypto.Certificate	ns	Certificate	pub
 std.crypto.Certificate.buffer	field	buffer	pub
 std.crypto.Certificate.index	field	index	pub
 std.crypto.Certificate.Bundle	ns	Bundle	pub
-std.crypto.Certificate.Bundle.Bundle	const	Bundle	priv
+std.crypto.Certificate.Bundle.Bundle	alias	Bundle	priv
 std.crypto.Certificate.Bundle.builtin	modref	builtin	priv
 std.crypto.Certificate.Bundle.std	nsref	std	priv
 std.crypto.Certificate.Bundle.Io	alias	Io	priv
@@ -21174,7 +21174,7 @@ std.crypto.Certificate.builtin	modref	builtin	priv
 std.crypto.Certificate.std	nsref	std	priv
 std.crypto.Certificate.crypto	alias	crypto	priv
 std.crypto.Certificate.mem	alias	mem	priv
-std.crypto.Certificate.Certificate	const	Certificate	priv
+std.crypto.Certificate.Certificate	alias	Certificate	priv
 std.crypto.Certificate.der	struct	der	pub
 std.crypto.Certificate.der.Class	enum	Class	pub
 std.crypto.Certificate.der.Class.universal	tag	universal	pub
@@ -21277,7 +21277,7 @@ std.debug.Dwarf.Endian	alias	Endian	priv
 std.debug.Dwarf.Io	alias	Io	priv
 std.debug.Dwarf.Reader	alias	Reader	priv
 std.debug.Dwarf.Error	alias	Error	priv
-std.debug.Dwarf.Dwarf	const	Dwarf	priv
+std.debug.Dwarf.Dwarf	alias	Dwarf	priv
 std.debug.Dwarf.expression	ns	expression	pub
 std.debug.Dwarf.expression.builtin	modref	builtin	priv
 std.debug.Dwarf.expression.native_arch	alias	native_arch	priv
@@ -21308,7 +21308,7 @@ std.debug.Dwarf.expression.Options.call_frame_context	field	call_frame_context	p
 std.debug.Dwarf.expression.Error	const	Error	pub
 std.debug.Dwarf.expression.StackMachine	fn	StackMachine	pub
 std.debug.Dwarf.expression.StackMachine()	struct	StackMachine	pub
-std.debug.Dwarf.expression.StackMachine().Self	const	Self	priv
+std.debug.Dwarf.expression.StackMachine().Self	alias	Self	priv
 std.debug.Dwarf.expression.StackMachine().Operand	union	Operand	priv
 std.debug.Dwarf.expression.StackMachine().Operand.generic	field	generic	pub
 std.debug.Dwarf.expression.StackMachine().Operand.register	field	register	pub
@@ -21421,7 +21421,7 @@ std.debug.Dwarf.Unwind.VirtualMachine.std	nsref	std	priv
 std.debug.Dwarf.Unwind.VirtualMachine.assert	alias	assert	priv
 std.debug.Dwarf.Unwind.VirtualMachine.Allocator	alias	Allocator	priv
 std.debug.Dwarf.Unwind.VirtualMachine.Unwind	alias	Unwind	priv
-std.debug.Dwarf.Unwind.VirtualMachine.VirtualMachine	const	VirtualMachine	priv
+std.debug.Dwarf.Unwind.VirtualMachine.VirtualMachine	alias	VirtualMachine	priv
 std.debug.Dwarf.Unwind.frame_section	field	frame_section	pub
 std.debug.Dwarf.Unwind.lookup	field	lookup	pub
 std.debug.Dwarf.Unwind.cie_list	field	cie_list	pub
@@ -21498,7 +21498,7 @@ std.debug.Dwarf.Unwind.maxInt	alias	maxInt	priv
 std.debug.Dwarf.Unwind.missing	alias	missing	priv
 std.debug.Dwarf.Unwind.Reader	alias	Reader	priv
 std.debug.Dwarf.Unwind.std	modref	std	priv
-std.debug.Dwarf.Unwind.Unwind	const	Unwind	priv
+std.debug.Dwarf.Unwind.Unwind	alias	Unwind	priv
 std.debug.Dwarf.SelfUnwinder	ns	SelfUnwinder	pub
 std.debug.Dwarf.SelfUnwinder.cpu_state	field	cpu_state	pub
 std.debug.Dwarf.SelfUnwinder.pc	field	pc	pub
@@ -21532,7 +21532,7 @@ std.debug.Dwarf.SelfUnwinder.assert	alias	assert	priv
 std.debug.Dwarf.SelfUnwinder.stripInstructionPtrAuthCode	alias	stripInstructionPtrAuthCode	priv
 std.debug.Dwarf.SelfUnwinder.builtin	modref	builtin	priv
 std.debug.Dwarf.SelfUnwinder.native_endian	const	native_endian	priv
-std.debug.Dwarf.SelfUnwinder.SelfUnwinder	const	SelfUnwinder	priv
+std.debug.Dwarf.SelfUnwinder.SelfUnwinder	alias	SelfUnwinder	priv
 std.debug.Dwarf.debug_debug_mode	alias	debug_debug_mode	priv
 std.debug.Dwarf.sections	field	sections	pub
 std.debug.Dwarf.abbrev_table_list	field	abbrev_table_list	pub
@@ -21711,7 +21711,7 @@ std.debug.Pdb.File	alias	File	priv
 std.debug.Pdb.Allocator	alias	Allocator	priv
 std.debug.Pdb.pdb	alias	pdb	priv
 std.debug.Pdb.assert	alias	assert	priv
-std.debug.Pdb.Pdb	const	Pdb	priv
+std.debug.Pdb.Pdb	alias	Pdb	priv
 std.debug.Pdb.file_reader	field	file_reader	pub
 std.debug.Pdb.msf	field	msf	pub
 std.debug.Pdb.allocator	field	allocator	pub
@@ -21827,7 +21827,7 @@ std.debug.Pdb.MsfStream.getFilePos	fn	getFilePos	priv
 std.debug.Pdb.readSparseBitVector	fn	readSparseBitVector	priv
 std.debug.Pdb.blockCountFromSize	fn	blockCountFromSize	priv
 std.debug.ElfFile	ns	ElfFile	pub
-std.debug.ElfFile.ElfFile	const	ElfFile	priv
+std.debug.ElfFile.ElfFile	alias	ElfFile	priv
 std.debug.ElfFile.std	modref	std	priv
 std.debug.ElfFile.Io	alias	Io	priv
 std.debug.ElfFile.Endian	alias	Endian	priv
@@ -21932,9 +21932,9 @@ std.debug.MachOFile.macho	alias	macho	priv
 std.debug.MachOFile.mem	alias	mem	priv
 std.debug.MachOFile.testing	alias	testing	priv
 std.debug.MachOFile.builtin	modref	builtin	priv
-std.debug.MachOFile.MachOFile	const	MachOFile	priv
+std.debug.MachOFile.MachOFile	alias	MachOFile	priv
 std.debug.Info	ns	Info	pub
-std.debug.Info.Info	const	Info	priv
+std.debug.Info.Info	alias	Info	priv
 std.debug.Info.std	nsref	std	priv
 std.debug.Info.Io	alias	Io	priv
 std.debug.Info.Allocator	alias	Allocator	priv
@@ -21952,7 +21952,7 @@ std.debug.Info.deinit	fn	deinit	pub
 std.debug.Info.ResolveAddressesError	const	ResolveAddressesError	pub
 std.debug.Info.resolveAddresses	fn	resolveAddresses	pub
 std.debug.Coverage	ns	Coverage	pub
-std.debug.Coverage.Coverage	const	Coverage	priv
+std.debug.Coverage.Coverage	alias	Coverage	priv
 std.debug.Coverage.std	nsref	std	priv
 std.debug.Coverage.Io	alias	Io	priv
 std.debug.Coverage.Allocator	alias	Allocator	priv
@@ -24872,7 +24872,7 @@ std.enums.directEnumArray	fn	directEnumArray	pub
 std.enums.directEnumArrayDefault	fn	directEnumArrayDefault	pub
 std.enums.EnumSet	fn	EnumSet	pub
 std.enums.EnumSet()	struct	EnumSet	pub
-std.enums.EnumSet().Self	const	Self	priv
+std.enums.EnumSet().Self	alias	Self	priv
 std.enums.EnumSet().Indexer	const	Indexer	pub
 std.enums.EnumSet().Key	alias	Key	pub
 std.enums.EnumSet().BitSet	const	BitSet	priv
@@ -24909,7 +24909,7 @@ std.enums.EnumSet().Iterator.inner	field	inner	pub
 std.enums.EnumSet().Iterator.next	fn	next	pub
 std.enums.EnumMap	fn	EnumMap	pub
 std.enums.EnumMap()	struct	EnumMap	pub
-std.enums.EnumMap().Self	const	Self	priv
+std.enums.EnumMap().Self	alias	Self	priv
 std.enums.EnumMap().Indexer	const	Indexer	pub
 std.enums.EnumMap().Key	alias	Key	pub
 std.enums.EnumMap().Value	alias	Value	pub
@@ -24945,7 +24945,7 @@ std.enums.EnumMap().Iterator.next	fn	next	pub
 std.enums.EnumMultiset	fn	EnumMultiset	pub
 std.enums.BoundedEnumMultiset	fn	BoundedEnumMultiset	pub
 std.enums.BoundedEnumMultiset()	struct	BoundedEnumMultiset	pub
-std.enums.BoundedEnumMultiset().Self	const	Self	priv
+std.enums.BoundedEnumMultiset().Self	alias	Self	priv
 std.enums.BoundedEnumMultiset().counts	field	counts	pub
 std.enums.BoundedEnumMultiset().init	fn	init	pub
 std.enums.BoundedEnumMultiset().empty	const	empty	pub
@@ -24972,7 +24972,7 @@ std.enums.BoundedEnumMultiset().Iterator	const	Iterator	pub
 std.enums.BoundedEnumMultiset().iterator	fn	iterator	pub
 std.enums.EnumArray	fn	EnumArray	pub
 std.enums.EnumArray()	struct	EnumArray	pub
-std.enums.EnumArray().Self	const	Self	priv
+std.enums.EnumArray().Self	alias	Self	priv
 std.enums.EnumArray().Indexer	const	Indexer	pub
 std.enums.EnumArray().Key	alias	Key	pub
 std.enums.EnumArray().Value	alias	Value	pub
@@ -25306,7 +25306,7 @@ std.fs.path.ComponentIterator().root_len	field	root_len	pub
 std.fs.path.ComponentIterator().root_end_index	field	root_end_index	pub
 std.fs.path.ComponentIterator().start_index	field	start_index	pub
 std.fs.path.ComponentIterator().end_index	field	end_index	pub
-std.fs.path.ComponentIterator().Self	const	Self	priv
+std.fs.path.ComponentIterator().Self	alias	Self	priv
 std.fs.path.ComponentIterator().Component	struct	Component	pub
 std.fs.path.ComponentIterator().Component.name	field	name	pub
 std.fs.path.ComponentIterator().Component.path	field	path	pub
@@ -25376,7 +25376,7 @@ std.gpu.ExecutionMode.LocalSize.z	field	z	pub
 std.gpu.executionMode	fn	executionMode	pub
 std.hash	ns	hash	pub
 std.hash.Adler32	ns	Adler32	pub
-std.hash.Adler32.Adler32	const	Adler32	priv
+std.hash.Adler32.Adler32	alias	Adler32	priv
 std.hash.Adler32.std	modref	std	priv
 std.hash.Adler32.testing	alias	testing	priv
 std.hash.Adler32.adler	field	adler	pub
@@ -25417,7 +25417,7 @@ std.hash.crc.impl.Algorithm().reflect_output	field	reflect_output	pub
 std.hash.crc.impl.Algorithm().xor_output	field	xor_output	pub
 std.hash.crc.impl.Crc	fn	Crc	pub
 std.hash.crc.impl.Crc()	struct	Crc	pub
-std.hash.crc.impl.Crc().Self	const	Self	priv
+std.hash.crc.impl.Crc().Self	alias	Self	priv
 std.hash.crc.impl.Crc().I	const	I	priv
 std.hash.crc.impl.Crc().lookup_table	const	lookup_table	priv
 std.hash.crc.impl.Crc().crc	field	crc	pub
@@ -25553,7 +25553,7 @@ std.hash.fnv.Fnv1a_64	const	Fnv1a_64	pub
 std.hash.fnv.Fnv1a_128	const	Fnv1a_128	pub
 std.hash.fnv.Fnv1a	fn	Fnv1a	priv
 std.hash.fnv.Fnv1a()	struct	Fnv1a	priv
-std.hash.fnv.Fnv1a().Self	const	Self	priv
+std.hash.fnv.Fnv1a().Self	alias	Self	priv
 std.hash.fnv.Fnv1a().value	field	value	pub
 std.hash.fnv.Fnv1a().init	fn	init	pub
 std.hash.fnv.Fnv1a().update	fn	update	pub
@@ -25578,7 +25578,7 @@ std.hash.murmur.testing	alias	testing	priv
 std.hash.murmur.native_endian	const	native_endian	priv
 std.hash.murmur.default_seed	const	default_seed	priv
 std.hash.murmur.Murmur2_32	struct	Murmur2_32	pub
-std.hash.murmur.Murmur2_32.Self	const	Self	priv
+std.hash.murmur.Murmur2_32.Self	alias	Self	priv
 std.hash.murmur.Murmur2_32.hash	fn	hash	pub
 std.hash.murmur.Murmur2_32.hashWithSeed	fn	hashWithSeed	pub
 std.hash.murmur.Murmur2_32.hashUint32	fn	hashUint32	pub
@@ -25586,7 +25586,7 @@ std.hash.murmur.Murmur2_32.hashUint32WithSeed	fn	hashUint32WithSeed	pub
 std.hash.murmur.Murmur2_32.hashUint64	fn	hashUint64	pub
 std.hash.murmur.Murmur2_32.hashUint64WithSeed	fn	hashUint64WithSeed	pub
 std.hash.murmur.Murmur2_64	struct	Murmur2_64	pub
-std.hash.murmur.Murmur2_64.Self	const	Self	priv
+std.hash.murmur.Murmur2_64.Self	alias	Self	priv
 std.hash.murmur.Murmur2_64.hash	fn	hash	pub
 std.hash.murmur.Murmur2_64.hashWithSeed	fn	hashWithSeed	pub
 std.hash.murmur.Murmur2_64.hashUint32	fn	hashUint32	pub
@@ -25594,7 +25594,7 @@ std.hash.murmur.Murmur2_64.hashUint32WithSeed	fn	hashUint32WithSeed	pub
 std.hash.murmur.Murmur2_64.hashUint64	fn	hashUint64	pub
 std.hash.murmur.Murmur2_64.hashUint64WithSeed	fn	hashUint64WithSeed	pub
 std.hash.murmur.Murmur3_32	struct	Murmur3_32	pub
-std.hash.murmur.Murmur3_32.Self	const	Self	priv
+std.hash.murmur.Murmur3_32.Self	alias	Self	priv
 std.hash.murmur.Murmur3_32.rotl32	fn	rotl32	priv
 std.hash.murmur.Murmur3_32.hash	fn	hash	pub
 std.hash.murmur.Murmur3_32.hashWithSeed	fn	hashWithSeed	pub
@@ -25612,7 +25612,7 @@ std.hash.cityhash.offsetPtr	fn	offsetPtr	priv
 std.hash.cityhash.fetch32	fn	fetch32	priv
 std.hash.cityhash.fetch64	fn	fetch64	priv
 std.hash.cityhash.CityHash32	struct	CityHash32	pub
-std.hash.cityhash.CityHash32.Self	const	Self	priv
+std.hash.cityhash.CityHash32.Self	alias	Self	priv
 std.hash.cityhash.CityHash32.c1	const	c1	priv
 std.hash.cityhash.CityHash32.c2	const	c2	priv
 std.hash.cityhash.CityHash32.fmix	fn	fmix	priv
@@ -25623,7 +25623,7 @@ std.hash.cityhash.CityHash32.hash32Len5To12	fn	hash32Len5To12	priv
 std.hash.cityhash.CityHash32.hash32Len13To24	fn	hash32Len13To24	priv
 std.hash.cityhash.CityHash32.hash	fn	hash	pub
 std.hash.cityhash.CityHash64	struct	CityHash64	pub
-std.hash.cityhash.CityHash64.Self	const	Self	priv
+std.hash.cityhash.CityHash64.Self	alias	Self	priv
 std.hash.cityhash.CityHash64.k0	const	k0	priv
 std.hash.cityhash.CityHash64.k1	const	k1	priv
 std.hash.cityhash.CityHash64.k2	const	k2	priv
@@ -25841,7 +25841,7 @@ std.hash_map.HashMap().KeyIterator	alias	KeyIterator	pub
 std.hash_map.HashMap().ValueIterator	alias	ValueIterator	pub
 std.hash_map.HashMap().Size	alias	Size	pub
 std.hash_map.HashMap().GetOrPutResult	alias	GetOrPutResult	pub
-std.hash_map.HashMap().Self	const	Self	priv
+std.hash_map.HashMap().Self	alias	Self	priv
 std.hash_map.HashMap().init	fn	init	pub
 std.hash_map.HashMap().initContext	fn	initContext	pub
 std.hash_map.HashMap().lockPointers	fn	lockPointers	pub
@@ -25892,7 +25892,7 @@ std.hash_map.HashMap().move	fn	move	pub
 std.hash_map.HashMap().rehash	fn	rehash	pub
 std.hash_map.HashMapUnmanaged	fn	HashMapUnmanaged	pub
 std.hash_map.HashMapUnmanaged()	struct	HashMapUnmanaged	pub
-std.hash_map.HashMapUnmanaged().Self	const	Self	priv
+std.hash_map.HashMapUnmanaged().Self	alias	Self	priv
 std.hash_map.HashMapUnmanaged().metadata	field	metadata	pub
 std.hash_map.HashMapUnmanaged().size	field	size	pub
 std.hash_map.HashMapUnmanaged().available	field	available	pub
@@ -26037,7 +26037,7 @@ std.heap.Allocator	alias	Allocator	priv
 std.heap.windows	alias	windows	priv
 std.heap.Alignment	alias	Alignment	priv
 std.heap.ArenaAllocator	ns	ArenaAllocator	pub
-std.heap.ArenaAllocator.ArenaAllocator	const	ArenaAllocator	priv
+std.heap.ArenaAllocator.ArenaAllocator	alias	ArenaAllocator	priv
 std.heap.ArenaAllocator.child_allocator	field	child_allocator	pub
 std.heap.ArenaAllocator.state	field	state	pub
 std.heap.ArenaAllocator.State	struct	State	pub
@@ -26137,7 +26137,7 @@ std.heap.ArenaAllocator.FuzzAllocator.resize	fn	resize	priv
 std.heap.ArenaAllocator.FuzzAllocator.remap	fn	remap	priv
 std.heap.ArenaAllocator.FuzzAllocator.free	fn	free	priv
 std.heap.SmpAllocator	ns	SmpAllocator	pub
-std.heap.SmpAllocator.SmpAllocator	const	SmpAllocator	priv
+std.heap.SmpAllocator.SmpAllocator	alias	SmpAllocator	priv
 std.heap.SmpAllocator.builtin	modref	builtin	priv
 std.heap.SmpAllocator.std	nsref	std	priv
 std.heap.SmpAllocator.assert	alias	assert	priv
@@ -26175,7 +26175,7 @@ std.heap.FixedBufferAllocator.std	nsref	std	priv
 std.heap.FixedBufferAllocator.Allocator	alias	Allocator	priv
 std.heap.FixedBufferAllocator.assert	alias	assert	priv
 std.heap.FixedBufferAllocator.mem	alias	mem	priv
-std.heap.FixedBufferAllocator.FixedBufferAllocator	const	FixedBufferAllocator	priv
+std.heap.FixedBufferAllocator.FixedBufferAllocator	alias	FixedBufferAllocator	priv
 std.heap.FixedBufferAllocator.end_index	field	end_index	pub
 std.heap.FixedBufferAllocator.buffer	field	buffer	pub
 std.heap.FixedBufferAllocator.init	fn	init	pub
@@ -26222,7 +26222,7 @@ std.heap.PageAllocator.unmap	fn	unmap	pub
 std.heap.PageAllocator.realloc	fn	realloc	pub
 std.heap.WasmAllocator	const	WasmAllocator	pub
 std.heap.BrkAllocator	ns	BrkAllocator	pub
-std.heap.BrkAllocator.BrkAllocator	const	BrkAllocator	priv
+std.heap.BrkAllocator.BrkAllocator	alias	BrkAllocator	priv
 std.heap.BrkAllocator.builtin	modref	builtin	priv
 std.heap.BrkAllocator.std	nsref	std	priv
 std.heap.BrkAllocator.Allocator	alias	Allocator	priv
@@ -26270,7 +26270,7 @@ std.heap.DebugAllocator().large_allocations	field	large_allocations	pub
 std.heap.DebugAllocator().total_requested_bytes	field	total_requested_bytes	pub
 std.heap.DebugAllocator().requested_memory_limit	field	requested_memory_limit	pub
 std.heap.DebugAllocator().mutex	field	mutex	pub
-std.heap.DebugAllocator().Self	const	Self	priv
+std.heap.DebugAllocator().Self	alias	Self	priv
 std.heap.DebugAllocator().init	const	init	pub
 std.heap.DebugAllocator().slot_counts	const	slot_counts	priv
 std.heap.DebugAllocator().page_size	alias	page_size	priv
@@ -26353,7 +26353,7 @@ std.heap.memory_pool.Options.alignment	field	alignment	pub
 std.heap.memory_pool.Options.growable	field	growable	pub
 std.heap.memory_pool.Extra	fn	Extra	pub
 std.heap.memory_pool.Extra()	struct	Extra	pub
-std.heap.memory_pool.Extra().Pool	const	Pool	priv
+std.heap.memory_pool.Extra().Pool	alias	Pool	priv
 std.heap.memory_pool.Extra().arena_state	field	arena_state	pub
 std.heap.memory_pool.Extra().free_list	field	free_list	pub
 std.heap.memory_pool.Extra().item_size	const	item_size	pub
@@ -26372,7 +26372,7 @@ std.heap.memory_pool.Extra().destroy	fn	destroy	pub
 std.heap.memory_pool.Extra().allocNew	fn	allocNew	priv
 std.heap.memory_pool.ExtraManaged	fn	ExtraManaged	pub
 std.heap.memory_pool.ExtraManaged()	struct	ExtraManaged	pub
-std.heap.memory_pool.ExtraManaged().Pool	const	Pool	priv
+std.heap.memory_pool.ExtraManaged().Pool	alias	Pool	priv
 std.heap.memory_pool.ExtraManaged().allocator	field	allocator	pub
 std.heap.memory_pool.ExtraManaged().unmanaged	field	unmanaged	pub
 std.heap.memory_pool.ExtraManaged().Unmanaged	const	Unmanaged	pub
@@ -26412,7 +26412,7 @@ std.heap.brk_allocator	const	brk_allocator	pub
 std.heap.stackFallback	fn	stackFallback	pub
 std.heap.StackFallbackAllocator	fn	StackFallbackAllocator	pub
 std.heap.StackFallbackAllocator()	struct	StackFallbackAllocator	pub
-std.heap.StackFallbackAllocator().Self	const	Self	priv
+std.heap.StackFallbackAllocator().Self	alias	Self	priv
 std.heap.StackFallbackAllocator().buffer	field	buffer	pub
 std.heap.StackFallbackAllocator().fallback_allocator	field	fallback_allocator	pub
 std.heap.StackFallbackAllocator().fixed_buffer_allocator	field	fixed_buffer_allocator	pub
@@ -26436,7 +26436,7 @@ std.http.assert	alias	assert	priv
 std.http.Writer	alias	Writer	priv
 std.http.File	alias	File	priv
 std.http.Client	ns	Client	pub
-std.http.Client.Client	const	Client	priv
+std.http.Client.Client	alias	Client	priv
 std.http.Client.builtin	modref	builtin	priv
 std.http.Client.std	nsref	std	priv
 std.http.Client.Io	alias	Io	priv
@@ -26666,7 +26666,7 @@ std.http.Server.assert	alias	assert	priv
 std.http.Server.testing	alias	testing	priv
 std.http.Server.Writer	alias	Writer	priv
 std.http.Server.Reader	alias	Reader	priv
-std.http.Server.Server	const	Server	priv
+std.http.Server.Server	alias	Server	priv
 std.http.Server.out	field	out	pub
 std.http.Server.reader	field	reader	pub
 std.http.Server.init	fn	init	pub
@@ -26766,11 +26766,11 @@ std.http.HeadParser.int16	fn	int16	priv
 std.http.HeadParser.int24	fn	int24	priv
 std.http.HeadParser.int32	fn	int32	priv
 std.http.HeadParser.intShift	fn	intShift	priv
-std.http.HeadParser.HeadParser	const	HeadParser	priv
+std.http.HeadParser.HeadParser	alias	HeadParser	priv
 std.http.HeadParser.std	modref	std	priv
 std.http.HeadParser.builtin	modref	builtin	priv
 std.http.ChunkParser	ns	ChunkParser	pub
-std.http.ChunkParser.ChunkParser	const	ChunkParser	priv
+std.http.ChunkParser.ChunkParser	alias	ChunkParser	priv
 std.http.ChunkParser.std	modref	std	priv
 std.http.ChunkParser.state	field	state	pub
 std.http.ChunkParser.chunk_len	field	chunk_len	pub
@@ -26790,7 +26790,7 @@ std.http.HeaderIterator.index	field	index	pub
 std.http.HeaderIterator.is_trailer	field	is_trailer	pub
 std.http.HeaderIterator.init	fn	init	pub
 std.http.HeaderIterator.next	fn	next	pub
-std.http.HeaderIterator.HeaderIterator	const	HeaderIterator	priv
+std.http.HeaderIterator.HeaderIterator	alias	HeaderIterator	priv
 std.http.HeaderIterator.std	nsref	std	priv
 std.http.HeaderIterator.assert	alias	assert	priv
 std.http.Version	enum	Version	pub
@@ -26997,7 +26997,7 @@ std.json.ArrayHashMap().jsonParse	fn	jsonParse	pub
 std.json.ArrayHashMap().jsonParseFromValue	fn	jsonParseFromValue	pub
 std.json.ArrayHashMap().jsonStringify	fn	jsonStringify	pub
 std.json.Scanner	ns	Scanner	pub
-std.json.Scanner.Scanner	const	Scanner	priv
+std.json.Scanner.Scanner	alias	Scanner	priv
 std.json.Scanner.std	modref	std	priv
 std.json.Scanner.Allocator	alias	Allocator	priv
 std.json.Scanner.assert	alias	assert	priv
@@ -27191,7 +27191,7 @@ std.json.Stringify.assert	alias	assert	priv
 std.json.Stringify.Allocator	alias	Allocator	priv
 std.json.Stringify.ArrayList	alias	ArrayList	priv
 std.json.Stringify.BitStack	alias	BitStack	priv
-std.json.Stringify.Stringify	const	Stringify	priv
+std.json.Stringify.Stringify	alias	Stringify	priv
 std.json.Stringify.Writer	alias	Writer	priv
 std.json.Stringify.IndentationMode	enum	IndentationMode	priv
 std.json.Stringify.IndentationMode.object	tag	object	pub
@@ -27999,7 +27999,7 @@ std.math.float.expect	alias	expect	priv
 std.math.float.expectEqual	alias	expectEqual	priv
 std.math.float.FloatRepr	fn	FloatRepr	pub
 std.math.float.FloatRepr()	struct	FloatRepr	pub
-std.math.float.FloatRepr().Repr	const	Repr	priv
+std.math.float.FloatRepr().Repr	alias	Repr	priv
 std.math.float.FloatRepr().mantissa	field	mantissa	pub
 std.math.float.FloatRepr().exponent	field	exponent	pub
 std.math.float.FloatRepr().sign	field	sign	pub
@@ -28169,7 +28169,7 @@ std.math.complex.tanh	fn	tanh	pub
 std.math.complex.tan	fn	tan	pub
 std.math.complex.Complex	fn	Complex	pub
 std.math.complex.Complex()	struct	Complex	pub
-std.math.complex.Complex().Self	const	Self	priv
+std.math.complex.Complex().Self	alias	Self	priv
 std.math.complex.Complex().re	field	re	pub
 std.math.complex.Complex().im	field	im	pub
 std.math.complex.Complex().init	fn	init	pub
@@ -28541,7 +28541,7 @@ std.mem.builtin	modref	builtin	priv
 std.mem.debug	alias	debug	priv
 std.mem.assert	alias	assert	priv
 std.mem.math	alias	math	priv
-std.mem.mem	const	mem	priv
+std.mem.mem	alias	mem	priv
 std.mem.testing	alias	testing	priv
 std.mem.Endian	alias	Endian	priv
 std.mem.native_endian	const	native_endian	priv
@@ -28551,7 +28551,7 @@ std.mem.Allocator.std	nsref	std	priv
 std.mem.Allocator.assert	alias	assert	priv
 std.mem.Allocator.math	alias	math	priv
 std.mem.Allocator.mem	alias	mem	priv
-std.mem.Allocator.Allocator	const	Allocator	priv
+std.mem.Allocator.Allocator	alias	Allocator	priv
 std.mem.Allocator.builtin	modref	builtin	priv
 std.mem.Allocator.Alignment	alias	Alignment	priv
 std.mem.Allocator.Error	const	Error	pub
@@ -28616,7 +28616,7 @@ std.mem.Alignment.backward	fn	backward	pub
 std.mem.Alignment.check	fn	check	pub
 std.mem.ValidationAllocator	fn	ValidationAllocator	pub
 std.mem.ValidationAllocator()	struct	ValidationAllocator	pub
-std.mem.ValidationAllocator().Self	const	Self	priv
+std.mem.ValidationAllocator().Self	alias	Self	priv
 std.mem.ValidationAllocator().underlying_allocator	field	underlying_allocator	pub
 std.mem.ValidationAllocator().init	fn	init	pub
 std.mem.ValidationAllocator().allocator	fn	allocator	pub
@@ -28726,7 +28726,7 @@ std.mem.WindowIterator().buffer	field	buffer	pub
 std.mem.WindowIterator().index	field	index	pub
 std.mem.WindowIterator().size	field	size	pub
 std.mem.WindowIterator().advance	field	advance	pub
-std.mem.WindowIterator().Self	const	Self	priv
+std.mem.WindowIterator().Self	alias	Self	priv
 std.mem.WindowIterator().next	fn	next	pub
 std.mem.WindowIterator().reset	fn	reset	pub
 std.mem.startsWith	fn	startsWith	pub
@@ -28746,7 +28746,7 @@ std.mem.TokenIterator()	struct	TokenIterator	pub
 std.mem.TokenIterator().buffer	field	buffer	pub
 std.mem.TokenIterator().delimiter	field	delimiter	pub
 std.mem.TokenIterator().index	field	index	pub
-std.mem.TokenIterator().Self	const	Self	priv
+std.mem.TokenIterator().Self	alias	Self	priv
 std.mem.TokenIterator().next	fn	next	pub
 std.mem.TokenIterator().peek	fn	peek	pub
 std.mem.TokenIterator().rest	fn	rest	pub
@@ -28757,7 +28757,7 @@ std.mem.SplitIterator()	struct	SplitIterator	pub
 std.mem.SplitIterator().buffer	field	buffer	pub
 std.mem.SplitIterator().index	field	index	pub
 std.mem.SplitIterator().delimiter	field	delimiter	pub
-std.mem.SplitIterator().Self	const	Self	priv
+std.mem.SplitIterator().Self	alias	Self	priv
 std.mem.SplitIterator().first	fn	first	pub
 std.mem.SplitIterator().next	fn	next	pub
 std.mem.SplitIterator().peek	fn	peek	pub
@@ -28768,7 +28768,7 @@ std.mem.SplitBackwardsIterator()	struct	SplitBackwardsIterator	pub
 std.mem.SplitBackwardsIterator().buffer	field	buffer	pub
 std.mem.SplitBackwardsIterator().index	field	index	pub
 std.mem.SplitBackwardsIterator().delimiter	field	delimiter	pub
-std.mem.SplitBackwardsIterator().Self	const	Self	priv
+std.mem.SplitBackwardsIterator().Self	alias	Self	priv
 std.mem.SplitBackwardsIterator().first	fn	first	pub
 std.mem.SplitBackwardsIterator().next	fn	next	pub
 std.mem.SplitBackwardsIterator().rest	fn	rest	pub
@@ -28861,7 +28861,7 @@ std.meta.TrailerFlags().bit_count	const	bit_count	pub
 std.meta.TrailerFlags().FieldEnum	const	FieldEnum	pub
 std.meta.TrailerFlags().ActiveFields	const	ActiveFields	pub
 std.meta.TrailerFlags().FieldValues	const	FieldValues	pub
-std.meta.TrailerFlags().Self	const	Self	pub
+std.meta.TrailerFlags().Self	alias	Self	pub
 std.meta.TrailerFlags().has	fn	has	pub
 std.meta.TrailerFlags().get	fn	get	pub
 std.meta.TrailerFlags().setFlag	fn	setFlag	pub
@@ -40545,7 +40545,7 @@ std.os.linux.io_uring_sqe.prep_cmd_sock	fn	prep_cmd_sock	pub
 std.os.linux.io_uring_sqe.set_flags	fn	set_flags	pub
 std.os.linux.io_uring_sqe.link_next	fn	link_next	pub
 std.os.linux.IoUring	ns	IoUring	pub
-std.os.linux.IoUring.IoUring	const	IoUring	priv
+std.os.linux.IoUring.IoUring	alias	IoUring	priv
 std.os.linux.IoUring.builtin	modref	builtin	priv
 std.os.linux.IoUring.is_linux	const	is_linux	priv
 std.os.linux.IoUring.std	nsref	std	priv
@@ -42566,7 +42566,7 @@ std.os.uefi.protocol.std	modref	std	priv
 std.os.uefi.protocol.uefi	alias	uefi	priv
 std.os.uefi.protocol.ServiceBinding	fn	ServiceBinding	pub
 std.os.uefi.protocol.ServiceBinding()	struct	ServiceBinding	pub
-std.os.uefi.protocol.ServiceBinding().Self	const	Self	priv
+std.os.uefi.protocol.ServiceBinding().Self	alias	Self	priv
 std.os.uefi.protocol.ServiceBinding()._create_child	field	_create_child	pub
 std.os.uefi.protocol.ServiceBinding()._destroy_child	field	_destroy_child	pub
 std.os.uefi.protocol.ServiceBinding().CreateChildError	const	CreateChildError	pub
@@ -42711,7 +42711,7 @@ std.os.uefi.protocol.File.Info.VolumeLabel.getVolumeLabel	fn	getVolumeLabel	pub
 std.os.uefi.protocol.File.Info.VolumeLabel.guid	const	guid	pub
 std.os.uefi.protocol.File.end_of_file	const	end_of_file	priv
 std.os.uefi.protocol.BlockIo	struct	BlockIo	pub
-std.os.uefi.protocol.BlockIo.Self	const	Self	priv
+std.os.uefi.protocol.BlockIo.Self	alias	Self	priv
 std.os.uefi.protocol.BlockIo.revision	field	revision	pub
 std.os.uefi.protocol.BlockIo.media	field	media	pub
 std.os.uefi.protocol.BlockIo._reset	field	_reset	pub
@@ -53428,7 +53428,7 @@ std.process.windows	alias	windows	priv
 std.process.unicode	alias	unicode	priv
 std.process.max_path_bytes	alias	max_path_bytes	priv
 std.process.Child	ns	Child	pub
-std.process.Child.Child	const	Child	priv
+std.process.Child.Child	alias	Child	priv
 std.process.Child.builtin	modref	builtin	priv
 std.process.Child.native_os	alias	native_os	priv
 std.process.Child.std	nsref	std	priv
@@ -53462,7 +53462,7 @@ std.process.Child.kill	fn	kill	pub
 std.process.Child.WaitError	const	WaitError	pub
 std.process.Child.wait	fn	wait	pub
 std.process.Args	ns	Args	pub
-std.process.Args.Args	const	Args	priv
+std.process.Args.Args	alias	Args	priv
 std.process.Args.builtin	modref	builtin	priv
 std.process.Args.native_os	alias	native_os	priv
 std.process.Args.std	nsref	std	priv
@@ -53539,7 +53539,7 @@ std.process.Args.IteratorGeneral().free_cmd_line_on_deinit	field	free_cmd_line_o
 std.process.Args.IteratorGeneral().buffer	field	buffer	pub
 std.process.Args.IteratorGeneral().start	field	start	pub
 std.process.Args.IteratorGeneral().end	field	end	pub
-std.process.Args.IteratorGeneral().Self	const	Self	pub
+std.process.Args.IteratorGeneral().Self	alias	Self	pub
 std.process.Args.IteratorGeneral().InitError	const	InitError	pub
 std.process.Args.IteratorGeneral().init	fn	init	pub
 std.process.Args.IteratorGeneral().initTakeOwnership	fn	initTakeOwnership	pub
@@ -53551,7 +53551,7 @@ std.process.Args.IteratorGeneral().emitCharacter	fn	emitCharacter	priv
 std.process.Args.IteratorGeneral().deinit	fn	deinit	pub
 std.process.Args.testResponseFileCmdLine	fn	testResponseFileCmdLine	priv
 std.process.Environ	ns	Environ	pub
-std.process.Environ.Environ	const	Environ	priv
+std.process.Environ.Environ	alias	Environ	priv
 std.process.Environ.builtin	modref	builtin	priv
 std.process.Environ.native_os	alias	native_os	priv
 std.process.Environ.std	nsref	std	priv
@@ -53635,7 +53635,7 @@ std.process.Environ.CreateWindowsBlockOptions	struct	CreateWindowsBlockOptions	p
 std.process.Environ.CreateWindowsBlockOptions.zig_progress_handle	field	zig_progress_handle	pub
 std.process.Environ.createWindowsBlock	fn	createWindowsBlock	pub
 std.process.Preopens	ns	Preopens	pub
-std.process.Preopens.Preopens	const	Preopens	priv
+std.process.Preopens.Preopens	alias	Preopens	priv
 std.process.Preopens.builtin	modref	builtin	priv
 std.process.Preopens.native_os	alias	native_os	priv
 std.process.Preopens.std	nsref	std	priv
@@ -53925,7 +53925,7 @@ std.tar.Io	alias	Io	priv
 std.tar.assert	alias	assert	priv
 std.tar.testing	alias	testing	priv
 std.tar.Writer	ns	Writer	pub
-std.tar.Writer.Writer	const	Writer	priv
+std.tar.Writer.Writer	alias	Writer	priv
 std.tar.Writer.std	modref	std	priv
 std.tar.Writer.Io	alias	Io	priv
 std.tar.Writer.assert	alias	assert	priv
@@ -54090,7 +54090,7 @@ std.tar.pax_max_size_attr_len	const	pax_max_size_attr_len	priv
 std.tar.PaxIterator	struct	PaxIterator	pub
 std.tar.PaxIterator.size	field	size	pub
 std.tar.PaxIterator.reader	field	reader	pub
-std.tar.PaxIterator.Self	const	Self	priv
+std.tar.PaxIterator.Self	alias	Self	priv
 std.tar.PaxIterator.Attribute	struct	Attribute	priv
 std.tar.PaxIterator.Attribute.kind	field	kind	pub
 std.tar.PaxIterator.Attribute.len	field	len	pub
@@ -54120,7 +54120,7 @@ std.testing.random_seed	const	random_seed	pub
 std.testing.FailingAllocator	ns	FailingAllocator	pub
 std.testing.FailingAllocator.std	nsref	std	priv
 std.testing.FailingAllocator.mem	alias	mem	priv
-std.testing.FailingAllocator.FailingAllocator	const	FailingAllocator	priv
+std.testing.FailingAllocator.FailingAllocator	alias	FailingAllocator	priv
 std.testing.FailingAllocator.alloc_index	field	alloc_index	pub
 std.testing.FailingAllocator.resize_index	field	resize_index	pub
 std.testing.FailingAllocator.internal_allocator	field	internal_allocator	pub
@@ -54170,7 +54170,7 @@ std.testing.SliceDiffer().start_index	field	start_index	pub
 std.testing.SliceDiffer().expected	field	expected	pub
 std.testing.SliceDiffer().actual	field	actual	pub
 std.testing.SliceDiffer().terminal_mode	field	terminal_mode	pub
-std.testing.SliceDiffer().Self	const	Self	priv
+std.testing.SliceDiffer().Self	alias	Self	priv
 std.testing.SliceDiffer().write	fn	write	pub
 std.testing.BytesDiffer	struct	BytesDiffer	priv
 std.testing.BytesDiffer.expected	field	expected	pub
@@ -54205,7 +54205,7 @@ std.testing.Smith.builtin	modref	builtin	priv
 std.testing.Smith.std	nsref	std	priv
 std.testing.Smith.assert	alias	assert	priv
 std.testing.Smith.fuzz_abi	alias	fuzz_abi	priv
-std.testing.Smith.Smith	const	Smith	priv
+std.testing.Smith.Smith	alias	Smith	priv
 std.testing.Smith.in	field	in	pub
 std.testing.Smith.Weight	alias	Weight	pub
 std.testing.Smith.intUid	fn	intUid	priv
@@ -55472,7 +55472,7 @@ std.zig.tokenizer.Tokenizer.next	fn	next	pub
 std.zig.tokenizer.testTokenize	fn	testTokenize	priv
 std.zig.tokenizer.testPropertiesUpheld	fn	testPropertiesUpheld	priv
 std.zig.ErrorBundle	ns	ErrorBundle	pub
-std.zig.ErrorBundle.ErrorBundle	const	ErrorBundle	priv
+std.zig.ErrorBundle.ErrorBundle	alias	ErrorBundle	priv
 std.zig.ErrorBundle.std	modref	std	priv
 std.zig.ErrorBundle.Io	alias	Io	priv
 std.zig.ErrorBundle.Writer	alias	Writer	priv
@@ -55557,7 +55557,7 @@ std.zig.ErrorBundle.Wip.addExtra	fn	addExtra	priv
 std.zig.ErrorBundle.Wip.addExtraAssumeCapacity	fn	addExtraAssumeCapacity	priv
 std.zig.ErrorBundle.Wip.setExtra	fn	setExtra	priv
 std.zig.Server	ns	Server	pub
-std.zig.Server.Server	const	Server	priv
+std.zig.Server.Server	alias	Server	priv
 std.zig.Server.builtin	modref	builtin	priv
 std.zig.Server.std	modref	std	priv
 std.zig.Server.Allocator	alias	Allocator	priv
@@ -55672,7 +55672,7 @@ std.zig.TokenSmith.std	nsref	std	priv
 std.zig.TokenSmith.Smith	alias	Smith	priv
 std.zig.TokenSmith.Token	alias	Token	priv
 std.zig.TokenSmith.TokenList	alias	TokenList	priv
-std.zig.TokenSmith.TokenSmith	const	TokenSmith	priv
+std.zig.TokenSmith.TokenSmith	alias	TokenSmith	priv
 std.zig.TokenSmith.source_buf	field	source_buf	pub
 std.zig.TokenSmith.source_len	field	source_len	pub
 std.zig.TokenSmith.tag_buf	field	tag_buf	pub
@@ -55765,7 +55765,7 @@ std.zig.Ast.assert	alias	assert	priv
 std.zig.Ast.testing	alias	testing	priv
 std.zig.Ast.mem	alias	mem	priv
 std.zig.Ast.Token	alias	Token	priv
-std.zig.Ast.Ast	const	Ast	priv
+std.zig.Ast.Ast	alias	Ast	priv
 std.zig.Ast.Allocator	alias	Allocator	priv
 std.zig.Ast.Parse	ns	Parse	priv
 std.zig.Ast.Parse.Error	const	Error	pub
@@ -55904,7 +55904,7 @@ std.zig.Ast.Parse.assertToken	fn	assertToken	priv
 std.zig.Ast.Parse.expectToken	fn	expectToken	priv
 std.zig.Ast.Parse.expectSemicolon	fn	expectSemicolon	priv
 std.zig.Ast.Parse.nextToken	fn	nextToken	priv
-std.zig.Ast.Parse.Parse	const	Parse	priv
+std.zig.Ast.Parse.Parse	alias	Parse	priv
 std.zig.Ast.Parse.std	nsref	std	priv
 std.zig.Ast.Parse.assert	alias	assert	priv
 std.zig.Ast.Parse.Allocator	alias	Allocator	priv
@@ -55974,7 +55974,7 @@ std.zig.Ast.Render.Ast	alias	Ast	priv
 std.zig.Ast.Render.Token	alias	Token	priv
 std.zig.Ast.Render.primitives	alias	primitives	priv
 std.zig.Ast.Render.Writer	alias	Writer	priv
-std.zig.Ast.Render.Render	const	Render	priv
+std.zig.Ast.Render.Render	alias	Render	priv
 std.zig.Ast.Render.gpa	field	gpa	pub
 std.zig.Ast.Render.ais	field	ais	pub
 std.zig.Ast.Render.tree	field	tree	pub
@@ -56746,7 +56746,7 @@ std.zig.Ast.nodeToSpan	fn	nodeToSpan	pub
 std.zig.Ast.tokenToSpan	fn	tokenToSpan	pub
 std.zig.Ast.tokensToSpan	fn	tokensToSpan	pub
 std.zig.AstGen	ns	AstGen	pub
-std.zig.AstGen.AstGen	const	AstGen	priv
+std.zig.AstGen.AstGen	alias	AstGen	priv
 std.zig.AstGen.std	modref	std	priv
 std.zig.AstGen.Ast	alias	Ast	priv
 std.zig.AstGen.mem	alias	mem	priv
@@ -57220,7 +57220,7 @@ std.zig.AstSmith.assert	alias	assert	priv
 std.zig.AstSmith.Token	alias	Token	priv
 std.zig.AstSmith.Smith	alias	Smith	priv
 std.zig.AstSmith.Weight	alias	Weight	priv
-std.zig.AstSmith.AstSmith	const	AstSmith	priv
+std.zig.AstSmith.AstSmith	alias	AstSmith	priv
 std.zig.AstSmith.smith	field	smith	pub
 std.zig.AstSmith.source_buf	field	source_buf	pub
 std.zig.AstSmith.source_len	field	source_len	pub
@@ -57393,7 +57393,7 @@ std.zig.AstSmith.logBadSourceInner	fn	logBadSourceInner	priv
 std.zig.AstSmith.logSource	fn	logSource	pub
 std.zig.AstSmith.logSourceInner	fn	logSourceInner	priv
 std.zig.Zir	ns	Zir	pub
-std.zig.Zir.Zir	const	Zir	priv
+std.zig.Zir.Zir	alias	Zir	priv
 std.zig.Zir.builtin	modref	builtin	priv
 std.zig.Zir.std	modref	std	priv
 std.zig.Zir.Io	alias	Io	priv
@@ -58715,7 +58715,7 @@ std.zig.Zir.UnwrappedOpaqueDecl.captures	field	captures	pub
 std.zig.Zir.UnwrappedOpaqueDecl.capture_names	field	capture_names	pub
 std.zig.Zir.UnwrappedOpaqueDecl.decls	field	decls	pub
 std.zig.Zoir	ns	Zoir	pub
-std.zig.Zoir.Zoir	const	Zoir	priv
+std.zig.Zoir.Zoir	alias	Zoir	priv
 std.zig.Zoir.std	modref	std	priv
 std.zig.Zoir.Io	alias	Io	priv
 std.zig.Zoir.assert	alias	assert	priv
@@ -58808,7 +58808,7 @@ std.zig.ZonGen.mem	alias	mem	priv
 std.zig.ZonGen.Allocator	alias	Allocator	priv
 std.zig.ZonGen.StringIndexAdapter	alias	StringIndexAdapter	priv
 std.zig.ZonGen.StringIndexContext	alias	StringIndexContext	priv
-std.zig.ZonGen.ZonGen	const	ZonGen	priv
+std.zig.ZonGen.ZonGen	alias	ZonGen	priv
 std.zig.ZonGen.Zoir	nsref	Zoir	priv
 std.zig.ZonGen.Ast	nsref	Ast	priv
 std.zig.ZonGen.Writer	alias	Writer	priv
@@ -58863,7 +58863,7 @@ std.zig.system.Target	alias	Target	priv
 std.zig.system.posix	alias	posix	priv
 std.zig.system.Io	alias	Io	priv
 std.zig.system.NativePaths	ns	NativePaths	pub
-std.zig.system.NativePaths.NativePaths	const	NativePaths	priv
+std.zig.system.NativePaths.NativePaths	alias	NativePaths	priv
 std.zig.system.NativePaths.builtin	modref	builtin	priv
 std.zig.system.NativePaths.std	nsref	std	priv
 std.zig.system.NativePaths.Io	alias	Io	priv
@@ -59197,10 +59197,10 @@ std.zig.BuiltinFn.illegal_outside_function	field	illegal_outside_function	pub
 std.zig.BuiltinFn.param_count	field	param_count	pub
 std.zig.BuiltinFn.list	const	list	pub
 std.zig.BuiltinFn.std	modref	std	priv
-std.zig.BuiltinFn.BuiltinFn	const	BuiltinFn	priv
+std.zig.BuiltinFn.BuiltinFn	alias	BuiltinFn	priv
 std.zig.AstRlAnnotate	ns	AstRlAnnotate	pub
 std.zig.AstRlAnnotate.std	modref	std	priv
-std.zig.AstRlAnnotate.AstRlAnnotate	const	AstRlAnnotate	priv
+std.zig.AstRlAnnotate.AstRlAnnotate	alias	AstRlAnnotate	priv
 std.zig.AstRlAnnotate.Ast	alias	Ast	priv
 std.zig.AstRlAnnotate.Allocator	alias	Allocator	priv
 std.zig.AstRlAnnotate.AutoHashMapUnmanaged	alias	AutoHashMapUnmanaged	priv
@@ -59232,7 +59232,7 @@ std.zig.AstRlAnnotate.identString	fn	identString	priv
 std.zig.AstRlAnnotate.blockExpr	fn	blockExpr	priv
 std.zig.AstRlAnnotate.builtinCall	fn	builtinCall	priv
 std.zig.LibCInstallation	ns	LibCInstallation	pub
-std.zig.LibCInstallation.LibCInstallation	const	LibCInstallation	priv
+std.zig.LibCInstallation.LibCInstallation	alias	LibCInstallation	priv
 std.zig.LibCInstallation.builtin	modref	builtin	priv
 std.zig.LibCInstallation.is_darwin	const	is_darwin	priv
 std.zig.LibCInstallation.is_windows	const	is_windows	priv
@@ -59299,7 +59299,7 @@ std.zig.LibCInstallation.CrtPaths.crtend	field	crtend	pub
 std.zig.LibCInstallation.CrtPaths.crtn	field	crtn	pub
 std.zig.LibCInstallation.resolveCrtPaths	fn	resolveCrtPaths	pub
 std.zig.WindowsSdk	ns	WindowsSdk	pub
-std.zig.WindowsSdk.WindowsSdk	const	WindowsSdk	priv
+std.zig.WindowsSdk.WindowsSdk	alias	WindowsSdk	priv
 std.zig.WindowsSdk.builtin	modref	builtin	priv
 std.zig.WindowsSdk.std	modref	std	priv
 std.zig.WindowsSdk.Io	alias	Io	priv
@@ -59370,7 +59370,7 @@ std.zig.WindowsSdk.MsvcLibDir.findViaVs7Key	fn	findViaVs7Key	priv
 std.zig.WindowsSdk.MsvcLibDir.verifyLibDir	fn	verifyLibDir	priv
 std.zig.WindowsSdk.MsvcLibDir.find	fn	find	pub
 std.zig.LibCDirs	ns	LibCDirs	pub
-std.zig.LibCDirs.LibCDirs	const	LibCDirs	priv
+std.zig.LibCDirs.LibCDirs	alias	LibCDirs	priv
 std.zig.LibCDirs.builtin	modref	builtin	priv
 std.zig.LibCDirs.std	nsref	std	priv
 std.zig.LibCDirs.Io	alias	Io	priv
@@ -59420,7 +59420,7 @@ std.zig.target.assert	alias	assert	priv
 std.zig.target.Allocator	alias	Allocator	priv
 std.zig.llvm	ns	llvm	pub
 std.zig.llvm.BitcodeReader	ns	BitcodeReader	pub
-std.zig.llvm.BitcodeReader.BitcodeReader	const	BitcodeReader	priv
+std.zig.llvm.BitcodeReader.BitcodeReader	alias	BitcodeReader	priv
 std.zig.llvm.BitcodeReader.std	nsref	std	priv
 std.zig.llvm.BitcodeReader.assert	alias	assert	priv
 std.zig.llvm.BitcodeReader.allocator	field	allocator	pub
@@ -59526,7 +59526,7 @@ std.zig.llvm.bitcode_writer.AbbrevOp.array_char6	field	array_char6	pub
 std.zig.llvm.bitcode_writer.Error	const	Error	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter	fn	BitcodeWriter	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter()	struct	BitcodeWriter	pub
-std.zig.llvm.bitcode_writer.BitcodeWriter().BcWriter	const	BcWriter	priv
+std.zig.llvm.bitcode_writer.BitcodeWriter().BcWriter	alias	BcWriter	priv
 std.zig.llvm.bitcode_writer.BitcodeWriter().buffer	field	buffer	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter().bit_buffer	field	bit_buffer	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter().bit_count	field	bit_count	pub
@@ -59545,7 +59545,7 @@ std.zig.llvm.bitcode_writer.BitcodeWriter().alignTo32	fn	alignTo32	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter().enterTopBlock	fn	enterTopBlock	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter	fn	BlockWriter	priv
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter()	struct	BlockWriter	priv
-std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().Self	const	Self	priv
+std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().Self	alias	Self	priv
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().abbrev_len	const	abbrev_len	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().start	field	start	pub
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().bitcode	field	bitcode	pub
@@ -59562,7 +59562,7 @@ std.zig.llvm.bitcode_writer.BufType	fn	BufType	priv
 std.zig.llvm.bitcode_writer.bufValue	fn	bufValue	priv
 std.zig.llvm.Builder	ns	Builder	pub
 std.zig.llvm.Builder.builtin	modref	builtin	priv
-std.zig.llvm.Builder.Builder	const	Builder	priv
+std.zig.llvm.Builder.Builder	alias	Builder	priv
 std.zig.llvm.Builder.std	nsref	std	priv
 std.zig.llvm.Builder.Io	alias	Io	priv
 std.zig.llvm.Builder.Allocator	alias	Allocator	priv
@@ -63354,7 +63354,7 @@ std.zon.Serializer	ns	Serializer	pub
 std.zon.Serializer.options	field	options	pub
 std.zon.Serializer.indent_level	field	indent_level	pub
 std.zon.Serializer.writer	field	writer	pub
-std.zon.Serializer.Serializer	const	Serializer	priv
+std.zon.Serializer.Serializer	alias	Serializer	priv
 std.zon.Serializer.std	modref	std	priv
 std.zon.Serializer.assert	alias	assert	priv
 std.zon.Serializer.Writer	alias	Writer	priv

@@ -42,29 +42,31 @@ itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
 `path · attr · value`. Sparse: a row exists only where the fact is present. **@@N_ATTRS@@ rows**
-across seven attributes:
+across eight attributes:
 
 | attr | value | count |
 |---|---|---|
 | `loc` | source location `file:line` (root-relative, machine-independent) | @@N_LOC@@ |
-| `value` | a `field`/`tag`'s written type & default, or a `const`'s literal | @@N_VALUES@@ |
-| `doc` | the decl's `///` doc-comment, whitespace-collapsed | @@N_DOCS@@ |
+| `value` | a `field`'s default, or a `const`'s initializer as written (whitespace-collapsed, never shortened) | @@N_VALUES@@ |
+| `type` | the type as written on a `field`, or on a `const`/`var` declared `: T` (the `has_type` edge keeps only the name it references: `?*Node` → `Node`) | @@N_TYPES@@ |
+| `doc` | the decl's `///` doc-comment, whitespace-collapsed; a file's namespace adds the file's own `//!` doc | @@N_DOCS@@ |
 | `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | @@N_SIGS@@ |
 | `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | @@N_EXAMPLES@@ |
-| `mod` | a decl's qualifiers — `extern`/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | @@N_MOD@@ |
+| `mod` | a decl's qualifiers — `extern` (with its library: `extern "c"`)/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | @@N_MOD@@ |
 | `errmember` | a member of a named `error{…}` set (one row per member) | @@N_ERRMEMBER@@ |
 
 ### `edges.tsv` — Edges (typed references, resolved)
 `src · type · target · scope`. Every reference a declaration makes, **with its reach resolved**
-in a second pass against the walked node set. **@@N_EDGES@@ edges**, five types:
+in a second pass against the walked node set. **@@N_EDGES@@ edges**, six types:
 
 | type | count | what it links |
 |---|---|---|
-| `has_type` | @@N_HASTYPE@@ | a fn param/return or field → the type it names |
+| `has_type` | @@N_HASTYPE@@ | a fn param/return, a field, or a `const`/`var` declared `: T` → the type it names (an array → its element) |
 | `alias` | @@N_ALIASEDGE@@ | a re-export (`pub const X = Y.Z`) → what it points at |
-| `error_set` | @@N_ERRSET@@ | an `error{…}` / error-union → its members |
+| `error_set` | @@N_ERRSET@@ | an `error{…}` / error-union → its members; `A || B` gives one edge per operand |
 | `imports` | @@N_IMPORTS@@ | an `@import` alias → the file/module it names |
 | `delegates` | @@N_DELEGATES@@ | a forwarding factory (`fn X() type { return Y(args); }`) → its target |
+| `instantiates` | @@N_INSTANTIATES@@ | a `const` built by a call (`Sha256 = Sha2x32(…)`) → the fn it calls |
 
 `scope` records **where the target landed** — the one invariant worth protecting is that a
 `local`/`cross` edge always points at a real node:
@@ -74,7 +76,7 @@ in a second pass against the walked node set. **@@N_EDGES@@ edges**, five types:
 | `primitive` | @@E_PRIM@@ | a language builtin (`i32`, `usize`, `type`, …) |
 | `local` | @@E_LOCAL@@ | a node inside `src`'s own container (incl. `@This()`) |
 | `cross` | @@E_CROSS@@ | a node elsewhere in the tree |
-| `module` | @@E_MODULE@@ | an `@import` alias / a file or module boundary |
+| `module` | @@E_MODULE@@ | outside the tree: an `@import` itself, or a path into a module that is not walked, kept whole (`builtin.os.tag`) |
 | `unresolved` | @@E_UNRES@@ | couldn't place it (comptime-built, exotic) |
 | `inline` | @@E_INLINE@@ | an inline `struct{…}`/`enum{…}` literal target |
 | `generic` | @@E_GENERIC@@ | a comptime type parameter in scope |

@@ -8,10 +8,10 @@ std.ArrayListUnmanaged	alias	yes
 std.AutoArrayHashMapUnmanaged	alias	yes
 std.AutoHashMap	alias	no
 std.AutoHashMapUnmanaged	alias	no
-std.BitStack	ns	no
+std.BitStack	ns	yes
 std.BitStack.Allocator	alias	no
 std.BitStack.ArrayList	alias	no
-std.BitStack.BitStack	const	no
+std.BitStack.BitStack	alias	no
 std.BitStack.bit_len	field	no
 std.BitStack.bytes	field	no
 std.BitStack.deinit	fn	no
@@ -70,11 +70,11 @@ std.Build.AvailableOption	struct	no
 std.Build.AvailableOption.description	field	no
 std.Build.AvailableOption.enum_options	field	yes
 std.Build.AvailableOption.type_id	field	no
-std.Build.Build	const	no
-std.Build.Cache	ns	no
+std.Build.Build	alias	no
+std.Build.Cache	ns	yes
 std.Build.Cache.Allocator	alias	no
 std.Build.Cache.BinDigest	const	no
-std.Build.Cache.Cache	const	no
+std.Build.Cache.Cache	alias	no
 std.Build.Cache.DepTokenizer	ns	no
 std.Build.Cache.DepTokenizer.Allocator	alias	no
 std.Build.Cache.DepTokenizer.Io	alias	no
@@ -114,7 +114,7 @@ std.Build.Cache.DepTokenizer.Token.prereq_must_resolve	field	no
 std.Build.Cache.DepTokenizer.Token.resolve	fn	yes
 std.Build.Cache.DepTokenizer.Token.target	field	no
 std.Build.Cache.DepTokenizer.Token.target_must_resolve	field	no
-std.Build.Cache.DepTokenizer.Tokenizer	const	no
+std.Build.Cache.DepTokenizer.Tokenizer	alias	no
 std.Build.Cache.DepTokenizer.assert	alias	no
 std.Build.Cache.DepTokenizer.bytes	field	no
 std.Build.Cache.DepTokenizer.depTokenizer	fn	no
@@ -129,7 +129,7 @@ std.Build.Cache.DepTokenizer.std	modref	no
 std.Build.Cache.DepTokenizer.testing	alias	no
 std.Build.Cache.Directory	ns	no
 std.Build.Cache.Directory.Allocator	alias	no
-std.Build.Cache.Directory.Directory	const	no
+std.Build.Cache.Directory.Directory	alias	no
 std.Build.Cache.Directory.Io	alias	no
 std.Build.Cache.Directory.assert	alias	no
 std.Build.Cache.Directory.clone	fn	no
@@ -360,7 +360,7 @@ std.Build.Cache.Path	ns	no
 std.Build.Cache.Path.Allocator	alias	no
 std.Build.Cache.Path.Cache	alias	no
 std.Build.Cache.Path.Io	alias	no
-std.Build.Cache.Path.Path	const	no
+std.Build.Cache.Path.Path	alias	no
 std.Build.Cache.Path.TableAdapter	struct	yes
 std.Build.Cache.Path.TableAdapter.Hash	alias	no
 std.Build.Cache.Path.TableAdapter.eql	fn	no
@@ -478,7 +478,7 @@ std.Build.Configuration.CSourceFiles.args	field	no
 std.Build.Configuration.CSourceFiles.flags	field	no
 std.Build.Configuration.CSourceFiles.root	field	no
 std.Build.Configuration.CSourceFiles.sub_paths	field	no
-std.Build.Configuration.Configuration	const	no
+std.Build.Configuration.Configuration	alias	no
 std.Build.Configuration.DefaultingBool	enum	no
 std.Build.Configuration.DefaultingBool.default	tag	no
 std.Build.Configuration.DefaultingBool.false	tag	no
@@ -2020,7 +2020,7 @@ std.Build.Module.LinkSystemLibraryOptions.preferred_link_mode	field	no
 std.Build.Module.LinkSystemLibraryOptions.search_strategy	field	no
 std.Build.Module.LinkSystemLibraryOptions.use_pkg_config	field	no
 std.Build.Module.LinkSystemLibraryOptions.weak	field	yes
-std.Build.Module.Module	const	no
+std.Build.Module.Module	alias	no
 std.Build.Module.RPath	union	no
 std.Build.Module.RPath.lazy_path	field	no
 std.Build.Module.RPath.special	field	no
@@ -2154,7 +2154,7 @@ std.Build.RunResult.success	field	yes
 std.Build.Serialize	ns	yes
 std.Build.Serialize.Allocator	alias	no
 std.Build.Serialize.Configuration	alias	no
-std.Build.Serialize.Serialize	const	no
+std.Build.Serialize.Serialize	alias	no
 std.Build.Serialize.Step	alias	no
 std.Build.Serialize.addCSourceFile	fn	no
 std.Build.Serialize.addCSourceFiles	fn	no
@@ -2198,8 +2198,8 @@ std.Build.StandardTargetOptionsArgs.default_target	field	no
 std.Build.StandardTargetOptionsArgs.whitelist	field	no
 std.Build.Step	ns	no
 std.Build.Step.Build	alias	no
-std.Build.Step.CheckFile	ns	no
-std.Build.Step.CheckFile.CheckFile	const	no
+std.Build.Step.CheckFile	ns	yes
+std.Build.Step.CheckFile.CheckFile	alias	no
 std.Build.Step.CheckFile.Configuration	alias	no
 std.Build.Step.CheckFile.Io	alias	no
 std.Build.Step.CheckFile.Options	struct	no
@@ -2220,7 +2220,7 @@ std.Build.Step.CheckFile.std	modref	no
 std.Build.Step.CheckFile.step	field	no
 std.Build.Step.Compile	ns	no
 std.Build.Step.Compile.Allocator	alias	no
-std.Build.Step.Compile.Compile	const	no
+std.Build.Step.Compile.Compile	alias	no
 std.Build.Step.Compile.Configuration	alias	no
 std.Build.Step.Compile.Entry	union	no
 std.Build.Step.Compile.Entry.default	field	yes
@@ -2405,7 +2405,7 @@ std.Build.Step.Compile.win32_module_definition	field	yes
 std.Build.Step.Compile.zig_lib_dir	field	yes
 std.Build.Step.ConfigHeader	ns	no
 std.Build.Step.ConfigHeader.Allocator	alias	no
-std.Build.Step.ConfigHeader.ConfigHeader	const	no
+std.Build.Step.ConfigHeader.ConfigHeader	alias	no
 std.Build.Step.ConfigHeader.Configuration	alias	no
 std.Build.Step.ConfigHeader.Io	alias	no
 std.Build.Step.ConfigHeader.Options	struct	no
@@ -2447,9 +2447,9 @@ std.Build.Step.ConfigHeader.step	field	no
 std.Build.Step.ConfigHeader.style	field	no
 std.Build.Step.ConfigHeader.values	field	no
 std.Build.Step.Configuration	alias	no
-std.Build.Step.Fail	ns	no
+std.Build.Step.Fail	ns	yes
 std.Build.Step.Fail.Configuration	alias	no
-std.Build.Step.Fail.Fail	const	no
+std.Build.Step.Fail.Fail	alias	no
 std.Build.Step.Fail.Step	alias	no
 std.Build.Step.Fail.base_tag	const	no
 std.Build.Step.Fail.create	fn	no
@@ -2458,7 +2458,7 @@ std.Build.Step.Fail.std	modref	no
 std.Build.Step.Fail.step	field	no
 std.Build.Step.FindProgram	ns	no
 std.Build.Step.FindProgram.Configuration	alias	no
-std.Build.Step.FindProgram.FindProgram	const	no
+std.Build.Step.FindProgram.FindProgram	alias	no
 std.Build.Step.FindProgram.Options	struct	no
 std.Build.Step.FindProgram.Options.names	field	no
 std.Build.Step.FindProgram.Step	alias	no
@@ -2468,9 +2468,9 @@ std.Build.Step.FindProgram.found_path	field	no
 std.Build.Step.FindProgram.names	field	no
 std.Build.Step.FindProgram.std	modref	no
 std.Build.Step.FindProgram.step	field	no
-std.Build.Step.Fmt	ns	no
+std.Build.Step.Fmt	ns	yes
 std.Build.Step.Fmt.Configuration	alias	no
-std.Build.Step.Fmt.Fmt	const	no
+std.Build.Step.Fmt.Fmt	alias	no
 std.Build.Step.Fmt.LazyPath	alias	no
 std.Build.Step.Fmt.Options	struct	no
 std.Build.Step.Fmt.Options.check	field	yes
@@ -2488,7 +2488,7 @@ std.Build.Step.InstallArtifact	ns	no
 std.Build.Step.InstallArtifact.DylibSymlinkInfo	struct	no
 std.Build.Step.InstallArtifact.DylibSymlinkInfo.major_only_filename	field	no
 std.Build.Step.InstallArtifact.DylibSymlinkInfo.name_only_filename	field	no
-std.Build.Step.InstallArtifact.InstallArtifact	const	no
+std.Build.Step.InstallArtifact.InstallArtifact	alias	no
 std.Build.Step.InstallArtifact.InstallDir	alias	no
 std.Build.Step.InstallArtifact.LazyPath	alias	no
 std.Build.Step.InstallArtifact.Options	struct	no
@@ -2520,7 +2520,7 @@ std.Build.Step.InstallArtifact.pdb_dir	field	no
 std.Build.Step.InstallArtifact.std	modref	no
 std.Build.Step.InstallArtifact.step	field	no
 std.Build.Step.InstallDir	ns	no
-std.Build.Step.InstallDir.InstallDir	const	no
+std.Build.Step.InstallDir.InstallDir	alias	no
 std.Build.Step.InstallDir.LazyPath	alias	no
 std.Build.Step.InstallDir.Options	struct	no
 std.Build.Step.InstallDir.Options.blank_extensions	field	yes
@@ -2540,7 +2540,7 @@ std.Build.Step.InstallDir.std	modref	no
 std.Build.Step.InstallDir.step	field	no
 std.Build.Step.InstallFile	ns	no
 std.Build.Step.InstallFile.InstallDir	alias	no
-std.Build.Step.InstallFile.InstallFile	const	no
+std.Build.Step.InstallFile.InstallFile	alias	no
 std.Build.Step.InstallFile.LazyPath	alias	no
 std.Build.Step.InstallFile.Step	alias	no
 std.Build.Step.InstallFile.assert	alias	no
@@ -2565,7 +2565,7 @@ std.Build.Step.ObjCopy.Format	enum	no
 std.Build.Step.ObjCopy.Format.binary	tag	no
 std.Build.Step.ObjCopy.Format.elf	tag	no
 std.Build.Step.ObjCopy.Format.hex	tag	no
-std.Build.Step.ObjCopy.ObjCopy	const	no
+std.Build.Step.ObjCopy.ObjCopy	alias	no
 std.Build.Step.ObjCopy.Options	struct	no
 std.Build.Step.ObjCopy.Options.SeparateDebugFile	struct	no
 std.Build.Step.ObjCopy.Options.SeparateDebugFile.basename	field	no
@@ -2608,7 +2608,7 @@ std.Build.Step.Options.LazyPath	alias	no
 std.Build.Step.Options.NamedPath	struct	no
 std.Build.Step.Options.NamedPath.name	field	no
 std.Build.Step.Options.NamedPath.path	field	no
-std.Build.Step.Options.Options	const	no
+std.Build.Step.Options.Options	alias	no
 std.Build.Step.Options.Step	alias	no
 std.Build.Step.Options.addOption	fn	no
 std.Build.Step.Options.addOptionFallible	fn	no
@@ -2693,7 +2693,7 @@ std.Build.Step.Run.PathArgOptions	struct	no
 std.Build.Step.Run.PathArgOptions.make_absolute	field	yes
 std.Build.Step.Run.PathArgOptions.prefix	field	no
 std.Build.Step.Run.PathArgOptions.suffix	field	no
-std.Build.Step.Run.Run	const	no
+std.Build.Step.Run.Run	alias	no
 std.Build.Step.Run.StdIn	union	no
 std.Build.Step.Run.StdIn.bytes	field	no
 std.Build.Step.Run.StdIn.lazy_path	field	no
@@ -2792,7 +2792,7 @@ std.Build.Step.Run.stdin	field	yes
 std.Build.Step.Run.stdio	field	yes
 std.Build.Step.Run.stdio_limit	field	yes
 std.Build.Step.Run.step	field	no
-std.Build.Step.Step	const	no
+std.Build.Step.Step	alias	no
 std.Build.Step.StepOptions	struct	no
 std.Build.Step.StepOptions.first_ret_addr	field	no
 std.Build.Step.StepOptions.max_rss	field	no
@@ -2819,7 +2819,7 @@ std.Build.Step.TranslateC.Options.optimize	field	no
 std.Build.Step.TranslateC.Options.root_source_file	field	no
 std.Build.Step.TranslateC.Options.target	field	no
 std.Build.Step.TranslateC.Step	alias	no
-std.Build.Step.TranslateC.TranslateC	const	no
+std.Build.Step.TranslateC.TranslateC	alias	no
 std.Build.Step.TranslateC.addAfterIncludePath	fn	no
 std.Build.Step.TranslateC.addCFlags	fn	yes
 std.Build.Step.TranslateC.addCheckFile	fn	no
@@ -2855,7 +2855,7 @@ std.Build.Step.UpdateSourceFiles.Configuration	alias	no
 std.Build.Step.UpdateSourceFiles.Copy	alias	no
 std.Build.Step.UpdateSourceFiles.Embed	alias	no
 std.Build.Step.UpdateSourceFiles.Step	alias	no
-std.Build.Step.UpdateSourceFiles.UpdateSourceFiles	const	no
+std.Build.Step.UpdateSourceFiles.UpdateSourceFiles	alias	no
 std.Build.Step.UpdateSourceFiles.addBytesToSource	fn	yes
 std.Build.Step.UpdateSourceFiles.addCopyFileToSource	fn	yes
 std.Build.Step.UpdateSourceFiles.base_tag	const	no
@@ -2864,7 +2864,7 @@ std.Build.Step.UpdateSourceFiles.create	fn	no
 std.Build.Step.UpdateSourceFiles.embeds	field	no
 std.Build.Step.UpdateSourceFiles.std	modref	no
 std.Build.Step.UpdateSourceFiles.step	field	no
-std.Build.Step.WriteFile	ns	no
+std.Build.Step.WriteFile	ns	yes
 std.Build.Step.WriteFile.Configuration	alias	no
 std.Build.Step.WriteFile.Copy	struct	no
 std.Build.Step.WriteFile.Copy.src_file	field	no
@@ -2883,7 +2883,7 @@ std.Build.Step.WriteFile.Mode.mutate	field	yes
 std.Build.Step.WriteFile.Mode.tmp	field	yes
 std.Build.Step.WriteFile.Mode.whole_cached	field	yes
 std.Build.Step.WriteFile.Step	alias	no
-std.Build.Step.WriteFile.WriteFile	const	no
+std.Build.Step.WriteFile.WriteFile	alias	no
 std.Build.Step.WriteFile.add	fn	yes
 std.Build.Step.WriteFile.addCopyDirectory	fn	yes
 std.Build.Step.WriteFile.addCopyFile	fn	yes
@@ -2928,7 +2928,7 @@ std.Build.TestOptions.test_runner	field	no
 std.Build.TestOptions.use_lld	field	no
 std.Build.TestOptions.use_llvm	field	no
 std.Build.TestOptions.zig_lib_dir	field	no
-std.Build.abi	ns	no
+std.Build.abi	ns	yes
 std.Build.abi.BuildStatus	enum	yes
 std.Build.abi.BuildStatus.fuzz_init	tag	no
 std.Build.abi.BuildStatus.idle	tag	no
@@ -3228,7 +3228,7 @@ std.Deque().Iterator.next	fn	no
 std.Deque().Iterator.nextPtr	fn	no
 std.Deque().Iterator.peek	fn	no
 std.Deque().Iterator.peekPtr	fn	no
-std.Deque().Self	const	no
+std.Deque().Self	alias	no
 std.Deque().at	fn	yes
 std.Deque().atPtr	fn	yes
 std.Deque().back	fn	yes
@@ -3261,8 +3261,8 @@ std.Deque().pushFrontBounded	fn	yes
 std.Deque().pushFrontSlice	fn	yes
 std.Deque().pushFrontSliceAssumeCapacity	fn	yes
 std.Deque().pushFrontSliceBounded	fn	yes
-std.DoublyLinkedList	ns	no
-std.DoublyLinkedList.DoublyLinkedList	const	no
+std.DoublyLinkedList	ns	yes
+std.DoublyLinkedList.DoublyLinkedList	alias	no
 std.DoublyLinkedList.Node	struct	yes
 std.DoublyLinkedList.Node.next	field	no
 std.DoublyLinkedList.Node.prev	field	no
@@ -3297,7 +3297,7 @@ std.EnumMap	alias	no
 std.EnumSet	alias	no
 std.HashMap	alias	no
 std.HashMapUnmanaged	alias	no
-std.Io	ns	no
+std.Io	ns	yes
 std.Io.Alignment	alias	no
 std.Io.Allocator	alias	no
 std.Io.AnyFuture	opaque	no
@@ -3402,7 +3402,7 @@ std.Io.Dir.CreatePathStatus.existed	tag	no
 std.Io.Dir.DeleteDirError	const	no
 std.Io.Dir.DeleteFileError	const	no
 std.Io.Dir.DeleteTreeError	const	no
-std.Io.Dir.Dir	const	no
+std.Io.Dir.Dir	alias	no
 std.Io.Dir.Entry	struct	no
 std.Io.Dir.Entry.inode	field	no
 std.Io.Dir.Entry.kind	field	no
@@ -3634,7 +3634,7 @@ std.Io.Dispatch.Csprng	alias	no
 std.Io.Dispatch.Dir	alias	no
 std.Io.Dispatch.DupError	const	no
 std.Io.Dispatch.Environ	alias	no
-std.Io.Dispatch.Evented	const	no
+std.Io.Dispatch.Evented	alias	no
 std.Io.Dispatch.Fiber	struct	no
 std.Io.Dispatch.Fiber.@"resume"	fn	no
 std.Io.Dispatch.Fiber.CancelProtection	struct	no
@@ -4074,7 +4074,7 @@ std.Io.Event.waiting	tag	no
 std.Io.Evented	const	no
 std.Io.File	ns	no
 std.Io.File.Atomic	ns	no
-std.Io.File.Atomic.Atomic	const	no
+std.Io.File.Atomic.Atomic	alias	no
 std.Io.File.Atomic.Dir	alias	no
 std.Io.File.Atomic.File	alias	no
 std.Io.File.Atomic.InitError	alias	no
@@ -4097,7 +4097,7 @@ std.Io.File.BlockSize	alias	no
 std.Io.File.Dir	alias	no
 std.Io.File.DowngradeLockError	const	no
 std.Io.File.EnableAnsiEscapeCodesError	const	no
-std.Io.File.File	const	no
+std.Io.File.File	alias	no
 std.Io.File.Flags	struct	no
 std.Io.File.Flags.nonblocking	field	yes
 std.Io.File.Gid	alias	no
@@ -4136,7 +4136,7 @@ std.Io.File.MemoryMap.CreateOptions.protection	field	yes
 std.Io.File.MemoryMap.CreateOptions.undefined_contents	field	yes
 std.Io.File.MemoryMap.File	alias	no
 std.Io.File.MemoryMap.Io	alias	no
-std.Io.File.MemoryMap.MemoryMap	const	no
+std.Io.File.MemoryMap.MemoryMap	alias	no
 std.Io.File.MemoryMap.Section	const	no
 std.Io.File.MemoryMap.SetLengthError	const	no
 std.Io.File.MemoryMap.builtin	modref	no
@@ -4169,7 +4169,7 @@ std.Io.File.MultiReader.Error	const	no
 std.Io.File.MultiReader.File	alias	no
 std.Io.File.MultiReader.FillError	const	no
 std.Io.File.MultiReader.Io	alias	no
-std.Io.File.MultiReader.MultiReader	const	no
+std.Io.File.MultiReader.MultiReader	alias	no
 std.Io.File.MultiReader.Streams	struct	yes
 std.Io.File.MultiReader.Streams.contexts	fn	no
 std.Io.File.MultiReader.Streams.len	field	no
@@ -4199,7 +4199,7 @@ std.Io.File.OpenError	const	no
 std.Io.File.Permissions	const	yes
 std.Io.File.ReadPositionalError	const	no
 std.Io.File.ReadStreamingError	const	no
-std.Io.File.Reader	ns	no
+std.Io.File.Reader	ns	yes
 std.Io.File.Reader.Error	const	no
 std.Io.File.Reader.File	alias	no
 std.Io.File.Reader.Io	alias	no
@@ -4211,7 +4211,7 @@ std.Io.File.Reader.Mode.streaming	tag	no
 std.Io.File.Reader.Mode.streaming_simple	tag	yes
 std.Io.File.Reader.Mode.toSimple	fn	no
 std.Io.File.Reader.Mode.toStreaming	fn	no
-std.Io.File.Reader.Reader	const	no
+std.Io.File.Reader.Reader	alias	no
 std.Io.File.Reader.SeekError	const	no
 std.Io.File.Reader.SizeError	const	no
 std.Io.File.Reader.assert	alias	no
@@ -4279,7 +4279,7 @@ std.Io.File.Writer.Io	alias	no
 std.Io.File.Writer.Mode	alias	no
 std.Io.File.Writer.SeekError	alias	no
 std.Io.File.Writer.WriteFileError	const	no
-std.Io.File.Writer.Writer	const	no
+std.Io.File.Writer.Writer	alias	no
 std.Io.File.Writer.assert	alias	no
 std.Io.File.Writer.builtin	modref	no
 std.Io.File.Writer.drain	fn	no
@@ -4364,7 +4364,7 @@ std.Io.Group.init	const	no
 std.Io.Group.state	field	yes
 std.Io.Group.token	field	yes
 std.Io.InheritParentHandleError	const	no
-std.Io.Io	const	no
+std.Io.Io	alias	no
 std.Io.Kqueue	ns	no
 std.Io.Kqueue.Alignment	alias	no
 std.Io.Kqueue.Allocator	alias	no
@@ -4422,7 +4422,7 @@ std.Io.Kqueue.InitOptions.n_threads	field	no
 std.Io.Kqueue.Io	alias	no
 std.Io.Kqueue.IpAddress	alias	no
 std.Io.Kqueue.KEventError	const	no
-std.Io.Kqueue.Kqueue	const	no
+std.Io.Kqueue.Kqueue	alias	no
 std.Io.Kqueue.SwitchMessage	struct	no
 std.Io.Kqueue.SwitchMessage.PendingTask	union	no
 std.Io.Kqueue.SwitchMessage.PendingTask.exit	field	no
@@ -4691,7 +4691,7 @@ std.Io.Reader.Hashed().stream	fn	no
 std.Io.Reader.Limit	alias	no
 std.Io.Reader.Limited	ns	no
 std.Io.Reader.Limited.Limit	alias	no
-std.Io.Reader.Limited.Limited	const	no
+std.Io.Reader.Limited.Limited	alias	no
 std.Io.Reader.Limited.Reader	alias	no
 std.Io.Reader.Limited.Writer	alias	no
 std.Io.Reader.Limited.discard	fn	no
@@ -4703,7 +4703,7 @@ std.Io.Reader.Limited.stream	fn	no
 std.Io.Reader.Limited.unlimited	field	no
 std.Io.Reader.LimitedAllocError	const	no
 std.Io.Reader.ReadAllocError	const	no
-std.Io.Reader.Reader	const	no
+std.Io.Reader.Reader	alias	no
 std.Io.Reader.RebaseError	alias	no
 std.Io.Reader.ShortError	const	no
 std.Io.Reader.StreamDelimiterLimitError	const	no
@@ -4811,10 +4811,10 @@ std.Io.Reader.vtable	field	no
 std.Io.Reader.writableVector	fn	no
 std.Io.Reader.writableVectorPosix	fn	no
 std.Io.Reader.writableVectorWsa	fn	no
-std.Io.RwLock	ns	no
+std.Io.RwLock	ns	yes
 std.Io.RwLock.Count	const	no
 std.Io.RwLock.Io	alias	no
-std.Io.RwLock.RwLock	const	no
+std.Io.RwLock.RwLock	alias	no
 std.Io.RwLock.assert	alias	no
 std.Io.RwLock.builtin	modref	no
 std.Io.RwLock.init	const	no
@@ -4841,7 +4841,7 @@ std.Io.RwLock.writer_mask	const	no
 std.Io.Select	fn	yes
 std.Io.Select()	struct	no
 std.Io.Select().Field	const	no
-std.Io.Select().S	const	no
+std.Io.Select().S	alias	no
 std.Io.Select().Union	alias	no
 std.Io.Select().async	fn	yes
 std.Io.Select().await	fn	yes
@@ -4853,9 +4853,9 @@ std.Io.Select().group	field	no
 std.Io.Select().init	fn	no
 std.Io.Select().io	field	no
 std.Io.Select().queue	field	no
-std.Io.Semaphore	ns	no
+std.Io.Semaphore	ns	yes
 std.Io.Semaphore.Io	alias	no
-std.Io.Semaphore.Semaphore	const	no
+std.Io.Semaphore.Semaphore	alias	no
 std.Io.Semaphore.WaitTimeoutError	const	no
 std.Io.Semaphore.cond	field	no
 std.Io.Semaphore.mutex	field	no
@@ -4896,7 +4896,7 @@ std.Io.Terminal.Mode.escape_codes	field	no
 std.Io.Terminal.Mode.no_color	field	no
 std.Io.Terminal.Mode.windows_api	field	no
 std.Io.Terminal.SetColorError	const	no
-std.Io.Terminal.Terminal	const	yes
+std.Io.Terminal.Terminal	alias	yes
 std.Io.Terminal.builtin	modref	no
 std.Io.Terminal.is_windows	const	no
 std.Io.Terminal.mode	field	no
@@ -5125,7 +5125,7 @@ std.Io.Threaded.Thread.park_tid	field	no
 std.Io.Threaded.Thread.signalCanceledSyscall	fn	yes
 std.Io.Threaded.Thread.status	field	no
 std.Io.Threaded.Thread.unpark_flag	field	no
-std.Io.Threaded.Threaded	const	no
+std.Io.Threaded.Threaded	alias	no
 std.Io.Threaded.UnixAddress	union	no
 std.Io.Threaded.UnixAddress.any	field	no
 std.Io.Threaded.UnixAddress.un	field	no
@@ -5780,7 +5780,7 @@ std.Io.Uring.Csprng	alias	no
 std.Io.Uring.Dir	alias	no
 std.Io.Uring.DupError	const	no
 std.Io.Uring.Environ	alias	no
-std.Io.Uring.Evented	const	no
+std.Io.Uring.Evented	alias	no
 std.Io.Uring.Fiber	struct	no
 std.Io.Uring.Fiber.CancelProtection	struct	no
 std.Io.Uring.Fiber.CancelProtection.acknowledge	fn	no
@@ -6333,7 +6333,7 @@ std.Io.Writer.VTable.drain	field	yes
 std.Io.Writer.VTable.flush	field	yes
 std.Io.Writer.VTable.rebase	field	yes
 std.Io.Writer.VTable.sendFile	field	yes
-std.Io.Writer.Writer	const	no
+std.Io.Writer.Writer	alias	no
 std.Io.Writer.advance	fn	yes
 std.Io.Writer.alignBuffer	fn	no
 std.Io.Writer.alignBufferOptions	fn	no
@@ -6517,7 +6517,7 @@ std.Io.futexWake	fn	yes
 std.Io.lockStderr	fn	yes
 std.Io.math	alias	no
 std.Io.net	ns	no
-std.Io.net.HostName	ns	no
+std.Io.net.HostName	ns	yes
 std.Io.net.HostName.ConnectError	const	no
 std.Io.net.HostName.DnsRecord	enum	no
 std.Io.net.HostName.DnsRecord.A	tag	no
@@ -6538,7 +6538,7 @@ std.Io.net.HostName.DnsResponse.init	fn	no
 std.Io.net.HostName.DnsResponse.next	fn	no
 std.Io.net.HostName.ExpandError	const	no
 std.Io.net.HostName.FromUriError	const	no
-std.Io.net.HostName.HostName	const	no
+std.Io.net.HostName.HostName	alias	no
 std.Io.net.HostName.Io	alias	no
 std.Io.net.HostName.Ip6Address	alias	no
 std.Io.net.HostName.IpAddress	alias	no
@@ -6936,7 +6936,7 @@ std.MultiArrayList().Elem	const	no
 std.MultiArrayList().Entry	const	no
 std.MultiArrayList().Field	const	no
 std.MultiArrayList().FieldType	fn	no
-std.MultiArrayList().Self	const	no
+std.MultiArrayList().Self	alias	no
 std.MultiArrayList().Slice	struct	yes
 std.MultiArrayList().Slice.capacity	field	no
 std.MultiArrayList().Slice.dbHelper	fn	yes
@@ -7030,7 +7030,7 @@ std.PriorityDequeue().Iterator.count	field	no
 std.PriorityDequeue().Iterator.next	fn	no
 std.PriorityDequeue().Iterator.queue	field	no
 std.PriorityDequeue().Iterator.reset	fn	no
-std.PriorityDequeue().Self	const	no
+std.PriorityDequeue().Self	alias	no
 std.PriorityDequeue().StartIndexAndLayer	struct	no
 std.PriorityDequeue().StartIndexAndLayer.index	field	no
 std.PriorityDequeue().StartIndexAndLayer.min_layer	field	no
@@ -7081,7 +7081,7 @@ std.PriorityQueue().Iterator.count	field	no
 std.PriorityQueue().Iterator.next	fn	no
 std.PriorityQueue().Iterator.queue	field	no
 std.PriorityQueue().Iterator.reset	fn	no
-std.PriorityQueue().Self	const	no
+std.PriorityQueue().Self	alias	no
 std.PriorityQueue().allocatedSlice	fn	yes
 std.PriorityQueue().cap	field	no
 std.PriorityQueue().capacity	fn	yes
@@ -7108,7 +7108,7 @@ std.PriorityQueue().shrinkAndFree	fn	yes
 std.PriorityQueue().siftDown	fn	no
 std.PriorityQueue().siftUp	fn	no
 std.PriorityQueue().update	fn	yes
-std.Progress	ns	no
+std.Progress	ns	yes
 std.Progress.@"progress_error {d}"	const	no
 std.Progress.@"progress_normal {d}"	const	no
 std.Progress.Children	struct	no
@@ -7192,7 +7192,7 @@ std.Progress.Options.initial_delay_ns	field	yes
 std.Progress.Options.refresh_rate_ns	field	yes
 std.Progress.Options.root_name	field	no
 std.Progress.ParentFileError	const	no
-std.Progress.Progress	const	no
+std.Progress.Progress	alias	no
 std.Progress.Serialized	struct	no
 std.Progress.Serialized.Buffer	struct	no
 std.Progress.Serialized.Buffer.batch	field	no
@@ -7310,10 +7310,10 @@ std.Progress.windowsApiWriteMarker	fn	no
 std.Progress.windows_api_start_marker	const	yes
 std.Progress.withinRowLimit	fn	no
 std.Progress.writeIpc	fn	no
-std.Random	ns	no
-std.Random.Ascon	ns	no
+std.Random	ns	yes
+std.Random.Ascon	ns	yes
 std.Random.Ascon.Ascon	const	no
-std.Random.Ascon.Self	const	no
+std.Random.Ascon.Self	alias	no
 std.Random.Ascon.addEntropy	fn	yes
 std.Random.Ascon.fill	fn	yes
 std.Random.Ascon.init	fn	yes
@@ -7323,9 +7323,9 @@ std.Random.Ascon.rate	const	no
 std.Random.Ascon.secret_seed_length	const	no
 std.Random.Ascon.state	field	no
 std.Random.Ascon.std	modref	no
-std.Random.ChaCha	ns	no
+std.Random.ChaCha	ns	yes
 std.Random.ChaCha.Cipher	alias	no
-std.Random.ChaCha.Self	const	no
+std.Random.ChaCha.Self	alias	no
 std.Random.ChaCha.State	const	no
 std.Random.ChaCha.addEntropy	fn	yes
 std.Random.ChaCha.fill	fn	yes
@@ -7344,8 +7344,8 @@ std.Random.IoSource	struct	no
 std.Random.IoSource.fill	fn	no
 std.Random.IoSource.interface	fn	no
 std.Random.IoSource.io	field	no
-std.Random.Isaac64	ns	no
-std.Random.Isaac64.Isaac64	const	no
+std.Random.Isaac64	ns	yes
+std.Random.Isaac64.Isaac64	alias	no
 std.Random.Isaac64.a	field	no
 std.Random.Isaac64.b	field	no
 std.Random.Isaac64.c	field	no
@@ -7362,8 +7362,8 @@ std.Random.Isaac64.seed	fn	no
 std.Random.Isaac64.std	modref	no
 std.Random.Isaac64.step	fn	no
 std.Random.MinArrayIndex	fn	yes
-std.Random.Pcg	ns	no
-std.Random.Pcg.Pcg	const	no
+std.Random.Pcg	ns	yes
+std.Random.Pcg.Pcg	alias	no
 std.Random.Pcg.default_multiplier	const	no
 std.Random.Pcg.fill	fn	no
 std.Random.Pcg.i	field	no
@@ -7374,9 +7374,9 @@ std.Random.Pcg.s	field	no
 std.Random.Pcg.seed	fn	no
 std.Random.Pcg.seedTwo	fn	no
 std.Random.Pcg.std	modref	no
-std.Random.Random	const	no
+std.Random.Random	alias	no
 std.Random.RomuTrio	ns	no
-std.Random.RomuTrio.RomuTrio	const	no
+std.Random.RomuTrio.RomuTrio	alias	no
 std.Random.RomuTrio.builtin	modref	no
 std.Random.RomuTrio.fill	fn	no
 std.Random.RomuTrio.init	fn	no
@@ -7389,11 +7389,11 @@ std.Random.RomuTrio.std	modref	no
 std.Random.RomuTrio.x_state	field	no
 std.Random.RomuTrio.y_state	field	no
 std.Random.RomuTrio.z_state	field	no
-std.Random.Sfc64	ns	no
+std.Random.Sfc64	ns	yes
 std.Random.Sfc64.LeftShift	const	no
 std.Random.Sfc64.RightShift	const	no
 std.Random.Sfc64.Rotation	const	no
-std.Random.Sfc64.Sfc64	const	no
+std.Random.Sfc64.Sfc64	alias	no
 std.Random.Sfc64.a	field	no
 std.Random.Sfc64.b	field	no
 std.Random.Sfc64.c	field	no
@@ -7405,13 +7405,13 @@ std.Random.Sfc64.next	fn	no
 std.Random.Sfc64.random	fn	no
 std.Random.Sfc64.seed	fn	no
 std.Random.Sfc64.std	modref	no
-std.Random.SplitMix64	ns	no
-std.Random.SplitMix64.SplitMix64	const	no
+std.Random.SplitMix64	ns	yes
+std.Random.SplitMix64.SplitMix64	alias	no
 std.Random.SplitMix64.init	fn	no
 std.Random.SplitMix64.next	fn	no
 std.Random.SplitMix64.s	field	no
-std.Random.Xoroshiro128	ns	no
-std.Random.Xoroshiro128.Xoroshiro128	const	no
+std.Random.Xoroshiro128	ns	yes
+std.Random.Xoroshiro128.Xoroshiro128	alias	no
 std.Random.Xoroshiro128.fill	fn	no
 std.Random.Xoroshiro128.init	fn	no
 std.Random.Xoroshiro128.jump	fn	no
@@ -7421,8 +7421,8 @@ std.Random.Xoroshiro128.random	fn	no
 std.Random.Xoroshiro128.s	field	no
 std.Random.Xoroshiro128.seed	fn	no
 std.Random.Xoroshiro128.std	modref	no
-std.Random.Xoshiro256	ns	no
-std.Random.Xoshiro256.Xoshiro256	const	no
+std.Random.Xoshiro256	ns	yes
+std.Random.Xoshiro256.Xoshiro256	alias	no
 std.Random.Xoshiro256.fill	fn	no
 std.Random.Xoshiro256.init	fn	no
 std.Random.Xoshiro256.jump	fn	no
@@ -7448,10 +7448,10 @@ std.Random.intRangeAtMost	fn	yes
 std.Random.intRangeAtMostBiased	fn	yes
 std.Random.intRangeLessThan	fn	yes
 std.Random.intRangeLessThanBiased	fn	yes
-std.Random.lcg	ns	no
+std.Random.lcg	ns	yes
 std.Random.lcg.Wrapping	fn	yes
 std.Random.lcg.Wrapping()	struct	no
-std.Random.lcg.Wrapping().LcgSelf	const	no
+std.Random.lcg.Wrapping().LcgSelf	alias	no
 std.Random.lcg.Wrapping().a	field	no
 std.Random.lcg.Wrapping().c	field	no
 std.Random.lcg.Wrapping().init	fn	no
@@ -7471,7 +7471,7 @@ std.Random.uintAtMostBiased	fn	yes
 std.Random.uintLessThan	fn	yes
 std.Random.uintLessThanBiased	fn	yes
 std.Random.weightedIndex	fn	yes
-std.Random.ziggurat	ns	no
+std.Random.ziggurat	ns	yes
 std.Random.ziggurat.ExpDist	const	no
 std.Random.ziggurat.NormDist	const	no
 std.Random.ziggurat.Random	alias	no
@@ -7497,13 +7497,13 @@ std.Random.ziggurat.norm_r	const	no
 std.Random.ziggurat.norm_v	const	no
 std.Random.ziggurat.norm_zero_case	fn	no
 std.Random.ziggurat.std	nsref	no
-std.SemanticVersion	ns	no
+std.SemanticVersion	ns	yes
 std.SemanticVersion.Range	struct	no
 std.SemanticVersion.Range.includesVersion	fn	no
 std.SemanticVersion.Range.isAtLeast	fn	yes
 std.SemanticVersion.Range.max	field	no
 std.SemanticVersion.Range.min	field	no
-std.SemanticVersion.Version	const	no
+std.SemanticVersion.Version	alias	no
 std.SemanticVersion.build	field	no
 std.SemanticVersion.expect	alias	no
 std.SemanticVersion.expectError	alias	no
@@ -7516,7 +7516,7 @@ std.SemanticVersion.parseNum	fn	no
 std.SemanticVersion.patch	field	no
 std.SemanticVersion.pre	field	no
 std.SemanticVersion.std	modref	no
-std.SinglyLinkedList	ns	no
+std.SinglyLinkedList	ns	yes
 std.SinglyLinkedList.Node	struct	yes
 std.SinglyLinkedList.Node.countChildren	fn	yes
 std.SinglyLinkedList.Node.findLast	fn	yes
@@ -7524,7 +7524,7 @@ std.SinglyLinkedList.Node.insertAfter	fn	no
 std.SinglyLinkedList.Node.next	field	no
 std.SinglyLinkedList.Node.removeNext	fn	yes
 std.SinglyLinkedList.Node.reverse	fn	yes
-std.SinglyLinkedList.SinglyLinkedList	const	no
+std.SinglyLinkedList.SinglyLinkedList	alias	no
 std.SinglyLinkedList.assert	alias	no
 std.SinglyLinkedList.debug	alias	no
 std.SinglyLinkedList.first	field	no
@@ -7540,7 +7540,7 @@ std.StaticStringMapWithEql	alias	no
 std.StringArrayHashMapUnmanaged	alias	yes
 std.StringHashMap	alias	no
 std.StringHashMapUnmanaged	alias	no
-std.Target	ns	no
+std.Target	ns	yes
 std.Target.Abi	enum	no
 std.Target.Abi.Float	enum	no
 std.Target.Abi.Float.hard	tag	no
@@ -7942,7 +7942,7 @@ std.Target.Os.isAtLeast	fn	yes
 std.Target.Os.tag	field	no
 std.Target.Os.versionRange	fn	yes
 std.Target.Os.version_range	field	no
-std.Target.Query	ns	no
+std.Target.Query	ns	yes
 std.Target.Query.Allocator	alias	no
 std.Target.Query.ArrayList	alias	no
 std.Target.Query.CpuModel	union	no
@@ -7971,7 +7971,7 @@ std.Target.Query.ParseOptions.cpu_features	field	yes
 std.Target.Query.ParseOptions.diagnostics	field	yes
 std.Target.Query.ParseOptions.dynamic_linker	field	yes
 std.Target.Query.ParseOptions.object_format	field	no
-std.Target.Query.Query	const	no
+std.Target.Query.Query	alias	no
 std.Target.Query.SemanticVersion	alias	no
 std.Target.Query.Target	alias	no
 std.Target.Query.abi	field	yes
@@ -8014,8 +8014,8 @@ std.Target.Query.zigTriple	fn	no
 std.Target.StackGrowth	enum	no
 std.Target.StackGrowth.down	tag	no
 std.Target.StackGrowth.up	tag	no
-std.Target.Target	const	no
-std.Target.aarch64	ns	no
+std.Target.Target	alias	no
+std.Target.aarch64	ns	yes
 std.Target.aarch64.CpuFeature	alias	no
 std.Target.aarch64.CpuModel	alias	no
 std.Target.aarch64.Feature	enum	no
@@ -8406,7 +8406,7 @@ std.Target.aarch64.featureSetHasAll	const	no
 std.Target.aarch64.featureSetHasAny	const	no
 std.Target.aarch64.std	nsref	no
 std.Target.abi	field	no
-std.Target.alpha	ns	no
+std.Target.alpha	ns	yes
 std.Target.alpha.CpuFeature	alias	no
 std.Target.alpha.CpuModel	alias	no
 std.Target.alpha.Feature	enum	no
@@ -8428,7 +8428,7 @@ std.Target.alpha.featureSetHas	const	no
 std.Target.alpha.featureSetHasAll	const	no
 std.Target.alpha.featureSetHasAny	const	no
 std.Target.alpha.std	nsref	no
-std.Target.amdgcn	ns	no
+std.Target.amdgcn	ns	yes
 std.Target.amdgcn.CpuFeature	alias	no
 std.Target.amdgcn.CpuModel	alias	no
 std.Target.amdgcn.Feature	enum	no
@@ -8766,7 +8766,7 @@ std.Target.amdgcn.featureSetHas	const	no
 std.Target.amdgcn.featureSetHasAll	const	no
 std.Target.amdgcn.featureSetHasAny	const	no
 std.Target.amdgcn.std	nsref	no
-std.Target.arc	ns	no
+std.Target.arc	ns	yes
 std.Target.arc.CpuFeature	alias	no
 std.Target.arc.CpuModel	alias	no
 std.Target.arc.Feature	enum	no
@@ -8779,7 +8779,7 @@ std.Target.arc.featureSetHas	const	no
 std.Target.arc.featureSetHasAll	const	no
 std.Target.arc.featureSetHasAny	const	no
 std.Target.arc.std	nsref	no
-std.Target.arm	ns	no
+std.Target.arm	ns	yes
 std.Target.arm.CpuFeature	alias	no
 std.Target.arm.CpuModel	alias	no
 std.Target.arm.Feature	enum	no
@@ -9091,7 +9091,7 @@ std.Target.arm.featureSetHasAll	const	no
 std.Target.arm.featureSetHasAny	const	no
 std.Target.arm.std	nsref	no
 std.Target.assert	alias	no
-std.Target.avr	ns	no
+std.Target.avr	ns	yes
 std.Target.avr.CpuFeature	alias	no
 std.Target.avr.CpuModel	alias	no
 std.Target.avr.Feature	enum	no
@@ -9521,7 +9521,7 @@ std.Target.avr.featureSetHas	const	no
 std.Target.avr.featureSetHasAll	const	no
 std.Target.avr.featureSetHasAny	const	no
 std.Target.avr.std	nsref	no
-std.Target.bpf	ns	no
+std.Target.bpf	ns	yes
 std.Target.bpf.CpuFeature	alias	no
 std.Target.bpf.CpuModel	alias	no
 std.Target.bpf.Feature	enum	no
@@ -9550,7 +9550,7 @@ std.Target.cTypeAlignment	fn	yes
 std.Target.cTypeBitSize	fn	yes
 std.Target.cTypeByteSize	fn	yes
 std.Target.cpu	field	no
-std.Target.csky	ns	no
+std.Target.csky	ns	yes
 std.Target.csky.CpuFeature	alias	no
 std.Target.csky.CpuModel	alias	no
 std.Target.csky.Feature	enum	no
@@ -9779,7 +9779,7 @@ std.Target.csky.std	nsref	no
 std.Target.dynamicLibSuffix	fn	no
 std.Target.dynamic_linker	field	no
 std.Target.exeFileExt	fn	no
-std.Target.hexagon	ns	no
+std.Target.hexagon	ns	yes
 std.Target.hexagon.CpuFeature	alias	no
 std.Target.hexagon.CpuModel	alias	no
 std.Target.hexagon.Feature	enum	no
@@ -9854,7 +9854,7 @@ std.Target.hexagon.featureSetHas	const	no
 std.Target.hexagon.featureSetHasAll	const	no
 std.Target.hexagon.featureSetHasAny	const	no
 std.Target.hexagon.std	nsref	no
-std.Target.hppa	ns	no
+std.Target.hppa	ns	yes
 std.Target.hppa.CpuFeature	alias	no
 std.Target.hppa.CpuModel	alias	no
 std.Target.hppa.Feature	enum	no
@@ -9910,7 +9910,7 @@ std.Target.kalimba.featureSetHas	const	no
 std.Target.kalimba.featureSetHasAll	const	no
 std.Target.kalimba.featureSetHasAny	const	no
 std.Target.kalimba.std	nsref	no
-std.Target.kvx	ns	no
+std.Target.kvx	ns	yes
 std.Target.kvx.CpuFeature	alias	no
 std.Target.kvx.CpuModel	alias	no
 std.Target.kvx.Feature	enum	no
@@ -9926,7 +9926,7 @@ std.Target.kvx.featureSetHas	const	no
 std.Target.kvx.featureSetHasAll	const	no
 std.Target.kvx.featureSetHasAny	const	no
 std.Target.kvx.std	nsref	no
-std.Target.lanai	ns	no
+std.Target.lanai	ns	yes
 std.Target.lanai.CpuFeature	alias	no
 std.Target.lanai.CpuModel	alias	no
 std.Target.lanai.Feature	enum	no
@@ -9942,7 +9942,7 @@ std.Target.lanai.std	nsref	no
 std.Target.libPrefix	fn	no
 std.Target.linuxTriple	fn	yes
 std.Target.linuxTripleSimple	fn	yes
-std.Target.loongarch	ns	no
+std.Target.loongarch	ns	yes
 std.Target.loongarch.CpuFeature	alias	no
 std.Target.loongarch.CpuModel	alias	no
 std.Target.loongarch.Feature	enum	no
@@ -9982,7 +9982,7 @@ std.Target.loongarch.featureSetHas	const	no
 std.Target.loongarch.featureSetHasAll	const	no
 std.Target.loongarch.featureSetHasAny	const	no
 std.Target.loongarch.std	nsref	no
-std.Target.m68k	ns	no
+std.Target.m68k	ns	yes
 std.Target.m68k.CpuFeature	alias	no
 std.Target.m68k.CpuModel	alias	no
 std.Target.m68k.Feature	enum	no
@@ -10025,7 +10025,7 @@ std.Target.m68k.featureSetHasAny	const	no
 std.Target.m68k.std	nsref	no
 std.Target.m88k	nsref	no
 std.Target.microblaze	nsref	no
-std.Target.mips	ns	no
+std.Target.mips	ns	yes
 std.Target.mips.CpuFeature	alias	no
 std.Target.mips.CpuModel	alias	no
 std.Target.mips.Feature	enum	no
@@ -10116,7 +10116,7 @@ std.Target.mips.featureSetHas	const	no
 std.Target.mips.featureSetHasAll	const	no
 std.Target.mips.featureSetHasAny	const	no
 std.Target.mips.std	nsref	no
-std.Target.msp430	ns	no
+std.Target.msp430	ns	yes
 std.Target.msp430.CpuFeature	alias	no
 std.Target.msp430.CpuModel	alias	no
 std.Target.msp430.Feature	enum	no
@@ -10134,7 +10134,7 @@ std.Target.msp430.featureSetHas	const	no
 std.Target.msp430.featureSetHasAll	const	no
 std.Target.msp430.featureSetHasAny	const	no
 std.Target.msp430.std	nsref	no
-std.Target.nvptx	ns	no
+std.Target.nvptx	ns	yes
 std.Target.nvptx.CpuFeature	alias	no
 std.Target.nvptx.CpuModel	alias	no
 std.Target.nvptx.Feature	enum	no
@@ -10259,7 +10259,7 @@ std.Target.nvptx.std	nsref	no
 std.Target.ofmt	field	no
 std.Target.or1k	nsref	no
 std.Target.os	field	no
-std.Target.powerpc	ns	no
+std.Target.powerpc	ns	yes
 std.Target.powerpc.CpuFeature	alias	no
 std.Target.powerpc.CpuModel	alias	no
 std.Target.powerpc.Feature	enum	no
@@ -10388,7 +10388,7 @@ std.Target.powerpc.featureSetHas	const	no
 std.Target.powerpc.featureSetHasAll	const	no
 std.Target.powerpc.featureSetHasAny	const	no
 std.Target.powerpc.std	nsref	no
-std.Target.propeller	ns	no
+std.Target.propeller	ns	yes
 std.Target.propeller.CpuFeature	alias	no
 std.Target.propeller.CpuModel	alias	no
 std.Target.propeller.Feature	enum	no
@@ -10406,7 +10406,7 @@ std.Target.ptrBitWidth	fn	no
 std.Target.ptrBitWidth_arch_abi	fn	no
 std.Target.ptrBitWidth_cpu_abi	fn	no
 std.Target.requiresLibC	fn	yes
-std.Target.riscv	ns	no
+std.Target.riscv	ns	yes
 std.Target.riscv.CpuFeature	alias	no
 std.Target.riscv.CpuModel	alias	no
 std.Target.riscv.Feature	enum	no
@@ -10819,7 +10819,7 @@ std.Target.riscv.featureSetHas	const	no
 std.Target.riscv.featureSetHasAll	const	no
 std.Target.riscv.featureSetHasAny	const	no
 std.Target.riscv.std	nsref	no
-std.Target.s390x	ns	no
+std.Target.s390x	ns	yes
 std.Target.s390x.CpuFeature	alias	no
 std.Target.s390x.CpuModel	alias	no
 std.Target.s390x.Feature	enum	no
@@ -10897,7 +10897,7 @@ std.Target.s390x.featureSetHasAll	const	no
 std.Target.s390x.featureSetHasAny	const	no
 std.Target.s390x.std	nsref	no
 std.Target.sh	nsref	no
-std.Target.sparc	ns	no
+std.Target.sparc	ns	yes
 std.Target.sparc.CpuFeature	alias	no
 std.Target.sparc.CpuModel	alias	no
 std.Target.sparc.Feature	enum	no
@@ -11007,7 +11007,7 @@ std.Target.sparc.featureSetHas	const	no
 std.Target.sparc.featureSetHasAll	const	no
 std.Target.sparc.featureSetHasAny	const	no
 std.Target.sparc.std	nsref	no
-std.Target.spirv	ns	no
+std.Target.spirv	ns	yes
 std.Target.spirv.CpuFeature	alias	no
 std.Target.spirv.CpuModel	alias	no
 std.Target.spirv.Feature	enum	no
@@ -11258,7 +11258,7 @@ std.Target.std	nsref	no
 std.Target.supportsAddressSpace	fn	yes
 std.Target.toCoffMachine	fn	no
 std.Target.toElfMachine	fn	no
-std.Target.ve	ns	no
+std.Target.ve	ns	yes
 std.Target.ve.CpuFeature	alias	no
 std.Target.ve.CpuModel	alias	no
 std.Target.ve.Feature	enum	no
@@ -11271,7 +11271,7 @@ std.Target.ve.featureSetHas	const	no
 std.Target.ve.featureSetHasAll	const	no
 std.Target.ve.featureSetHasAny	const	no
 std.Target.ve.std	nsref	no
-std.Target.wasm	ns	no
+std.Target.wasm	ns	yes
 std.Target.wasm.CpuFeature	alias	no
 std.Target.wasm.CpuModel	alias	no
 std.Target.wasm.Feature	enum	no
@@ -11305,7 +11305,7 @@ std.Target.wasm.featureSetHas	const	no
 std.Target.wasm.featureSetHasAll	const	no
 std.Target.wasm.featureSetHasAny	const	no
 std.Target.wasm.std	nsref	no
-std.Target.x86	ns	no
+std.Target.x86	ns	yes
 std.Target.x86.CpuFeature	alias	no
 std.Target.x86.CpuModel	alias	no
 std.Target.x86.Feature	enum	no
@@ -11620,7 +11620,7 @@ std.Target.x86.featureSetHas	const	no
 std.Target.x86.featureSetHasAll	const	no
 std.Target.x86.featureSetHasAny	const	no
 std.Target.x86.std	nsref	no
-std.Target.xcore	ns	no
+std.Target.xcore	ns	yes
 std.Target.xcore.CpuFeature	alias	no
 std.Target.xcore.CpuModel	alias	no
 std.Target.xcore.Feature	enum	no
@@ -11633,7 +11633,7 @@ std.Target.xcore.featureSetHas	const	no
 std.Target.xcore.featureSetHasAll	const	no
 std.Target.xcore.featureSetHasAny	const	no
 std.Target.xcore.std	nsref	no
-std.Target.xtensa	ns	no
+std.Target.xtensa	ns	yes
 std.Target.xtensa.CpuFeature	alias	no
 std.Target.xtensa.CpuModel	alias	no
 std.Target.xtensa.Feature	enum	no
@@ -11686,7 +11686,7 @@ std.Target.xtensa.featureSetHasAny	const	no
 std.Target.xtensa.std	nsref	no
 std.Target.z80	nsref	no
 std.Target.zigTriple	fn	no
-std.Thread	ns	no
+std.Thread	ns	yes
 std.Thread.Completion	const	yes
 std.Thread.CpuCountError	const	no
 std.Thread.GetNameError	const	no
@@ -11728,7 +11728,7 @@ std.Thread.SpawnConfig.allocator	field	yes
 std.Thread.SpawnConfig.default_stack_size	const	no
 std.Thread.SpawnConfig.stack_size	field	yes
 std.Thread.SpawnError	const	no
-std.Thread.Thread	const	no
+std.Thread.Thread	alias	no
 std.Thread.UnsupportedImpl	struct	yes
 std.Thread.UnsupportedImpl.ThreadHandle	alias	no
 std.Thread.UnsupportedImpl.detach	fn	no
@@ -11835,7 +11835,7 @@ std.Treap().Node.priority	field	no
 std.Treap().Prng	struct	yes
 std.Treap().Prng.random	fn	no
 std.Treap().Prng.xorshift	field	no
-std.Treap().Self	const	no
+std.Treap().Self	alias	no
 std.Treap().compare	fn	no
 std.Treap().extremeInSubtreeOnDirection	fn	no
 std.Treap().find	fn	no
@@ -11852,7 +11852,7 @@ std.Treap().replace	fn	no
 std.Treap().root	field	no
 std.Treap().rotate	fn	no
 std.Tz	alias	no
-std.Uri	ns	no
+std.Uri	ns	yes
 std.Uri.Allocator	alias	no
 std.Uri.Component	union	no
 std.Uri.Component.empty	const	no
@@ -11885,7 +11885,7 @@ std.Uri.Format.flags	field	no
 std.Uri.Format.uri	field	no
 std.Uri.ParseError	const	no
 std.Uri.ResolveInPlaceError	const	no
-std.Uri.Uri	const	no
+std.Uri.Uri	alias	no
 std.Uri.Writer	alias	no
 std.Uri.authority_sep	const	no
 std.Uri.fmt	fn	no
@@ -11964,7 +11964,7 @@ std.array_hash_map.Custom().Oom	alias	no
 std.array_hash_map.Custom().RemovalType	enum	no
 std.array_hash_map.Custom().RemovalType.ordered	tag	no
 std.array_hash_map.Custom().RemovalType.swap	tag	no
-std.array_hash_map.Custom().Self	const	no
+std.array_hash_map.Custom().Self	alias	no
 std.array_hash_map.Custom().capacity	fn	yes
 std.array_hash_map.Custom().checkedEql	fn	no
 std.array_hash_map.Custom().checkedHash	fn	no
@@ -12096,7 +12096,7 @@ std.array_hash_map.Custom().updateEntryIndex	fn	no
 std.array_hash_map.Custom().values	fn	yes
 std.array_hash_map.Index	fn	yes
 std.array_hash_map.Index()	struct	no
-std.array_hash_map.Index().Self	const	no
+std.array_hash_map.Index().Self	alias	no
 std.array_hash_map.Index().distance_from_start_index	field	yes
 std.array_hash_map.Index().empty	const	yes
 std.array_hash_map.Index().empty_sentinel	const	yes
@@ -12133,7 +12133,7 @@ std.array_hash_map.getAutoHashStratFn	fn	no
 std.array_hash_map.getHashPtrAddrFn	fn	no
 std.array_hash_map.getTrivialEqlFn	fn	no
 std.array_hash_map.hashString	fn	no
-std.array_hash_map.hash_map	const	no
+std.array_hash_map.hash_map	alias	no
 std.array_hash_map.index_capacities	const	no
 std.array_hash_map.math	alias	no
 std.array_hash_map.max_bit_index	const	no
@@ -12147,7 +12147,7 @@ std.array_hash_map.testing	alias	no
 std.array_list	ns	no
 std.array_list.Aligned	fn	yes
 std.array_list.Aligned()	struct	no
-std.array_list.Aligned().Self	const	no
+std.array_list.Aligned().Self	alias	no
 std.array_list.Aligned().SentinelSlice	fn	no
 std.array_list.Aligned().Slice	const	no
 std.array_list.Aligned().addManyAsArray	fn	yes
@@ -12228,7 +12228,7 @@ std.array_list.Aligned().unlockPointers	fn	yes
 std.array_list.Aligned().unusedCapacitySlice	fn	yes
 std.array_list.AlignedManaged	fn	yes
 std.array_list.AlignedManaged()	struct	no
-std.array_list.AlignedManaged().Self	const	no
+std.array_list.AlignedManaged().Self	alias	no
 std.array_list.AlignedManaged().SentinelSlice	fn	no
 std.array_list.AlignedManaged().Slice	const	no
 std.array_list.AlignedManaged().addManyAsArray	fn	yes
@@ -12302,7 +12302,7 @@ std.array_list.math	alias	no
 std.array_list.mem	alias	no
 std.array_list.std	nsref	no
 std.array_list.testing	alias	no
-std.ascii	ns	no
+std.ascii	ns	yes
 std.ascii.HexEscape	struct	no
 std.ascii.HexEscape.bytes	field	no
 std.ascii.HexEscape.charset	field	no
@@ -12390,7 +12390,7 @@ std.atomic.Mutex.unlocked	tag	no
 std.atomic.Value	fn	yes
 std.atomic.Value()	struct	no
 std.atomic.Value().Bit	const	no
-std.atomic.Value().Self	const	no
+std.atomic.Value().Self	alias	no
 std.atomic.Value().bitReset	fn	yes
 std.atomic.Value().bitSet	fn	yes
 std.atomic.Value().bitToggle	fn	yes
@@ -12417,7 +12417,7 @@ std.atomic.cache_line	const	yes
 std.atomic.spinLoopHint	fn	yes
 std.atomic.std	nsref	no
 std.atomic.testing	alias	no
-std.base64	ns	no
+std.base64	ns	yes
 std.base64.Base64Decoder	struct	no
 std.base64.Base64Decoder.calcSizeForSlice	fn	yes
 std.base64.Base64Decoder.calcSizeUpperBound	fn	yes
@@ -12470,13 +12470,13 @@ std.base64.url_safe	const	yes
 std.base64.url_safe_alphabet_chars	const	yes
 std.base64.url_safe_no_pad	const	yes
 std.base64.window	alias	no
-std.bit_set	ns	no
+std.bit_set	ns	yes
 std.bit_set.Allocator	alias	no
 std.bit_set.Array	fn	yes
 std.bit_set.Array()	struct	no
 std.bit_set.Array().Iterator	fn	no
 std.bit_set.Array().MaskInt	alias	yes
-std.bit_set.Array().Self	const	no
+std.bit_set.Array().Self	alias	no
 std.bit_set.Array().ShiftInt	const	yes
 std.bit_set.Array().bit_length	alias	yes
 std.bit_set.Array().boolMaskBit	fn	no
@@ -12519,7 +12519,7 @@ std.bit_set.ArrayBitSet	alias	yes
 std.bit_set.Dynamic	struct	yes
 std.bit_set.Dynamic.Iterator	fn	no
 std.bit_set.Dynamic.MaskInt	alias	yes
-std.bit_set.Dynamic.Self	const	no
+std.bit_set.Dynamic.Self	alias	no
 std.bit_set.Dynamic.ShiftInt	const	yes
 std.bit_set.Dynamic.bit_length	field	yes
 std.bit_set.Dynamic.boolMaskBit	fn	no
@@ -12560,7 +12560,7 @@ std.bit_set.DynamicBitSetUnmanaged	alias	yes
 std.bit_set.DynamicManaged	struct	yes
 std.bit_set.DynamicManaged.Iterator	alias	no
 std.bit_set.DynamicManaged.MaskInt	alias	yes
-std.bit_set.DynamicManaged.Self	const	no
+std.bit_set.DynamicManaged.Self	alias	no
 std.bit_set.DynamicManaged.ShiftInt	const	yes
 std.bit_set.DynamicManaged.allocator	field	no
 std.bit_set.DynamicManaged.capacity	fn	yes
@@ -12590,7 +12590,7 @@ std.bit_set.DynamicManaged.unset	fn	yes
 std.bit_set.DynamicManaged.unsetAll	fn	yes
 std.bit_set.GenericIterator	fn	no
 std.bit_set.GenericIterator()	struct	no
-std.bit_set.GenericIterator().Self	const	no
+std.bit_set.GenericIterator().Self	alias	no
 std.bit_set.GenericIterator().bit_offset	field	no
 std.bit_set.GenericIterator().bits_remain	field	no
 std.bit_set.GenericIterator().init	fn	no
@@ -12602,11 +12602,11 @@ std.bit_set.Integer	fn	yes
 std.bit_set.Integer()	struct	no
 std.bit_set.Integer().Iterator	fn	no
 std.bit_set.Integer().MaskInt	const	yes
-std.bit_set.Integer().Self	const	no
+std.bit_set.Integer().Self	alias	no
 std.bit_set.Integer().ShiftInt	const	yes
 std.bit_set.Integer().SingleWordIterator	fn	no
 std.bit_set.Integer().SingleWordIterator()	struct	no
-std.bit_set.Integer().SingleWordIterator().IterSelf	const	no
+std.bit_set.Integer().SingleWordIterator().IterSelf	alias	no
 std.bit_set.Integer().SingleWordIterator().bits_remain	field	no
 std.bit_set.Integer().SingleWordIterator().next	fn	yes
 std.bit_set.Integer().bit_length	alias	yes
@@ -12931,7 +12931,7 @@ std.c.boolean_t	alias	no
 std.c.bsearch	fn	no
 std.c.builtin	modref	no
 std.c.bzero	fn	no
-std.c.c	const	no
+std.c.c	alias	no
 std.c.caddr_t	const	no
 std.c.calloc	fn	no
 std.c.cap_rights	alias	no
@@ -17765,7 +17765,7 @@ std.coff.mem	alias	no
 std.coff.pe_pointer_offset	const	no
 std.coff.pe_signature	const	no
 std.coff.std	nsref	no
-std.compress	ns	no
+std.compress	ns	yes
 std.compress.flate	ns	yes
 std.compress.flate.Compress	ns	yes
 std.compress.flate.Compress.BitWriter	struct	no
@@ -17787,7 +17787,7 @@ std.compress.flate.Compress.BlockHeader.Dynamic.regular	field	no
 std.compress.flate.Compress.BlockHeader.final	field	no
 std.compress.flate.Compress.BlockHeader.int	fn	no
 std.compress.flate.Compress.BlockHeader.kind	field	no
-std.compress.flate.Compress.Compress	const	no
+std.compress.flate.Compress.Compress	alias	no
 std.compress.flate.Compress.FreqBufIndex	enum	no
 std.compress.flate.Compress.FreqBufIndex.gradient	tag	no
 std.compress.flate.Compress.FreqBufIndex.random	tag	no
@@ -17988,12 +17988,12 @@ std.compress.flate.Decompress.BlockType.invalid	tag	no
 std.compress.flate.Decompress.BlockType.stored	tag	no
 std.compress.flate.Decompress.CodegenDecoder	const	no
 std.compress.flate.Decompress.Container	alias	no
-std.compress.flate.Decompress.Decompress	const	no
+std.compress.flate.Decompress.Decompress	alias	no
 std.compress.flate.Decompress.DistanceDecoder	const	no
 std.compress.flate.Decompress.Error	const	no
 std.compress.flate.Decompress.HuffmanDecoder	fn	yes
 std.compress.flate.Decompress.HuffmanDecoder()	struct	no
-std.compress.flate.Decompress.HuffmanDecoder().Self	const	no
+std.compress.flate.Decompress.HuffmanDecoder().Self	alias	no
 std.compress.flate.Decompress.HuffmanDecoder().checkCompleteness	fn	yes
 std.compress.flate.Decompress.HuffmanDecoder().find	fn	yes
 std.compress.flate.Decompress.HuffmanDecoder().findLinked	fn	no
@@ -18224,7 +18224,7 @@ std.compress.xz.Decompress.Check.none	tag	no
 std.compress.xz.Decompress.Check.sha256	tag	no
 std.compress.xz.Decompress.Crc32	const	no
 std.compress.xz.Decompress.Crc64	const	no
-std.compress.xz.Decompress.Decompress	const	no
+std.compress.xz.Decompress.Decompress	alias	no
 std.compress.xz.Decompress.Error	const	no
 std.compress.xz.Decompress.InitError	const	no
 std.compress.xz.Decompress.Reader	alias	no
@@ -18271,7 +18271,7 @@ std.compress.zstd.Decompress.Bits	fn	no
 std.compress.zstd.Decompress.Bits()	struct	no
 std.compress.zstd.Decompress.Bits().[0]	field	no
 std.compress.zstd.Decompress.Bits().[1]	field	no
-std.compress.zstd.Decompress.Decompress	const	no
+std.compress.zstd.Decompress.Decompress	alias	no
 std.compress.zstd.Decompress.Error	const	no
 std.compress.zstd.Decompress.Frame	struct	no
 std.compress.zstd.Decompress.Frame.InitError	const	no
@@ -18532,7 +18532,7 @@ std.compress.zstd.testDecompress	fn	no
 std.compress.zstd.testDiscard	fn	yes
 std.compress.zstd.testExpectDecompress	fn	no
 std.compress.zstd.testExpectDecompressError	fn	no
-std.crypto	ns	no
+std.crypto	ns	yes
 std.crypto.Certificate	ns	no
 std.crypto.Certificate.Algorithm	enum	no
 std.crypto.Certificate.Algorithm.Hash	fn	no
@@ -18569,13 +18569,13 @@ std.crypto.Certificate.Attribute.postalCode	tag	no
 std.crypto.Certificate.Attribute.serialNumber	tag	no
 std.crypto.Certificate.Attribute.stateOrProvinceName	tag	no
 std.crypto.Certificate.Attribute.streetAddress	tag	no
-std.crypto.Certificate.Bundle	ns	no
+std.crypto.Certificate.Bundle	ns	yes
 std.crypto.Certificate.Bundle.AddCertsFromDirError	alias	no
 std.crypto.Certificate.Bundle.AddCertsFromDirPathError	const	no
 std.crypto.Certificate.Bundle.AddCertsFromFileError	const	no
 std.crypto.Certificate.Bundle.AddCertsFromFilePathError	const	no
 std.crypto.Certificate.Bundle.Allocator	alias	no
-std.crypto.Certificate.Bundle.Bundle	const	no
+std.crypto.Certificate.Bundle.Bundle	alias	no
 std.crypto.Certificate.Bundle.Certificate	alias	no
 std.crypto.Certificate.Bundle.Dir	alias	no
 std.crypto.Certificate.Bundle.Io	alias	no
@@ -18615,7 +18615,7 @@ std.crypto.Certificate.Bundle.rescanWindows	fn	no
 std.crypto.Certificate.Bundle.rescanWithPath	fn	no
 std.crypto.Certificate.Bundle.std	nsref	no
 std.crypto.Certificate.Bundle.verify	fn	no
-std.crypto.Certificate.Certificate	const	no
+std.crypto.Certificate.Certificate	alias	no
 std.crypto.Certificate.Chain	const	no
 std.crypto.Certificate.Date	struct	no
 std.crypto.Certificate.Date.day	field	yes
@@ -18812,7 +18812,7 @@ std.crypto.aead.aegis.Aegis256X2_256	alias	no
 std.crypto.aead.aegis.Aegis256X4	alias	no
 std.crypto.aead.aegis.Aegis256X4_256	alias	no
 std.crypto.aead.aegis.Aegis256_256	alias	no
-std.crypto.aead.aegis.variants	ns	no
+std.crypto.aead.aegis.variants	ns	yes
 std.crypto.aead.aegis.variants.Aegis128L	const	yes
 std.crypto.aead.aegis.variants.Aegis128LMac	const	yes
 std.crypto.aead.aegis.variants.Aegis128LMac_128	const	yes
@@ -18859,7 +18859,7 @@ std.crypto.aead.aegis.variants.Aegis256XGeneric().tag_length	const	no
 std.crypto.aead.aegis.variants.Aegis256_256	const	yes
 std.crypto.aead.aegis.variants.AegisMac	fn	no
 std.crypto.aead.aegis.variants.AegisMac()	struct	no
-std.crypto.aead.aegis.variants.AegisMac().Mac	const	no
+std.crypto.aead.aegis.variants.AegisMac().Mac	alias	no
 std.crypto.aead.aegis.variants.AegisMac().block_length	alias	no
 std.crypto.aead.aegis.variants.AegisMac().buf	field	no
 std.crypto.aead.aegis.variants.AegisMac().create	fn	yes
@@ -18879,7 +18879,7 @@ std.crypto.aead.aegis.variants.AuthenticationError	alias	no
 std.crypto.aead.aegis.variants.State128X	fn	no
 std.crypto.aead.aegis.variants.State128X()	struct	no
 std.crypto.aead.aegis.variants.State128X().AesBlockVec	const	no
-std.crypto.aead.aegis.variants.State128X().State	const	no
+std.crypto.aead.aegis.variants.State128X().State	alias	no
 std.crypto.aead.aegis.variants.State128X().absorb	fn	no
 std.crypto.aead.aegis.variants.State128X().aes_block_length	alias	no
 std.crypto.aead.aegis.variants.State128X().alignment	alias	no
@@ -18895,7 +18895,7 @@ std.crypto.aead.aegis.variants.State128X().update	fn	no
 std.crypto.aead.aegis.variants.State256X	fn	no
 std.crypto.aead.aegis.variants.State256X()	struct	no
 std.crypto.aead.aegis.variants.State256X().AesBlockVec	const	no
-std.crypto.aead.aegis.variants.State256X().State	const	no
+std.crypto.aead.aegis.variants.State256X().State	alias	no
 std.crypto.aead.aegis.variants.State256X().absorb	fn	no
 std.crypto.aead.aegis.variants.State256X().aes_block_length	alias	no
 std.crypto.aead.aegis.variants.State256X().alignment	alias	no
@@ -18915,7 +18915,7 @@ std.crypto.aead.aegis.variants.mem	alias	no
 std.crypto.aead.aegis.variants.repeat16u8	fn	yes
 std.crypto.aead.aegis.variants.std	modref	no
 std.crypto.aead.aegis.variants.testing	alias	no
-std.crypto.aead.aes_ccm	ns	no
+std.crypto.aead.aes_ccm	ns	yes
 std.crypto.aead.aes_ccm.Aes128Ccm0	const	yes
 std.crypto.aead.aes_ccm.Aes128Ccm16	const	yes
 std.crypto.aead.aes_ccm.Aes128Ccm8	const	yes
@@ -18938,7 +18938,7 @@ std.crypto.aead.aes_ccm.assert	alias	no
 std.crypto.aead.aes_ccm.cbc_mac	ns	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac	fn	yes
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac()	struct	no
-std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Self	const	no
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Self	alias	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().block_length	alias	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().buf	field	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().cipher_ctx	field	no
@@ -19046,7 +19046,7 @@ std.crypto.auth.cbc_mac	nsref	no
 std.crypto.auth.cmac	ns	no
 std.crypto.auth.cmac.Cmac	fn	yes
 std.crypto.auth.cmac.Cmac()	struct	no
-std.crypto.auth.cmac.Cmac().Self	const	no
+std.crypto.auth.cmac.Cmac().Self	alias	no
 std.crypto.auth.cmac.Cmac().block_length	alias	no
 std.crypto.auth.cmac.Cmac().buf	field	no
 std.crypto.auth.cmac.Cmac().cipher_ctx	field	no
@@ -19069,7 +19069,7 @@ std.crypto.auth.cmac.testing	alias	no
 std.crypto.auth.hmac	ns	no
 std.crypto.auth.hmac.Hmac	fn	no
 std.crypto.auth.hmac.Hmac()	struct	no
-std.crypto.auth.hmac.Hmac().Self	const	no
+std.crypto.auth.hmac.Hmac().Self	alias	no
 std.crypto.auth.hmac.Hmac().create	fn	no
 std.crypto.auth.hmac.Hmac().final	fn	no
 std.crypto.auth.hmac.Hmac().finalResult	fn	no
@@ -19095,7 +19095,7 @@ std.crypto.auth.hmac.std	nsref	no
 std.crypto.auth.siphash	ns	no
 std.crypto.auth.siphash.SipHash	fn	no
 std.crypto.auth.siphash.SipHash()	struct	no
-std.crypto.auth.siphash.SipHash().Self	const	no
+std.crypto.auth.siphash.SipHash().Self	alias	no
 std.crypto.auth.siphash.SipHash().State	const	no
 std.crypto.auth.siphash.SipHash().block_length	const	no
 std.crypto.auth.siphash.SipHash().buf	field	no
@@ -19115,7 +19115,7 @@ std.crypto.auth.siphash.SipHash128	fn	yes
 std.crypto.auth.siphash.SipHash64	fn	yes
 std.crypto.auth.siphash.SipHashStateless	fn	no
 std.crypto.auth.siphash.SipHashStateless()	struct	no
-std.crypto.auth.siphash.SipHashStateless().Self	const	no
+std.crypto.auth.siphash.SipHashStateless().Self	alias	no
 std.crypto.auth.siphash.SipHashStateless().block_length	const	no
 std.crypto.auth.siphash.SipHashStateless().final	fn	no
 std.crypto.auth.siphash.SipHashStateless().hash	fn	no
@@ -19136,7 +19136,7 @@ std.crypto.auth.siphash.std	nsref	no
 std.crypto.auth.siphash.test_key	const	no
 std.crypto.auth.siphash.testing	alias	no
 std.crypto.codecs	ns	yes
-std.crypto.codecs.asn1	ns	no
+std.crypto.codecs.asn1	ns	yes
 std.crypto.codecs.asn1.Any	struct	yes
 std.crypto.codecs.asn1.Any.bytes	field	no
 std.crypto.codecs.asn1.Any.decodeDer	fn	no
@@ -19243,18 +19243,18 @@ std.crypto.codecs.asn1.Tag.max_encoded_len	const	no
 std.crypto.codecs.asn1.Tag.number	field	no
 std.crypto.codecs.asn1.Tag.toExpected	fn	no
 std.crypto.codecs.asn1.Tag.universal	fn	no
-std.crypto.codecs.asn1.der	ns	no
-std.crypto.codecs.asn1.der.Decoder	ns	no
-std.crypto.codecs.asn1.der.Decoder.Decoder	const	no
+std.crypto.codecs.asn1.der	ns	yes
+std.crypto.codecs.asn1.der.Decoder	ns	yes
+std.crypto.codecs.asn1.der.Decoder.Decoder	alias	no
 std.crypto.codecs.asn1.der.Decoder.Element	alias	no
 std.crypto.codecs.asn1.der.Decoder.ExpectedTag	alias	no
 std.crypto.codecs.asn1.der.Decoder.FieldTag	alias	no
 std.crypto.codecs.asn1.der.Decoder.Index	alias	no
-std.crypto.codecs.asn1.der.Decoder.Oid	ns	no
+std.crypto.codecs.asn1.der.Decoder.Oid	ns	yes
 std.crypto.codecs.asn1.der.Decoder.Oid.Allocator	alias	no
 std.crypto.codecs.asn1.der.Decoder.Oid.Arc	alias	no
 std.crypto.codecs.asn1.der.Decoder.Oid.InitError	const	no
-std.crypto.codecs.asn1.der.Decoder.Oid.Oid	const	no
+std.crypto.codecs.asn1.der.Decoder.Oid.Oid	alias	no
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	fn	yes
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap()	struct	no
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	fn	no
@@ -19291,10 +19291,10 @@ std.crypto.codecs.asn1.der.Decoder.int	fn	no
 std.crypto.codecs.asn1.der.Decoder.sequence	fn	no
 std.crypto.codecs.asn1.der.Decoder.std	modref	no
 std.crypto.codecs.asn1.der.Decoder.view	fn	yes
-std.crypto.codecs.asn1.der.Encoder	ns	no
-std.crypto.codecs.asn1.der.Encoder.ArrayListReverse	ns	no
+std.crypto.codecs.asn1.der.Encoder	ns	yes
+std.crypto.codecs.asn1.der.Encoder.ArrayListReverse	ns	yes
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.Allocator	alias	no
-std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.ArrayListReverse	const	no
+std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.ArrayListReverse	alias	no
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.Error	alias	no
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.allocatedSlice	fn	no
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.allocator	field	no
@@ -19310,7 +19310,7 @@ std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.prependSliceSize	fn	no
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.std	modref	no
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.testing	alias	no
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse.toOwnedSlice	fn	yes
-std.crypto.codecs.asn1.der.Encoder.Encoder	const	no
+std.crypto.codecs.asn1.der.Encoder.Encoder	alias	no
 std.crypto.codecs.asn1.der.Encoder.FieldTag	alias	no
 std.crypto.codecs.asn1.der.Encoder.Oid	nsref	no
 std.crypto.codecs.asn1.der.Encoder.Tag	alias	no
@@ -19375,7 +19375,7 @@ std.crypto.core	struct	yes
 std.crypto.core.Ascon	fn	yes
 std.crypto.core.Ascon()	struct	no
 std.crypto.core.Ascon().Block	const	no
-std.crypto.core.Ascon().Self	const	no
+std.crypto.core.Ascon().Self	alias	no
 std.crypto.core.Ascon().addByte	fn	yes
 std.crypto.core.Ascon().addBytes	fn	yes
 std.crypto.core.Ascon().asBytes	fn	yes
@@ -19414,7 +19414,7 @@ std.crypto.core.keccak	ns	no
 std.crypto.core.keccak.KeccakF	fn	yes
 std.crypto.core.keccak.KeccakF()	struct	no
 std.crypto.core.keccak.KeccakF().RC	const	no
-std.crypto.core.keccak.KeccakF().Self	const	no
+std.crypto.core.keccak.KeccakF().Self	alias	no
 std.crypto.core.keccak.KeccakF().addByte	fn	yes
 std.crypto.core.keccak.KeccakF().addBytes	fn	yes
 std.crypto.core.keccak.KeccakF().asBytes	fn	yes
@@ -19434,7 +19434,7 @@ std.crypto.core.keccak.KeccakF().xorBytes	fn	yes
 std.crypto.core.keccak.State	fn	yes
 std.crypto.core.keccak.State()	struct	no
 std.crypto.core.keccak.State().Options	struct	yes
-std.crypto.core.keccak.State().Self	const	no
+std.crypto.core.keccak.State().Self	alias	no
 std.crypto.core.keccak.State().absorb	fn	yes
 std.crypto.core.keccak.State().buf	field	no
 std.crypto.core.keccak.State().delim	field	yes
@@ -19777,7 +19777,7 @@ std.crypto.ecc.P256.scalar.add	fn	yes
 std.crypto.ecc.P256.scalar.common	ns	no
 std.crypto.ecc.P256.scalar.common.Field	fn	yes
 std.crypto.ecc.P256.scalar.common.Field()	struct	no
-std.crypto.ecc.P256.scalar.common.Field().Fe	const	no
+std.crypto.ecc.P256.scalar.common.Field().Fe	alias	no
 std.crypto.ecc.P256.scalar.common.Field().IntRepr	const	yes
 std.crypto.ecc.P256.scalar.common.Field().add	fn	yes
 std.crypto.ecc.P256.scalar.common.Field().cMov	fn	yes
@@ -20145,7 +20145,7 @@ std.crypto.ff.Error	const	yes
 std.crypto.ff.Fe_	fn	yes
 std.crypto.ff.Fe_()	struct	no
 std.crypto.ff.Fe_().FeUint	const	no
-std.crypto.ff.Fe_().Self	const	no
+std.crypto.ff.Fe_().Self	alias	no
 std.crypto.ff.Fe_().compare	fn	yes
 std.crypto.ff.Fe_().encoded_bytes	alias	yes
 std.crypto.ff.Fe_().eql	fn	yes
@@ -20165,7 +20165,7 @@ std.crypto.ff.Modulus	fn	yes
 std.crypto.ff.Modulus()	struct	no
 std.crypto.ff.Modulus().Fe	const	yes
 std.crypto.ff.Modulus().FeUint	alias	no
-std.crypto.ff.Modulus().Self	const	no
+std.crypto.ff.Modulus().Self	alias	no
 std.crypto.ff.Modulus().add	fn	yes
 std.crypto.ff.Modulus().bits	fn	yes
 std.crypto.ff.Modulus().computeRR	fn	no
@@ -20205,7 +20205,7 @@ std.crypto.ff.RepresentationError	const	yes
 std.crypto.ff.TLimb	const	no
 std.crypto.ff.Uint	fn	yes
 std.crypto.ff.Uint()	struct	no
-std.crypto.ff.Uint().Self	const	no
+std.crypto.ff.Uint().Self	alias	no
 std.crypto.ff.Uint().addWithOverflow	fn	yes
 std.crypto.ff.Uint().bitLenPublic	fn	yes
 std.crypto.ff.Uint().capacity_bits	const	no
@@ -20296,7 +20296,7 @@ std.crypto.hash.Blake3.reset	fn	no
 std.crypto.hash.Blake3.update	fn	yes
 std.crypto.hash.Md5	struct	yes
 std.crypto.hash.Md5.Options	struct	no
-std.crypto.hash.Md5.Self	const	no
+std.crypto.hash.Md5.Self	alias	no
 std.crypto.hash.Md5.block_length	const	no
 std.crypto.hash.Md5.buf	field	no
 std.crypto.hash.Md5.buf_len	field	no
@@ -20310,7 +20310,7 @@ std.crypto.hash.Md5.round	fn	no
 std.crypto.hash.Md5.s	field	no
 std.crypto.hash.Md5.total_len	field	no
 std.crypto.hash.Md5.update	fn	no
-std.crypto.hash.Sha1	ns	no
+std.crypto.hash.Sha1	ns	yes
 std.crypto.hash.Sha1.Options	struct	no
 std.crypto.hash.Sha1.RoundParam	struct	no
 std.crypto.hash.Sha1.RoundParam.a	field	no
@@ -20320,7 +20320,7 @@ std.crypto.hash.Sha1.RoundParam.c	field	no
 std.crypto.hash.Sha1.RoundParam.d	field	no
 std.crypto.hash.Sha1.RoundParam.e	field	no
 std.crypto.hash.Sha1.RoundParam.i	field	no
-std.crypto.hash.Sha1.Sha1	const	no
+std.crypto.hash.Sha1.Sha1	alias	no
 std.crypto.hash.Sha1.block_length	const	no
 std.crypto.hash.Sha1.buf	field	yes
 std.crypto.hash.Sha1.buf_len	field	no
@@ -20342,7 +20342,7 @@ std.crypto.hash.ascon	struct	no
 std.crypto.hash.ascon.AsconCxof128	alias	no
 std.crypto.hash.ascon.AsconHash256	alias	no
 std.crypto.hash.ascon.AsconXof128	alias	no
-std.crypto.hash.ascon.variants	ns	no
+std.crypto.hash.ascon.variants	ns	yes
 std.crypto.hash.ascon.variants.AsconAead128	struct	yes
 std.crypto.hash.ascon.variants.AsconAead128.AeadState	struct	no
 std.crypto.hash.ascon.variants.AsconAead128.AeadState.finalize	fn	yes
@@ -20396,7 +20396,7 @@ std.crypto.hash.ascon.variants.AuthenticationError	alias	no
 std.crypto.hash.ascon.variants.State	fn	yes
 std.crypto.hash.ascon.variants.State()	struct	no
 std.crypto.hash.ascon.variants.State().Block	const	no
-std.crypto.hash.ascon.variants.State().Self	const	no
+std.crypto.hash.ascon.variants.State().Self	alias	no
 std.crypto.hash.ascon.variants.State().addByte	fn	yes
 std.crypto.hash.ascon.variants.State().addBytes	fn	yes
 std.crypto.hash.ascon.variants.State().asBytes	fn	yes
@@ -20432,7 +20432,7 @@ std.crypto.hash.blake2.Blake2b().Options.context	field	no
 std.crypto.hash.blake2.Blake2b().Options.expected_out_bits	field	no
 std.crypto.hash.blake2.Blake2b().Options.key	field	no
 std.crypto.hash.blake2.Blake2b().Options.salt	field	no
-std.crypto.hash.blake2.Blake2b().Self	const	no
+std.crypto.hash.blake2.Blake2b().Self	alias	no
 std.crypto.hash.blake2.Blake2b().block_length	const	no
 std.crypto.hash.blake2.Blake2b().buf	field	no
 std.crypto.hash.blake2.Blake2b().buf_len	field	no
@@ -20462,7 +20462,7 @@ std.crypto.hash.blake2.Blake2s().Options.context	field	no
 std.crypto.hash.blake2.Blake2s().Options.expected_out_bits	field	no
 std.crypto.hash.blake2.Blake2s().Options.key	field	no
 std.crypto.hash.blake2.Blake2s().Options.salt	field	no
-std.crypto.hash.blake2.Blake2s().Self	const	no
+std.crypto.hash.blake2.Blake2s().Self	alias	no
 std.crypto.hash.blake2.Blake2s().block_length	const	no
 std.crypto.hash.blake2.Blake2s().buf	field	no
 std.crypto.hash.blake2.Blake2s().buf_len	field	no
@@ -20505,7 +20505,7 @@ std.crypto.hash.composition.Composition().H2	field	no
 std.crypto.hash.composition.Composition().Options	struct	yes
 std.crypto.hash.composition.Composition().Options.H1	field	yes
 std.crypto.hash.composition.Composition().Options.H2	field	yes
-std.crypto.hash.composition.Composition().Self	const	no
+std.crypto.hash.composition.Composition().Self	alias	no
 std.crypto.hash.composition.Composition().block_length	alias	yes
 std.crypto.hash.composition.Composition().digest_length	alias	yes
 std.crypto.hash.composition.Composition().final	fn	yes
@@ -20518,7 +20518,7 @@ std.crypto.hash.composition.Sha384oSha384	const	yes
 std.crypto.hash.composition.Sha512oSha512	const	yes
 std.crypto.hash.composition.sha2	alias	no
 std.crypto.hash.composition.std	nsref	no
-std.crypto.hash.sha2	ns	no
+std.crypto.hash.sha2	ns	yes
 std.crypto.hash.sha2.Iv32	const	no
 std.crypto.hash.sha2.Iv64	const	no
 std.crypto.hash.sha2.RoundParam256	struct	no
@@ -20548,7 +20548,7 @@ std.crypto.hash.sha2.Sha256T192	const	yes
 std.crypto.hash.sha2.Sha2x32	fn	no
 std.crypto.hash.sha2.Sha2x32()	struct	no
 std.crypto.hash.sha2.Sha2x32().Options	struct	no
-std.crypto.hash.sha2.Sha2x32().Self	const	no
+std.crypto.hash.sha2.Sha2x32().Self	alias	no
 std.crypto.hash.sha2.Sha2x32().W	const	no
 std.crypto.hash.sha2.Sha2x32().block_length	const	no
 std.crypto.hash.sha2.Sha2x32().buf	field	no
@@ -20566,7 +20566,7 @@ std.crypto.hash.sha2.Sha2x32().update	fn	no
 std.crypto.hash.sha2.Sha2x64	fn	no
 std.crypto.hash.sha2.Sha2x64()	struct	no
 std.crypto.hash.sha2.Sha2x64().Options	struct	no
-std.crypto.hash.sha2.Sha2x64().Self	const	no
+std.crypto.hash.sha2.Sha2x64().Self	alias	no
 std.crypto.hash.sha2.Sha2x64().block_length	const	no
 std.crypto.hash.sha2.Sha2x64().buf	field	no
 std.crypto.hash.sha2.Sha2x64().buf_len	field	no
@@ -20606,7 +20606,7 @@ std.crypto.hash.sha3.CShakeLike	fn	no
 std.crypto.hash.sha3.CShakeLike()	struct	no
 std.crypto.hash.sha3.CShakeLike().Options	struct	yes
 std.crypto.hash.sha3.CShakeLike().Options.context	field	no
-std.crypto.hash.sha3.CShakeLike().Self	const	no
+std.crypto.hash.sha3.CShakeLike().Self	alias	no
 std.crypto.hash.sha3.CShakeLike().Shaker	const	no
 std.crypto.hash.sha3.CShakeLike().block_length	alias	yes
 std.crypto.hash.sha3.CShakeLike().digest_length	alias	yes
@@ -20624,7 +20624,7 @@ std.crypto.hash.sha3.KMacLike	fn	no
 std.crypto.hash.sha3.KMacLike()	struct	no
 std.crypto.hash.sha3.KMacLike().Options	struct	yes
 std.crypto.hash.sha3.KMacLike().Options.context	field	no
-std.crypto.hash.sha3.KMacLike().Self	const	no
+std.crypto.hash.sha3.KMacLike().Self	alias	no
 std.crypto.hash.sha3.KMacLike().block_length	alias	yes
 std.crypto.hash.sha3.KMacLike().create	fn	yes
 std.crypto.hash.sha3.KMacLike().createWithOptions	fn	yes
@@ -20645,7 +20645,7 @@ std.crypto.hash.sha3.Keccak	fn	yes
 std.crypto.hash.sha3.Keccak()	struct	no
 std.crypto.hash.sha3.Keccak().Options	struct	yes
 std.crypto.hash.sha3.Keccak().Options.delim	field	no
-std.crypto.hash.sha3.Keccak().Self	const	no
+std.crypto.hash.sha3.Keccak().Self	alias	no
 std.crypto.hash.sha3.Keccak().block_length	alias	yes
 std.crypto.hash.sha3.Keccak().digest_length	const	yes
 std.crypto.hash.sha3.Keccak().final	fn	yes
@@ -20676,7 +20676,7 @@ std.crypto.hash.sha3.ShakeLike	fn	no
 std.crypto.hash.sha3.ShakeLike()	struct	no
 std.crypto.hash.sha3.ShakeLike().Options	struct	yes
 std.crypto.hash.sha3.ShakeLike().Options.delim	field	no
-std.crypto.hash.sha3.ShakeLike().Self	const	no
+std.crypto.hash.sha3.ShakeLike().Self	alias	no
 std.crypto.hash.sha3.ShakeLike().block_length	alias	yes
 std.crypto.hash.sha3.ShakeLike().buf	field	no
 std.crypto.hash.sha3.ShakeLike().digest_length	const	yes
@@ -20696,7 +20696,7 @@ std.crypto.hash.sha3.TupleHashLike	fn	no
 std.crypto.hash.sha3.TupleHashLike()	struct	no
 std.crypto.hash.sha3.TupleHashLike().Options	struct	yes
 std.crypto.hash.sha3.TupleHashLike().Options.context	field	no
-std.crypto.hash.sha3.TupleHashLike().Self	const	no
+std.crypto.hash.sha3.TupleHashLike().Self	alias	no
 std.crypto.hash.sha3.TupleHashLike().block_length	alias	yes
 std.crypto.hash.sha3.TupleHashLike().cshaker	field	no
 std.crypto.hash.sha3.TupleHashLike().digest_length	alias	yes
@@ -20736,7 +20736,7 @@ std.crypto.hash.sha3.kangarootwelve.KTHash	fn	yes
 std.crypto.hash.sha3.kangarootwelve.KTHash()	struct	no
 std.crypto.hash.sha3.kangarootwelve.KTHash().Options	struct	yes
 std.crypto.hash.sha3.kangarootwelve.KTHash().Options.customization	field	no
-std.crypto.hash.sha3.kangarootwelve.KTHash().Self	const	no
+std.crypto.hash.sha3.kangarootwelve.KTHash().Self	alias	no
 std.crypto.hash.sha3.kangarootwelve.KTHash().StateType	alias	no
 std.crypto.hash.sha3.kangarootwelve.KTHash().block_length	alias	yes
 std.crypto.hash.sha3.kangarootwelve.KTHash().buffer	field	no
@@ -20845,7 +20845,7 @@ std.crypto.kdf.hkdf.htest	nsref	no
 std.crypto.kdf.hkdf.mem	alias	no
 std.crypto.kdf.hkdf.std	nsref	no
 std.crypto.kem	struct	yes
-std.crypto.kem.hybrid	ns	no
+std.crypto.kem.hybrid	ns	yes
 std.crypto.kem.hybrid.HybridKem	fn	yes
 std.crypto.kem.hybrid.HybridKem()	struct	no
 std.crypto.kem.hybrid.HybridKem().EncapsulatedSecret	struct	yes
@@ -21066,7 +21066,7 @@ std.crypto.pwhash.argon2.Mode.argon2d	tag	yes
 std.crypto.pwhash.argon2.Mode.argon2i	tag	yes
 std.crypto.pwhash.argon2.Mode.argon2id	tag	yes
 std.crypto.pwhash.argon2.Params	struct	yes
-std.crypto.pwhash.argon2.Params.Self	const	no
+std.crypto.pwhash.argon2.Params.Self	alias	no
 std.crypto.pwhash.argon2.Params.ad	field	yes
 std.crypto.pwhash.argon2.Params.fromLimits	fn	yes
 std.crypto.pwhash.argon2.Params.interactive_2i	const	yes
@@ -21145,7 +21145,7 @@ std.crypto.pwhash.bcrypt.HasherError	alias	no
 std.crypto.pwhash.bcrypt.HmacSha512	alias	no
 std.crypto.pwhash.bcrypt.KdfError	alias	no
 std.crypto.pwhash.bcrypt.Params	struct	yes
-std.crypto.pwhash.bcrypt.Params.Self	const	no
+std.crypto.pwhash.bcrypt.Params.Self	alias	no
 std.crypto.pwhash.bcrypt.Params.owasp	const	yes
 std.crypto.pwhash.bcrypt.Params.rounds_log	field	yes
 std.crypto.pwhash.bcrypt.Params.silently_truncate_password	field	yes
@@ -21196,7 +21196,7 @@ std.crypto.pwhash.bcrypt.mem	alias	no
 std.crypto.pwhash.bcrypt.opensshKdf	fn	yes
 std.crypto.pwhash.bcrypt.pbkdf	fn	yes
 std.crypto.pwhash.bcrypt.pbkdf_prf	struct	no
-std.crypto.pwhash.bcrypt.pbkdf_prf.Self	const	no
+std.crypto.pwhash.bcrypt.pbkdf_prf.Self	alias	no
 std.crypto.pwhash.bcrypt.pbkdf_prf.create	fn	no
 std.crypto.pwhash.bcrypt.pbkdf_prf.final	fn	no
 std.crypto.pwhash.bcrypt.pbkdf_prf.finalResult	fn	no
@@ -21211,7 +21211,7 @@ std.crypto.pwhash.bcrypt.phc_format.B64Decoder	alias	no
 std.crypto.pwhash.bcrypt.phc_format.B64Encoder	alias	no
 std.crypto.pwhash.bcrypt.phc_format.BinValue	fn	yes
 std.crypto.pwhash.bcrypt.phc_format.BinValue()	struct	no
-std.crypto.pwhash.bcrypt.phc_format.BinValue().Self	const	no
+std.crypto.pwhash.bcrypt.phc_format.BinValue().Self	alias	no
 std.crypto.pwhash.bcrypt.phc_format.BinValue().buf	field	no
 std.crypto.pwhash.bcrypt.phc_format.BinValue().capacity	alias	no
 std.crypto.pwhash.bcrypt.phc_format.BinValue().constSlice	fn	yes
@@ -21266,7 +21266,7 @@ std.crypto.pwhash.scrypt.HasherError	alias	no
 std.crypto.pwhash.scrypt.HmacSha256	alias	no
 std.crypto.pwhash.scrypt.KdfError	alias	no
 std.crypto.pwhash.scrypt.Params	struct	yes
-std.crypto.pwhash.scrypt.Params.Self	const	no
+std.crypto.pwhash.scrypt.Params.Self	alias	no
 std.crypto.pwhash.scrypt.Params.fromLimits	fn	yes
 std.crypto.pwhash.scrypt.Params.interactive	const	yes
 std.crypto.pwhash.scrypt.Params.ln	field	yes
@@ -21301,7 +21301,7 @@ std.crypto.pwhash.scrypt.blockXor	fn	no
 std.crypto.pwhash.scrypt.crypt_format	struct	no
 std.crypto.pwhash.scrypt.crypt_format.BinValue	fn	yes
 std.crypto.pwhash.scrypt.crypt_format.BinValue()	struct	no
-std.crypto.pwhash.scrypt.crypt_format.BinValue().Self	const	no
+std.crypto.pwhash.scrypt.crypt_format.BinValue().Self	alias	no
 std.crypto.pwhash.scrypt.crypt_format.BinValue().buf	field	no
 std.crypto.pwhash.scrypt.crypt_format.BinValue().capacity	alias	no
 std.crypto.pwhash.scrypt.crypt_format.BinValue().constSlice	fn	yes
@@ -21522,7 +21522,7 @@ std.crypto.sign.ecdsa.sha3	alias	no
 std.crypto.sign.ecdsa.std	modref	no
 std.crypto.sign.ecdsa.testing	alias	no
 std.crypto.sign.ecdsa.tvTry	fn	no
-std.crypto.sign.mldsa	ns	no
+std.crypto.sign.mldsa	ns	yes
 std.crypto.sign.mldsa.ContextTooLongError	alias	no
 std.crypto.sign.mldsa.D	const	no
 std.crypto.sign.mldsa.EncodingError	alias	no
@@ -21571,7 +21571,7 @@ std.crypto.sign.mldsa.MLDSAImpl().SecretKey.t0	field	no
 std.crypto.sign.mldsa.MLDSAImpl().SecretKey.t0_hat	field	no
 std.crypto.sign.mldsa.MLDSAImpl().SecretKey.toBytes	fn	yes
 std.crypto.sign.mldsa.MLDSAImpl().SecretKey.tr	field	no
-std.crypto.sign.mldsa.MLDSAImpl().Self	const	no
+std.crypto.sign.mldsa.MLDSAImpl().Self	alias	no
 std.crypto.sign.mldsa.MLDSAImpl().Signature	struct	yes
 std.crypto.sign.mldsa.MLDSAImpl().Signature.VerifyError	const	no
 std.crypto.sign.mldsa.MLDSAImpl().Signature.c_tilde	field	no
@@ -21620,7 +21620,7 @@ std.crypto.sign.mldsa.MLDSAImpl().seed_length	const	yes
 std.crypto.sign.mldsa.MLDSAImpl().signature_bytes	const	yes
 std.crypto.sign.mldsa.Mat	fn	no
 std.crypto.sign.mldsa.Mat()	struct	no
-std.crypto.sign.mldsa.Mat().Self	const	no
+std.crypto.sign.mldsa.Mat().Self	alias	no
 std.crypto.sign.mldsa.Mat().VecK	const	no
 std.crypto.sign.mldsa.Mat().VecL	const	no
 std.crypto.sign.mldsa.Mat().derive	fn	yes
@@ -21656,7 +21656,7 @@ std.crypto.sign.mldsa.Poly.sub	fn	no
 std.crypto.sign.mldsa.Poly.zero	const	no
 std.crypto.sign.mldsa.PolyVec	fn	no
 std.crypto.sign.mldsa.PolyVec()	struct	no
-std.crypto.sign.mldsa.PolyVec().Self	const	no
+std.crypto.sign.mldsa.PolyVec().Self	alias	no
 std.crypto.sign.mldsa.PolyVec().add	fn	no
 std.crypto.sign.mldsa.PolyVec().decomposeVec	fn	yes
 std.crypto.sign.mldsa.PolyVec().deriveUniformLeGamma1	fn	yes
@@ -21770,7 +21770,7 @@ std.crypto.stream.salsa.XSalsa().key_length	const	yes
 std.crypto.stream.salsa.XSalsa().nonce_length	const	yes
 std.crypto.stream.salsa.XSalsa().xor	fn	yes
 std.crypto.stream.salsa.XSalsa20	const	yes
-std.crypto.timing_safe	ns	no
+std.crypto.timing_safe	ns	yes
 std.crypto.timing_safe.Endian	alias	no
 std.crypto.timing_safe.Order	alias	no
 std.crypto.timing_safe.add	fn	yes
@@ -21782,7 +21782,7 @@ std.crypto.timing_safe.eql	fn	yes
 std.crypto.timing_safe.markSecret	fn	no
 std.crypto.timing_safe.std	nsref	no
 std.crypto.timing_safe.sub	fn	yes
-std.crypto.tls	ns	no
+std.crypto.tls	ns	yes
 std.crypto.tls.Alert	struct	no
 std.crypto.tls.Alert.Description	enum	no
 std.crypto.tls.Alert.Description.Error	const	no
@@ -21923,7 +21923,7 @@ std.crypto.tls.Client.CertificatePublicKey.buf	field	no
 std.crypto.tls.Client.CertificatePublicKey.init	fn	no
 std.crypto.tls.Client.CertificatePublicKey.len	field	no
 std.crypto.tls.Client.CertificatePublicKey.verifySignature	fn	no
-std.crypto.tls.Client.Client	const	no
+std.crypto.tls.Client.Client	alias	no
 std.crypto.tls.Client.InitError	const	no
 std.crypto.tls.Client.KeyShare	struct	no
 std.crypto.tls.Client.KeyShare.exchange	fn	no
@@ -22139,7 +22139,7 @@ std.crypto.tls.SignatureScheme.rsa_pss_rsae_sha256	tag	no
 std.crypto.tls.SignatureScheme.rsa_pss_rsae_sha384	tag	no
 std.crypto.tls.SignatureScheme.rsa_pss_rsae_sha512	tag	no
 std.crypto.tls.SignatureScheme.rsa_sha224	tag	no
-std.crypto.tls.Tls	const	no
+std.crypto.tls.Tls	alias	no
 std.crypto.tls.array	fn	no
 std.crypto.tls.assert	alias	no
 std.crypto.tls.close_notify_alert	const	no
@@ -22176,7 +22176,7 @@ std.debug.ConfigurableTrace().init	const	no
 std.debug.ConfigurableTrace().notes	field	no
 std.debug.Coverage	ns	no
 std.debug.Coverage.Allocator	alias	no
-std.debug.Coverage.Coverage	const	no
+std.debug.Coverage.Coverage	alias	no
 std.debug.Coverage.Dwarf	alias	no
 std.debug.Coverage.File	struct	no
 std.debug.Coverage.File.Index	enum	no
@@ -22227,7 +22227,7 @@ std.debug.Coverage.std	nsref	no
 std.debug.Coverage.stringAt	fn	no
 std.debug.Coverage.string_bytes	field	no
 std.debug.CpuContextPtr	const	yes
-std.debug.Dwarf	ns	no
+std.debug.Dwarf	ns	yes
 std.debug.Dwarf.AT	alias	no
 std.debug.Dwarf.Abbrev	struct	no
 std.debug.Dwarf.Abbrev.Attr	struct	no
@@ -22297,7 +22297,7 @@ std.debug.Dwarf.Die.getAttrSecOffset	fn	no
 std.debug.Dwarf.Die.getAttrString	fn	no
 std.debug.Dwarf.Die.has_children	field	no
 std.debug.Dwarf.Die.tag_id	field	no
-std.debug.Dwarf.Dwarf	const	no
+std.debug.Dwarf.Dwarf	alias	no
 std.debug.Dwarf.Endian	alias	no
 std.debug.Dwarf.Error	alias	no
 std.debug.Dwarf.FORM	alias	no
@@ -22371,7 +22371,7 @@ std.debug.Dwarf.Section.Id.debug_str_offsets	tag	no
 std.debug.Dwarf.Section.data	field	no
 std.debug.Dwarf.Section.owned	field	yes
 std.debug.Dwarf.SectionArray	const	no
-std.debug.Dwarf.SelfUnwinder	ns	no
+std.debug.Dwarf.SelfUnwinder	ns	yes
 std.debug.Dwarf.SelfUnwinder.Allocator	alias	no
 std.debug.Dwarf.SelfUnwinder.CacheEntry	struct	no
 std.debug.Dwarf.SelfUnwinder.CacheEntry.cfa_rule	field	no
@@ -22385,7 +22385,7 @@ std.debug.Dwarf.SelfUnwinder.CacheEntry.populate	fn	no
 std.debug.Dwarf.SelfUnwinder.CacheEntry.rules	field	no
 std.debug.Dwarf.SelfUnwinder.CacheEntry.rules_regs	field	no
 std.debug.Dwarf.SelfUnwinder.Dwarf	alias	no
-std.debug.Dwarf.SelfUnwinder.SelfUnwinder	const	no
+std.debug.Dwarf.SelfUnwinder.SelfUnwinder	alias	no
 std.debug.Dwarf.SelfUnwinder.applyOffset	fn	yes
 std.debug.Dwarf.SelfUnwinder.assert	alias	no
 std.debug.Dwarf.SelfUnwinder.builtin	modref	no
@@ -22410,7 +22410,7 @@ std.debug.Dwarf.UnitHeader	struct	no
 std.debug.Dwarf.UnitHeader.format	field	no
 std.debug.Dwarf.UnitHeader.header_length	field	no
 std.debug.Dwarf.UnitHeader.unit_length	field	no
-std.debug.Dwarf.Unwind	ns	no
+std.debug.Dwarf.Unwind	ns	yes
 std.debug.Dwarf.Unwind.Allocator	alias	no
 std.debug.Dwarf.Unwind.CommonInformationEntry	struct	no
 std.debug.Dwarf.Unwind.CommonInformationEntry.AugmentationKind	enum	no
@@ -22468,8 +22468,8 @@ std.debug.Dwarf.Unwind.Section.eh_frame	tag	no
 std.debug.Dwarf.Unwind.SortedFdeEntry	struct	no
 std.debug.Dwarf.Unwind.SortedFdeEntry.fde_offset	field	yes
 std.debug.Dwarf.Unwind.SortedFdeEntry.pc_begin	field	yes
-std.debug.Dwarf.Unwind.Unwind	const	no
-std.debug.Dwarf.Unwind.VirtualMachine	ns	no
+std.debug.Dwarf.Unwind.Unwind	alias	no
+std.debug.Dwarf.Unwind.VirtualMachine	ns	yes
 std.debug.Dwarf.Unwind.VirtualMachine.Allocator	alias	no
 std.debug.Dwarf.Unwind.VirtualMachine.CfaRule	union	no
 std.debug.Dwarf.Unwind.VirtualMachine.CfaRule.expression	field	no
@@ -22512,7 +22512,7 @@ std.debug.Dwarf.Unwind.VirtualMachine.Row.cfa	field	no
 std.debug.Dwarf.Unwind.VirtualMachine.Row.columns	field	yes
 std.debug.Dwarf.Unwind.VirtualMachine.Row.offset	field	yes
 std.debug.Dwarf.Unwind.VirtualMachine.Unwind	alias	no
-std.debug.Dwarf.Unwind.VirtualMachine.VirtualMachine	const	no
+std.debug.Dwarf.Unwind.VirtualMachine.VirtualMachine	alias	no
 std.debug.Dwarf.Unwind.VirtualMachine.assert	alias	no
 std.debug.Dwarf.Unwind.VirtualMachine.cie_row	field	yes
 std.debug.Dwarf.Unwind.VirtualMachine.columns	field	no
@@ -22611,7 +22611,7 @@ std.debug.Dwarf.expression.StackMachine().Operand.generic	field	no
 std.debug.Dwarf.expression.StackMachine().Operand.register	field	no
 std.debug.Dwarf.expression.StackMachine().Operand.register_type	field	no
 std.debug.Dwarf.expression.StackMachine().Operand.type_size	field	no
-std.debug.Dwarf.expression.StackMachine().Self	const	no
+std.debug.Dwarf.expression.StackMachine().Self	alias	no
 std.debug.Dwarf.expression.StackMachine().Value	union	no
 std.debug.Dwarf.expression.StackMachine().Value.asIntegral	fn	no
 std.debug.Dwarf.expression.StackMachine().Value.const_type	field	no
@@ -22674,7 +22674,7 @@ std.debug.Dwarf.sections	field	no
 std.debug.Dwarf.spRegNum	fn	no
 std.debug.Dwarf.std	nsref	no
 std.debug.Dwarf.supportsUnwinding	fn	yes
-std.debug.ElfFile	ns	no
+std.debug.ElfFile	ns	yes
 std.debug.ElfFile.Allocator	alias	no
 std.debug.ElfFile.DebugInfoSearchPaths	struct	no
 std.debug.ElfFile.DebugInfoSearchPaths.debuginfod_client	field	yes
@@ -22683,7 +22683,7 @@ std.debug.ElfFile.DebugInfoSearchPaths.global_debug	field	yes
 std.debug.ElfFile.DebugInfoSearchPaths.native	fn	no
 std.debug.ElfFile.DebugInfoSearchPaths.none	const	no
 std.debug.ElfFile.Dwarf	alias	no
-std.debug.ElfFile.ElfFile	const	no
+std.debug.ElfFile.ElfFile	alias	no
 std.debug.ElfFile.Endian	alias	no
 std.debug.ElfFile.Io	alias	no
 std.debug.ElfFile.LoadError	const	no
@@ -22773,11 +22773,11 @@ std.debug.FullPanic().startGreaterThanEnd	fn	no
 std.debug.FullPanic().unexpectedErrorCode	fn	no
 std.debug.FullPanic().unwrapError	fn	no
 std.debug.FullPanic().unwrapNull	fn	no
-std.debug.Info	ns	no
+std.debug.Info	ns	yes
 std.debug.Info.Allocator	alias	no
 std.debug.Info.Coverage	alias	no
 std.debug.Info.ElfFile	alias	no
-std.debug.Info.Info	const	no
+std.debug.Info.Info	alias	no
 std.debug.Info.Io	alias	no
 std.debug.Info.LoadError	const	no
 std.debug.Info.MachOFile	alias	no
@@ -22801,7 +22801,7 @@ std.debug.MachOFile.DsymFile.mapped_memory	field	no
 std.debug.MachOFile.Dwarf	alias	no
 std.debug.MachOFile.Error	const	no
 std.debug.MachOFile.Io	alias	no
-std.debug.MachOFile.MachOFile	const	no
+std.debug.MachOFile.MachOFile	alias	no
 std.debug.MachOFile.OFile	struct	no
 std.debug.MachOFile.OFile.SymbolAdapter	struct	no
 std.debug.MachOFile.OFile.SymbolAdapter.eql	fn	no
@@ -22935,7 +22935,7 @@ std.debug.Pdb.MsfStream.next_read_pos	field	no
 std.debug.Pdb.MsfStream.seekBy	fn	no
 std.debug.Pdb.MsfStream.seekTo	fn	no
 std.debug.Pdb.MsfStream.stream	fn	no
-std.debug.Pdb.Pdb	const	no
+std.debug.Pdb.Pdb	alias	no
 std.debug.Pdb.age	field	no
 std.debug.Pdb.allocator	field	no
 std.debug.Pdb.assert	alias	no
@@ -23278,7 +23278,7 @@ std.debug.maybeEnableSegfaultHandler	fn	no
 std.debug.mem	alias	no
 std.debug.native_arch	alias	no
 std.debug.native_os	alias	no
-std.debug.no_panic	ns	no
+std.debug.no_panic	ns	yes
 std.debug.no_panic.call	fn	no
 std.debug.no_panic.castToNull	fn	no
 std.debug.no_panic.copyLenMismatch	fn	no
@@ -23320,7 +23320,7 @@ std.debug.printSourceAtAddress	fn	no
 std.debug.resetSegfaultHandler	fn	no
 std.debug.root	modref	no
 std.debug.runtime_safety	const	yes
-std.debug.simple_panic	ns	no
+std.debug.simple_panic	ns	yes
 std.debug.simple_panic.call	fn	yes
 std.debug.simple_panic.castToNull	fn	no
 std.debug.simple_panic.copyLenMismatch	fn	no
@@ -23364,7 +23364,7 @@ std.debug.writeCurrentStackTrace	fn	yes
 std.debug.writeErrorReturnTrace	fn	yes
 std.debug.writeStackTrace	fn	yes
 std.debug.writeTrace	fn	no
-std.dwarf	ns	no
+std.dwarf	ns	yes
 std.dwarf.ACCESS	struct	no
 std.dwarf.ACCESS.private	const	no
 std.dwarf.ACCESS.protected	const	no
@@ -24176,7 +24176,7 @@ std.dwarf.UT.partial	const	no
 std.dwarf.UT.skeleton	const	no
 std.dwarf.UT.split_compile	const	no
 std.dwarf.UT.split_type	const	no
-std.elf	ns	no
+std.elf	ns	yes
 std.elf.ARFMAG	const	yes
 std.elf.ARMAG	const	yes
 std.elf.ARMAG_THIN	const	yes
@@ -26031,12 +26031,12 @@ std.elf.std	nsref	no
 std.elf.takeDynamicSection	fn	no
 std.elf.takeProgramHeader	fn	no
 std.elf.takeSectionHeader	fn	no
-std.enums	ns	no
+std.enums	ns	yes
 std.enums.BoundedEnumMultiset	fn	yes
 std.enums.BoundedEnumMultiset()	struct	no
 std.enums.BoundedEnumMultiset().Entry	const	no
 std.enums.BoundedEnumMultiset().Iterator	const	no
-std.enums.BoundedEnumMultiset().Self	const	no
+std.enums.BoundedEnumMultiset().Self	alias	no
 std.enums.BoundedEnumMultiset().add	fn	yes
 std.enums.BoundedEnumMultiset().addAssertSafe	fn	yes
 std.enums.BoundedEnumMultiset().addSet	fn	yes
@@ -26070,7 +26070,7 @@ std.enums.EnumArray().Iterator.index	field	no
 std.enums.EnumArray().Iterator.next	fn	no
 std.enums.EnumArray().Iterator.values	field	no
 std.enums.EnumArray().Key	alias	yes
-std.enums.EnumArray().Self	const	no
+std.enums.EnumArray().Self	alias	no
 std.enums.EnumArray().Value	alias	yes
 std.enums.EnumArray().get	fn	yes
 std.enums.EnumArray().getPtr	fn	yes
@@ -26102,7 +26102,7 @@ std.enums.EnumMap().Iterator.inner	field	no
 std.enums.EnumMap().Iterator.next	fn	no
 std.enums.EnumMap().Iterator.values	field	no
 std.enums.EnumMap().Key	alias	yes
-std.enums.EnumMap().Self	const	no
+std.enums.EnumMap().Self	alias	no
 std.enums.EnumMap().Value	alias	yes
 std.enums.EnumMap().bits	field	yes
 std.enums.EnumMap().contains	fn	yes
@@ -26135,7 +26135,7 @@ std.enums.EnumSet().Iterator	struct	no
 std.enums.EnumSet().Iterator.inner	field	no
 std.enums.EnumSet().Iterator.next	fn	no
 std.enums.EnumSet().Key	alias	yes
-std.enums.EnumSet().Self	const	no
+std.enums.EnumSet().Self	alias	no
 std.enums.EnumSet().bits	field	no
 std.enums.EnumSet().complement	fn	yes
 std.enums.EnumSet().contains	fn	yes
@@ -26173,7 +26173,7 @@ std.enums.tagName	fn	yes
 std.enums.testing	alias	no
 std.enums.values	fn	yes
 std.enums.valuesFromFields	fn	yes
-std.fmt	ns	no
+std.fmt	ns	yes
 std.fmt.Alignment	enum	no
 std.fmt.Alignment.center	tag	no
 std.fmt.Alignment.left	tag	no
@@ -26256,7 +26256,7 @@ std.fmt.digitToChar	fn	no
 std.fmt.digits2	fn	yes
 std.fmt.expectArrayFmt	fn	no
 std.fmt.expectFmt	alias	no
-std.fmt.float	ns	no
+std.fmt.float	ns	yes
 std.fmt.float.Backend128_Tables	struct	no
 std.fmt.float.Backend128_Tables.POW5_BITCOUNT	alias	no
 std.fmt.float.Backend128_Tables.POW5_INV_BITCOUNT	alias	no
@@ -26360,7 +26360,7 @@ std.fmt.parseUnsigned	fn	yes
 std.fmt.printInt	fn	yes
 std.fmt.std	nsref	no
 std.fmt.testing	alias	no
-std.fs	ns	no
+std.fs	ns	yes
 std.fs.base64_alphabet	alias	yes
 std.fs.base64_decoder	alias	yes
 std.fs.base64_encoder	alias	yes
@@ -26373,7 +26373,7 @@ std.fs.path.ComponentIterator()	struct	no
 std.fs.path.ComponentIterator().Component	struct	no
 std.fs.path.ComponentIterator().Component.name	field	yes
 std.fs.path.ComponentIterator().Component.path	field	yes
-std.fs.path.ComponentIterator().Self	const	no
+std.fs.path.ComponentIterator().Self	alias	no
 std.fs.path.ComponentIterator().end_index	field	no
 std.fs.path.ComponentIterator().first	fn	yes
 std.fs.path.ComponentIterator().init	fn	yes
@@ -26519,8 +26519,8 @@ std.fs.path.windowsParsePath	fn	yes
 std.fs.path.windowsResolveAgainstCwd	fn	no
 std.fs.std	nsref	no
 std.hash	ns	no
-std.hash.Adler32	ns	no
-std.hash.Adler32.Adler32	const	no
+std.hash.Adler32	ns	yes
+std.hash.Adler32.Adler32	alias	no
 std.hash.Adler32.adler	field	no
 std.hash.Adler32.hash	fn	no
 std.hash.Adler32.permute	fn	no
@@ -26566,7 +26566,7 @@ std.hash.auto_hash.testing	alias	no
 std.hash.auto_hash.typeContainsSlice	fn	no
 std.hash.cityhash	ns	no
 std.hash.cityhash.CityHash32	struct	no
-std.hash.cityhash.CityHash32.Self	const	no
+std.hash.cityhash.CityHash32.Self	alias	no
 std.hash.cityhash.CityHash32.c1	const	no
 std.hash.cityhash.CityHash32.c2	const	no
 std.hash.cityhash.CityHash32.fmix	fn	no
@@ -26578,7 +26578,7 @@ std.hash.cityhash.CityHash32.mur	fn	no
 std.hash.cityhash.CityHash32.rotr32	fn	no
 std.hash.cityhash.CityHash32hashIgnoreSeed	fn	no
 std.hash.cityhash.CityHash64	struct	no
-std.hash.cityhash.CityHash64.Self	const	no
+std.hash.cityhash.CityHash64.Self	alias	no
 std.hash.cityhash.CityHash64.WeakPair	struct	no
 std.hash.cityhash.CityHash64.WeakPair.first	field	no
 std.hash.cityhash.CityHash64.WeakPair.second	field	no
@@ -26603,7 +26603,7 @@ std.hash.cityhash.fetch64	fn	no
 std.hash.cityhash.offsetPtr	fn	no
 std.hash.cityhash.std	modref	no
 std.hash.cityhash.verify	nsref	no
-std.hash.crc	ns	no
+std.hash.crc	ns	yes
 std.hash.crc.@"CRC-10/ATM"	const	no
 std.hash.crc.@"CRC-10/CDMA2000"	const	no
 std.hash.crc.@"CRC-10/GSM"	const	no
@@ -26727,7 +26727,7 @@ std.hash.crc.Algorithm().xor_output	field	no
 std.hash.crc.Generic	fn	no
 std.hash.crc.Generic()	struct	no
 std.hash.crc.Generic().I	const	no
-std.hash.crc.Generic().Self	const	no
+std.hash.crc.Generic().Self	alias	no
 std.hash.crc.Generic().crc	field	no
 std.hash.crc.Generic().final	fn	no
 std.hash.crc.Generic().hash	fn	no
@@ -26740,7 +26740,7 @@ std.hash.crc.builtin	modref	no
 std.hash.fnv	ns	no
 std.hash.fnv.Fnv1a	fn	no
 std.hash.fnv.Fnv1a()	struct	no
-std.hash.fnv.Fnv1a().Self	const	no
+std.hash.fnv.Fnv1a().Self	alias	no
 std.hash.fnv.Fnv1a().final	fn	no
 std.hash.fnv.Fnv1a().hash	fn	no
 std.hash.fnv.Fnv1a().init	fn	no
@@ -26760,7 +26760,7 @@ std.hash.fnv.verify.std	modref	no
 std.hash.int	fn	yes
 std.hash.murmur	ns	no
 std.hash.murmur.Murmur2_32	struct	no
-std.hash.murmur.Murmur2_32.Self	const	no
+std.hash.murmur.Murmur2_32.Self	alias	no
 std.hash.murmur.Murmur2_32.hash	fn	no
 std.hash.murmur.Murmur2_32.hashUint32	fn	no
 std.hash.murmur.Murmur2_32.hashUint32WithSeed	fn	no
@@ -26768,7 +26768,7 @@ std.hash.murmur.Murmur2_32.hashUint64	fn	no
 std.hash.murmur.Murmur2_32.hashUint64WithSeed	fn	no
 std.hash.murmur.Murmur2_32.hashWithSeed	fn	no
 std.hash.murmur.Murmur2_64	struct	no
-std.hash.murmur.Murmur2_64.Self	const	no
+std.hash.murmur.Murmur2_64.Self	alias	no
 std.hash.murmur.Murmur2_64.hash	fn	no
 std.hash.murmur.Murmur2_64.hashUint32	fn	no
 std.hash.murmur.Murmur2_64.hashUint32WithSeed	fn	no
@@ -26776,7 +26776,7 @@ std.hash.murmur.Murmur2_64.hashUint64	fn	no
 std.hash.murmur.Murmur2_64.hashUint64WithSeed	fn	no
 std.hash.murmur.Murmur2_64.hashWithSeed	fn	no
 std.hash.murmur.Murmur3_32	struct	no
-std.hash.murmur.Murmur3_32.Self	const	no
+std.hash.murmur.Murmur3_32.Self	alias	no
 std.hash.murmur.Murmur3_32.hash	fn	no
 std.hash.murmur.Murmur3_32.hashUint32	fn	no
 std.hash.murmur.Murmur3_32.hashUint32WithSeed	fn	no
@@ -26986,7 +26986,7 @@ std.hash_map.Custom().Metadata.slot_tombstone	const	no
 std.hash_map.Custom().Metadata.takeFingerprint	fn	no
 std.hash_map.Custom().Metadata.tombstone	const	no
 std.hash_map.Custom().Metadata.used	field	no
-std.hash_map.Custom().Self	const	no
+std.hash_map.Custom().Self	alias	no
 std.hash_map.Custom().Size	alias	no
 std.hash_map.Custom().ValueIterator	const	no
 std.hash_map.Custom().allocate	fn	no
@@ -27083,7 +27083,7 @@ std.hash_map.HashMap().Hash	alias	yes
 std.hash_map.HashMap().Iterator	alias	yes
 std.hash_map.HashMap().KV	alias	yes
 std.hash_map.HashMap().KeyIterator	alias	no
-std.hash_map.HashMap().Self	const	no
+std.hash_map.HashMap().Self	alias	no
 std.hash_map.HashMap().Size	alias	yes
 std.hash_map.HashMap().Unmanaged	const	yes
 std.hash_map.HashMap().ValueIterator	alias	no
@@ -27170,10 +27170,10 @@ std.hash_map.testing	alias	no
 std.heap	ns	no
 std.heap.Alignment	alias	no
 std.heap.Allocator	alias	no
-std.heap.ArenaAllocator	ns	no
+std.heap.ArenaAllocator	ns	yes
 std.heap.ArenaAllocator.Alignment	alias	no
 std.heap.ArenaAllocator.Allocator	alias	no
-std.heap.ArenaAllocator.ArenaAllocator	const	no
+std.heap.ArenaAllocator.ArenaAllocator	alias	no
 std.heap.ArenaAllocator.FuzzAllocator	struct	no
 std.heap.ArenaAllocator.FuzzAllocator.alloc	fn	no
 std.heap.ArenaAllocator.FuzzAllocator.allocator	fn	no
@@ -27270,10 +27270,10 @@ std.heap.ArenaAllocator.state	field	no
 std.heap.ArenaAllocator.std	modref	no
 std.heap.ArenaAllocator.stealFreeList	fn	no
 std.heap.ArenaAllocator.tryPushNode	fn	no
-std.heap.BrkAllocator	ns	no
+std.heap.BrkAllocator	ns	yes
 std.heap.BrkAllocator.Alignment	alias	no
 std.heap.BrkAllocator.Allocator	alias	no
-std.heap.BrkAllocator.BrkAllocator	const	no
+std.heap.BrkAllocator.BrkAllocator	alias	no
 std.heap.BrkAllocator.Error	alias	no
 std.heap.BrkAllocator.alloc	fn	no
 std.heap.BrkAllocator.allocBigPages	fn	no
@@ -27299,10 +27299,10 @@ std.heap.BrkAllocator.std	nsref	no
 std.heap.BrkAllocator.test_ally	const	no
 std.heap.BrkAllocator.ushift	const	no
 std.heap.BrkAllocator.vtable	const	no
-std.heap.BufferFirstAllocator	ns	no
+std.heap.BufferFirstAllocator	ns	yes
 std.heap.BufferFirstAllocator.Alignment	alias	no
 std.heap.BufferFirstAllocator.Allocator	alias	no
-std.heap.BufferFirstAllocator.BufferFirstAllocator	const	no
+std.heap.BufferFirstAllocator.BufferFirstAllocator	alias	no
 std.heap.BufferFirstAllocator.FixedBufferAllocator	alias	no
 std.heap.BufferFirstAllocator.alloc	fn	no
 std.heap.BufferFirstAllocator.allocator	fn	no
@@ -27345,7 +27345,7 @@ std.heap.DebugAllocator().LargeAlloc.stack_addresses	field	no
 std.heap.DebugAllocator().LargeAlloc.trace_n	const	no
 std.heap.DebugAllocator().LargeAllocTable	const	no
 std.heap.DebugAllocator().LargestSizeClassInt	const	no
-std.heap.DebugAllocator().Self	const	no
+std.heap.DebugAllocator().Self	alias	no
 std.heap.DebugAllocator().SlotIndex	const	yes
 std.heap.DebugAllocator().alloc	fn	no
 std.heap.DebugAllocator().allocator	fn	no
@@ -27406,7 +27406,7 @@ std.heap.DebugAllocatorConfig.thread_safe	field	yes
 std.heap.DebugAllocatorConfig.verbose_log	field	yes
 std.heap.FixedBufferAllocator	ns	no
 std.heap.FixedBufferAllocator.Allocator	alias	no
-std.heap.FixedBufferAllocator.FixedBufferAllocator	const	no
+std.heap.FixedBufferAllocator.FixedBufferAllocator	alias	no
 std.heap.FixedBufferAllocator.alloc	fn	no
 std.heap.FixedBufferAllocator.allocator	fn	yes
 std.heap.FixedBufferAllocator.assert	alias	no
@@ -27455,7 +27455,7 @@ std.heap.PageAllocator.std	nsref	no
 std.heap.PageAllocator.unmap	fn	no
 std.heap.PageAllocator.vtable	const	no
 std.heap.PageAllocator.windows	alias	no
-std.heap.SafeAllocator	ns	no
+std.heap.SafeAllocator	ns	yes
 std.heap.SafeAllocator.Alignment	alias	no
 std.heap.SafeAllocator.AllocFooter	struct	yes
 std.heap.SafeAllocator.AllocFooter.Data	struct	no
@@ -27622,10 +27622,10 @@ std.heap.SafeAllocator.Options.block_size_log2	field	yes
 std.heap.SafeAllocator.Options.bucket_size_log2	field	yes
 std.heap.SafeAllocator.Options.canary	field	yes
 std.heap.SafeAllocator.Options.check_write_after_free	field	no
-std.heap.SafeAllocator.Options.is_debug	modref	no
+std.heap.SafeAllocator.Options.is_debug	const	no
 std.heap.SafeAllocator.Options.page_size_log2	const	no
 std.heap.SafeAllocator.Options.stack_trace_frames	field	no
-std.heap.SafeAllocator.SafeAllocator	const	no
+std.heap.SafeAllocator.SafeAllocator	alias	no
 std.heap.SafeAllocator.Smith	alias	no
 std.heap.SafeAllocator.Thread	struct	no
 std.heap.SafeAllocator.Thread._	field	yes
@@ -27694,11 +27694,11 @@ std.heap.SafeAllocator.std	nsref	no
 std.heap.SafeAllocator.thread_index	const	no
 std.heap.SafeAllocator.threads	field	no
 std.heap.SafeAllocator.vtable	const	no
-std.heap.SmpAllocator	ns	no
+std.heap.SmpAllocator	ns	yes
 std.heap.SmpAllocator.Alignment	alias	no
 std.heap.SmpAllocator.Allocator	alias	no
 std.heap.SmpAllocator.PageAllocator	alias	no
-std.heap.SmpAllocator.SmpAllocator	const	no
+std.heap.SmpAllocator.SmpAllocator	alias	no
 std.heap.SmpAllocator.Thread	struct	no
 std.heap.SmpAllocator.Thread._	field	yes
 std.heap.SmpAllocator.Thread.frees	field	yes
@@ -27753,7 +27753,7 @@ std.heap.memory_pool.Extra	fn	yes
 std.heap.memory_pool.Extra()	struct	no
 std.heap.memory_pool.Extra().ItemPtr	const	no
 std.heap.memory_pool.Extra().Node	alias	no
-std.heap.memory_pool.Extra().Pool	const	no
+std.heap.memory_pool.Extra().Pool	alias	no
 std.heap.memory_pool.Extra().ResetMode	alias	no
 std.heap.memory_pool.Extra().addCapacity	fn	yes
 std.heap.memory_pool.Extra().allocNew	fn	no
@@ -27820,8 +27820,8 @@ std.http.BodyWriter.noneSendFile	fn	yes
 std.http.BodyWriter.state	field	no
 std.http.BodyWriter.writeHex	fn	yes
 std.http.BodyWriter.writer	field	no
-std.http.ChunkParser	ns	no
-std.http.ChunkParser.ChunkParser	const	no
+std.http.ChunkParser	ns	yes
+std.http.ChunkParser.ChunkParser	alias	no
 std.http.ChunkParser.State	enum	no
 std.http.ChunkParser.State.data	tag	no
 std.http.ChunkParser.State.data_suffix	tag	no
@@ -27835,9 +27835,9 @@ std.http.ChunkParser.feed	fn	yes
 std.http.ChunkParser.init	const	no
 std.http.ChunkParser.state	field	no
 std.http.ChunkParser.std	modref	no
-std.http.Client	ns	no
+std.http.Client	ns	yes
 std.http.Client.Allocator	alias	no
-std.http.Client.Client	const	no
+std.http.Client.Client	alias	no
 std.http.Client.ConnectError	const	no
 std.http.Client.ConnectTcpError	const	no
 std.http.Client.ConnectTcpOptions	struct	no
@@ -28074,8 +28074,8 @@ std.http.Decompress.init	fn	no
 std.http.Decompress.none	field	no
 std.http.Decompress.zstd	field	no
 std.http.File	alias	no
-std.http.HeadParser	ns	no
-std.http.HeadParser.HeadParser	const	no
+std.http.HeadParser	ns	yes
+std.http.HeadParser.HeadParser	alias	no
 std.http.HeadParser.State	enum	no
 std.http.HeadParser.State.finished	tag	no
 std.http.HeadParser.State.seen_n	tag	no
@@ -28095,7 +28095,7 @@ std.http.Header	struct	no
 std.http.Header.name	field	no
 std.http.Header.value	field	no
 std.http.HeaderIterator	ns	no
-std.http.HeaderIterator.HeaderIterator	const	no
+std.http.HeaderIterator.HeaderIterator	alias	no
 std.http.HeaderIterator.assert	alias	no
 std.http.HeaderIterator.bytes	field	no
 std.http.HeaderIterator.index	field	no
@@ -28152,7 +28152,7 @@ std.http.Reader.parseTrailers	fn	yes
 std.http.Reader.receiveHead	fn	yes
 std.http.Reader.state	field	yes
 std.http.Reader.trailers	field	yes
-std.http.Server	ns	no
+std.http.Server	ns	yes
 std.http.Server.Reader	alias	no
 std.http.Server.ReceiveHeadError	const	no
 std.http.Server.Request	struct	no
@@ -28204,7 +28204,7 @@ std.http.Server.Request.respond_err	field	no
 std.http.Server.Request.server	field	no
 std.http.Server.Request.upgradeRequested	fn	yes
 std.http.Server.Request.writeExpectContinue	fn	no
-std.http.Server.Server	const	no
+std.http.Server.Server	alias	no
 std.http.Server.Uri	alias	no
 std.http.Server.WebSocket	struct	yes
 std.http.Server.WebSocket.Header0	struct	no
@@ -28329,7 +28329,7 @@ std.http.Writer	alias	no
 std.http.assert	alias	no
 std.http.builtin	modref	no
 std.http.std	nsref	no
-std.json	ns	no
+std.json	ns	yes
 std.json.AllocWhen	alias	no
 std.json.Array	const	no
 std.json.ArrayHashMap	fn	yes
@@ -28361,7 +28361,7 @@ std.json.Parsed().arena	field	no
 std.json.Parsed().deinit	fn	no
 std.json.Parsed().value	field	no
 std.json.Reader	alias	no
-std.json.Scanner	ns	no
+std.json.Scanner	ns	yes
 std.json.Scanner.ARRAY_MODE	const	no
 std.json.Scanner.AllocError	const	no
 std.json.Scanner.AllocIntoArrayListError	const	no
@@ -28403,7 +28403,7 @@ std.json.Scanner.Reader.scanner	field	no
 std.json.Scanner.Reader.skipUntilStackHeight	fn	yes
 std.json.Scanner.Reader.skipValue	fn	yes
 std.json.Scanner.Reader.stackHeight	fn	yes
-std.json.Scanner.Scanner	const	no
+std.json.Scanner.Scanner	alias	no
 std.json.Scanner.SkipError	const	no
 std.json.Scanner.State	enum	no
 std.json.Scanner.State.array_start	tag	no
@@ -28519,7 +28519,7 @@ std.json.Scanner.takeValueSliceMinusTrailingOffset	fn	no
 std.json.Scanner.utf16_code_units	field	no
 std.json.Scanner.validate	fn	yes
 std.json.Scanner.value_start	field	no
-std.json.Stringify	ns	no
+std.json.Stringify	ns	yes
 std.json.Stringify.Allocator	alias	no
 std.json.Stringify.ArrayList	alias	no
 std.json.Stringify.BitStack	alias	no
@@ -28533,7 +28533,7 @@ std.json.Stringify.Options.emit_null_optional_fields	field	yes
 std.json.Stringify.Options.emit_strings_as_arrays	field	yes
 std.json.Stringify.Options.escape_unicode	field	yes
 std.json.Stringify.Options.whitespace	field	yes
-std.json.Stringify.Stringify	const	no
+std.json.Stringify.Stringify	alias	no
 std.json.Stringify.Writer	alias	no
 std.json.Stringify.assert	alias	no
 std.json.Stringify.beginArray	fn	no
@@ -28609,7 +28609,7 @@ std.json.parseFromValueLeaky	fn	no
 std.json.std	modref	no
 std.json.testing	alias	no
 std.json.validate	alias	no
-std.lang	ns	no
+std.lang	ns	yes
 std.lang.AddressSpace	enum	yes
 std.lang.AddressSpace.cog	tag	yes
 std.lang.AddressSpace.constant	tag	no
@@ -29216,7 +29216,7 @@ std.leb.testing	alias	no
 std.leb.writeSignedFixed	fn	yes
 std.leb.writeUnsignedExtended	fn	yes
 std.leb.writeUnsignedFixed	fn	yes
-std.log	ns	no
+std.log	ns	yes
 std.log.Level	enum	no
 std.log.Level.asText	fn	yes
 std.log.Level.debug	tag	yes
@@ -30303,7 +30303,7 @@ std.math.compare	fn	yes
 std.math.complex	ns	no
 std.math.complex.Complex	fn	yes
 std.math.complex.Complex()	struct	no
-std.math.complex.Complex().Self	const	no
+std.math.complex.Complex().Self	alias	no
 std.math.complex.Complex().add	fn	yes
 std.math.complex.Complex().conjugate	fn	yes
 std.math.complex.Complex().div	fn	yes
@@ -30381,7 +30381,7 @@ std.math.float.FloatRepr().Normalized.Fraction	const	no
 std.math.float.FloatRepr().Normalized.exponent	field	no
 std.math.float.FloatRepr().Normalized.fraction	field	no
 std.math.float.FloatRepr().Normalized.reconstruct	fn	yes
-std.math.float.FloatRepr().Repr	const	no
+std.math.float.FloatRepr().Repr	alias	no
 std.math.float.FloatRepr().StoredMantissa	const	no
 std.math.float.FloatRepr().classify	fn	no
 std.math.float.FloatRepr().exponent	field	no
@@ -30542,11 +30542,11 @@ std.mem.Alignment.min	fn	no
 std.mem.Alignment.of	fn	no
 std.mem.Alignment.order	fn	no
 std.mem.Alignment.toByteUnits	fn	no
-std.mem.Allocator	ns	no
+std.mem.Allocator	ns	yes
 std.mem.Allocator.AbsorbSentinel	alias	no
 std.mem.Allocator.Alignment	alias	no
 std.mem.Allocator.AllocWithOptionsPayload	fn	no
-std.mem.Allocator.Allocator	const	no
+std.mem.Allocator.Allocator	alias	no
 std.mem.Allocator.Error	const	no
 std.mem.Allocator.Log2Align	const	no
 std.mem.Allocator.Slice	alias	no
@@ -30616,7 +30616,7 @@ std.mem.SliceTo	fn	yes
 std.mem.Span	fn	yes
 std.mem.SplitBackwardsIterator	fn	yes
 std.mem.SplitBackwardsIterator()	struct	no
-std.mem.SplitBackwardsIterator().Self	const	no
+std.mem.SplitBackwardsIterator().Self	alias	no
 std.mem.SplitBackwardsIterator().buffer	field	no
 std.mem.SplitBackwardsIterator().delimiter	field	no
 std.mem.SplitBackwardsIterator().first	fn	yes
@@ -30626,7 +30626,7 @@ std.mem.SplitBackwardsIterator().reset	fn	yes
 std.mem.SplitBackwardsIterator().rest	fn	yes
 std.mem.SplitIterator	fn	yes
 std.mem.SplitIterator()	struct	no
-std.mem.SplitIterator().Self	const	no
+std.mem.SplitIterator().Self	alias	no
 std.mem.SplitIterator().buffer	field	no
 std.mem.SplitIterator().delimiter	field	no
 std.mem.SplitIterator().first	fn	yes
@@ -30637,7 +30637,7 @@ std.mem.SplitIterator().reset	fn	yes
 std.mem.SplitIterator().rest	fn	yes
 std.mem.TokenIterator	fn	yes
 std.mem.TokenIterator()	struct	no
-std.mem.TokenIterator().Self	const	no
+std.mem.TokenIterator().Self	alias	no
 std.mem.TokenIterator().buffer	field	no
 std.mem.TokenIterator().delimiter	field	no
 std.mem.TokenIterator().index	field	no
@@ -30648,7 +30648,7 @@ std.mem.TokenIterator().reset	fn	yes
 std.mem.TokenIterator().rest	fn	yes
 std.mem.ValidationAllocator	fn	yes
 std.mem.ValidationAllocator()	struct	no
-std.mem.ValidationAllocator().Self	const	no
+std.mem.ValidationAllocator().Self	alias	no
 std.mem.ValidationAllocator().alloc	fn	no
 std.mem.ValidationAllocator().allocator	fn	no
 std.mem.ValidationAllocator().free	fn	no
@@ -30660,7 +30660,7 @@ std.mem.ValidationAllocator().resize	fn	no
 std.mem.ValidationAllocator().underlying_allocator	field	no
 std.mem.WindowIterator	fn	yes
 std.mem.WindowIterator()	struct	no
-std.mem.WindowIterator().Self	const	no
+std.mem.WindowIterator().Self	alias	no
 std.mem.WindowIterator().advance	field	no
 std.mem.WindowIterator().buffer	field	no
 std.mem.WindowIterator().index	field	no
@@ -30772,7 +30772,7 @@ std.mem.lessThanZ	fn	yes
 std.mem.littleToNative	fn	yes
 std.mem.math	alias	no
 std.mem.max	fn	yes
-std.mem.mem	const	no
+std.mem.mem	alias	no
 std.mem.min	fn	yes
 std.mem.minMax	fn	yes
 std.mem.moreReadIntTests	fn	no
@@ -30855,7 +30855,7 @@ std.meta.TrailerFlags().Field	fn	no
 std.meta.TrailerFlags().FieldEnum	const	no
 std.meta.TrailerFlags().FieldValues	const	no
 std.meta.TrailerFlags().Int	const	no
-std.meta.TrailerFlags().Self	const	no
+std.meta.TrailerFlags().Self	alias	no
 std.meta.TrailerFlags().bit_count	const	no
 std.meta.TrailerFlags().bits	field	no
 std.meta.TrailerFlags().get	fn	no
@@ -31641,7 +31641,7 @@ std.os.emscripten.utsname.sysname	field	no
 std.os.emscripten.utsname.version	field	no
 std.os.emscripten.wasi	alias	no
 std.os.emscripten.worker_handle	alias	no
-std.os.linux	ns	no
+std.os.linux	ns	yes
 std.os.linux.ACCMODE	alias	no
 std.os.linux.AF	struct	no
 std.os.linux.AF.ALG	alias	no
@@ -33610,7 +33610,7 @@ std.os.linux.IoUring.CompletionQueue.mask	field	no
 std.os.linux.IoUring.CompletionQueue.overflow	field	no
 std.os.linux.IoUring.CompletionQueue.tail	field	no
 std.os.linux.IoUring.Io	alias	no
-std.os.linux.IoUring.IoUring	const	no
+std.os.linux.IoUring.IoUring	alias	no
 std.os.linux.IoUring.ReadBuffer	union	yes
 std.os.linux.IoUring.ReadBuffer.buffer	field	yes
 std.os.linux.IoUring.ReadBuffer.buffer_selection	field	yes
@@ -34617,7 +34617,7 @@ std.os.linux.SECBIT_NO_CAP_AMBIENT_RAISE	const	no
 std.os.linux.SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED	const	no
 std.os.linux.SECBIT_NO_SETUID_FIXUP	const	no
 std.os.linux.SECBIT_NO_SETUID_FIXUP_LOCKED	const	no
-std.os.linux.SECCOMP	ns	no
+std.os.linux.SECCOMP	ns	yes
 std.os.linux.SECCOMP.ADDFD_FLAG	struct	yes
 std.os.linux.SECCOMP.ADDFD_FLAG.SEND	const	no
 std.os.linux.SECCOMP.ADDFD_FLAG.SETFD	const	no
@@ -47259,7 +47259,7 @@ std.os.linux.timezone	struct	no
 std.os.linux.timezone.dsttime	field	no
 std.os.linux.timezone.minuteswest	field	no
 std.os.linux.tkill	fn	no
-std.os.linux.tls	ns	no
+std.os.linux.tls	ns	yes
 std.os.linux.tls.AbiTcb	const	yes
 std.os.linux.tls.AreaDesc	struct	yes
 std.os.linux.tls.AreaDesc.abi_tcb	field	no
@@ -48261,7 +48261,7 @@ std.os.uefi.protocol.BlockIo.BlockMedia.write_caching	field	yes
 std.os.uefi.protocol.BlockIo.FlushBlocksError	const	no
 std.os.uefi.protocol.BlockIo.ReadBlocksError	const	no
 std.os.uefi.protocol.BlockIo.ResetError	const	no
-std.os.uefi.protocol.BlockIo.Self	const	no
+std.os.uefi.protocol.BlockIo.Self	alias	no
 std.os.uefi.protocol.BlockIo.WriteBlocksError	const	no
 std.os.uefi.protocol.BlockIo._flush_blocks	field	no
 std.os.uefi.protocol.BlockIo._read_blocks	field	no
@@ -48746,7 +48746,7 @@ std.os.uefi.protocol.ServiceBinding	fn	no
 std.os.uefi.protocol.ServiceBinding()	struct	no
 std.os.uefi.protocol.ServiceBinding().CreateChildError	const	no
 std.os.uefi.protocol.ServiceBinding().DestroyChildError	const	no
-std.os.uefi.protocol.ServiceBinding().Self	const	no
+std.os.uefi.protocol.ServiceBinding().Self	alias	no
 std.os.uefi.protocol.ServiceBinding()._create_child	field	no
 std.os.uefi.protocol.ServiceBinding()._destroy_child	field	no
 std.os.uefi.protocol.ServiceBinding().addToHandle	fn	no
@@ -49618,7 +49618,7 @@ std.os.uefi.tables.math	alias	no
 std.os.uefi.tables.std	modref	no
 std.os.uefi.tables.uefi	alias	no
 std.os.uefi.unexpectedStatus	fn	no
-std.os.wasi	ns	no
+std.os.wasi	ns	yes
 std.os.wasi.DIRCOOKIE_START	const	no
 std.os.wasi.EVENT_FD_READWRITE_HANGUP	const	no
 std.os.wasi.SOCK	struct	no
@@ -49944,7 +49944,7 @@ std.os.wasi.whence_t	enum	no
 std.os.wasi.whence_t.CUR	tag	no
 std.os.wasi.whence_t.END	tag	no
 std.os.wasi.whence_t.SET	tag	no
-std.os.windows	ns	no
+std.os.windows	ns	yes
 std.os.windows.ACCESS_MASK	struct	no
 std.os.windows.ACCESS_MASK.ACCESS_SYSTEM_SECURITY	field	no
 std.os.windows.ACCESS_MASK.GENERIC	field	no
@@ -56652,7 +56652,7 @@ std.os.windows.math	alias	no
 std.os.windows.maxInt	alias	no
 std.os.windows.mem	alias	no
 std.os.windows.native_arch	alias	no
-std.os.windows.nls	ns	no
+std.os.windows.nls	ns	yes
 std.os.windows.nls.builtin	modref	no
 std.os.windows.nls.std	nsref	no
 std.os.windows.nls.upcaseW	fn	yes
@@ -57047,7 +57047,7 @@ std.os.windows.ws2_32.timeval.sec	field	no
 std.os.windows.ws2_32.timeval.usec	field	no
 std.os.windows.ws2_32.windows	alias	no
 std.os.windows.wtf8ToWtf16Le	fn	no
-std.pdb	ns	no
+std.pdb	ns	yes
 std.pdb.ArrayList	alias	no
 std.pdb.BinaryAnnotationOpcode	enum	no
 std.pdb.BinaryAnnotationOpcode.change_code_length	tag	no
@@ -57551,7 +57551,7 @@ std.pie.elf	alias	no
 std.pie.getDynamicSymbol	fn	no
 std.pie.relocate	fn	no
 std.pie.std	modref	no
-std.posix	ns	no
+std.posix	ns	yes
 std.posix.ACCMODE	const	no
 std.posix.AF	alias	no
 std.posix.AF_SUN	alias	no
@@ -57827,7 +57827,7 @@ std.process.ArgExpansion.expand	tag	no
 std.process.ArgExpansion.no_expand	tag	no
 std.process.Args	ns	no
 std.process.Args.Allocator	alias	no
-std.process.Args.Args	const	no
+std.process.Args.Args	alias	no
 std.process.Args.Iterator	struct	yes
 std.process.Args.Iterator.InitError	alias	no
 std.process.Args.Iterator.Inner	const	no
@@ -57881,7 +57881,7 @@ std.process.Args.Iterator.skip	fn	yes
 std.process.Args.IteratorGeneral	fn	yes
 std.process.Args.IteratorGeneral()	struct	no
 std.process.Args.IteratorGeneral().InitError	const	no
-std.process.Args.IteratorGeneral().Self	const	no
+std.process.Args.IteratorGeneral().Self	alias	no
 std.process.Args.IteratorGeneral().allocator	field	no
 std.process.Args.IteratorGeneral().buffer	field	yes
 std.process.Args.IteratorGeneral().cmd_line	field	no
@@ -57916,7 +57916,7 @@ std.process.Args.toSlice	fn	yes
 std.process.Args.vector	field	no
 std.process.Child	ns	no
 std.process.Child.Allocator	alias	no
-std.process.Child.Child	const	no
+std.process.Child.Child	alias	no
 std.process.Child.Cwd	union	no
 std.process.Child.Cwd.dir	field	yes
 std.process.Child.Cwd.inherit	field	yes
@@ -57962,7 +57962,7 @@ std.process.Environ.CreatePosixBlockOptions	struct	no
 std.process.Environ.CreatePosixBlockOptions.zig_progress_fd	field	yes
 std.process.Environ.CreateWindowsBlockOptions	struct	no
 std.process.Environ.CreateWindowsBlockOptions.zig_progress_handle	field	yes
-std.process.Environ.Environ	const	no
+std.process.Environ.Environ	alias	no
 std.process.Environ.GetAllocError	const	no
 std.process.Environ.GlobalBlock	struct	no
 std.process.Environ.GlobalBlock.deinit	fn	no
@@ -58071,7 +58071,7 @@ std.process.Preopens.Allocator	alias	no
 std.process.Preopens.InitError	const	no
 std.process.Preopens.Io	alias	no
 std.process.Preopens.Map	const	no
-std.process.Preopens.Preopens	const	no
+std.process.Preopens.Preopens	alias	no
 std.process.Preopens.Resource	union	no
 std.process.Preopens.Resource.dir	field	no
 std.process.Preopens.Resource.file	field	no
@@ -58197,7 +58197,7 @@ std.process.unlockMemory	fn	yes
 std.process.unlockMemoryAll	fn	no
 std.process.windows	alias	no
 std.root	modref	no
-std.simd	ns	no
+std.simd	ns	yes
 std.simd.VectorCount	fn	yes
 std.simd.VectorIndex	fn	yes
 std.simd.builtin	modref	no
@@ -58361,7 +58361,7 @@ std.static_string_map.StaticStringMapWithEql().KVs	struct	no
 std.static_string_map.StaticStringMapWithEql().KVs.keys	field	no
 std.static_string_map.StaticStringMapWithEql().KVs.len	field	no
 std.static_string_map.StaticStringMapWithEql().KVs.values	field	no
-std.static_string_map.StaticStringMapWithEql().Self	const	no
+std.static_string_map.StaticStringMapWithEql().Self	alias	no
 std.static_string_map.StaticStringMapWithEql().SortContext	struct	no
 std.static_string_map.StaticStringMapWithEql().SortContext.keys	field	no
 std.static_string_map.StaticStringMapWithEql().SortContext.lessThan	fn	no
@@ -58412,7 +58412,7 @@ std.static_string_map.testSet	fn	no
 std.static_string_map.testStaticStringMapWithEql	fn	no
 std.static_string_map.test_alloc	alias	no
 std.static_string_map.testing	alias	no
-std.tar	ns	no
+std.tar	ns	yes
 std.tar.Diagnostics	struct	yes
 std.tar.Diagnostics.Error	union	no
 std.tar.Diagnostics.Error.components_outside_stripped_prefix	field	no
@@ -58513,7 +58513,7 @@ std.tar.PaxIterator.Attribute.kind	field	no
 std.tar.PaxIterator.Attribute.len	field	no
 std.tar.PaxIterator.Attribute.reader	field	no
 std.tar.PaxIterator.Attribute.value	fn	no
-std.tar.PaxIterator.Self	const	no
+std.tar.PaxIterator.Self	alias	no
 std.tar.PaxIterator.eql	fn	no
 std.tar.PaxIterator.hasNull	fn	no
 std.tar.PaxIterator.next	fn	no
@@ -58567,7 +58567,7 @@ std.tar.Writer.Options.mode	field	yes
 std.tar.Writer.Options.mtime	field	yes
 std.tar.Writer.WriteFileError	const	no
 std.tar.Writer.WriteFileStreamError	const	no
-std.tar.Writer.Writer	const	no
+std.tar.Writer.Writer	alias	no
 std.tar.Writer.assert	alias	no
 std.tar.Writer.block_size	const	no
 std.tar.Writer.finishPedantically	fn	yes
@@ -58614,11 +58614,11 @@ std.testing.BytesDiffer.write	fn	no
 std.testing.BytesDiffer.writeDiff	fn	no
 std.testing.CheckAllAllocationFailuresExtraArgs	fn	no
 std.testing.Environ	alias	no
-std.testing.FailingAllocator	ns	no
+std.testing.FailingAllocator	ns	yes
 std.testing.FailingAllocator.Config	struct	no
 std.testing.FailingAllocator.Config.fail_index	field	yes
 std.testing.FailingAllocator.Config.resize_fail_index	field	yes
-std.testing.FailingAllocator.FailingAllocator	const	no
+std.testing.FailingAllocator.FailingAllocator	alias	no
 std.testing.FailingAllocator.alloc	fn	no
 std.testing.FailingAllocator.alloc_index	field	no
 std.testing.FailingAllocator.allocated_bytes	field	no
@@ -58662,18 +58662,18 @@ std.testing.ReaderIndirect.stream	fn	no
 std.testing.ReaderIndirect.streamInner	fn	no
 std.testing.SliceDiffer	fn	no
 std.testing.SliceDiffer()	struct	no
-std.testing.SliceDiffer().Self	const	no
+std.testing.SliceDiffer().Self	alias	no
 std.testing.SliceDiffer().actual	field	no
 std.testing.SliceDiffer().expected	field	no
 std.testing.SliceDiffer().start_index	field	no
 std.testing.SliceDiffer().terminal_mode	field	no
 std.testing.SliceDiffer().write	fn	no
-std.testing.Smith	ns	no
+std.testing.Smith	ns	yes
 std.testing.Smith.Backing	fn	no
 std.testing.Smith.EnumField	struct	no
 std.testing.Smith.EnumField.name	field	no
 std.testing.Smith.EnumField.value	field	no
-std.testing.Smith.Smith	const	no
+std.testing.Smith.Smith	alias	no
 std.testing.Smith.UnionTagWithoutUninitializable	fn	no
 std.testing.Smith.Weight	alias	no
 std.testing.Smith.allBitPatternsValid	fn	yes
@@ -58777,7 +58777,7 @@ std.testing.returnErrorUnion	fn	no
 std.testing.std	nsref	no
 std.testing.tmpDir	fn	no
 std.time	ns	no
-std.time.epoch	ns	no
+std.time.epoch	ns	yes
 std.time.epoch.DaySeconds	struct	yes
 std.time.epoch.DaySeconds.getHoursIntoDay	fn	yes
 std.time.epoch.DaySeconds.getMinutesIntoHour	fn	yes
@@ -58866,7 +58866,7 @@ std.time.us_per_min	const	no
 std.time.us_per_ms	const	no
 std.time.us_per_s	const	no
 std.time.us_per_week	const	no
-std.tz	ns	no
+std.tz	ns	yes
 std.tz.Allocator	alias	no
 std.tz.Leapsecond	struct	no
 std.tz.Leapsecond.correction	field	no
@@ -59786,15 +59786,15 @@ std.wasm.result_type	const	no
 std.wasm.std	nsref	yes
 std.wasm.testing	alias	no
 std.wasm.version	const	no
-std.zig	ns	no
+std.zig	ns	yes
 std.zig.AllocPrintCmdOptions	struct	yes
 std.zig.AllocPrintCmdOptions.child_env	field	no
 std.zig.AllocPrintCmdOptions.cwd	field	no
 std.zig.AllocPrintCmdOptions.parent_env	field	no
 std.zig.Allocator	alias	no
-std.zig.Ast	ns	no
+std.zig.Ast	ns	yes
 std.zig.Ast.Allocator	alias	no
-std.zig.Ast.Ast	const	no
+std.zig.Ast.Ast	alias	no
 std.zig.Ast.ByteOffset	alias	no
 std.zig.Ast.Error	struct	no
 std.zig.Ast.Error.Tag	enum	no
@@ -60156,7 +60156,7 @@ std.zig.Ast.OptionalTokenOffset	enum	yes
 std.zig.Ast.OptionalTokenOffset._	tag	no
 std.zig.Ast.OptionalTokenOffset.none	tag	no
 std.zig.Ast.OptionalTokenOffset.unwrap	fn	no
-std.zig.Ast.Parse	ns	no
+std.zig.Ast.Parse	ns	yes
 std.zig.Ast.Parse.Allocator	alias	no
 std.zig.Ast.Parse.Assoc	enum	no
 std.zig.Ast.Parse.Assoc.left	tag	no
@@ -60176,7 +60176,7 @@ std.zig.Ast.Parse.OperInfo.assoc	field	no
 std.zig.Ast.Parse.OperInfo.prec	field	no
 std.zig.Ast.Parse.OperInfo.tag	field	no
 std.zig.Ast.Parse.OptionalTokenIndex	alias	no
-std.zig.Ast.Parse.Parse	const	no
+std.zig.Ast.Parse.Parse	alias	no
 std.zig.Ast.Parse.PtrModifiers	struct	yes
 std.zig.Ast.Parse.PtrModifiers.addrspace_node	field	no
 std.zig.Ast.Parse.PtrModifiers.align_node	field	no
@@ -60377,7 +60377,7 @@ std.zig.Ast.Render.QuoteBehavior	enum	no
 std.zig.Ast.Render.QuoteBehavior.eagerly_unquote	tag	no
 std.zig.Ast.Render.QuoteBehavior.eagerly_unquote_except_underscore	tag	no
 std.zig.Ast.Render.QuoteBehavior.preserve_when_shadowing	tag	no
-std.zig.Ast.Render.Render	const	no
+std.zig.Ast.Render.Render	alias	no
 std.zig.Ast.Render.Space	enum	no
 std.zig.Ast.Render.Space.comma	tag	yes
 std.zig.Ast.Render.Space.comma_maybe_space	tag	yes
@@ -60774,11 +60774,11 @@ std.zig.Ast.tokensToSpan	fn	no
 std.zig.Ast.whileCont	fn	no
 std.zig.Ast.whileFull	fn	no
 std.zig.Ast.whileSimple	fn	no
-std.zig.AstGen	ns	no
+std.zig.AstGen	ns	yes
 std.zig.AstGen.Allocator	alias	no
 std.zig.AstGen.ArrayList	alias	no
 std.zig.AstGen.Ast	alias	no
-std.zig.AstGen.AstGen	const	no
+std.zig.AstGen.AstGen	alias	no
 std.zig.AstGen.AstRlAnnotate	alias	no
 std.zig.AstGen.BlockKind	enum	no
 std.zig.AstGen.BlockKind.allow_branch_hint	tag	no
@@ -61234,10 +61234,10 @@ std.zig.AstGen.unusedResultExpr	fn	yes
 std.zig.AstGen.varDecl	fn	no
 std.zig.AstGen.whileExpr	fn	no
 std.zig.AstGen.within_fn	field	yes
-std.zig.AstRlAnnotate	ns	no
+std.zig.AstRlAnnotate	ns	yes
 std.zig.AstRlAnnotate.Allocator	alias	no
 std.zig.AstRlAnnotate.Ast	alias	no
-std.zig.AstRlAnnotate.AstRlAnnotate	const	no
+std.zig.AstRlAnnotate.AstRlAnnotate	alias	no
 std.zig.AstRlAnnotate.AutoHashMapUnmanaged	alias	no
 std.zig.AstRlAnnotate.Block	struct	yes
 std.zig.AstRlAnnotate.Block.consumes_res_ptr	field	no
@@ -61308,7 +61308,7 @@ std.zig.BuildId.parse	fn	yes
 std.zig.BuildId.sha1	field	no
 std.zig.BuildId.uuid	field	no
 std.zig.BuiltinFn	ns	no
-std.zig.BuiltinFn.BuiltinFn	const	no
+std.zig.BuiltinFn.BuiltinFn	alias	no
 std.zig.BuiltinFn.EvalToError	enum	no
 std.zig.BuiltinFn.EvalToError.always	tag	yes
 std.zig.BuiltinFn.EvalToError.maybe	tag	yes
@@ -61558,7 +61558,7 @@ std.zig.ClangCliParam.syntax	field	no
 std.zig.ClangCliParam.ze	field	no
 std.zig.Client	ns	no
 std.zig.Client.Allocator	alias	no
-std.zig.Client.Client	const	no
+std.zig.Client.Client	alias	no
 std.zig.Client.Configuration	alias	no
 std.zig.Client.InMessage	alias	no
 std.zig.Client.Io	alias	no
@@ -61685,9 +61685,9 @@ std.zig.EnvVar.ZIG_VERBOSE_CMD	tag	no
 std.zig.EnvVar.ZIG_VERBOSE_LINK	tag	no
 std.zig.EnvVar.get	fn	no
 std.zig.EnvVar.isSet	fn	no
-std.zig.ErrorBundle	ns	no
+std.zig.ErrorBundle	ns	yes
 std.zig.ErrorBundle.Allocator	alias	no
-std.zig.ErrorBundle.ErrorBundle	const	no
+std.zig.ErrorBundle.ErrorBundle	alias	no
 std.zig.ErrorBundle.ErrorMessage	struct	yes
 std.zig.ErrorBundle.ErrorMessage.count	field	yes
 std.zig.ErrorBundle.ErrorMessage.msg	field	no
@@ -61782,7 +61782,7 @@ std.zig.Io	alias	no
 std.zig.LibCDirs	ns	no
 std.zig.LibCDirs.Allocator	alias	no
 std.zig.LibCDirs.Io	alias	no
-std.zig.LibCDirs.LibCDirs	const	no
+std.zig.LibCDirs.LibCDirs	alias	no
 std.zig.LibCDirs.LibCInstallation	alias	no
 std.zig.LibCDirs.Path	alias	no
 std.zig.LibCDirs.builtin	modref	no
@@ -61795,7 +61795,7 @@ std.zig.LibCDirs.libc_include_dir_list	field	no
 std.zig.LibCDirs.libc_installation	field	no
 std.zig.LibCDirs.std	nsref	no
 std.zig.LibCDirs.sysroot	field	no
-std.zig.LibCInstallation	ns	no
+std.zig.LibCInstallation	ns	yes
 std.zig.LibCInstallation.Allocator	alias	no
 std.zig.LibCInstallation.CCPrintFileNameOptions	struct	no
 std.zig.LibCInstallation.CCPrintFileNameOptions.environ_map	field	no
@@ -61829,7 +61829,7 @@ std.zig.LibCInstallation.FindNativeOptions.environ_map	field	no
 std.zig.LibCInstallation.FindNativeOptions.target	field	no
 std.zig.LibCInstallation.FindNativeOptions.verbose	field	yes
 std.zig.LibCInstallation.Io	alias	no
-std.zig.LibCInstallation.LibCInstallation	const	no
+std.zig.LibCInstallation.LibCInstallation	alias	no
 std.zig.LibCInstallation.Path	alias	no
 std.zig.LibCInstallation.Target	alias	no
 std.zig.LibCInstallation.addToHash	fn	no
@@ -61876,7 +61876,7 @@ std.zig.LtoMode.full	tag	no
 std.zig.LtoMode.none	tag	no
 std.zig.LtoMode.thin	tag	no
 std.zig.ParsedCharLiteral	alias	no
-std.zig.PkgConfig	ns	no
+std.zig.PkgConfig	ns	yes
 std.zig.PkgConfig.Allocator	alias	no
 std.zig.PkgConfig.Diagnostic	struct	no
 std.zig.PkgConfig.Diagnostic.invalid_line	field	no
@@ -61891,7 +61891,7 @@ std.zig.PkgConfig.Parsed.unknown_flags	field	no
 std.zig.PkgConfig.Pkg	struct	no
 std.zig.PkgConfig.Pkg.desc	field	no
 std.zig.PkgConfig.Pkg.name	field	no
-std.zig.PkgConfig.PkgConfig	const	no
+std.zig.PkgConfig.PkgConfig	alias	no
 std.zig.PkgConfig.all	field	no
 std.zig.PkgConfig.assert	alias	no
 std.zig.PkgConfig.exe	fn	no
@@ -62013,7 +62013,7 @@ std.zig.Server.Message.TimeReport.llvm_pass_timings_len	field	no
 std.zig.Server.Message.TimeReport.stats	field	no
 std.zig.Server.OutMessage	alias	no
 std.zig.Server.Reader	alias	no
-std.zig.Server.Server	const	no
+std.zig.Server.Server	alias	no
 std.zig.Server.TestMetadata	struct	no
 std.zig.Server.TestMetadata.expected_panic_msgs	field	no
 std.zig.Server.TestMetadata.names	field	no
@@ -62141,11 +62141,11 @@ std.zig.Subsystem.native	tag	no
 std.zig.Subsystem.posix	tag	no
 std.zig.Subsystem.windows	tag	no
 std.zig.Token	alias	no
-std.zig.TokenSmith	ns	no
+std.zig.TokenSmith	ns	yes
 std.zig.TokenSmith.Smith	alias	no
 std.zig.TokenSmith.Token	alias	no
 std.zig.TokenSmith.TokenList	alias	no
-std.zig.TokenSmith.TokenSmith	const	no
+std.zig.TokenSmith.TokenSmith	alias	no
 std.zig.TokenSmith.checkSource	fn	no
 std.zig.TokenSmith.gen	fn	no
 std.zig.TokenSmith.list	fn	yes
@@ -62214,7 +62214,7 @@ std.zig.WindowsSdk.Registry.cache	field	no
 std.zig.WindowsSdk.Registry.deinit	fn	no
 std.zig.WindowsSdk.Registry.openSoftwareKey	fn	no
 std.zig.WindowsSdk.Registry.tryOpenSoftwareKeyWithPrecedence	fn	no
-std.zig.WindowsSdk.WindowsSdk	const	no
+std.zig.WindowsSdk.WindowsSdk	alias	no
 std.zig.WindowsSdk.Writer	alias	no
 std.zig.WindowsSdk.builtin	modref	no
 std.zig.WindowsSdk.find	fn	yes
@@ -62230,7 +62230,7 @@ std.zig.WindowsSdk.windows10sdk	field	no
 std.zig.WindowsSdk.windows81sdk	field	no
 std.zig.WindowsSdk.windows_kits_reg_key	const	no
 std.zig.Writer	alias	no
-std.zig.Zir	ns	no
+std.zig.Zir	ns	yes
 std.zig.Zir.Allocator	alias	no
 std.zig.Zir.Ast	alias	no
 std.zig.Zir.BigIntConst	alias	no
@@ -63533,7 +63533,7 @@ std.zig.Zir.UnwrappedUnionDecl.name_strategy	field	no
 std.zig.Zir.UnwrappedUnionDecl.src_column	field	no
 std.zig.Zir.UnwrappedUnionDecl.src_line	field	no
 std.zig.Zir.UnwrappedUnionDecl.src_node	field	no
-std.zig.Zir.Zir	const	no
+std.zig.Zir.Zir	alias	no
 std.zig.Zir.assert	alias	no
 std.zig.Zir.assertTrackable	fn	yes
 std.zig.Zir.bodySlice	fn	no
@@ -63565,7 +63565,7 @@ std.zig.Zir.refSlice	fn	no
 std.zig.Zir.std	modref	no
 std.zig.Zir.string_bytes	field	yes
 std.zig.Zir.typeDecls	fn	no
-std.zig.Zoir	ns	no
+std.zig.Zoir	ns	yes
 std.zig.Zoir.Allocator	alias	no
 std.zig.Zoir.Ast	alias	no
 std.zig.Zoir.CompileError	struct	no
@@ -63641,7 +63641,7 @@ std.zig.Zoir.Node.true	field	yes
 std.zig.Zoir.NullTerminatedString	enum	no
 std.zig.Zoir.NullTerminatedString._	tag	no
 std.zig.Zoir.NullTerminatedString.get	fn	no
-std.zig.Zoir.Zoir	const	no
+std.zig.Zoir.Zoir	alias	no
 std.zig.Zoir.assert	alias	no
 std.zig.Zoir.compile_errors	field	no
 std.zig.Zoir.deinit	fn	no
@@ -63652,7 +63652,7 @@ std.zig.Zoir.limbs	field	no
 std.zig.Zoir.nodes	field	no
 std.zig.Zoir.std	modref	no
 std.zig.Zoir.string_bytes	field	no
-std.zig.ZonGen	ns	no
+std.zig.ZonGen	ns	yes
 std.zig.ZonGen.Allocator	alias	no
 std.zig.ZonGen.Ast	nsref	no
 std.zig.ZonGen.Options	struct	no
@@ -63664,7 +63664,7 @@ std.zig.ZonGen.StringLiteralResult.nts	field	no
 std.zig.ZonGen.StringLiteralResult.slice	field	no
 std.zig.ZonGen.Writer	alias	no
 std.zig.ZonGen.Zoir	nsref	no
-std.zig.ZonGen.ZonGen	const	no
+std.zig.ZonGen.ZonGen	alias	no
 std.zig.ZonGen.addErrorInner	fn	no
 std.zig.ZonGen.addErrorNode	fn	no
 std.zig.ZonGen.addErrorNodeNotes	fn	no
@@ -63857,7 +63857,7 @@ std.zig.llvm.BitcodeReader.Abbrev.Store.addOwnedAbbrev	fn	no
 std.zig.llvm.BitcodeReader.Abbrev.Store.addOwnedAbbrevAssumeCapacity	fn	no
 std.zig.llvm.BitcodeReader.Abbrev.Store.deinit	fn	no
 std.zig.llvm.BitcodeReader.Abbrev.operands	field	no
-std.zig.llvm.BitcodeReader.BitcodeReader	const	no
+std.zig.llvm.BitcodeReader.BitcodeReader	alias	no
 std.zig.llvm.BitcodeReader.Block	struct	no
 std.zig.llvm.BitcodeReader.Block.Info	struct	no
 std.zig.llvm.BitcodeReader.Block.Info.abbrevs	field	no
@@ -64477,7 +64477,7 @@ std.zig.llvm.Builder.BinaryOpcode.sub	tag	no
 std.zig.llvm.Builder.BinaryOpcode.udiv	tag	no
 std.zig.llvm.Builder.BinaryOpcode.urem	tag	no
 std.zig.llvm.Builder.BinaryOpcode.xor	tag	no
-std.zig.llvm.Builder.Builder	const	no
+std.zig.llvm.Builder.Builder	alias	no
 std.zig.llvm.Builder.CallConv	enum	no
 std.zig.llvm.Builder.CallConv._	tag	no
 std.zig.llvm.Builder.CallConv.aarch64_sme_preservemost_from_x0	tag	no
@@ -67265,10 +67265,10 @@ std.zig.llvm.bitcode_writer.AbbrevOp.literal	field	no
 std.zig.llvm.bitcode_writer.AbbrevOp.vbr	field	no
 std.zig.llvm.bitcode_writer.BitcodeWriter	fn	no
 std.zig.llvm.bitcode_writer.BitcodeWriter()	struct	no
-std.zig.llvm.bitcode_writer.BitcodeWriter().BcWriter	const	no
+std.zig.llvm.bitcode_writer.BitcodeWriter().BcWriter	alias	no
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter	fn	no
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter()	struct	no
-std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().Self	const	no
+std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().Self	alias	no
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().abbrevId	fn	no
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().abbrev_len	const	no
 std.zig.llvm.bitcode_writer.BitcodeWriter().BlockWriter().bitcode	field	no
@@ -67344,7 +67344,7 @@ std.zig.number_literal.std	nsref	no
 std.zig.parseCharLiteral	alias	no
 std.zig.parseNumberLiteral	alias	no
 std.zig.parseTargetQueryOrReportFatalError	fn	no
-std.zig.parser_generated_oracle	ns	no
+std.zig.parser_generated_oracle	ns	yes
 std.zig.parser_generated_oracle.Def	enum	no
 std.zig.parser_generated_oracle.Def.defAMPERSAND	tag	no
 std.zig.parser_generated_oracle.Def.defAMPERSANDEQUAL	tag	no
@@ -67974,7 +67974,7 @@ std.zig.system.LdInfo.ld	field	no
 std.zig.system.NativePaths	ns	no
 std.zig.system.NativePaths.Allocator	alias	no
 std.zig.system.NativePaths.Io	alias	no
-std.zig.system.NativePaths.NativePaths	const	no
+std.zig.system.NativePaths.NativePaths	alias	no
 std.zig.system.NativePaths.addFrameworkDir	fn	no
 std.zig.system.NativePaths.addFrameworkDirFmt	fn	no
 std.zig.system.NativePaths.addIncludeDir	fn	no
@@ -68476,7 +68476,7 @@ std.zig.tokenizer.Tokenizer.next	fn	yes
 std.zig.tokenizer.std	nsref	no
 std.zig.tokenizer.testPropertiesUpheld	fn	no
 std.zig.tokenizer.testTokenize	fn	no
-std.zip	ns	no
+std.zip	ns	yes
 std.zip.CentralDirectoryFileHeader	struct	no
 std.zip.CentralDirectoryFileHeader.comment_len	field	no
 std.zip.CentralDirectoryFileHeader.compressed_size	field	no
@@ -68604,7 +68604,7 @@ std.zip.local_file_header_sig	const	no
 std.zip.readZip64FileExtents	fn	no
 std.zip.std	modref	no
 std.zip.testing	alias	no
-std.zon	ns	no
+std.zon	ns	yes
 std.zon.Formatter	fn	yes
 std.zon.Formatter()	struct	no
 std.zon.Formatter().format	fn	no
@@ -68612,7 +68612,7 @@ std.zon.Formatter().options	field	no
 std.zon.Formatter().value	field	no
 std.zon.Serializer	nsref	no
 std.zon.fmt	fn	yes
-std.zon.parse	ns	no
+std.zon.parse	ns	yes
 std.zon.parse.Allocator	alias	no
 std.zon.parse.ArenaAllocator	alias	no
 std.zon.parse.ArrayList	alias	no
@@ -68727,14 +68727,14 @@ std.zon.parse.updateFromZoir	fn	yes
 std.zon.parse.updateFromZoirNoAlloc	fn	yes
 std.zon.parse.valid_types	const	yes
 std.zon.std	modref	no
-std.zon.stringify	ns	no
+std.zon.stringify	ns	yes
 std.zon.stringify.SerializeOptions	struct	no
 std.zon.stringify.SerializeOptions.emit_codepoint_literals	field	yes
 std.zon.stringify.SerializeOptions.emit_default_optional_fields	field	yes
 std.zon.stringify.SerializeOptions.emit_strings_as_containers	field	yes
 std.zon.stringify.SerializeOptions.escape_non_ascii	field	yes
 std.zon.stringify.SerializeOptions.whitespace	field	yes
-std.zon.stringify.Serializer	ns	no
+std.zon.stringify.Serializer	ns	yes
 std.zon.stringify.Serializer.CodePointError	const	no
 std.zon.stringify.Serializer.CodePointOptions	struct	yes
 std.zon.stringify.Serializer.CodePointOptions.escape_non_ascii	field	no
@@ -68768,7 +68768,7 @@ std.zon.stringify.Serializer.MultilineStringOptions	struct	yes
 std.zon.stringify.Serializer.MultilineStringOptions.top_level	field	yes
 std.zon.stringify.Serializer.Options	struct	no
 std.zon.stringify.Serializer.Options.whitespace	field	yes
-std.zon.stringify.Serializer.Serializer	const	no
+std.zon.stringify.Serializer.Serializer	alias	no
 std.zon.stringify.Serializer.StringOptions	struct	no
 std.zon.stringify.Serializer.StringOptions.escape_non_ascii	field	no
 std.zon.stringify.Serializer.Struct	struct	yes

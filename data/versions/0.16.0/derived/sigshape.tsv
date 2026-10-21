@@ -1721,7 +1721,7 @@ std.Io.Threaded.groupAwait	other	yes	no
 std.Io.Threaded.groupCancel	other	yes	no
 std.Io.Threaded.groupConcurrent	other	yes	no
 std.Io.Threaded.inheritFile	none	no	no
-std.Io.Threaded.init	other	yes	no
+std.Io.Threaded.init	allocator	no	no
 std.Io.Threaded.initLockedStderr	other	yes	no
 std.Io.Threaded.io	other	yes	no
 std.Io.Threaded.isCygwinPty	other	yes	no
@@ -9920,7 +9920,7 @@ std.zig.AstGen.parseStrLit	other	no	no
 std.zig.AstGen.ptrCast	other	no	no
 std.zig.AstGen.ptrType	other	no	no
 std.zig.AstGen.reachableExpr	other	no	no
-std.zig.AstGen.reachableExprComptime	other	no	yes
+std.zig.AstGen.reachableExprComptime	other	no	no
 std.zig.AstGen.reachableTypeExpr	other	no	no
 std.zig.AstGen.reserveExtra	other	no	no
 std.zig.AstGen.restoreErrRetIndex	other	no	no
@@ -11259,7 +11259,7 @@ std.zon.parse.canParseTypeInner	other	no	no
 std.zon.parse.free	allocator	no	yes
 std.zon.parse.freeArray	allocator	no	yes
 std.zon.parse.fromSlice	other	no	no
-std.zon.parse.fromSliceAlloc	other	no	yes
+std.zon.parse.fromSliceAlloc	other	no	no
 std.zon.parse.fromZoir	other	no	no
 std.zon.parse.fromZoirAlloc	other	no	no
 std.zon.parse.fromZoirNode	other	no	no

@@ -44,8 +44,8 @@ reproduces it, not the bytes.
 | stream | shape | what it is |
 |---|---|---|
 | `nodes.tsv` | Tree | 68,845 nodes (61,592 pub / 7,253 priv), incl. fields, tags, and factory members (`<fn>()`) |
-| `attrs.tsv` | Attributes | 120,415 facts — 13,885 docs · 11,697 sigs · 22,640 values · 68,844 locations · 1,520 test bodies · 1,344 modifiers · 485 error members |
-| `edges.tsv` | Edges | 56,612 typed references, 96% of the resolvable ones landing on a node/primitive |
+| `attrs.tsv` | Attributes | 144,975 facts — 14,028 docs · 11,697 sigs · 32,299 values · 68,844 locations · 1,520 test bodies · 1,344 modifiers · 485 error members |
+| `edges.tsv` | Edges | 60,588 typed references, 98% of the resolvable ones landing on a node/primitive |
 | `builtins.tsv` | — | 128 builtins (`@intCast`, …) from `parse/langref.zig`: the compiler's builtin table + the language reference, cross-checked |
 
 (The `index.tsv` table of contents is built *from* the Tree by the [`../derive/`](../derive/)

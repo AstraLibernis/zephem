@@ -205,8 +205,8 @@ query rebakes the lookup table once (≈90 ms).
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to
 `data/std/extracted/`. On zig 0.17.0 that is **68,845 nodes across 343 files**
-(61,592 public, 7,253 private), max nesting depth 8 — carrying 120,415
-attributes and 56,612 typed edges.
+(61,592 public, 7,253 private), max nesting depth 8 — carrying 144,975
+attributes and 60,588 typed edges.
 
 ```sh
 awk -F'\t' '$2=="ns"' data/std/extracted/nodes.tsv                        # every std source file
@@ -235,8 +235,8 @@ $ zig build std
 [forward]  scanning .../std.zig  (zig 0.17.0, depth 8)
            rows: 68845   files: 343   private: 7253
 [index]    containers: 4332   root span: 68845   max depth: 8
-[attrs]    120415 rows — doc 13885 · sig 11697 · value 22640 · example 1520
-[edges]    56612 rows — resolved 49961 / unresolved 2088
+[attrs]    144975 rows — doc 14028 · sig 11697 · value 32299 · example 1520
+[edges]    60588 rows — resolved 57476 / unresolved 1354
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.
@@ -348,9 +348,9 @@ The extractor is **three engines**, split by *what each reads*:
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
   [parse/README.md](parse/README.md)). `parse/walk.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
-  the Attributes (`attrs.tsv` — 11,697 signatures, 13,885 `///` docs, 22,640 field/const
+  the Attributes (`attrs.tsv` — 11,697 signatures, 14,028 `///` docs, 32,299 field/const
   values, 68,844 locations, 1,520 test bodies, 1,344 modifiers, 485 error
-  members), and the Edges (`edges.tsv` — 56,612
+  members), and the Edges (`edges.tsv` — 60,588
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
   `return struct {…}` gets its members under `<fn>()`, e.g. `std.hash_map.HashMap().get`) and gives each
   selective re-export a single canonical home. It reads source as text and never runs the compiler,
