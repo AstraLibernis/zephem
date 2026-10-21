@@ -8,15 +8,17 @@
 //!   --check  two fresh rebuilds must agree (intrinsic), reproduce the committed manifest
 //!            (regression), and match the on-disk snapshot (integrity)
 //!
-//! Everything runs in-process — no `zig run` handoff. The intermediate TSVs ARE the product, so
-//! they are still written to disk; only the orchestration moved from Nushell into Zig.
+//! The source walk (parse/main.zig) is built by the toolchain being mapped and run as its own
+//! process, so each std is parsed by its own release's parser and an older or newer std maps the
+//! same way the current one does. The builtins table and the index run in-process. The
+//! intermediate TSVs ARE the product, so they are written to disk.
 const std = @import("std");
 const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
 const toolchain = @import("../toolchain.zig");
 const manifest = @import("../manifest.zig");
-const parse = @import("parse");
+const proc = @import("../proc.zig");
 const derive_index = @import("derive");
 const langref = @import("langref");
 const verify = @import("../verify/std.zig");
@@ -61,7 +63,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const env = try toolchain.probe(c);
     const root = try std.fs.path.join(c.a, &.{ env.std_dir, "std.zig" });
     const zver = env.version;
-    const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env) };
+    const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env), .zig_exe = env.zig_exe, .zig_version = zver };
 
     var buf: [4096]u8 = undefined;
     var ow = std.Io.File.stdout().writerStreaming(c.io, &buf);
@@ -73,31 +75,40 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         return;
     }
 
-    // ── forward: regenerate ──────────────────────────────────────────────────
+    // ── forward: regenerate into a staging dir ───────────────────────────────
+    // Nothing reaches data_dir until the backward check passes: a rejected regeneration leaves the
+    // committed map untouched.
     try w.print("[forward]  scanning {s}  (zig {s}, depth {d})\n", .{ root, zver, depth });
     if (src.langref == null) try w.writeAll("[builtins] ⚠ this toolchain ships no doc/langref.html — builtins get names and arity only\n");
-    _ = try regen(c, src, data_dir);
+    const stage = try vars.repoFile(c, ".zig-cache/zephem-std-stage");
+    std.Io.Dir.cwd().deleteTree(c.io, stage) catch {}; // zsnag:ok — best-effort scratch cleanup; regen rewrites every file it later reads
+    _ = try regen(c, src, stage);
     // PINNED: first line the version (consumers read it), second the target triple (the reflect
     // layer is target-scoped — a Windows decl poisons on linux, usize=u64 here, etc.).
-    try writeFileStr(c, try join(c.a, data_dir, "PINNED"), try std.fmt.allocPrint(c.a, "zig {s}\ntarget {s}\n", .{ zver, env.target }));
-    try report(c, data_dir, w);
+    try writeFileStr(c, try join(c.a, stage, "PINNED"), try c.a.print("zig {s}\ntarget {s}\n", .{ zver, env.target }));
+    try report(c, stage, w);
 
     // ── backward: verify ─────────────────────────────────────────────────────
     try w.writeAll("[backward] re-reading the datasets — must reconcile...\n");
     try w.flush();
-    if (!try verify.run(c, data_dir)) {
-        try w.writeAll("build_std: ✗ forward and backward DISAGREE — snapshot rejected.\n");
+    if (!try verify.run(c, stage)) {
+        try w.writeAll("build_std: ✗ forward and backward DISAGREE — snapshot rejected; the committed map is unchanged.\n");
         try w.flush();
         std.process.exit(1);
     }
 
-    // ── record the manifest ──────────────────────────────────────────────────
+    // ── install and record the manifest ──────────────────────────────────────
+    const cwd = std.Io.Dir.cwd();
+    for (names ++ [_][]const u8{"PINNED"}) |name| {
+        try cwd.copyFile(try join(c.a, stage, name), cwd, try join(c.a, data_dir, name), c.io, .{});
+    }
+    cwd.deleteTree(c.io, stage) catch {}; // zsnag:ok — best-effort scratch cleanup after install; nothing reads it again
     try writeManifest(c, data_dir, try join(c.a, data_dir, "SHA256SUMS"));
     try w.writeAll("build_std: ✓ true (forward == backward) and recorded — run --check to prove it rebuilds.\n");
     try w.flush();
 }
 
-const Sources = struct { root: []const u8, builtin_fn: []const u8, langref: ?[]const u8 };
+const Sources = struct { root: []const u8, builtin_fn: []const u8, langref: ?[]const u8, zig_exe: []const u8, zig_version: []const u8 };
 
 /// `doc/langref.html` beside the toolchain's `lib/` (the layout of the official tarballs), or
 /// null when this install has no docs.
@@ -118,9 +129,40 @@ fn regen(c: Ctx, src: Sources, out_dir: []const u8) !void {
     const edges = try join(c.a, out_dir, "extracted/edges.tsv");
     const attrs = try join(c.a, out_dir, "extracted/attrs.tsv");
     const index = try join(c.a, out_dir, "derived/index.tsv");
-    _ = try parse.run(c.a, c.io, src.root, nodes, edges, attrs);
+    const walker = try buildExtractor(c, src);
+    try runChecked(c, &.{ walker, src.root, nodes, edges, attrs }, "the extractor");
     _ = try langref.run(c.a, c.io, src.builtin_fn, src.langref, try join(c.a, out_dir, "extracted/builtins.tsv"));
     _ = try derive_index.run(c.a, c.io, nodes, index);
+}
+
+/// Build parse/main.zig with the toolchain whose std is being mapped, so the std is parsed by
+/// its own release's parser (a newer parser rejects an older std's syntax; see parse/compat.zig).
+/// One binary per Zig version under .zig-cache/; the compiler's cache makes a rebuild a no-op.
+/// Returns the binary's path.
+fn buildExtractor(c: Ctx, src: Sources) ![]const u8 {
+    const dir = try vars.repoFile(c, try c.a.print(".zig-cache/zephem-extract/{s}", .{src.zig_version}));
+    try std.Io.Dir.cwd().createDirPath(c.io, dir);
+    const bin = try join(c.a, dir, "walk");
+    try runChecked(c, &.{
+        src.zig_exe,                                          "build-exe",
+        "-OReleaseSafe",                                      try vars.repoFile(c, "parse/main.zig"),
+        try c.a.print("-femit-bin={s}", .{bin}), "--cache-dir",
+        try join(c.a, dir, "cache"),
+    }, "building the extractor");
+    return bin;
+}
+
+/// Run `argv`, pass its stderr through, and stop zephem when it fails.
+fn runChecked(c: Ctx, argv_: []const []const u8, what: []const u8) !void {
+    const out = try proc.capture(c.a, c.io, argv_);
+    var er = std.Io.File.stderr().writerStreaming(c.io, try c.a.alloc(u8, 4096));
+    try er.interface.writeAll(out.stderr);
+    if (out.exit_code != 0) {
+        try er.interface.print("zephem std: ✗ {s} failed (exit {d}): {s}\n", .{ what, out.exit_code, argv_[0] });
+        try er.interface.flush();
+        std.process.exit(1);
+    }
+    try er.interface.flush();
 }
 
 /// The forward-build stats line, re-reading the datasets the way `build_std.nu` did.

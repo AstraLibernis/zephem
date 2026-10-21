@@ -6,7 +6,7 @@
 //! regeneration this rejects is rejected.
 //!
 //!   CONNECTED  every non-root node hangs off a real parent
-//!   PARTITION  every row is a known kind
+//!   PARTITION  every row is a known kind; for std, no file failed to parse (`nserr`)
 //!   INDEX      every index entry is a real node; root span == total rows
 //!   ATTRS      every attr keys onto a real node; known attr kinds only
 //!   EDGES      every edge starts at a real node; every local/cross edge resolves to a real node
@@ -97,6 +97,20 @@ fn checks(c: Ctx, data_dir: []const u8, with_builtins: bool, w: *std.Io.Writer) 
         try w.print("  ✗ {d} row(s) with an unknown kind\n", .{bad_kind});
         ok = false;
     } else try w.writeAll("  ✓ every row a known kind\n");
+    // An `nserr` is a file the extractor could not read or parse: everything under it is missing
+    // from the map. std always parses with its own release's parser, so for std one is a broken
+    // regeneration (an extractor built by a different Zig than the std it read), never a fact.
+    if (with_builtins) {
+        var nserr: usize = 0;
+        for (nodes.rows) |r| if (std.mem.eql(u8, r[k_i], "nserr")) {
+            if (nserr < 5) try w.print("  ✗ unparsed file: {s}\n", .{r[p_i]});
+            nserr += 1;
+        };
+        if (nserr > 0) {
+            try w.print("  ✗ {d} file(s) failed to parse — their declarations are missing (was the extractor built by the Zig whose std it read?)\n", .{nserr});
+            ok = false;
+        } else try w.writeAll("  ✓ every file parsed\n");
+    }
 
     // 3. INDEX — every entry a real node; root span == total rows.
     const ix = try rel.load(a, c.io, try join(a, data_dir, "derived/index.tsv"));

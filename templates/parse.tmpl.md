@@ -87,11 +87,17 @@ check and the build claims nothing.
 parse/
   walk.zig       # follow @import from the root ONCE, walk the organism, resolve edges
                #        → nodes.tsv (Tree) · attrs.tsv (Attributes) · edges.tsv (Edges)
+  main.zig       # the program `zephem std` builds with the target Zig: walk <std.zig> <nodes> <edges> <attrs>
+  compat.zig     # the std calls that differ between supported Zig releases
 ```
 
-One flat file — one walk, one two-phase resolver, three writers. `walk.zig` is imported as the
-`parse` module and driven in-process by `zephem std` (its `run()` fn is the entry point); there is
-no `zig run` handoff.
+One flat file — one walk, one two-phase resolver, three writers. `zephem std` builds it into its
+own program (`main.zig`) **with the Zig whose std it maps** and runs it, so each std is parsed by
+its own release's parser: a newer parser rejects an older std's syntax (0.17 has no `**`, which
+0.16's std uses in 43 files). One source compiles on every supported release; the few std calls
+that differ between them live in `compat.zig`. A file that still fails to parse becomes an `nserr`
+node, and for std the backward check rejects any. `zephem deps` imports `walk.zig` in-process as
+the `parse` module.
 
 ## 5. Running it
 

@@ -2,8 +2,9 @@
 // Copyright (C) 2026 AstraLibernis
 
 //! parse/walk.zig — the parser engine: one walk over the source tree emitting the shape model.
-//! Imported as the `parse` module and driven in-process by `zephem std` via `run` (no `zig run`
-//! handoff). The walk/resolve logic is the heart of the read-it engine.
+//! Built by the Zig whose std it maps and run as its own program (parse/main.zig; version
+//! differences in compat.zig). `zephem deps` still imports it in-process as the `parse` module.
+//! The walk/resolve logic is the heart of the read-it engine.
 //!
 //! One walk, node-centric: at each node we pull the Tree, and every Edge that node offers, then
 //! RESOLVE each edge's target to mark WHERE it points — inside its own container, elsewhere in the
@@ -30,6 +31,7 @@
 
 const std = @import("std");
 const Ast = std.zig.Ast;
+const compat = @import("compat.zig");
 
 const Edge = struct { src: []const u8, etype: []const u8, target: []const u8 };
 
@@ -251,7 +253,7 @@ fn parseChild(w: *W, abs: []const u8) ?*Ast {
     if (w.ast_cache.get(abs)) |a| return a; // already parsed this build — reuse (Asts are arena-persistent)
     const src = std.Io.Dir.cwd().readFileAllocOptions(w.io, abs, w.arena, .unlimited, .of(u8), 0) catch return null;
     const a = w.arena.create(Ast) catch return null;
-    a.* = Ast.parse(w.arena, src, .{}) catch return null;
+    a.* = compat.parseZig(w.arena, src) catch return null;
     if (a.errors.len != 0) return null;
     w.ast_cache.put(abs, a) catch {}; // zsnag:ok — a failed cache insert only means this file is re-parsed later, same output
     return a;
@@ -747,7 +749,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
 pub const Stats = struct {
     nodes: usize,
     edges: usize,
-    scope: [@typeInfo(Scope).@"enum".field_names.len]usize,
+    scope: std.EnumArray(Scope, usize),
 };
 
 /// Walk `root` (a std.zig path) and write the three TSV streams. `arena` must outlive nothing past
@@ -763,7 +765,7 @@ pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []
 /// prints one line per module instead).
 pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_name: []const u8, nodes_out: []const u8, edges_out: []const u8, attrs_out: []const u8, report: bool) !Stats {
     const src = try std.Io.Dir.cwd().readFileAllocOptions(io, root, arena, .unlimited, .of(u8), 0);
-    var ast = try Ast.parse(arena, src, .{});
+    var ast = try compat.parseZig(arena, src);
 
     const nf = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nf.close(io);
@@ -807,7 +809,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     var efw = ef.writer(io, &ebuf);
     const ew = &efw.interface;
     try ew.print("src\ttype\ttarget\tscope\n", .{});
-    var counts: [@typeInfo(Scope).@"enum".field_names.len]usize = @splat(0); // by Scope
+    var counts: std.EnumArray(Scope, usize) = .initFill(0); // by Scope
     for (w.edges.items) |e| {
         // an `imports` edge always reaches out of the tree (a file/module we didn't walk) — its
         // target is a path, not a name to look up, so it never goes through scope resolution.
@@ -815,7 +817,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
             Res{ .scope = Scope.module, .target = e.target }
         else
             resolve(&w, e.src, e.target, 4);
-        counts[@backingInt(r.scope)] += 1;
+        counts.getPtr(r.scope).* += 1;
         try ew.print("{s}\t{s}\t{s}\t{s}\n", .{ e.src, e.etype, r.target, @tagName(r.scope) });
     }
     try ew.flush();
@@ -826,9 +828,9 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     const s = &sfw.interface;
     try s.print("[parse] {s}\n  nodes: {d}   edges: {d}\n  scope: local {d} · cross {d} · primitive {d} · module {d} · generic {d} · inline {d} · unresolved {d}\n", .{
         root,                                  w.node_set.count(),                 w.edges.items.len,
-        counts[@backingInt(Scope.local)],      counts[@backingInt(Scope.cross)],   counts[@backingInt(Scope.primitive)],
-        counts[@backingInt(Scope.module)],     counts[@backingInt(Scope.generic)], counts[@backingInt(Scope.@"inline")],
-        counts[@backingInt(Scope.unresolved)],
+        counts.get(Scope.local),      counts.get(Scope.cross),   counts.get(Scope.primitive),
+        counts.get(Scope.module),     counts.get(Scope.generic), counts.get(Scope.@"inline"),
+        counts.get(Scope.unresolved),
     });
     try s.flush();
 
