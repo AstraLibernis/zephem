@@ -183,6 +183,15 @@ def classify(old, new):
 
 # ------------------------------------------------------------------ the diff --------
 
+VARIANT = re.compile(r"\.\[([A-Za-z_][^\]]*)\]")
+
+
+def variant(p):
+    """(const, tags, rest) for a path inside a `[…]` platform arm, else None (`[0]` is a tuple field)."""
+    m = VARIANT.search(p)
+    return (p[:m.start()], m.group(1), p[m.end():]) if m else None
+
+
 def parent(p):
     return p.rsplit(".", 1)[0] if "." in p else p
 
@@ -190,8 +199,11 @@ def parent(p):
 def compute(old: Side, new: Side):
     O, N = old.pub(), new.pub()
     both = set(old.decl) & set(new.decl)
-    removed = {p for p in O if p not in new.decl}
-    added = {p for p in N if p not in old.decl}
+    # one-sided paths inside a platform arm are compared per tag (variants below), not listed
+    removed = {p for p in O if p not in new.decl and not variant(p)}
+    added = {p for p in N if p not in old.decl and not variant(p)}
+    O = {p for p in O if p in new.decl or not variant(p)}  # the identities count what is listed
+    N = {p for p in N if p in old.decl or not variant(p)}
     changed, sigclass = {}, {}
     for p in both:
         o, n = old.decl[p], new.decl[p]
@@ -303,7 +315,39 @@ def compute(old: Side, new: Side):
         elif na and not oa:
             a_gained.add(p)
 
-    return dict(a_retarget=a_retarget, a_gained=a_gained, a_lost=a_lost, alias_both=alias_both,O=O, N=N, both=both, removed=removed, added=added, changed=changed, sigclass=sigclass, moves=moves,
+    # Platform arms, per tag: const -> tag -> {rest below the arm}, public nodes only.
+    def vtable(side):
+        t = defaultdict(lambda: defaultdict(set))
+        for p, d in side.decl.items():
+            v = variant(p)
+            if v and d["vis"] == "pub":
+                for tag in v[1].split(","):
+                    t[v[0]][tag].add(v[2])
+        return t
+
+    vo, vn = vtable(old), vtable(new)
+    moved_from = {t: f for f, t, _ in moves}
+    v_tag_added, v_tag_removed, v_members = set(), set(), set()
+    for c, ntags in vn.items():
+        oc = c if c in vo else moved_from.get(c)
+        if oc is None or oc not in vo:
+            continue
+        otags = vo[oc]
+        prov = "extracted" if oc == c else "inferred"
+        for tag in ntags:
+            if tag not in otags:
+                v_tag_added.add((c, tag, prov))
+            else:
+                plus, minus = len(ntags[tag] - otags[tag]), len(otags[tag] - ntags[tag])
+                if plus or minus:
+                    v_members.add((c, tag, minus, plus, prov))
+        for tag in otags:
+            if tag not in ntags:
+                v_tag_removed.add((c, tag, prov))
+    v_consts = {x[0] for x in v_tag_added | v_tag_removed | v_members}
+
+    return dict(v_tag_added=v_tag_added, v_tag_removed=v_tag_removed, v_members=v_members, v_consts=v_consts,
+                a_retarget=a_retarget, a_gained=a_gained, a_lost=a_lost, alias_both=alias_both, O=O, N=N, both=both, removed=removed, added=added, changed=changed, sigclass=sigclass, moves=moves,
                 newly=newly, lifted=lifted, dep_removed=dep_removed, tags_r=tags_r, tags_a=tags_a, enums=enums,
                 b_added=b_added, b_removed=b_removed, b_changed=b_changed, b_doc=b_doc, values=values, docs=docs)
 
@@ -374,6 +418,9 @@ def main():
     check("aliases retargeted (path→old,new,moved)", me["a_retarget"], {r[2]: (r[5], r[6], r[7] == "target_moved") for r in by["alias_retargeted"]})
     check("aliases gained (set)", me["a_gained"], {r[2] for r in by["alias_gained"]})
     check("aliases lost (set)", me["a_lost"], {r[2] for r in by["alias_lost"]})
+    check("variant tags added (const,tag,prov)", me["v_tag_added"], {(r[2], r[6], r[1]) for r in by["variant_tag_added"]})
+    check("variant tags removed (const,tag,prov)", me["v_tag_removed"], {(r[2], r[5], r[1]) for r in by["variant_tag_removed"]})
+    check("variant members (const,tag,-r,+a,prov)", me["v_members"], {(r[2], r[7], int(r[5][1:]), int(r[6][1:]), r[1]) for r in by["variant_members"]})
 
     # Human report agrees with the TSV.
     m = re.search(r"^(\d+) removed · (\d+) changed · (\d+) added", human, re.M)
@@ -393,6 +440,7 @@ def main():
     check("human: doc changes", len(me["docs"]), int(md.group(1)) if md else 0)
     check("human: doc changes flagged", sum(me["docs"].values()), int(md.group(2)) if md else 0)
     check("human: aliases", len(me["a_retarget"]) + len(me["a_gained"]) + len(me["a_lost"]), section_count(human, "aliases and delegations changed"))
+    check("human: platform variants", len(me["v_consts"]), section_count(human, "platform variants") or 0)
     mv_from = {f for f, _, _ in me["moves"]}
     check("human: removed listed = removed − tags − moves", len(me["removed"]) - len(me["tags_r"]) - len(mv_from & me["removed"]), section_count(human, "removed"))
     mv_to = {t for _, t, _ in me["moves"]}

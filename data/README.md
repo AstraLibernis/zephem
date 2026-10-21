@@ -19,10 +19,10 @@ and the self-check that guards it). The clean line: **extracted/ is what Zig say
 derived/ is what zephem computes from it, and can be deleted and rebuilt from extracted/
 alone.**
 
-At a glance — the parser's shape model is **68,845 nodes across 343 files**
-(the tree), **144,975 attributes** (14,028 docs, 11,697 sigs, 32,299 values,
-68,844 locations, 1,520 test bodies, 1,344 modifiers, 485 error members),
-and **60,588 typed edges**; reflect adds
+At a glance — the parser's shape model is **86,046 nodes across 484 files**
+(the tree), **185,340 attributes** (15,618 docs, 12,421 sigs, 44,065 values,
+86,045 locations, 1,927 test bodies, 1,376 modifiers, 490 error members),
+and **71,312 typed edges**; reflect adds
 3,162 containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## versions/ — one frozen folder per Zig version

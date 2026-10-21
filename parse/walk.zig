@@ -53,6 +53,12 @@ const W = struct {
     ast_cache: std.StringHashMap(*Ast), // abs file path → parsed Ast — parse each file once per build
     line_cache: std.StringHashMap([]usize), // rel file → sorted newline offsets (fast line lookup)
     edges: std.ArrayList(Edge), // raw edges, resolved in phase 2
+    // A file reached only through `@import("f.zig").Sel`: Sel lives at its re-export path, the
+    // rest of the file under a private node for the file, and names inside Sel resolve there.
+    deferred: std.ArrayList(Deferred), // re-exported files to settle after the walk
+    file_home: std.StringHashMap([]const u8), // abs file path → the node its declarations live under
+    lexical: std.StringHashMap([]const u8), // node path → the scope its names resolve in, when that is not its parent
+    lexical_names: std.StringHashMap([]const u8), // `<file node>.Sel` → Sel's re-export path (where its tests belong)
 
     fn node(w: *W, path: []const u8, kind: []const u8, name: []const u8, vis: []const u8) !void {
         try w.nodes.print("{s}\t{s}\t{s}\t{s}\n", .{ path, kind, name, vis });
@@ -68,6 +74,8 @@ const W = struct {
 };
 
 const Factory = union(enum) { none, descend: Ast.Node.Index, delegate: []const u8 };
+
+const Deferred = struct { sel_path: []const u8, abs: []const u8, sel: []const u8, owner: []const u8, depth: u32 };
 
 /// The parent path in the tree. A `<fn>()` factory container's parent is the fn it descends from
 /// (drop the trailing `()`); otherwise drop the last dotted segment, treating a `.` inside a `@"…"`
@@ -436,14 +444,15 @@ fn isInlineContainer(raw: []const u8) bool {
 const Scope = enum { local, cross, primitive, module, generic, @"inline", unresolved };
 const Res = struct { scope: Scope, target: []const u8 };
 
-/// Resolve a bare name in src's lexical scope: try container.name, then walk up the ancestors.
+/// Resolve a bare name in src's lexical scope: try container.name, then walk up the ancestors (from
+/// a re-exported Sel, through the file it is declared in: `lexical`).
 fn resolveBare(w: *W, container: []const u8, name: []const u8) ?[]const u8 {
     var scope = container;
     while (true) {
         const cand = if (scope.len == 0) name else std.fmt.allocPrint(w.arena, "{s}.{s}", .{ scope, name }) catch return null;
         if (w.node_set.contains(cand)) return cand;
         if (scope.len == 0) return null;
-        scope = parent(scope);
+        scope = w.lexical.get(scope) orelse parent(scope); // a re-exported Sel continues in its own file
     }
 }
 
@@ -502,7 +511,7 @@ fn resolveRooted(w: *W, src: []const u8, full: []const u8, fuel: u8) ?Res {
 
 /// Classify (and where possible canonicalize) one edge target. `fuel` bounds alias-chasing.
 fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
-    const container = parent(src);
+    const container = w.lexical.get(src) orelse parent(src); // a re-exported fn resolves in its own file
     const trimmed = std.mem.trim(u8, raw, " \t\r\n");
     // an inline/anonymous type in the signature (`error{…}`, `struct {…}`) — no node to point at.
     if (isInlineContainer(trimmed)) return Res{ .scope = .@"inline", .target = trimmed };
@@ -626,6 +635,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
                 const base = if (std.mem.findScalarLast(u8, path, '.')) |k| path[k + 1 ..] else path;
                 owner = if (std.mem.eql(u8, nm, base)) path else try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, nm });
             };
+            owner = w.lexical_names.get(owner) orelse owner; // `test Sel` in a re-exported file: Sel's real path
             try w.attr(owner, "example", try escapeTsv(w.arena, ast.getNodeSource(m)));
             continue;
         }
@@ -740,6 +750,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             if (parseChild(w, abs)) |child| {
                 try declFacts(w, cp, decl_loc, try joinDocs(w, decl_doc, try fileDoc(w, child)));
                 try w.visited.put(abs, {}); // mark visited only on a successful parse — a failed
+                try w.file_home.put(abs, cp);
                 try w.node(cp, "ns", name, vis); // read stays `nserr` and can be retried elsewhere
                 const child_dir = std.fs.path.dirname(abs) orelse ".";
                 try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
@@ -770,6 +781,7 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         } else {
             try w.node(cp, "const", name, vis);
             try w.attr(cp, "value", try collapse(w.arena, trimmed)); // the initializer as written
+            try emitVariants(w, ast, init, cp, base_dir, depth, rel); // `switch (native_os) {…}`
             if (ast.nodeTag(init) == .merge_error_sets) {
                 try errorSetEdges(w, ast, cp, init); // `Error = A || B`
             } else {
@@ -779,6 +791,70 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
             }
         }
     }
+}
+
+/// A const chosen per platform or option — `switch (native_os) { .linux => linux.IPPROTO,
+/// .macos => struct {…}, else => void }`, or `if (cond) A else B` — has no single shape to map, so
+/// each arm becomes a variant node under it, `<cp>.[<label>]` (bracketed like a tuple field's
+/// `[0]`, so a path still splits on its dots): `std.c.IPPROTO.[macos].TCP`. The label is the
+/// prong's tags (`[linux,emscripten]`, `[else]`) or `[then]`/`[else]` for an `if`; the arm's full
+/// condition is its `when` attr. An arm is walked like any const: a container literal's members,
+/// an alias, a nested switch/if, or a value. Not a switch/if: nothing.
+fn emitVariants(w: *W, ast: *const Ast, n: Ast.Node.Index, cp: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) anyerror!void {
+    if (ast.fullSwitch(n)) |sw| {
+        for (sw.ast.cases, 0..) |case_node, k| {
+            const case = ast.fullSwitchCase(case_node).?;
+            const vals = case.ast.values;
+            const when = if (vals.len == 0) "else" else try collapse(w.arena, ast.source[ast.tokens.items(.start)[ast.firstToken(vals[0])]..ast.tokens.items(.start)[case.ast.arrow_token]]);
+            const label = try armLabel(w, ast, vals, k);
+            try emitArm(w, ast, case.ast.target_expr, cp, label, std.mem.trim(u8, when, " "), base_dir, depth, rel);
+        }
+    } else if (ast.fullIf(n)) |iff| {
+        try emitArm(w, ast, iff.ast.then_expr, cp, "then", try typeText(w, ast, iff.ast.cond_expr), base_dir, depth, rel);
+        if (iff.ast.else_expr.unwrap()) |e| try emitArm(w, ast, e, cp, "else", "else", base_dir, depth, rel);
+    }
+}
+
+/// A prong's label: its enum tags without the dots, comma-joined (`.linux, .emscripten` →
+/// `linux,emscripten`), `else` for the else prong; `arm<k>` when a value is anything else (a
+/// range, an expression), whose text stays in the `when` attr.
+fn armLabel(w: *W, ast: *const Ast, vals: []const Ast.Node.Index, k: usize) ![]const u8 {
+    if (vals.len == 0) return "else";
+    var out: std.ArrayList(u8) = .empty;
+    for (vals, 0..) |v, i| {
+        const src = std.mem.trim(u8, ast.getNodeSource(v), " \t\r\n");
+        const tag = if (std.mem.startsWith(u8, src, ".")) src[1..] else src;
+        if (tag.len == 0 or !isAliasChain(tag) or std.mem.findScalar(u8, tag, '.') != null) return std.fmt.allocPrint(w.arena, "arm{d}", .{k});
+        if (i > 0) try out.append(w.arena, ',');
+        try out.appendSlice(w.arena, tag);
+    }
+    return out.items;
+}
+
+/// One variant: the node `<cp>.[<label>]`, its `when`, and what the arm evaluates to.
+fn emitArm(w: *W, ast: *const Ast, expr: Ast.Node.Index, cp: []const u8, label: []const u8, when: []const u8, base_dir: []const u8, depth: u32, rel: []const u8) anyerror!void {
+    const name = try std.fmt.allocPrint(w.arena, "[{s}]", .{label});
+    const vp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ cp, name });
+    if (w.node_set.contains(vp)) return; // a repeated label (two `arm<k>` cannot collide; tags cannot repeat)
+    try w.attr(vp, "loc", try locOf(w, ast, expr, rel));
+    try w.attr(vp, "when", when);
+    if (containerKind(ast, expr)) |ck| {
+        try w.node(vp, ck, name, "pub");
+        var cbuf: [2]Ast.Node.Index = undefined;
+        const cd = ast.fullContainerDecl(&cbuf, expr).?;
+        try walk(w, ast, cd.ast.members, vp, ck, base_dir, depth + 1, rel);
+        return;
+    }
+    const src = std.mem.trim(u8, ast.getNodeSource(expr), " \t\r\n");
+    if (isAliasChain(src)) {
+        try w.node(vp, "alias", name, "pub");
+        try w.edge(vp, "alias", src);
+        try w.aliases.put(vp, src);
+        return;
+    }
+    try w.node(vp, "const", name, "pub");
+    try w.attr(vp, "value", try collapse(w.arena, src));
+    try emitVariants(w, ast, expr, vp, base_dir, depth + 1, rel);
 }
 
 /// 1-based line of `off`, via a per-file newline-offset table (built once, then binary-searched) —
@@ -840,6 +916,40 @@ fn findDecl(ast: *const Ast, members: []const Ast.Node.Index, sel: []const u8) ?
     return null;
 }
 
+/// Settle the files reached only through `@import("f.zig").Sel` (queued by `emitReexport`), after
+/// the walk so a whole-file import anywhere wins: such a file's declarations already have a home,
+/// and Sel's names resolve there. Otherwise the file gets a private node beside Sel —
+/// `<owner>.@"f.zig"` — holding its other declarations and tests, and Sel's names resolve in it
+/// (then, past it, in the owner, where Sel itself is). Settling a file can queue more.
+fn scopeFiles(w: *W) !void {
+    var k: usize = 0;
+    while (k < w.deferred.items.len) : (k += 1) {
+        const d = w.deferred.items[k];
+        if (w.file_home.get(d.abs)) |home| {
+            try w.lexical.put(d.sel_path, home);
+            continue;
+        }
+        const ast = parseChild(w, d.abs) orelse continue;
+        const fname = try std.fmt.allocPrint(w.arena, "@\"{s}\"", .{std.fs.path.basename(d.abs)});
+        const fp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ d.owner, fname });
+        if (w.node_set.contains(fp)) continue; // a declaration really named so: leave it
+        try w.visited.put(d.abs, {});
+        try w.file_home.put(d.abs, fp);
+        const rel = relOf(w, d.abs);
+        try w.attr(fp, "loc", try std.fmt.allocPrint(w.arena, "{s}:1", .{rel}));
+        try w.attr(fp, "doc", try fileDoc(w, ast));
+        try w.node(fp, "ns", fname, "priv");
+        // Sel itself already lives at its re-export path (a sibling of `fp`), where a lookup of
+        // its name from inside the file lands; only the rest of the file is walked here.
+        const found = findDecl(ast, ast.rootDecls(), d.sel);
+        var rest: std.ArrayList(Ast.Node.Index) = .empty;
+        for (ast.rootDecls()) |m| if (found == null or m != found.?) try rest.append(w.arena, m);
+        try w.lexical_names.put(try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ fp, d.sel }), d.sel_path);
+        try walk(w, ast, rest.items, fp, "struct", std.fs.path.dirname(d.abs) orelse ".", d.depth + 1, rel);
+        try w.lexical.put(d.sel_path, fp);
+    }
+}
+
 /// A selective re-export `pub const X = @import("f").Sel` — follow into `f`, find `Sel`, and place
 /// IT (its members, if a container) under `cp`. Selective-only files have no other home, so this is
 /// option B's single canonical home, not duplication. The node takes the TARGET's loc/doc (that is
@@ -862,6 +972,10 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     const found = findDecl(ast, ast.rootDecls(), sel) orelse return leaf(w, cp, name, vis, sel, decl_loc, decl_doc);
     const dir = std.fs.path.dirname(abs) orelse ".";
     const rel = relOf(w, abs);
+    // `Sel` is defined in this file (not re-imported from another): its names are this file's
+    // names, and the rest of the file has no other home yet. Settled after the walk (`scopeFiles`).
+    const via_import = if (ast.fullVarDecl(found)) |fvd| if (fvd.ast.init_node.unwrap()) |ini| importTarget(ast.getNodeSource(ini)) != null else false else false;
+    if (!via_import) try w.deferred.append(w.arena, .{ .sel_path = cp, .abs = abs, .sel = sel, .owner = parent(cp), .depth = depth });
 
     var fb: [1]Ast.Node.Index = undefined;
     if (ast.fullFnProto(&fb, found)) |proto| {
@@ -898,6 +1012,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
             if (w.visited.contains(abs2) or depth >= MAX_DEPTH) return w.node(cp, "nsref", name, vis);
             if (parseChild(w, abs2)) |c2| {
                 try w.visited.put(abs2, {}); // mark visited only on a successful parse
+                try w.file_home.put(abs2, cp);
                 try w.node(cp, "ns", name, vis);
                 try walk(w, c2, c2.rootDecls(), cp, "struct", std.fs.path.dirname(abs2) orelse ".", depth + 1, relOf(w, abs2));
             } else try w.node(cp, "nserr", name, vis);
@@ -963,6 +1078,10 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         .root_name = root_name,
         .ast_cache = std.StringHashMap(*Ast).init(arena),
         .line_cache = std.StringHashMap([]usize).init(arena),
+        .deferred = .empty,
+        .file_home = std.StringHashMap([]const u8).init(arena),
+        .lexical = std.StringHashMap([]const u8).init(arena),
+        .lexical_names = std.StringHashMap([]const u8).init(arena),
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
@@ -974,6 +1093,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
     // Phase 1 — walk the whole organism: follow every @import, building the complete node set.
     const root_dir = std.fs.path.dirname(root) orelse ".";
     try walk(&w, &ast, ast.rootDecls(), root_name, "root", root_dir, 0, std.fs.path.basename(root));
+    try scopeFiles(&w);
     try w.nodes.flush();
     try w.attrs.flush();
 

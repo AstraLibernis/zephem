@@ -30,8 +30,14 @@ All three key on the same dotted `path`, so they re-join without a lookup table.
 The whole `std` namespace tree, one row per node. A node is a declaration (public **or**
 private), a struct/union **field**, an enum **tag**, or a **type-factory member** (a member
 of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.MultiArrayList().append`;
-the `()` marks "instantiate first"). **68,845 rows** (61,592 pub / 7,253 priv)
-across **343 files**, max depth **8**.
+the `()` marks "instantiate first"). Two more node shapes keep what has no access path of its
+own: a **variant** — one arm of a const chosen per platform or option (`switch (native_os) {…}`,
+`if (cond) A else B`), pathed `<const>.[<label>]` like a tuple field's `[0]` (e.g.
+`std.c.IPPROTO.[macos].TCP`; the label is the prong's tags, its `when` attr the full condition)
+— and a **file node** `<owner>.@"f.zig"` (private), holding the rest of a file that std reaches
+only through `@import("f.zig").Sel` (its private helpers and tests; `Sel` itself is at its
+re-export path, and resolves its names in this file). **86,046 rows** (77,266 pub / 8,780 priv)
+across **484 files**, max depth **8**.
 Columns: `path · kind · name · vis`  (`vis ∈ pub · priv`).
 `kind ∈ ns · nsref · nserr · modref · struct · enum · union · opaque · fn · const · alias · field · tag`.
 
@@ -42,48 +48,49 @@ off its `path`, and the verifier reconciles the tree by that — every non-root 
 itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
-`path · attr · value`. Sparse: a row exists only where the fact is present. **144,975 rows**
-across eight attributes:
+`path · attr · value`. Sparse: a row exists only where the fact is present. **185,340 rows**
+across nine attributes:
 
 | attr | value | count |
 |---|---|---|
-| `loc` | source location `file:line` (root-relative, machine-independent) | 68,844 |
-| `value` | a `field`'s default, or a `const`'s initializer as written (whitespace-collapsed, never shortened) | 32,299 |
-| `type` | the type as written on a `field`, or on a `const`/`var` declared `: T` (the `has_type` edge keeps only the name it references: `?*Node` → `Node`) | 14,758 |
-| `doc` | the decl's `///` doc-comment, whitespace-collapsed; a file's namespace adds the file's own `//!` doc | 14,028 |
-| `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 11,697 |
-| `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,520 |
-| `mod` | a decl's qualifiers — `extern` (with its library: `extern "c"`)/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | 1,344 |
-| `errmember` | a member of a named `error{…}` set (one row per member) | 485 |
+| `loc` | source location `file:line` (root-relative, machine-independent) | 86,045 |
+| `value` | a `field`'s default, or a `const`'s initializer as written (whitespace-collapsed, never shortened) | 44,065 |
+| `when` | a variant's condition: its switch prong's values (`.linux, .emscripten`, `else`) or its `if` condition | 2,487 |
+| `type` | the type as written on a `field`, or on a `const`/`var` declared `: T` (the `has_type` edge keeps only the name it references: `?*Node` → `Node`) | 20,911 |
+| `doc` | the decl's `///` doc-comment, whitespace-collapsed; a file's namespace adds the file's own `//!` doc | 15,618 |
+| `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 12,421 |
+| `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,927 |
+| `mod` | a decl's qualifiers — `extern` (with its library: `extern "c"`)/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | 1,376 |
+| `errmember` | a member of a named `error{…}` set (one row per member) | 490 |
 
 ### `edges.tsv` — Edges (typed references, resolved)
 `src · type · target · scope`. Every reference a declaration makes, **with its reach resolved**
-in a second pass against the walked node set. **60,588 edges**, six types:
+in a second pass against the walked node set. **71,312 edges**, six types:
 
 | type | count | what it links |
 |---|---|---|
-| `has_type` | 51,995 | a fn param/return, a field, or a `const`/`var` declared `: T` → the type it names (an array → its element) |
-| `alias` | 3,202 | a re-export (`pub const X = Y.Z`) → what it points at |
-| `error_set` | 4,035 | an `error{…}` / error-union → its members; `A || B` gives one edge per operand |
-| `imports` | 842 | an `@import` alias → the file/module it names |
+| `has_type` | 60,256 | a fn param/return, a field, or a `const`/`var` declared `: T` → the type it names (an array → its element) |
+| `alias` | 5,200 | a re-export (`pub const X = Y.Z`) → what it points at |
+| `error_set` | 4,076 | an `error{…}` / error-union → its members; `A || B` gives one edge per operand |
+| `imports` | 1,025 | an `@import` alias → the file/module it names |
 | `delegates` | 31 | a forwarding factory (`fn X() type { return Y(args); }`) → its target |
-| `instantiates` | 483 | a `const` built by a call (`Sha256 = Sha2x32(…)`) → the fn it calls |
+| `instantiates` | 724 | a `const` built by a call (`Sha256 = Sha2x32(…)`) → the fn it calls |
 
 `scope` records **where the target landed** — the one invariant worth protecting is that a
 `local`/`cross` edge always points at a real node:
 
 | scope | count | meaning |
 |---|---|---|
-| `primitive` | 23,014 | a language builtin (`i32`, `usize`, `type`, …) |
-| `local` | 17,811 | a node inside `src`'s own container (incl. `@This()`) |
-| `cross` | 15,459 | a node elsewhere in the tree |
-| `module` | 909 | outside the tree: an `@import` itself, or a path into a module that is not walked, kept whole (`builtin.os.tag`) |
-| `unresolved` | 1,354 | couldn't place it (comptime-built, exotic) |
-| `inline` | 849 | an inline `struct{…}`/`enum{…}` literal target |
-| `generic` | 1,192 | a comptime type parameter in scope |
+| `primitive` | 30,045 | a language builtin (`i32`, `usize`, `type`, …) |
+| `local` | 18,274 | a node inside `src`'s own container (incl. `@This()`) |
+| `cross` | 18,127 | a node elsewhere in the tree |
+| `module` | 1,111 | outside the tree: an `@import` itself, or a path into a module that is not walked, kept whole (`builtin.os.tag`) |
+| `unresolved` | 1,555 | couldn't place it (comptime-built, exotic) |
+| `inline` | 911 | an inline `struct{…}`/`enum{…}` literal target |
+| `generic` | 1,289 | a comptime type parameter in scope |
 
-**57,476 of 60,588 edges (98% of the resolvable ones)** land on a
-node, primitive, or generic param; 1,354 stay unresolved.
+**67,735 of 71,312 edges (98% of the resolvable ones)** land on a
+node, primitive, or generic param; 1,555 stay unresolved.
 
 the backward check in `zephem std` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to
@@ -130,7 +137,7 @@ honest "the compiler couldn't build this here", not a miss.
 statuses: `resolved` (3,162), `partial` (18 — some decls failed on their
 own), `poison` (15), `private` (920 — reachable only through a private
 decl, so not reflectable from outside its file: a fact about the path, not a failure) and
-`skipped` (217 — an uninstantiated `()` factory). The verifier re-derives the buckets
+`skipped` (1,844 — no Zig expression reaches it: an uninstantiated `()` factory, a `[…]` variant, a private `@"f.zig"` file node; or a switch-built `const` that is a container only through its variants, reflected as a decl of its parent). The verifier re-derives the buckets
 from this and reconciles them against `resolved`/`poison`.
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).

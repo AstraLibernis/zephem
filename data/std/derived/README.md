@@ -16,8 +16,8 @@ Built by `derive/index.zig` from `extracted/nodes.tsv`. One row per container, r
 where its block lives in the map. Columns: `path · line · span · depth · kind · n_children`.
 Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
 `line` (1-based, header-aware) + `span` (subtree size) pin the exact block, letting a
-consumer read one module in a single ranged read instead of scanning 68845 rows.
-**4,332 containers.**
+consumer read one module in a single ranged read instead of scanning 86046 rows.
+**5,959 containers.**
 
 ```sh
 zephem map show std.crypto.aead   # exactly that subtree, via the table of contents
@@ -33,8 +33,8 @@ Self-checked both ways: `index.zig` asserts root span == total rows and every sp
 non-match a miss, it **compares** them and tags every path by which witness sees it:
 `read+run` (both agree — 16,552), `run-only` (only when reflected, e.g. a generic
 member like `Sha256.digest_length` — 4,883), `read-only` (text read it but it
-can't run here: a private decl or one under a private or poison container, a failing decl, or the `std` root — 10,734). One row per path in
-`nodes ∪ resolved` (32,169), **zero blanks**. Verified by `zephem overlays --check`.
+can't run here: a private decl or one under a private or poison container, a failing decl, or the `std` root — 19,463). One row per path in
+`nodes ∪ resolved` (40,898), **zero blanks**. Verified by `zephem overlays --check`.
 
 ### `canon.tsv` — dedup / dealias families
 `path · canon`, from `zephem overlays` over `resolved.tsv` alone. The compiler resolves
@@ -46,22 +46,22 @@ collide on it. This surfaces exactly those collisions — **678 paths in
 ### `doccov.tsv` — documentation coverage
 `path · kind · documented`, from `zephem overlays` over `nodes.tsv` (every node) joined
 against the `doc` attributes (`attrs.tsv` where `attr == doc` — which paths carry a `///`
-doc). 1:1 with the whole map. On zig 0.17.0: **20% documented** (14,028
+doc). 1:1 with the whole map. On zig 0.17.0: **18% documented** (15,618
 nodes). Verified by `zephem overlays --check`.
 
 ### `sigshape.tsv` — signature shapes
 `path · first_param · io · generic`, from `zephem overlays` over the `sig` attributes
 (`attrs.tsv` where `attr == sig`). Classes each signature by first-param kind
 (`self`/`none`/`allocator`/`other`), whether it threads `Io`, and whether it's generic
-(`comptime`/`anytype`). **11,697 fns**, every field a closed set. Verified by
+(`comptime`/`anytype`). **12,421 fns**, every field a closed set. Verified by
 `zephem overlays --check`.
 
 ### `callcard.tsv` — as-written ⋈ resolved
 `path · witness · sig · resolved`, from `zephem overlays` — the merge of the `sig`
 attributes (as-written) and `resolved.tsv` (typed) on a normalized path. One row per
-callable (14,055): `both` (5,536 — the resolved column fills in real types
+callable (14,779): `both` (5,536 — the resolved column fills in real types
 where the source said `@This()`/`Self`), `reflect-only` (2,358), `parser-only`
-(6,161 — a private or uninstantiated-factory fn the compiler couldn't build here,
+(6,885 — a private or uninstantiated-factory fn the compiler couldn't build here,
 no resolved type). Verified by `zephem overlays --check`.
 
 ---

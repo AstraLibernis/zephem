@@ -101,13 +101,14 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     const all_targets = try selectTargets(a, c, index, only, filter, list, limit);
     const skips = try skipsFor(a, all_targets, kids);
+    const values = try valuesFor(a, all_targets, index);
     // --commit sweeps into a staging dir and installs into data_dir only after verify passes, so a
     // rejected sweep leaves the committed overlay untouched.
     const outdir = if (commit) try std.fs.path.join(a, &.{ scratch_root, "commit" }) else (out orelse try std.fs.path.join(a, &.{ scratch_root, "out" }));
 
     try w.print("[L5] reflecting {d} container(s) — {s}, {d} lanes, {d}s timeout per compile\n", .{ all_targets.len, @tagName(mode), jcount, timeout_s });
-    const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount, mode);
-    try w.print("[L5] resolved: {d} containers + {d} partial, {d} rows   poison: {d} containers + {d} decls   private: {d}   skipped: {d} (uninstantiated `()` factories)   attempted: {d}\n", .{ counts.resolved_containers, counts.partial, counts.resolved_rows, counts.poison, counts.decl_poison, counts.private, counts.skipped, counts.attempted });
+    const counts = try depth.sweep(c, all_targets, skips, values, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount, mode);
+    try w.print("[L5] resolved: {d} containers + {d} partial, {d} rows   poison: {d} containers + {d} decls   private: {d}   skipped: {d} (no expression reaches it, or a value its parent reflects)   attempted: {d}\n", .{ counts.resolved_containers, counts.partial, counts.resolved_rows, counts.poison, counts.decl_poison, counts.private, counts.skipped, counts.attempted });
     if (mode == .batched) try w.print("[L5] probe {d} ms ({d} compiles) · run {d} ms ({d} compiles) · {d} solo\n", .{ counts.probe_ms, counts.probe_compiles, counts.run_ms, counts.run_compiles, counts.solo_compiles });
     try w.flush();
 
@@ -142,10 +143,11 @@ fn proveReproducible(c: Ctx, index: rel.Table, kids: Kids, env: toolchain.Env, t
 
     const targets = try allPaths(a, index);
     const skips = try skipsFor(a, targets, kids);
+    const values = try valuesFor(a, targets, index);
     const dir_a = try std.fs.path.join(a, &.{ scratch_root, "check-a" });
     const dir_b = try std.fs.path.join(a, &.{ scratch_root, "check-b" });
-    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sa" }), dir_a, timeout_s, jcount, mode);
-    _ = try depth.sweep(c, targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sb" }), dir_b, timeout_s, jcount, mode);
+    _ = try depth.sweep(c, targets, skips, values, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sa" }), dir_a, timeout_s, jcount, mode);
+    _ = try depth.sweep(c, targets, skips, values, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "sb" }), dir_b, timeout_s, jcount, mode);
 
     var ok = true;
     for (names, 0..) |name, k| {
@@ -214,8 +216,12 @@ const Kids = std.StringHashMap(std.ArrayList([]const u8));
 fn buildKids(a: std.mem.Allocator, index: rel.Table) !Kids {
     var kids = Kids.init(a);
     const pi = index.col("path");
+    const ki = index.col("kind");
     for (index.rows) |r| {
         const path = r[pi];
+        // A const/alias is a container only through its `[…]` variants and is not reflected on
+        // its own turn (`valuesFor`), so its parent must descend into it as into any value.
+        if (std.mem.eql(u8, r[ki], "const") or std.mem.eql(u8, r[ki], "alias")) continue;
         const par = util.dottedParent(path);
         const child = util.lastSeg(path);
         const gop = try kids.getOrPut(par);
@@ -246,3 +252,19 @@ fn writeManifest(c: Ctx, data_dir: []const u8, out_path: []const u8) !void {
 }
 
 const mark = util.mark;
+
+/// Per target: is it a `const` or `alias` in the index? Such a node is a container only because
+/// it has `[…]` variants under it (a per-platform switch); its value is reflected as a decl of its
+/// parent, so it is not reflected again on its own.
+fn valuesFor(a: std.mem.Allocator, targets: []const []const u8, index: rel.Table) ![]const bool {
+    var kind: std.StringHashMapUnmanaged([]const u8) = .empty;
+    const pi = index.col("path");
+    const ki = index.col("kind");
+    for (index.rows) |r| try kind.put(a, r[pi], r[ki]);
+    const out = try a.alloc(bool, targets.len);
+    for (targets, out) |t, *o| {
+        const k = kind.get(t) orelse "";
+        o.* = std.mem.eql(u8, k, "const") or std.mem.eql(u8, k, "alias");
+    }
+    return out;
+}

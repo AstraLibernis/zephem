@@ -14,6 +14,7 @@ const root_zig =
     \\pub const mem = @import("mem.zig");
     \\pub const Tbl = @import("tbl.zig");
     \\pub const Other = @import("other.zig");
+    \\pub const DynLib = @import("dl.zig").DynLib;
     \\pub const is_debug = @import("builtin").mode == .Debug;
     \\pub const os_tag = builtin.os.tag;
     \\
@@ -54,6 +55,17 @@ const mem_zig =
     \\    return a + b;
     \\}
     \\extern "kernel32" fn GetTick() u32;
+    \\const native_os = @import("builtin").os.tag;
+    \\const linux = struct {
+    \\    pub const P = u8;
+    \\};
+    \\pub const Proto = switch (native_os) {
+    \\    .linux, .emscripten => linux.P,
+    \\    .macos => struct {
+    \\        pub const TCP = 6;
+    \\    },
+    \\    else => void,
+    \\};
     \\
 ;
 
@@ -73,10 +85,21 @@ const tbl_zig =
     \\
 ;
 
+// Reached only through `@import("dl.zig").DynLib`: its private helper and its test have no
+// other home, and `ElfErr` inside DynLib is this file's name.
+const dl_zig =
+    \\const ElfErr = error{Elf};
+    \\pub const DynLib = struct {
+    \\    pub const Error = ElfErr || error{Other};
+    \\};
+    \\test DynLib {}
+    \\
+;
+
 const Out = struct { nodes: []const u8, edges: []const u8, attrs: []const u8 };
 
 fn extract(a: std.mem.Allocator, io: std.Io, tmp: std.testing.TmpDir) !Out {
-    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig } };
+    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig } };
     for (files) |f| try tmp.dir.writeFile(io, .{ .sub_path = f[0], .data = f[1] });
     const base = try tmp.dir.realPathFileAlloc(io, ".", a);
     const p = struct {
@@ -148,4 +171,19 @@ test "extractor: every fixed case produces its row" {
     // Imports are per file: `uefi` is std.mem in one file and a local struct in the other.
     try expectRow(o.edges, "std.Other.UseA\talias\tstd.mem.Allocator\tcross");
     try expectRow(o.edges, "std.Tbl.UseB\talias\tstd.Tbl.uefi.Allocator\tlocal");
+    // Each arm of a platform switch is a variant node, with its condition.
+    try expectRow(o.nodes, "std.mem.Proto.[linux,emscripten]\talias\t[linux,emscripten]\tpub");
+    try expectRow(o.edges, "std.mem.Proto.[linux,emscripten]\talias\tstd.mem.linux.P\tcross");
+    try expectRow(o.attrs, "std.mem.Proto.[linux,emscripten]\twhen\t.linux, .emscripten");
+    try expectRow(o.nodes, "std.mem.Proto.[macos].TCP\tconst\tTCP\tpub");
+    try expectRow(o.attrs, "std.mem.Proto.[macos].TCP\tvalue\t6");
+    try expectRow(o.nodes, "std.mem.Proto.[else]\talias\t[else]\tpub");
+    try expectRow(o.edges, "std.mem.Proto.[else]\talias\tvoid\tprimitive");
+    // A file reached only through `@import("dl.zig").DynLib` keeps the rest of itself under a
+    // private node, DynLib's names resolve in it, and its test lands on DynLib.
+    try expectRow(o.nodes, "std.@\"dl.zig\"\tns\t@\"dl.zig\"\tpriv");
+    try expectRow(o.nodes, "std.@\"dl.zig\".ElfErr\tconst\tElfErr\tpriv");
+    try expectRow(o.edges, "std.DynLib.Error\terror_set\tstd.@\"dl.zig\".ElfErr\tcross");
+    try expectRow(o.attrs, "std.DynLib\texample\ttest DynLib {}");
+    try expectNoRow(o.nodes, "std.@\"dl.zig\".DynLib\tstruct\tDynLib\tpub");
 }

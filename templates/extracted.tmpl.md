@@ -29,7 +29,13 @@ All three key on the same dotted `path`, so they re-join without a lookup table.
 The whole `std` namespace tree, one row per node. A node is a declaration (public **or**
 private), a struct/union **field**, an enum **tag**, or a **type-factory member** (a member
 of the type a `fn(…) type` returns, pathed under `<fn>()` — e.g. `std.MultiArrayList().append`;
-the `()` marks "instantiate first"). **@@N_NODES@@ rows** (@@N_PUB@@ pub / @@N_PRIV@@ priv)
+the `()` marks "instantiate first"). Two more node shapes keep what has no access path of its
+own: a **variant** — one arm of a const chosen per platform or option (`switch (native_os) {…}`,
+`if (cond) A else B`), pathed `<const>.[<label>]` like a tuple field's `[0]` (e.g.
+`std.c.IPPROTO.[macos].TCP`; the label is the prong's tags, its `when` attr the full condition)
+— and a **file node** `<owner>.@"f.zig"` (private), holding the rest of a file that std reaches
+only through `@import("f.zig").Sel` (its private helpers and tests; `Sel` itself is at its
+re-export path, and resolves its names in this file). **@@N_NODES@@ rows** (@@N_PUB@@ pub / @@N_PRIV@@ priv)
 across **@@N_FILES@@ files**, max depth **@@MAXDEPTH@@**.
 Columns: `path · kind · name · vis`  (`vis ∈ pub · priv`).
 `kind ∈ ns · nsref · nserr · modref · struct · enum · union · opaque · fn · const · alias · field · tag`.
@@ -42,12 +48,13 @@ itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
 `path · attr · value`. Sparse: a row exists only where the fact is present. **@@N_ATTRS@@ rows**
-across eight attributes:
+across nine attributes:
 
 | attr | value | count |
 |---|---|---|
 | `loc` | source location `file:line` (root-relative, machine-independent) | @@N_LOC@@ |
 | `value` | a `field`'s default, or a `const`'s initializer as written (whitespace-collapsed, never shortened) | @@N_VALUES@@ |
+| `when` | a variant's condition: its switch prong's values (`.linux, .emscripten`, `else`) or its `if` condition | @@N_WHEN@@ |
 | `type` | the type as written on a `field`, or on a `const`/`var` declared `: T` (the `has_type` edge keeps only the name it references: `?*Node` → `Node`) | @@N_TYPES@@ |
 | `doc` | the decl's `///` doc-comment, whitespace-collapsed; a file's namespace adds the file's own `//!` doc | @@N_DOCS@@ |
 | `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | @@N_SIGS@@ |
@@ -129,7 +136,7 @@ honest "the compiler couldn't build this here", not a miss.
 statuses: `resolved` (@@N_RES_CONT@@), `partial` (@@N_PARTIAL@@ — some decls failed on their
 own), `poison` (@@N_POISON_CONT@@), `private` (@@N_PRIVATE@@ — reachable only through a private
 decl, so not reflectable from outside its file: a fact about the path, not a failure) and
-`skipped` (@@N_SKIPPED@@ — an uninstantiated `()` factory). The verifier re-derives the buckets
+`skipped` (@@N_SKIPPED@@ — no Zig expression reaches it: an uninstantiated `()` factory, a `[…]` variant, a private `@"f.zig"` file node; or a switch-built `const` that is a container only through its variants, reflected as a decl of its parent). The verifier re-derives the buckets
 from this and reconciles them against `resolved`/`poison`.
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).

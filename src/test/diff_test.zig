@@ -495,3 +495,68 @@ test "changed declarations carry their signature failure mode; doc-only changes 
     try std.testing.expect(std.mem.find(u8, t, "changed\textracted\tstd.x.f\tfn\tfn\tfn f(a: u32) void\tfn f(a: u64) void\ttypes\n") != null);
     try std.testing.expect(std.mem.find(u8, t, "doc_changed\textracted\tstd.x.g\t\t\tReturns the thing.\tReturns the thing. It is now cached and no longer allocates.\thint\n") != null);
 }
+
+test "variants: platform arms compared per tag; a relabelled arm is not removed and re-added; a tuple field is not an arm" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    const on =
+        "path\tkind\tname\tvis\n" ++
+        "std\tns\tstd\tpub\n" ++
+        "std.c\tns\tc\tpub\n" ++
+        "std.c.P\tconst\tP\tpub\n" ++
+        "std.c.P.[linux]\talias\t[linux]\tpub\n" ++
+        "std.c.P.[macos,ios]\tstruct\t[macos,ios]\tpub\n" ++
+        "std.c.P.[macos,ios].TCP\tconst\tTCP\tpub\n" ++
+        "std.c.P.[macos,ios].UDP\tconst\tUDP\tpub\n" ++
+        "std.c.P.[wasi]\tconst\t[wasi]\tpub\n" ++
+        "std.c.P.[freebsd]\tstruct\t[freebsd]\tpub\n" ++
+        "std.c.P.[freebsd].A\tconst\tA\tpub\n" ++
+        "std.c.P.[freebsd].B\tconst\tB\tpub\n" ++
+        "std.c.T\tstruct\tT\tpub\n" ++
+        "std.c.T.[0]\tfield\t[0]\tpub\n";
+    const nn =
+        "path\tkind\tname\tvis\n" ++
+        "std\tns\tstd\tpub\n" ++
+        "std.c\tns\tc\tpub\n" ++
+        "std.c.P\tconst\tP\tpub\n" ++
+        "std.c.P.[linux]\talias\t[linux]\tpub\n" ++
+        "std.c.P.[macos,ios,maccatalyst]\tstruct\t[macos,ios,maccatalyst]\tpub\n" ++
+        "std.c.P.[macos,ios,maccatalyst].TCP\tconst\tTCP\tpub\n" ++
+        "std.c.P.[macos,ios,maccatalyst].RAW\tconst\tRAW\tpub\n" ++
+        "std.c.P.[freebsd]\tstruct\t[freebsd]\tpub\n" ++
+        "std.c.P.[freebsd].A\tconst\tA\tpub\n" ++
+        "std.c.T\tstruct\tT\tpub\n";
+    const attrs = "path\tattr\tvalue\n";
+    const r = try diff.analyze(a, try diff.loadSideBytes(a, on, attrs), try diff.loadSideBytes(a, nn, attrs), false);
+
+    // No arm path is listed as removed or added; the tuple field is.
+    for (r.changes) |ch| try std.testing.expect(diff.variantOf(ch.path) == null);
+    try std.testing.expect(findChange(r.changes, "std.c.T.[0]") != null);
+
+    try std.testing.expectEqual(@as(usize, 1), r.variants.len);
+    const v = r.variants[0];
+    try std.testing.expectEqualStrings("std.c.P", v.path);
+    try std.testing.expectEqual(@as(usize, 1), v.tags_added.len);
+    try std.testing.expectEqualStrings("maccatalyst", v.tags_added[0]);
+    try std.testing.expectEqual(@as(usize, 1), v.tags_removed.len);
+    try std.testing.expectEqualStrings("wasi", v.tags_removed[0]);
+    try std.testing.expectEqual(@as(usize, 3), v.members.len); // freebsd -B; ios and macos +RAW -UDP; linux unchanged
+    try std.testing.expectEqualStrings("freebsd", v.members[0].tag);
+    try std.testing.expectEqual(@as(usize, 0), v.members[0].added);
+    try std.testing.expectEqual(@as(usize, 1), v.members[0].removed);
+    try std.testing.expectEqualStrings("ios", v.members[1].tag);
+    try std.testing.expectEqual(@as(usize, 1), v.members[1].added);
+    try std.testing.expectEqual(@as(usize, 1), v.members[1].removed);
+
+    var tw: std.Io.Writer.Allocating = .init(a);
+    try diff.report(a, &tw.writer, "a", "b", r, .{ .tsv = true });
+    const t = tw.writer.buffered();
+    try std.testing.expect(std.mem.find(u8, t, "variant_tag_added\textracted\tstd.c.P\t\t\t\tmaccatalyst\t\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "variant_tag_removed\textracted\tstd.c.P\t\t\twasi\t\t\n") != null);
+    try std.testing.expect(std.mem.find(u8, t, "variant_members\textracted\tstd.c.P\t\t\t-1\t+1\tmacos\n") != null);
+
+    var hw: std.Io.Writer.Allocating = .init(a);
+    try diff.report(a, &hw.writer, "a", "b", r, .{});
+    try std.testing.expect(std.mem.find(u8, hw.writer.buffered(), "- `std.c.P`: +maccatalyst -wasi · [freebsd] +0 -1 · [ios] +1 -1 · [macos] +1 -1\n") != null);
+}

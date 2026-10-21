@@ -181,6 +181,7 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_MOD@@", try commafy(a, eqCount(attrs, "attr", "mod")));
     try add(&list, a, "@@N_ERRMEMBER@@", try commafy(a, eqCount(attrs, "attr", "errmember")));
     try add(&list, a, "@@N_TYPES@@", try commafy(a, eqCount(attrs, "attr", "type")));
+    try add(&list, a, "@@N_WHEN@@", try commafy(a, eqCount(attrs, "attr", "when")));
     try add(&list, a, "@@N_FIELDS@@", try commafy(a, fields));
     try add(&list, a, "@@N_EDGES@@", try commafy(a, edges.rows.len));
     try add(&list, a, "@@N_BUILTINS@@", try commafy(a, builtins.rows.len));

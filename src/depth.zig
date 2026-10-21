@@ -70,6 +70,7 @@ const SweepCtx = struct {
     timeout_s: u32,
     targets: []const []const u8,
     skips: []const []const []const u8, // per-target direct-child names to SKIP
+    values: []const bool, // per-target: a const or alias (a value its parent reflects), not a container
 };
 
 /// Reflect the whole target set into `outdir` (writes extracted/{status,resolved,poison}.tsv),
@@ -78,6 +79,7 @@ pub fn sweep(
     c: Ctx,
     targets: []const []const u8,
     skips: []const []const []const u8,
+    values: []const bool,
     zig_exe: []const u8,
     template: []const u8,
     std_dir: []const u8,
@@ -99,6 +101,7 @@ pub fn sweep(
         .timeout_s = timeout_s,
         .targets = targets,
         .skips = skips,
+        .values = values,
     };
     var phases: Phases = .{};
     const results = switch (mode) {
@@ -170,7 +173,7 @@ fn reflectOne(cx: SweepCtx, i: usize) One {
     // reflected standalone (the compiler needs the type args), so it would only ever poison.
     // Skip it structurally (no compile, no wasted process) — its real members are Phase D
     // (instantiate the generic, then reflect). Provably safe: no `()` container resolves.
-    if (std.mem.find(u8, path, "()") != null) return skippedOne(a, path);
+    if (notAnExpression(path) or cx.values[i]) return skippedOne(a, path);
 
     const rfile = a.print("{s}/r-{d}.zig", .{ cx.scratch_dir, i }) catch return poisonOne(a, path, "scratch alloc failed");
     return soloReflect(a, cx.io, cx.zig_exe, cx.template, cx.std_dir, cx.timeout_s, path, skip, rfile);
@@ -579,10 +582,10 @@ fn sweepBatched(c: Ctx, sctx: SweepCtx, jobs: usize, phases: *Phases) ![]One {
     const settled = try c.a.alloc(bool, n);
     @memset(settled, false);
 
-    // `()` factory containers are skipped structurally, exactly as in the solo path
+    // `()` factories and `[…]` variants are skipped structurally, exactly as in the solo path
     var todo: std.ArrayList(usize) = .empty;
     for (sctx.targets, 0..) |path, i| {
-        if (std.mem.find(u8, path, "()") != null) {
+        if (notAnExpression(path) or sctx.values[i]) {
             results[i] = skippedOne(c.a, path);
             settled[i] = true;
         } else try todo.append(c.a, i);
@@ -878,4 +881,13 @@ fn split(
     const mid = set.len / 2;
     try again(a, s, set[0..mid], g, depth + 1, out);
     try again(a, s, set[mid..], g, depth + 1, out);
+}
+
+/// A container no Zig expression reaches, so there is nothing to reflect: an uninstantiated `()`
+/// factory (the compiler needs its type args), a `[…]` switch/if variant (one platform's arm,
+/// not this target's value — the const itself is reflected), or a private file node `@"f.zig"`
+/// (the rest of a file std reaches only through a re-export).
+fn notAnExpression(path: []const u8) bool {
+    return std.mem.find(u8, path, "()") != null or std.mem.find(u8, path, ".[") != null or
+        std.mem.find(u8, path, ".zig\"") != null;
 }

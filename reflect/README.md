@@ -38,7 +38,8 @@ Every container in the map is swept, with one of five outcomes — it **resolved
 halves, and the rest are reflected); it's **poison** (the container itself fails); it's
 **private** (reachable only through a private decl, so not reflectable from outside its file);
 or it's **skipped** (an uninstantiated `()` factory: no type args, so there is nothing to reflect
-yet).
+yet; a `[…]` switch/if variant: one platform's arm, while the const itself is reflected for this
+target, as a decl of its parent; or a private `@"f.zig"` file node, which no expression reaches).
 
 | dataset | purpose | shape |
 |---|---|---|
@@ -46,7 +47,7 @@ yet).
 | `poison.tsv` | what *didn't* resolve — a poison container, or a failing decl of a partial one — each with the compiler's own first error line (platform / foreign lib / libc / `@compileError` / timeout) | `path · reason` |
 | `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the five buckets from it | `path · status · n_rows` |
 
-On zig 0.17.0: **4,332 containers swept → 3,162 resolved + 18 partial (21,527 rows) / 15 poison + 893 failing decls / 920 private / 217 skipped.**
+On zig 0.17.0: **5,959 containers swept → 3,162 resolved + 18 partial (21,527 rows) / 15 poison + 893 failing decls / 920 private / 1,844 skipped.**
 
 ### Planned — the same sweep, more facts
 

@@ -37,7 +37,8 @@ Every container in the map is swept, with one of five outcomes — it **resolved
 halves, and the rest are reflected); it's **poison** (the container itself fails); it's
 **private** (reachable only through a private decl, so not reflectable from outside its file);
 or it's **skipped** (an uninstantiated `()` factory: no type args, so there is nothing to reflect
-yet).
+yet; a `[…]` switch/if variant: one platform's arm, while the const itself is reflected for this
+target, as a decl of its parent; or a private `@"f.zig"` file node, which no expression reaches).
 
 | dataset | purpose | shape |
 |---|---|---|

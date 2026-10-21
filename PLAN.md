@@ -42,8 +42,8 @@ never folded into the base.
 5. **the shape model** (2026-07) — the parser was rebuilt around the insight that every node has
    exactly three kinds of fact: the **Tree** (where it sits), its **Attributes** (facts it carries),
    and its **Edges** (typed references it makes). The old side-files (`sigs`/`docs`/`fields`/
-   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (144,975 facts) and
-   `edges.tsv` (60,588 resolved references) — keyed to `nodes.tsv` by `path`. The parser now
+   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (185,340 facts) and
+   `edges.tsv` (71,312 resolved references) — keyed to `nodes.tsv` by `path`. The parser now
    **follows `@import`** (one organism), **includes private decls** (`vis`), and **resolves each
    edge's reach** in a second pass. The `n_children` conservation law is retired; integrity is now
    referential (connected tree · attrs key on nodes · edges resolve to nodes).
@@ -91,18 +91,18 @@ Everything below is self-verifying and byte-identical on rerun.
 
 | piece | built by | status |
 |---|---|---|
-| **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, 68,845 nodes (61,592 pub / 7,253 priv) / 343 files, depth 8; connectivity-checked |
-| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 144,975 facts keyed by `path`: 11,697 sigs · 14,028 `///` docs · 32,299 field/const values · 68,844 locations · 1,520 test bodies · 1,344 modifiers · 485 error members; each keys onto a real node |
-| **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 60,588 typed refs (51,995 has_type · 3,202 alias · 4,035 error_set · 842 imports · 31 delegates), resolved to a scope; 98% of resolvable ones land on a node/primitive; local/cross verified to resolve |
+| **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, 86,046 nodes (77,266 pub / 8,780 priv) / 484 files, depth 8; connectivity-checked |
+| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 185,340 facts keyed by `path`: 12,421 sigs · 15,618 `///` docs · 44,065 field/const values · 86,045 locations · 1,927 test bodies · 1,376 modifiers · 490 error members; each keys onto a real node |
+| **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 71,312 typed refs (60,256 has_type · 5,200 alias · 4,076 error_set · 1,025 imports · 31 delegates), resolved to a scope; 98% of resolvable ones land on a node/primitive; local/cross verified to resolve |
 | **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
-| **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,520 `test {}` bodies, escaped to one row, anchored to the enclosing node |
-| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 4,332 containers, self-checked both ways |
+| **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,927 `test {}` bodies, escaped to one row, anchored to the enclosing node |
+| **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 5,959 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,162 resolved + 18 partial / 15 poison containers + 893 failing decls / 920 private, zero dups |
-| **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 16,552 / run-only 4,883 / read-only 10,734; 0 blanks |
+| **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 16,552 / run-only 4,883 / read-only 19,463; 0 blanks |
 | **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ 678 paths in 265 alias/dup families (shared resolved `@typeName`); self-checked |
-| **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 20% of nodes documented (14,028 carry `///` docs); per-kind, self-checked vs map + docs overlay |
-| **signature shapes** — `sigshape.tsv` | `zephem overlays` | ✅ 11,697 signatures classed by first-param / Io / generic; self-checked vs the `sig` attrs |
-| **call-card** — `callcard.tsv` | `zephem overlays` | ✅ sigs ⋈ resolved merge, 14,055 callables: 5,536 both / 2,358 reflect-only / 6,161 parser-only |
+| **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 18% of nodes documented (15,618 carry `///` docs); per-kind, self-checked vs map + docs overlay |
+| **signature shapes** — `sigshape.tsv` | `zephem overlays` | ✅ 12,421 signatures classed by first-param / Io / generic; self-checked vs the `sig` attrs |
+| **call-card** — `callcard.tsv` | `zephem overlays` | ✅ sigs ⋈ resolved merge, 14,779 callables: 5,536 both / 2,358 reflect-only / 6,885 parser-only |
 | **doc regeneration** | `zephem docs` | ✅ every markdown doc regenerated from `templates/` with live numbers from `data/std/`; byte-identical on `--check` |
 | **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `zephem depth --check` (full sweep, machine-dependent) |
 
@@ -120,7 +120,7 @@ reported *as data* (an example-coverage overlay), never filled: writing a missin
 developer's job, and a fabricated row would carry false authority and break the "if a row is wrong,
 Zig said so" contract.
 
-1. **L4 — usage examples, harvested + cross-linked.** The 1,520 `test {}` bodies are already
+1. **L4 — usage examples, harvested + cross-linked.** The 1,927 `test {}` bodies are already
    captured (`attrs`, `example`), each anchored to its enclosing node. Two steps make them a real
    usage layer, no authoring:
    - **run them** (executing verification — a captured test that no longer compiles is stale signal);
@@ -184,7 +184,7 @@ are descended under `<fn>()`; `@import` is followed into one organism.
 
 ## Performance — what makes the L5 sweep faster, and what doesn't
 
-The sweep reflects **4332 containers**. Measured cold (benchfence, release build, one
+The sweep reflects **5959 containers**. Measured cold (benchfence, release build, one
 pinned core, the compiler cache wiped before every sample): a `zig run` of one container costs
 **169 ms**, and **~140 ms of that is analysing std's startup code** (`start.zig`,
 `std.process.Init`, `Io`) before it reaches the container; a container that fails to compile still

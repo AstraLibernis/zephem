@@ -1,4 +1,29 @@
 path	witness	sig	resolved
+std.@"deque.zig".FuzzAllocator.alloc	parser-only	fn alloc(ctx: *anyopaque, len: usize, a: std.mem.Alignment, _: usize) ?[*]u8	
+std.@"deque.zig".FuzzAllocator.allocCount	parser-only	fn allocCount(f: *FuzzAllocator) u2	
+std.@"deque.zig".FuzzAllocator.allocator	parser-only	fn allocator(f: *FuzzAllocator) std.mem.Allocator	
+std.@"deque.zig".FuzzAllocator.free	parser-only	fn free(ctx: *anyopaque, mem: []u8, a: std.mem.Alignment, _: usize) void	
+std.@"deque.zig".FuzzAllocator.init	parser-only	fn init(smith: *std.testing.Smith) FuzzAllocator	
+std.@"deque.zig".FuzzAllocator.memSlot	parser-only	fn memSlot(f: *FuzzAllocator, mem: []u8) u1	
+std.@"deque.zig".FuzzAllocator.remap	parser-only	fn remap(ctx: *anyopaque, mem: []u8, a: std.mem.Alignment, new_len: usize, _: usize) ?[*]u8	
+std.@"deque.zig".FuzzAllocator.resize	parser-only	fn resize(ctx: *anyopaque, mem: []u8, a: std.mem.Alignment, new_len: usize, _: usize) bool	
+std.@"deque.zig".addOrOom	parser-only	fn addOrOom(a: usize, b: usize) error{OutOfMemory}!usize	
+std.@"deque.zig".fuzzAgainstArrayList	parser-only	fn fuzzAgainstArrayList(_: void, smith: *std.testing.Smith) anyerror!void	
+std.@"priority_dequeue.zig".contextLessThanComparison	parser-only	fn contextLessThanComparison(context: []const u32, a: usize, b: usize) Order	
+std.@"priority_dequeue.zig".fuzzTestMax	parser-only	fn fuzzTestMax(rng: std.Random, queue_size: usize) !void	
+std.@"priority_dequeue.zig".fuzzTestMin	parser-only	fn fuzzTestMin(rng: std.Random, comptime queue_size: usize) !void	
+std.@"priority_dequeue.zig".fuzzTestMinMax	parser-only	fn fuzzTestMinMax(rng: std.Random, queue_size: usize) !void	
+std.@"priority_dequeue.zig".generateRandomSlice	parser-only	fn generateRandomSlice(allocator: std.mem.Allocator, rng: std.Random, size: usize) ![]u32	
+std.@"priority_dequeue.zig".lessThanComparison	parser-only	fn lessThanComparison(context: void, a: u32, b: u32) Order	
+std.@"priority_queue.zig".contextLessThan	parser-only	fn contextLessThan(context: []const u32, a: usize, b: usize) Order	
+std.@"priority_queue.zig".greaterThan	parser-only	fn greaterThan(context: void, a: u32, b: u32) Order	
+std.@"priority_queue.zig".lessThan	parser-only	fn lessThan(context: void, a: u32, b: u32) Order	
+std.@"treap.zig".SliceIterRandomOrder	parser-only	fn SliceIterRandomOrder(comptime T: type) type	
+std.@"treap.zig".SliceIterRandomOrder().init	parser-only	fn init(slice: []T, rng: std.Random) Self	
+std.@"treap.zig".SliceIterRandomOrder().next	parser-only	fn next(self: *Self) ?*T	
+std.@"treap.zig".SliceIterRandomOrder().reset	parser-only	fn reset(self: *Self) void	
+std.@"treap.zig".findFirstGreaterOrEqual	parser-only	fn findFirstGreaterOrEqual(array: []u64, value: u64) usize	
+std.@"treap.zig".testOrderedArrayAndTreapConsistency	parser-only	fn testOrderedArrayAndTreapConsistency(array: []u64, treap: *TestTreap) !void	
 std.ArrayHashMapUnmanaged	reflect-only		fn (comptime type, comptime type, comptime type, comptime bool) type
 std.ArrayList	both	fn ArrayList(comptime T: type) type	fn (comptime type) type
 std.ArrayListAligned	reflect-only		fn (comptime type, comptime ?mem.Alignment) type
@@ -1744,10 +1769,14 @@ std.Io.Threaded.AlertableSyscall.finish	parser-only	fn finish(s: AlertableSyscal
 std.Io.Threaded.AlertableSyscall.ntstatusBug	parser-only	fn ntstatusBug(s: AlertableSyscall, status: windows.NTSTATUS) Io.UnexpectedError	
 std.Io.Threaded.AlertableSyscall.start	parser-only	fn start() Io.Cancelable!AlertableSyscall	
 std.Io.Threaded.AlertableSyscall.unexpectedNtstatus	parser-only	fn unexpectedNtstatus(s: AlertableSyscall, status: windows.NTSTATUS) Io.UnexpectedError	
+std.Io.Threaded.Argv0.[else].init	parser-only	fn init(args: process.Args) Argv0	
+std.Io.Threaded.Argv0.[openbsd,haiku].init	parser-only	fn init(args: process.Args) Argv0	
 std.Io.Threaded.Argv0.init	reflect-only		fn (process.Args) Io.Threaded.Argv0__struct
 std.Io.Threaded.AwaitableId.fromFuture	parser-only	fn fromFuture(f: *Future) AwaitableId	
 std.Io.Threaded.AwaitableId.fromGroup	parser-only	fn fromGroup(g: *Io.Group) AwaitableId	
 std.Io.Threaded.Csprng.isInitialized	both	fn isInitialized(c: *const Csprng) bool	fn (*const Io.Threaded.Csprng) bool
+std.Io.Threaded.Dl.[else].deinit	parser-only	fn deinit(_: Dl) void	
+std.Io.Threaded.Dl.[windows].deinit	parser-only	fn deinit(dl: *Dl) void	
 std.Io.Threaded.Environ.scan	both	fn scan(environ: *Environ, allocator: Allocator) void	fn (*Io.Threaded.Environ, mem.Allocator) void
 std.Io.Threaded.Future.contextPointer	parser-only	fn contextPointer(future: *Future) [*]u8	
 std.Io.Threaded.Future.create	parser-only	fn create( gpa: Allocator, result_len: usize, result_alignment: Alignment, context: []const u8, context_alignment: Alignment, func: *const fn (context: *const anyopaque, result: *anyopaque) void, ) Allocator.Error!*Future	
@@ -1767,12 +1796,18 @@ std.Io.Threaded.Group.status	parser-only	fn status(g: Group) *std.atomic.Value(S
 std.Io.Threaded.Group.waitForCancelWithSignaling	parser-only	fn waitForCancelWithSignaling( g: Group, t: *Threaded, num_completed: *std.atomic.Value(u32), skip_signals: bool, ) void	
 std.Io.Threaded.LookupDnsWindows.completed	parser-only	fn completed( pQueryContext: ?*anyopaque, pQueryResults: *windows.DNS.QUERY.RESULT, ) callconv(.winapi) void	
 std.Io.Threaded.LookupDnsWindows.completedFallible	parser-only	fn completedFallible(lookup_dns: *LookupDnsWindows) (Io.QueueClosedError || Io.Cancelable)!void	
+std.Io.Threaded.NullFile.[else].deinit	parser-only	fn deinit(this: *@This()) void	
+std.Io.Threaded.NullFile.[wasi,ios,tvos,visionos,watchos].deinit	parser-only	fn deinit(this: @This()) void	
+std.Io.Threaded.NullFile.[windows].deinit	parser-only	fn deinit(this: *@This()) void	
 std.Io.Threaded.OpenFile	parser-only	fn OpenFile(sub_path_w: []const u16, options: OpenFileOptions) OpenError!windows.HANDLE	
 std.Io.Threaded.ParkingMutex.State.fromWaiter	parser-only	fn fromWaiter(w: ?*Waiter) State	
 std.Io.Threaded.ParkingMutex.State.waiter	parser-only	fn waiter(s: State) ?*Waiter	
 std.Io.Threaded.ParkingMutex.lock	parser-only	fn lock(m: *ParkingMutex) void	
 std.Io.Threaded.ParkingMutex.unlock	parser-only	fn unlock(m: *ParkingMutex) void	
+std.Io.Threaded.PipeFile.[else].deinit	parser-only	fn deinit(this: @This()) void	
+std.Io.Threaded.PipeFile.[windows].deinit	parser-only	fn deinit(this: *@This()) void	
 std.Io.Threaded.QueryObjectName	both	fn QueryObjectName(handle: windows.HANDLE, out_buffer: []u16) QueryObjectNameError![]u16	fn (*anyopaque, []u16) error{AccessDenied,InvalidHandle,NameTooLong,Unexpected}![]u16
+std.Io.Threaded.RandomFile.[else].[else].deinit	parser-only	fn deinit(this: @This()) void	
 std.Io.Threaded.Syscall.checkCancel	parser-only	fn checkCancel(s: Syscall) Io.Cancelable!void	
 std.Io.Threaded.Syscall.errnoBug	parser-only	fn errnoBug(s: Syscall, err: posix.E) Io.UnexpectedError	
 std.Io.Threaded.Syscall.fail	parser-only	fn fail(s: Syscall, err: anytype) @TypeOf(err)	
@@ -2397,6 +2432,8 @@ std.Io.Uring.stat	parser-only	fn stat(ev: *Evented, cancel_region: *CancelRegion
 std.Io.Uring.statx	parser-only	fn statx( ev: *Evented, cancel_region: *CancelRegion, dir: fd_t, path: [*:0]const u8, flags: u32, ) (Dir.StatError || Dir.PathNameError || error{ FileNotFound, NotDir, SymLinkLoop })!Dir.Stat	
 std.Io.Uring.swapCancelProtection	parser-only	fn swapCancelProtection(userdata: ?*anyopaque, new: Io.CancelProtection) Io.CancelProtection	
 std.Io.Uring.threadEntry	parser-only	fn threadEntry(ev: *Evented, index: u32) void	
+std.Io.Uring.tracy.[else].fiberEnter	parser-only	fn fiberEnter(fiber: [*:0]const u8) void	
+std.Io.Uring.tracy.[else].fiberLeave	parser-only	fn fiberLeave() void	
 std.Io.Uring.tryLockStderr	parser-only	fn tryLockStderr( userdata: ?*anyopaque, terminal_mode: ?Io.Terminal.Mode, ) Io.Cancelable!?Io.LockedStderr	
 std.Io.Uring.unlockStderr	parser-only	fn unlockStderr(userdata: ?*anyopaque) void	
 std.Io.Uring.urandomReadAll	parser-only	fn urandomReadAll( ev: *Evented, cancel_region: *CancelRegion, buffer: []u8, ) (File.OpenError || File.Reader.Error || error{EndOfStream})!void	
@@ -2751,6 +2788,8 @@ std.Io.unreachableRecancel	both	fn unreachableRecancel(userdata: ?*anyopaque) vo
 std.Io.unreachableSwapCancelProtection	both	fn unreachableSwapCancelProtection(userdata: ?*anyopaque, new: CancelProtection) CancelProtection	fn (?*anyopaque, Io.CancelProtection) Io.CancelProtection
 std.Io.unreachableUnlockStderr	both	fn unreachableUnlockStderr(userdata: ?*anyopaque) void	fn (?*anyopaque) void
 std.MultiArrayList	both	fn MultiArrayList(comptime T: type) type	fn (comptime type) type
+std.MultiArrayList().Elem.[arm1].fromT	parser-only	fn fromT(outer: T) @This()	
+std.MultiArrayList().Elem.[arm1].toT	parser-only	fn toT(tag: Tag, bare: Bare) T	
 std.MultiArrayList().FieldType	parser-only	fn FieldType(comptime field: Field) type	
 std.MultiArrayList().Slice.dbHelper	parser-only	fn dbHelper(self: *Slice, child: *Elem, field: *Field, entry: *Entry) void	
 std.MultiArrayList().Slice.deinit	parser-only	fn deinit(self: *Slice, gpa: Allocator) void	
@@ -4001,12 +4040,178 @@ std.c.S.ISFIFO	reflect-only		fn (u32) bool
 std.c.S.ISLNK	reflect-only		fn (u32) bool
 std.c.S.ISREG	reflect-only		fn (u32) bool
 std.c.S.ISSOCK	reflect-only		fn (u32) bool
+std.c.S.[dragonfly].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[dragonfly].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[dragonfly].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[dragonfly].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[dragonfly].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[dragonfly].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[dragonfly].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[dragonfly].IWHT	parser-only	fn IWHT(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].IWHT	parser-only	fn IWHT(m: u32) bool	
+std.c.S.[freebsd].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[freebsd].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[freebsd].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[freebsd].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[freebsd].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[freebsd].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[freebsd].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[freebsd].IWHT	parser-only	fn IWHT(m: u32) bool	
+std.c.S.[haiku].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[haiku].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[haiku].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[haiku].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[haiku].ISINDEX	parser-only	fn ISINDEX(m: u32) bool	
+std.c.S.[haiku].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[haiku].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[haiku].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[illumos].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[illumos].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[illumos].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[illumos].ISDOOR	parser-only	fn ISDOOR(m: u32) bool	
+std.c.S.[illumos].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[illumos].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[illumos].ISPORT	parser-only	fn ISPORT(m: u32) bool	
+std.c.S.[illumos].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[illumos].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[netbsd].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[netbsd].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[netbsd].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[netbsd].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[netbsd].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[netbsd].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[netbsd].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[netbsd].IWHT	parser-only	fn IWHT(m: u32) bool	
+std.c.S.[openbsd].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[openbsd].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[openbsd].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[openbsd].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[openbsd].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[openbsd].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[openbsd].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[serenity].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[serenity].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[serenity].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[serenity].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[serenity].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[serenity].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[serenity].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.S.[wasi].ISBLK	parser-only	fn ISBLK(m: u32) bool	
+std.c.S.[wasi].ISCHR	parser-only	fn ISCHR(m: u32) bool	
+std.c.S.[wasi].ISDIR	parser-only	fn ISDIR(m: u32) bool	
+std.c.S.[wasi].ISFIFO	parser-only	fn ISFIFO(m: u32) bool	
+std.c.S.[wasi].ISLNK	parser-only	fn ISLNK(m: u32) bool	
+std.c.S.[wasi].ISREG	parser-only	fn ISREG(m: u32) bool	
+std.c.S.[wasi].ISSOCK	parser-only	fn ISSOCK(m: u32) bool	
+std.c.SIG.[freebsd].BIT	parser-only	fn BIT(sig: usize) usize	
+std.c.SIG.[freebsd].IDX	parser-only	fn IDX(sig: usize) usize	
+std.c.SIG.[freebsd].VALID	parser-only	fn VALID(sig: usize) usize	
+std.c.SIG.[freebsd].WORD	parser-only	fn WORD(sig: usize) usize	
+std.c.SIG.[illumos].BIT	parser-only	fn BIT(sig: usize) usize	
+std.c.SIG.[illumos].IDX	parser-only	fn IDX(sig: usize) usize	
+std.c.SIG.[illumos].VALID	parser-only	fn VALID(sig: usize) usize	
+std.c.SIG.[illumos].WORD	parser-only	fn WORD(sig: usize) usize	
+std.c.SIG.[netbsd].BIT	parser-only	fn BIT(sig: usize) usize	
+std.c.SIG.[netbsd].IDX	parser-only	fn IDX(sig: usize) usize	
+std.c.SIG.[netbsd].VALID	parser-only	fn VALID(sig: usize) usize	
+std.c.SIG.[netbsd].WORD	parser-only	fn WORD(sig: usize) usize	
+std.c.Stat.[dragonfly].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[dragonfly].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[dragonfly].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].birthtime	parser-only	fn birthtime(self: @This()) timespec	
+std.c.Stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[haiku].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[haiku].birthtime	parser-only	fn birthtime(self: @This()) timespec	
+std.c.Stat.[haiku].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[haiku].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[illumos].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[illumos].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[illumos].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[netbsd].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[netbsd].birthtime	parser-only	fn birthtime(self: @This()) timespec	
+std.c.Stat.[netbsd].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[netbsd].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[openbsd].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[openbsd].birthtime	parser-only	fn birthtime(self: @This()) timespec	
+std.c.Stat.[openbsd].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[openbsd].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[serenity].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[serenity].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[serenity].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.Stat.[wasi].atime	parser-only	fn atime(self: @This()) timespec	
+std.c.Stat.[wasi].ctime	parser-only	fn ctime(self: @This()) timespec	
+std.c.Stat.[wasi].fromFilestat	parser-only	fn fromFilestat(st: wasi.filestat_t) Stat	
+std.c.Stat.[wasi].mtime	parser-only	fn mtime(self: @This()) timespec	
+std.c.T.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].ior	parser-only	fn ior(inout: u32, group_arg: usize, num: usize, len: usize) usize	
+std.c.T.[illumos].tioc	parser-only	fn tioc(t: u16, num: u8) u16	
 std.c.W.EXITSTATUS	reflect-only		fn (u32) u8
 std.c.W.IFEXITED	reflect-only		fn (u32) bool
 std.c.W.IFSIGNALED	reflect-only		fn (u32) bool
 std.c.W.IFSTOPPED	reflect-only		fn (u32) bool
 std.c.W.STOPSIG	reflect-only		fn (u32) os.linux.SIG__enum
 std.c.W.TERMSIG	reflect-only		fn (u32) os.linux.SIG__enum
+std.c.W.[dragonfly].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[dragonfly].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[dragonfly].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[dragonfly].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[dragonfly].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[dragonfly].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].EXITSTATUS	parser-only	fn EXITSTATUS(x: u32) u8	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].IFEXITED	parser-only	fn IFEXITED(x: u32) bool	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].IFSIGNALED	parser-only	fn IFSIGNALED(x: u32) bool	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].IFSTOPPED	parser-only	fn IFSTOPPED(x: u32) bool	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].STOPSIG	parser-only	fn STOPSIG(x: u32) SIG	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].TERMSIG	parser-only	fn TERMSIG(x: u32) SIG	
+std.c.W.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].status	parser-only	fn status(x: u32) u32	
+std.c.W.[freebsd].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[freebsd].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[freebsd].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[freebsd].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[freebsd].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[freebsd].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
+std.c.W.[haiku].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[haiku].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[haiku].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[haiku].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[haiku].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[haiku].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
+std.c.W.[illumos].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[illumos].IFCONTINUED	parser-only	fn IFCONTINUED(s: u32) bool	
+std.c.W.[illumos].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[illumos].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[illumos].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[illumos].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[illumos].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
+std.c.W.[netbsd].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[netbsd].IFCONTINUED	parser-only	fn IFCONTINUED(s: u32) bool	
+std.c.W.[netbsd].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[netbsd].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[netbsd].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[netbsd].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[netbsd].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
+std.c.W.[openbsd].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[openbsd].IFCONTINUED	parser-only	fn IFCONTINUED(s: u32) bool	
+std.c.W.[openbsd].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[openbsd].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[openbsd].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[openbsd].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[openbsd].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
+std.c.W.[serenity].EXITSTATUS	parser-only	fn EXITSTATUS(s: u32) u8	
+std.c.W.[serenity].IFCONTINUED	parser-only	fn IFCONTINUED(s: u32) bool	
+std.c.W.[serenity].IFEXITED	parser-only	fn IFEXITED(s: u32) bool	
+std.c.W.[serenity].IFSIGNALED	parser-only	fn IFSIGNALED(s: u32) bool	
+std.c.W.[serenity].IFSTOPPED	parser-only	fn IFSTOPPED(s: u32) bool	
+std.c.W.[serenity].STOPSIG	parser-only	fn STOPSIG(s: u32) SIG	
+std.c.W.[serenity].TERMSIG	parser-only	fn TERMSIG(s: u32) SIG	
 std.c._Exit	parser-only	fn _Exit(code: c_int) noreturn	
 std.c._exit	parser-only	fn _exit(code: c_int) noreturn	
 std.c.abort	parser-only	fn abort() noreturn	
@@ -4164,6 +4369,7 @@ std.c.darwin.thread_resume	parser-only	fn thread_resume(thread: thread_act_t) ke
 std.c.darwin.thread_set_state	parser-only	fn thread_set_state( thread: thread_act_t, flavor: thread_flavor_t, new_state: thread_state_t, count: mach_msg_type_number_t, ) kern_return_t	
 std.c.darwin.vm_deallocate	parser-only	fn vm_deallocate(target_task: vm_map_t, address: vm_address_t, size: vm_size_t) kern_return_t	
 std.c.darwin.vm_machine_attribute	parser-only	fn vm_machine_attribute( target_task: vm_map_t, address: vm_address_t, size: vm_size_t, attribute: vm_machine_attribute_t, value: *vm_machine_attribute_val_t, ) kern_return_t	
+std.c.dirent.[dragonfly].reclen	parser-only	fn reclen(self: dirent) u16	
 std.c.div	parser-only	fn div(a: c_int, b: c_int) div_t	
 std.c.dl_iterate_phdr	parser-only	fn dl_iterate_phdr(callback: dl_iterate_phdr_callback, data: ?*anyopaque) c_int	
 std.c.dlclose	parser-only	fn dlclose(handle: *anyopaque) c_int	
@@ -4638,6 +4844,8 @@ std.c.telldir	parser-only	fn telldir(dp: *DIR) c_long
 std.c.timerfd_create	parser-only	fn timerfd_create(clockid: timerfd_clockid_t, flags: c_int) c_int	
 std.c.timerfd_gettime	parser-only	fn timerfd_gettime(fd: c_int, curr_value: *itimerspec) c_int	
 std.c.timerfd_settime	parser-only	fn timerfd_settime( fd: c_int, flags: c_int, new_value: *const itimerspec, old_value: ?*itimerspec, ) c_int	
+std.c.timespec.[wasi].fromTimestamp	parser-only	fn fromTimestamp(tm: wasi.timestamp_t) timespec	
+std.c.timespec.[wasi].toTimestamp	parser-only	fn toTimestamp(ts: timespec) wasi.timestamp_t	
 std.c.umask	parser-only	fn umask(mode: mode_t) mode_t	
 std.c.uname	parser-only	fn uname(buf: *utsname) c_int	
 std.c.unlink	parser-only	fn unlink(path: [*:0]const u8) c_int	
@@ -4963,6 +5171,7 @@ std.compress.zstd.testDiscard	parser-only	fn testDiscard(gpa: std.mem.Allocator,
 std.compress.zstd.testExpectDecompress	parser-only	fn testExpectDecompress(uncompressed: []const u8, compressed: []const u8) !void	
 std.compress.zstd.testExpectDecompressError	parser-only	fn testExpectDecompressError(err: anyerror, compressed: []const u8) !void	
 std.crypto.Certificate.Algorithm.Hash	both	fn Hash(comptime algorithm: Algorithm) type	fn (comptime crypto.Certificate.Algorithm) type
+std.crypto.Certificate.Bundle.@"macos.zig".scanReader	parser-only	fn scanReader(cb: *Bundle, gpa: Allocator, reader: *Io.Reader, now_sec: i64) !void	
 std.crypto.Certificate.Bundle.MapContext.eql	parser-only	fn eql(ctx: MapContext, a: der.Element.Slice, b: der.Element.Slice) bool	
 std.crypto.Certificate.Bundle.MapContext.hash	parser-only	fn hash(ctx: MapContext, k: der.Element.Slice) u64	
 std.crypto.Certificate.Bundle.addCertsFromDir	both	fn addCertsFromDir(cb: *Bundle, gpa: Allocator, io: Io, now: Io.Timestamp, iterable_dir: Io.Dir) AddCertsFromDirError!void	fn (*crypto.Certificate.Bundle, mem.Allocator, Io, Io.Timestamp, Io.Dir) error{AccessDenied,AntivirusInterference,BadPathName,Canceled,CertificateAuthorityBundleTooBig,CertificateFieldHasInvalidLength,CertificateFieldHasWrongDataType,CertificateHasInvalidBitString,CertificateHasUnrecognizedObjectId,CertificateTimeInvalid,ConnectionResetByPeer,DeviceBusy,FileBusy,FileLocksUnsupported,FileNotFound,FileTooBig,InputOutput,InvalidCharacter,InvalidPadding,IsDir,LockViolation,MissingEndCertificateMarker,NameTooLong,NetworkNotFound,NoDevice,NoSpaceLeft,NotDir,NotOpenForReading,OutOfMemory,PathAlreadyExists,PermissionDenied,PipeBusy,ProcessFdQuotaExceeded,ReadOnlyFileSystem,SocketUnconnected,Streaming,SymLinkLoop,SystemFdQuotaExceeded,SystemResources,Unexpected,UnsupportedCertificateVersion,WouldBlock}!void
@@ -5106,18 +5315,49 @@ std.crypto.aead.aes_ccm.cbc_mac.CbcMac().final	parser-only	fn final(self: *Self,
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().finalResult	parser-only	fn finalResult(d: *Self) [mac_length]u8	
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().init	parser-only	fn init(key: *const [key_length]u8) Self	
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().update	parser-only	fn update(self: *Self, msg: []const u8) void	
+std.crypto.aead.aes_gcm.@"aes_gcm.zig".AesGcm	parser-only	fn AesGcm(comptime Aes: anytype) type	
+std.crypto.aead.aes_gcm.@"aes_gcm.zig".AesGcm().decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, key: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.aes_gcm.@"aes_gcm.zig".AesGcm().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, key: [key_length]u8) void	
 std.crypto.aead.aes_gcm.Aes128Gcm.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [16]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_gcm.Aes128Gcm.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [16]u8) void
 std.crypto.aead.aes_gcm.Aes256Gcm.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_gcm.Aes256Gcm.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [32]u8) void
+std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".AesGcmSiv	parser-only	fn AesGcmSiv(comptime Aes: anytype) type	
+std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".AesGcmSiv().decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, key: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".AesGcmSiv().deriveKeys	parser-only	fn deriveKeys(message_key: *[key_length]u8, auth_key: *[16]u8, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.aes_gcm_siv.@"aes_gcm_siv.zig".AesGcmSiv().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, key: [key_length]u8) void	
 std.crypto.aead.aes_gcm_siv.Aes128GcmSiv.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [16]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_gcm_siv.Aes128GcmSiv.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [16]u8) void
 std.crypto.aead.aes_gcm_siv.Aes256GcmSiv.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_gcm_siv.Aes256GcmSiv.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [32]u8) void
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb	parser-only	fn AesOcb(comptime Aes: anytype) type	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().Lx.double	parser-only	fn double(l: Block) Block	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().Lx.init	parser-only	fn init(aes_enc_ctx: EncryptCtx) Lx	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().Lx.precomp	parser-only	fn precomp(lx: *Lx, upto: usize) []const Block	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, key: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, key: [key_length]u8) void	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().getOffset	parser-only	fn getOffset(aes_enc_ctx: EncryptCtx, npub: [nonce_length]u8) Block	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".AesOcb().hash	parser-only	fn hash(aes_enc_ctx: EncryptCtx, lx: *Lx, a: []const u8) Block	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".xorBlocks	parser-only	fn xorBlocks(x: Block, y: Block) Block	
+std.crypto.aead.aes_ocb.@"aes_ocb.zig".xorWith	parser-only	fn xorWith(x: *Block, y: Block) void	
 std.crypto.aead.aes_ocb.Aes128Ocb.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [16]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_ocb.Aes128Ocb.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [16]u8) void
 std.crypto.aead.aes_ocb.Aes256Ocb.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_ocb.Aes256Ocb.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [32]u8) void
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv	parser-only	fn AesSiv(comptime Aes: anytype) type	
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().dbl	parser-only	fn dbl(d: [16]u8) [16]u8	
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: ?[]const u8, nonce: ?[]const u8, key: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().decryptWithAdVector	parser-only	fn decryptWithAdVector(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const []const u8, key: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: ?[]const u8, nonce: ?[]const u8, key: [key_length]u8) void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().encryptWithAdVector	parser-only	fn encryptWithAdVector(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const []const u8, key: [key_length]u8) void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".AesSiv().s2v	parser-only	fn s2v(iv: *[16]u8, key: [Aes.key_bits / 8]u8, strings: []const []const u8) void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac	parser-only	fn Cmac(comptime BlockCipher: type) type	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().create	parser-only	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().double	parser-only	fn double(l: Block) Block	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().final	parser-only	fn final(self: *Self, out: *[mac_length]u8) void	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().finalResult	parser-only	fn finalResult(d: *Self) [mac_length]u8	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().init	parser-only	fn init(key: *const [key_length]u8) Self	
+std.crypto.aead.aes_siv.@"aes_siv.zig".Cmac().update	parser-only	fn update(self: *Self, msg: []const u8) void	
 std.crypto.aead.aes_siv.Aes128Siv.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, ?[]const u8, ?[]const u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_siv.Aes128Siv.decryptWithAdVector	reflect-only		fn ([]u8, []const u8, [16]u8, []const []const u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.aes_siv.Aes128Siv.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, ?[]const u8, ?[]const u8, [32]u8) void
@@ -5131,6 +5371,41 @@ std.crypto.aead.ascon.AsconAead128.AeadState.init	parser-only	fn init(key: [16]u
 std.crypto.aead.ascon.AsconAead128.AeadState.processAd	parser-only	fn processAd(self: *AeadState, ad: []const u8) void	
 std.crypto.aead.ascon.AsconAead128.decrypt	both	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void	fn ([]u8, []const u8, [16]u8, []const u8, [16]u8, [16]u8) error{AuthenticationFailed}!void
 std.crypto.aead.ascon.AsconAead128.encrypt	both	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	fn ([]u8, *[16]u8, []const u8, []const u8, [16]u8, [16]u8) void
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaIETF	parser-only	fn ChaChaIETF(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaIETF().stream	parser-only	fn stream(out: []u8, counter: u32, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaIETF().xor	parser-only	fn xor(out: []u8, in: []const u8, counter: u32, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaImpl	parser-only	fn ChaChaImpl(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl	parser-only	fn ChaChaNonVecImpl(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().Rp	parser-only	fn Rp(a: usize, b: usize, c: usize, d: usize) QuarterRound	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().chacha20Core	parser-only	fn chacha20Core(x: *BlockVec, input: BlockVec) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().chacha20Stream	parser-only	fn chacha20Stream(out: []u8, key: [8]u32, nonce_and_counter: [4]u32, comptime count64: bool) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().chacha20Xor	parser-only	fn chacha20Xor(out: []u8, in: []const u8, key: [8]u32, nonce_and_counter: [4]u32, comptime count64: bool) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().contextFeedback	parser-only	fn contextFeedback(x: *BlockVec, ctx: BlockVec) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().hashToBytes	parser-only	fn hashToBytes(out: *[64]u8, x: *const BlockVec) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().hchacha20	parser-only	fn hchacha20(input: [16]u8, key: [32]u8) [32]u8	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaNonVecImpl().initContext	parser-only	fn initContext(key: [8]u32, d: [4]u32) BlockVec	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaPoly1305	parser-only	fn ChaChaPoly1305(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaPoly1305().decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaPoly1305().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl	parser-only	fn ChaChaVecImpl(comptime rounds_nb: usize, comptime degree: comptime_int) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().chacha20Core	parser-only	fn chacha20Core(x: *BlockVec, input: BlockVec) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().chacha20Stream	parser-only	fn chacha20Stream(out: []u8, key: [8]u32, nonce_and_counter: [4]u32, comptime count64: bool) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().chacha20Xor	parser-only	fn chacha20Xor(out: []u8, in: []const u8, key: [8]u32, nonce_and_counter: [4]u32, comptime count64: bool) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().contextFeedback	parser-only	fn contextFeedback(x: *BlockVec, ctx: BlockVec) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().hashToBytes	parser-only	fn hashToBytes(comptime dm: usize, out: *[64 * dm]u8, x: *const BlockVec) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().hchacha20	parser-only	fn hchacha20(input: [16]u8, key: [32]u8) [32]u8	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaVecImpl().initContext	parser-only	fn initContext(key: [8]u32, d: [4]u32) BlockVec	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaWith64BitNonce	parser-only	fn ChaChaWith64BitNonce(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaWith64BitNonce().stream	parser-only	fn stream(out: []u8, counter: u64, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaWith64BitNonce().xor	parser-only	fn xor(out: []u8, in: []const u8, counter: u64, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaIETF	parser-only	fn XChaChaIETF(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaIETF().stream	parser-only	fn stream(out: []u8, counter: u32, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaIETF().xor	parser-only	fn xor(out: []u8, in: []const u8, counter: u32, key: [key_length]u8, nonce: [nonce_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaPoly1305	parser-only	fn XChaChaPoly1305(comptime rounds_nb: usize) type	
+std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaPoly1305().decrypt	parser-only	fn decrypt(m: []u8, c: []const u8, tag: [tag_length]u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) AuthenticationError!void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaPoly1305().encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	
+std.crypto.aead.chacha_poly.@"chacha20.zig".extend	parser-only	fn extend(key: [32]u8, nonce: [24]u8, comptime rounds_nb: usize) struct { key: [32]u8, nonce: [12]u8 }	
+std.crypto.aead.chacha_poly.@"chacha20.zig".keyToWords	parser-only	fn keyToWords(key: [32]u8) [8]u32	
 std.crypto.aead.chacha_poly.ChaCha12Poly1305.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [32]u8) error{AuthenticationFailed}!void
 std.crypto.aead.chacha_poly.ChaCha12Poly1305.encrypt	reflect-only		fn ([]u8, *[16]u8, []const u8, []const u8, [12]u8, [32]u8) void
 std.crypto.aead.chacha_poly.ChaCha20Poly1305.decrypt	reflect-only		fn ([]u8, []const u8, [16]u8, []const u8, [12]u8, [32]u8) error{AuthenticationFailed}!void
@@ -5302,6 +5577,13 @@ std.crypto.auth.siphash.SipHashStateless().init	parser-only	fn init(key: *const 
 std.crypto.auth.siphash.SipHashStateless().round	parser-only	fn round(self: *Self, b: [8]u8) void	
 std.crypto.auth.siphash.SipHashStateless().sipRound	parser-only	fn sipRound(d: *Self) void	
 std.crypto.auth.siphash.SipHashStateless().update	parser-only	fn update(self: *Self, b: []const u8) void	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.DecoderWithIgnore.decode	parser-only	fn decode( self: DecoderWithIgnore, bin: []u8, encoded: []const u8, ) error{ NoSpaceLeft, InvalidCharacter, InvalidPadding }![]const u8	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.DecoderWithIgnore.decodedLenForSlice	parser-only	fn decodedLenForSlice(decoder: DecoderWithIgnore, encoded: []const u8) !usize	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.DecoderWithIgnore.decodedLenUpperBound	parser-only	fn decodedLenUpperBound(hex_len: usize) usize	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.decode	parser-only	fn decode(bin: []u8, encoded: []const u8) error{ SizeMismatch, InvalidCharacter, InvalidPadding }!void	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.decodeAny	parser-only	fn decodeAny( bin: []u8, encoded: []const u8, ignored_chars: ?StaticBitSet(256), ) error{ NoSpaceLeft, InvalidCharacter, InvalidPadding }![]const u8	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.decoderWithIgnore	parser-only	fn decoderWithIgnore(ignore_chars: []const u8) error{InvalidCharacter}!DecoderWithIgnore	
+std.crypto.codecs.@"base64_hex_ct.zig".hex.encode	parser-only	fn encode(encoded: []u8, bin: []const u8, comptime case: std.fmt.Case) error{SizeMismatch}!void	
 std.crypto.codecs.asn1.Any.decodeDer	both	fn decodeDer(decoder: *der.Decoder) !@This()	fn (*crypto.codecs.asn1.der.Decoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Any.decodeDer)).@"fn".return_type.?).error_union.error_set!crypto.codecs.asn1.Any
 std.crypto.codecs.asn1.Any.encodeDer	both	fn encodeDer(self: @This(), encoder: *der.Encoder) !void	fn (crypto.codecs.asn1.Any, *crypto.codecs.asn1.der.Encoder) @typeInfo(@typeInfo(@TypeOf(crypto.codecs.asn1.Any.encodeDer)).@"fn".return_type.?).error_union.error_set!void
 std.crypto.codecs.asn1.BitString.bitLen	both	fn bitLen(self: BitString) usize	fn (crypto.codecs.asn1.BitString) usize
@@ -5521,6 +5803,12 @@ std.crypto.dh.X25519.KeyPair.generateDeterministic	both	fn generateDeterministic
 std.crypto.dh.X25519.publicKeyFromEd25519	both	fn publicKeyFromEd25519(ed25519_public_key: crypto.sign.Ed25519.PublicKey) (IdentityElementError || EncodingError)![public_length]u8	fn (crypto.25519.ed25519.Ed25519.PublicKey) error{IdentityElement,InvalidEncoding}![32]u8
 std.crypto.dh.X25519.recoverPublicKey	both	fn recoverPublicKey(secret_key: [secret_length]u8) [public_length]u8	fn ([32]u8) [32]u8
 std.crypto.dh.X25519.scalarmult	both	fn scalarmult(secret_key: [secret_length]u8, public_key: [public_length]u8) IdentityElementError![shared_length]u8	fn ([32]u8, [32]u8) error{IdentityElement}![32]u8
+std.crypto.ecc.@"p256.zig".AffineCoordinates.cMov	parser-only	fn cMov(p: *AffineCoordinates, a: AffineCoordinates, c: u1) void	
+std.crypto.ecc.@"p256.zig".AffineCoordinates.neg	parser-only	fn neg(p: AffineCoordinates) AffineCoordinates	
+std.crypto.ecc.@"p384.zig".AffineCoordinates.cMov	parser-only	fn cMov(p: *AffineCoordinates, a: AffineCoordinates, c: u1) void	
+std.crypto.ecc.@"p384.zig".AffineCoordinates.neg	parser-only	fn neg(p: AffineCoordinates) AffineCoordinates	
+std.crypto.ecc.@"secp256k1.zig".AffineCoordinates.cMov	parser-only	fn cMov(p: *AffineCoordinates, a: AffineCoordinates, c: u1) void	
+std.crypto.ecc.@"secp256k1.zig".AffineCoordinates.neg	parser-only	fn neg(p: AffineCoordinates) AffineCoordinates	
 std.crypto.ecc.Curve25519.Fe._carry128	parser-only	fn _carry128(r: *[5]u128) Fe	
 std.crypto.ecc.Curve25519.Fe._sq	parser-only	fn _sq(a: Fe, comptime double: bool) Fe	
 std.crypto.ecc.Curve25519.Fe.abs	both	fn abs(a: Fe) Fe	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
@@ -6074,6 +6362,53 @@ std.crypto.ff.mulAddLimb	parser-only	fn mulAddLimb(z: []Limb, x: []const Limb, y
 std.crypto.ff.mulAddWide	parser-only	fn mulAddWide(z: []Limb, x: []const Limb, y: []const Limb) void	
 std.crypto.ff.orLimbs	parser-only	fn orLimbs(limbs: []const Limb) Limb	
 std.crypto.ff.testCt	parser-only	fn testCt(ct_: anytype) !void	
+std.crypto.hash.@"blake3.zig".ChunkBatch.process	parser-only	fn process(ctx: ChunkBatch) void	
+std.crypto.hash.@"blake3.zig".ChunkState.fillBuf	parser-only	fn fillBuf(self: *ChunkState, input: []const u8) usize	
+std.crypto.hash.@"blake3.zig".ChunkState.init	parser-only	fn init(key: [8]u32, flags: Flags) ChunkState	
+std.crypto.hash.@"blake3.zig".ChunkState.len	parser-only	fn len(self: *const ChunkState) usize	
+std.crypto.hash.@"blake3.zig".ChunkState.maybeStartFlag	parser-only	fn maybeStartFlag(self: *const ChunkState) Flags	
+std.crypto.hash.@"blake3.zig".ChunkState.output	parser-only	fn output(self: *const ChunkState) Output	
+std.crypto.hash.@"blake3.zig".ChunkState.reset	parser-only	fn reset(self: *ChunkState, key: [8]u32, chunk_counter: u64) void	
+std.crypto.hash.@"blake3.zig".ChunkState.update	parser-only	fn update(self: *ChunkState, input: []const u8) void	
+std.crypto.hash.@"blake3.zig".Flags.toInt	parser-only	fn toInt(self: Flags) u8	
+std.crypto.hash.@"blake3.zig".Flags.with	parser-only	fn with(self: Flags, other: Flags) Flags	
+std.crypto.hash.@"blake3.zig".Output.chainingValue	parser-only	fn chainingValue(self: *const Output) [8]u32	
+std.crypto.hash.@"blake3.zig".Output.rootBytes	parser-only	fn rootBytes(self: *const Output, seek: u64, out: []u8) void	
+std.crypto.hash.@"blake3.zig".buildMerkleTreeLayerParallel	parser-only	fn buildMerkleTreeLayerParallel( input_cvs: [][8]u32, output_cvs: [][8]u32, key: [8]u32, flags: Flags, io: Io, ) Io.Cancelable!void	
+std.crypto.hash.@"blake3.zig".compressChunksParallel	parser-only	fn compressChunksParallel(input: []const u8, key: [8]u32, chunk_counter: u64, flags: Flags, out: []u8) usize	
+std.crypto.hash.@"blake3.zig".compressInPlace	parser-only	fn compressInPlace(cv: *[8]u32, block: []const u8, block_len: u8, counter: u64, flags: Flags) void	
+std.crypto.hash.@"blake3.zig".compressParentsParallel	parser-only	fn compressParentsParallel(child_chaining_values: []const u8, num_chaining_values: usize, key: [8]u32, flags: Flags, out: []u8) usize	
+std.crypto.hash.@"blake3.zig".compressPre	parser-only	fn compressPre(state: *[16]u32, cv: *const [8]u32, block: []const u8, block_len: u8, counter: u64, flags: Flags) void	
+std.crypto.hash.@"blake3.zig".compressSubtreeToParentNode	parser-only	fn compressSubtreeToParentNode(input: []const u8, key: [8]u32, chunk_counter: u64, flags: Flags, out: *[2 * Blake3.digest_length]u8) void	
+std.crypto.hash.@"blake3.zig".compressSubtreeWide	parser-only	fn compressSubtreeWide(input: []const u8, key: [8]u32, chunk_counter: u64, flags: Flags, out: []u8) usize	
+std.crypto.hash.@"blake3.zig".compressXof	parser-only	fn compressXof(cv: *const [8]u32, block: []const u8, block_len: u8, counter: u64, flags: Flags, out: *[64]u8) void	
+std.crypto.hash.@"blake3.zig".counterHigh	parser-only	fn counterHigh(counter: u64) u32	
+std.crypto.hash.@"blake3.zig".counterLow	parser-only	fn counterLow(counter: u64) u32	
+std.crypto.hash.@"blake3.zig".g	parser-only	fn g(state: *[16]u32, a: usize, b: usize, c: usize, d: usize, x: u32, y: u32) void	
+std.crypto.hash.@"blake3.zig".hashMany	parser-only	fn hashMany(inputs: [][*]const u8, num_inputs: usize, blocks: usize, key: [8]u32, counter: u64, increment_counter: bool, flags: Flags, flags_start: Flags, flags_end: Flags, out: []u8) void	
+std.crypto.hash.@"blake3.zig".hashManyPortable	parser-only	fn hashManyPortable(inputs: [][*]const u8, num_inputs: usize, blocks: usize, key: [8]u32, counter_arg: u64, increment_counter: bool, flags: Flags, flags_start: Flags, flags_end: Flags, out: []u8) void	
+std.crypto.hash.@"blake3.zig".hashManySimd	parser-only	fn hashManySimd( inputs: [][*]const u8, num_inputs: usize, blocks: usize, key: [8]u32, counter: u64, increment_counter: bool, flags: Flags, flags_start: Flags, flags_end: Flags, out: []u8, ) void	
+std.crypto.hash.@"blake3.zig".hashOne	parser-only	fn hashOne(input: []const u8, blocks: usize, key: [8]u32, counter: u64, flags: Flags, flags_start: Flags, flags_end: Flags) [Blake3.digest_length]u8	
+std.crypto.hash.@"blake3.zig".hashVec	parser-only	fn hashVec( comptime Vec: type, comptime n: comptime_int, inputs: [n][*]const u8, blocks: usize, key: [8]u32, counter: u64, increment_counter: bool, flags: Flags, flags_start: Flags, flags_end: Flags, out: *[n * Blake3.digest_length]u8, ) void	
+std.crypto.hash.@"blake3.zig".highestOne	parser-only	fn highestOne(x: u64) u6	
+std.crypto.hash.@"blake3.zig".leftSubtreeLen	parser-only	fn leftSubtreeLen(input_len: usize) usize	
+std.crypto.hash.@"blake3.zig".load32	parser-only	fn load32(bytes: []const u8) u32	
+std.crypto.hash.@"blake3.zig".loadCvWords	parser-only	fn loadCvWords(bytes: [Blake3.digest_length]u8) [8]u32	
+std.crypto.hash.@"blake3.zig".loadKeyWords	parser-only	fn loadKeyWords(key: [Blake3.key_length]u8) [8]u32	
+std.crypto.hash.@"blake3.zig".parentOutput	parser-only	fn parentOutput(parent_block: []const u8, key: [8]u32, flags: Flags) Output	
+std.crypto.hash.@"blake3.zig".parentOutputFromCvs	parser-only	fn parentOutputFromCvs(left_cv: [8]u32, right_cv: [8]u32, key: [8]u32, flags: Flags) Output	
+std.crypto.hash.@"blake3.zig".processParentBatch	parser-only	fn processParentBatch(ctx: ParentBatchContext) void	
+std.crypto.hash.@"blake3.zig".processParentBatchSIMD	parser-only	fn processParentBatchSIMD(ctx: ParentBatchContext) void	
+std.crypto.hash.@"blake3.zig".rotr32	parser-only	fn rotr32(w: u32, c: u5) u32	
+std.crypto.hash.@"blake3.zig".roundDownToPowerOf2	parser-only	fn roundDownToPowerOf2(x: u64) u64	
+std.crypto.hash.@"blake3.zig".roundFn	parser-only	fn roundFn(state: *[16]u32, msg: *const [16]u32, round: usize) void	
+std.crypto.hash.@"blake3.zig".roundFnVec	parser-only	fn roundFnVec(comptime Vec: type, v: *[16]Vec, m: *const [16]Vec, r: usize) void	
+std.crypto.hash.@"blake3.zig".store32	parser-only	fn store32(bytes: []u8, w: u32) void	
+std.crypto.hash.@"blake3.zig".storeCvWords	parser-only	fn storeCvWords(cv_words: [8]u32) [Blake3.digest_length]u8	
+std.crypto.hash.@"blake3.zig".testBlake3	parser-only	fn testBlake3(hasher: *Blake3, input_len: usize, expected_hex: [262]u8) !void	
+std.crypto.hash.@"blake3.zig".transposeMsg	parser-only	fn transposeMsg(comptime Vec: type, comptime n: comptime_int, inputs: [n][*]const u8, block_offset: usize, out: *[16]Vec) void	
+std.crypto.hash.@"blake3.zig".transposeNxN	parser-only	fn transposeNxN(comptime Vec: type, comptime n: comptime_int, vecs: *[n]Vec) void	
+std.crypto.hash.@"md5.zig".roundParam	parser-only	fn roundParam(a: usize, b: usize, c: usize, d: usize, k: usize, s: u32, t: u32) RoundParam	
 std.crypto.hash.Blake3.final	both	fn final(self: *const Blake3, out: []u8) void	fn (*const crypto.blake3.Blake3, []u8) void
 std.crypto.hash.Blake3.finalizeSeek	both	fn finalizeSeek(self: *const Blake3, seek: u64, out: []u8) void	fn (*const crypto.blake3.Blake3, u64, []u8) void
 std.crypto.hash.Blake3.hash	both	fn hash(b: []const u8, out: []u8, options: Options) void	fn ([]const u8, []u8, crypto.blake3.Blake3.Options) void
@@ -6489,6 +6824,81 @@ std.crypto.kdf.hkdf.HkdfSha256.extractInit	reflect-only		fn ([]const u8) crypto.
 std.crypto.kdf.hkdf.HkdfSha512.expand	reflect-only		fn ([]u8, []const u8, [64]u8) void
 std.crypto.kdf.hkdf.HkdfSha512.extract	reflect-only		fn ([]const u8, []const u8) [64]u8
 std.crypto.kdf.hkdf.HkdfSha512.extractInit	reflect-only		fn ([]const u8) crypto.hmac.Hmac(crypto.sha2.Sha2x64(.{ 7640891576956012808, 13503953896175478587, 4354685564936845355, 11912009170470909681, 5840696475078001361, 11170449401992604703, 2270897969802886507, 6620516959819538809 },512))
+std.crypto.kem.@"ml_kem.zig".Kyber	parser-only	fn Kyber(comptime p: Params) type	
+std.crypto.kem.@"ml_kem.zig".Kyber().InnerPk.encrypt	parser-only	fn encrypt( pk: InnerPk, pt: *const [inner_plaintext_length]u8, seed: *const [32]u8, ) [ciphertext_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().InnerPk.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) errors.NonCanonicalError!InnerPk	
+std.crypto.kem.@"ml_kem.zig".Kyber().InnerPk.toBytes	parser-only	fn toBytes(pk: InnerPk) [encoded_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().InnerSk.decrypt	parser-only	fn decrypt(sk: InnerSk, ct: *const [ciphertext_length]u8) [inner_plaintext_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().InnerSk.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) InnerSk	
+std.crypto.kem.@"ml_kem.zig".Kyber().InnerSk.toBytes	parser-only	fn toBytes(sk: InnerSk) [encoded_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().KeyPair.generate	parser-only	fn generate(io: std.Io) KeyPair	
+std.crypto.kem.@"ml_kem.zig".Kyber().KeyPair.generateDeterministic	parser-only	fn generateDeterministic(seed: [seed_length]u8) !KeyPair	
+std.crypto.kem.@"ml_kem.zig".Kyber().PublicKey.encaps	parser-only	fn encaps(pk: PublicKey, io: std.Io) EncapsulatedSecret	
+std.crypto.kem.@"ml_kem.zig".Kyber().PublicKey.encapsDeterministic	parser-only	fn encapsDeterministic(pk: PublicKey, seed: *const [encaps_seed_length]u8) EncapsulatedSecret	
+std.crypto.kem.@"ml_kem.zig".Kyber().PublicKey.encapsInner	parser-only	fn encapsInner(pk: PublicKey, m: *[inner_plaintext_length]u8) EncapsulatedSecret	
+std.crypto.kem.@"ml_kem.zig".Kyber().PublicKey.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) errors.NonCanonicalError!PublicKey	
+std.crypto.kem.@"ml_kem.zig".Kyber().PublicKey.toBytes	parser-only	fn toBytes(pk: PublicKey) [encoded_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().SecretKey.decaps	parser-only	fn decaps(sk: SecretKey, ct: *const [ciphertext_length]u8) ![shared_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().SecretKey.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) errors.NonCanonicalError!SecretKey	
+std.crypto.kem.@"ml_kem.zig".Kyber().SecretKey.toBytes	parser-only	fn toBytes(sk: SecretKey) [encoded_length]u8	
+std.crypto.kem.@"ml_kem.zig".Kyber().innerKeyFromSeed	parser-only	fn innerKeyFromSeed(seed: [inner_seed_length]u8, pk: *InnerPk, sk: *InnerSk) void	
+std.crypto.kem.@"ml_kem.zig".Mat	parser-only	fn Mat(comptime k: u8) type	
+std.crypto.kem.@"ml_kem.zig".Mat().transpose	parser-only	fn transpose(m: Self) Self	
+std.crypto.kem.@"ml_kem.zig".Mat().uniform	parser-only	fn uniform(seed: [32]u8, comptime transposed: bool) Self	
+std.crypto.kem.@"ml_kem.zig".NistDRBG.fill	parser-only	fn fill(g: *NistDRBG, out: []u8) void	
+std.crypto.kem.@"ml_kem.zig".NistDRBG.incV	parser-only	fn incV(g: *NistDRBG) void	
+std.crypto.kem.@"ml_kem.zig".NistDRBG.init	parser-only	fn init(seed: [48]u8) NistDRBG	
+std.crypto.kem.@"ml_kem.zig".NistDRBG.update	parser-only	fn update(g: *NistDRBG, pd: ?[48]u8) void	
+std.crypto.kem.@"ml_kem.zig".Poly.add	parser-only	fn add(a: Poly, b: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.barrettReduce	parser-only	fn barrettReduce(a: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.compress	parser-only	fn compress(p: Poly, comptime d: u8) [compressedSize(d)]u8	
+std.crypto.kem.@"ml_kem.zig".Poly.compressedSize	parser-only	fn compressedSize(comptime d: u8) usize	
+std.crypto.kem.@"ml_kem.zig".Poly.decompress	parser-only	fn decompress(comptime d: u8, in: *const [compressedSize(d)]u8) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.invNTT	parser-only	fn invNTT(a: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.mulHat	parser-only	fn mulHat(a: Poly, b: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.noise	parser-only	fn noise(comptime eta: u8, nonce: u8, seed: *const [32]u8) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.normalize	parser-only	fn normalize(a: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.ntt	parser-only	fn ntt(a: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.sub	parser-only	fn sub(a: Poly, b: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.toBytes	parser-only	fn toBytes(p: Poly) [encoded_length]u8	
+std.crypto.kem.@"ml_kem.zig".Poly.toMont	parser-only	fn toMont(a: Poly) Poly	
+std.crypto.kem.@"ml_kem.zig".Poly.uniform	parser-only	fn uniform(seed: [32]u8, x: u8, y: u8) Poly	
+std.crypto.kem.@"ml_kem.zig".PolyVec	parser-only	fn PolyVec(comptime k: u8) type	
+std.crypto.kem.@"ml_kem.zig".PolyVec().add	parser-only	fn add(a: Self, b: Self) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().barrettReduce	parser-only	fn barrettReduce(v: Self) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().compress	parser-only	fn compress(v: Self, comptime d: u8) [compressedSize(d)]u8	
+std.crypto.kem.@"ml_kem.zig".PolyVec().compressedSize	parser-only	fn compressedSize(comptime d: u8) usize	
+std.crypto.kem.@"ml_kem.zig".PolyVec().decompress	parser-only	fn decompress(comptime d: u8, buf: *const [compressedSize(d)]u8) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().dotHat	parser-only	fn dotHat(a: Self, b: Self) Poly	
+std.crypto.kem.@"ml_kem.zig".PolyVec().fromBytes	parser-only	fn fromBytes(buf: *const [encoded_length]u8) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().invNTT	parser-only	fn invNTT(v: Self) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().map	parser-only	fn map(v: Self, comptime op: fn (Poly) Poly) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().mapBinary	parser-only	fn mapBinary(a: Self, b: Self, comptime op: fn (Poly, Poly) Poly) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().noise	parser-only	fn noise(comptime eta: u8, nonce: u8, seed: *const [32]u8) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().normalize	parser-only	fn normalize(v: Self) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().ntt	parser-only	fn ntt(v: Self) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().sub	parser-only	fn sub(a: Self, b: Self) Self	
+std.crypto.kem.@"ml_kem.zig".PolyVec().toBytes	parser-only	fn toBytes(v: Self) [encoded_length]u8	
+std.crypto.kem.@"ml_kem.zig".bitMask	parser-only	fn bitMask(comptime T: type, bit: T) T	
+std.crypto.kem.@"ml_kem.zig".cmov	parser-only	fn cmov(comptime len: usize, dst: *[len]u8, src: [len]u8, b: u1) void	
+std.crypto.kem.@"ml_kem.zig".computeZetas	parser-only	fn computeZetas() [128]i16	
+std.crypto.kem.@"ml_kem.zig".csubq	parser-only	fn csubq(x: i16) i16	
+std.crypto.kem.@"ml_kem.zig".ctneq	parser-only	fn ctneq(comptime len: usize, a: [len]u8, b: [len]u8) u1	
+std.crypto.kem.@"ml_kem.zig".extendedEuclidean	parser-only	fn extendedEuclidean(comptime T: type, comptime a_: T, comptime b_: T) struct { gcd: T, x: T, y: T }	
+std.crypto.kem.@"ml_kem.zig".feBarrettReduce	parser-only	fn feBarrettReduce(x: i16) i16	
+std.crypto.kem.@"ml_kem.zig".feToMont	parser-only	fn feToMont(x: i16) i16	
+std.crypto.kem.@"ml_kem.zig".invertMod	parser-only	fn invertMod(a: anytype, p: @TypeOf(a)) @TypeOf(a)	
+std.crypto.kem.@"ml_kem.zig".modQ32	parser-only	fn modQ32(x: i32) i16	
+std.crypto.kem.@"ml_kem.zig".modularInverse	parser-only	fn modularInverse(comptime T: type, comptime a: T, comptime p: T) T	
+std.crypto.kem.@"ml_kem.zig".modularPow	parser-only	fn modularPow(comptime T: type, comptime a: T, s: T, comptime p: T) T	
+std.crypto.kem.@"ml_kem.zig".montReduce	parser-only	fn montReduce(x: i32) i16	
+std.crypto.kem.@"ml_kem.zig".montgomeryReduce	parser-only	fn montgomeryReduce( comptime InT: type, comptime OutT: type, comptime q: comptime_int, comptime qInv: comptime_int, comptime r_bits: comptime_int, x: InT, ) OutT	
+std.crypto.kem.@"ml_kem.zig".randPolyAbsLeqQ	parser-only	fn randPolyAbsLeqQ(rnd: anytype) Poly	
+std.crypto.kem.@"ml_kem.zig".randPolyNormalized	parser-only	fn randPolyNormalized(rnd: anytype) Poly	
+std.crypto.kem.@"ml_kem.zig".sampleUniformRejection	parser-only	fn sampleUniformRejection( comptime PolyType: type, comptime q: comptime_int, comptime bits_per_coef: comptime_int, comptime n: comptime_int, seed: []const u8, domain_sep: []const u8, ) PolyType	
+std.crypto.kem.@"ml_kem.zig".signMask	parser-only	fn signMask(comptime T: type, x: T) @Int(.unsigned, @typeInfo(T).int.bits)	
+std.crypto.kem.@"ml_kem.zig".testNistKat	parser-only	fn testNistKat(mode: type, hash: []const u8) !void	
 std.crypto.kem.hybrid.HybridKem	both	fn HybridKem(comptime params: Params) type	fn (comptime crypto.hybrid_kem.Params) type
 std.crypto.kem.hybrid.HybridKem().KeyPair.generate	parser-only	fn generate(io: std.Io) !KeyPair	
 std.crypto.kem.hybrid.HybridKem().KeyPair.generateDeterministic	parser-only	fn generateDeterministic(seed: [params.Nseed]u8) !KeyPair	
@@ -6550,6 +6960,24 @@ std.crypto.nacl.salsa20.XSalsa20Poly1305.decrypt	parser-only	fn decrypt(m: []u8,
 std.crypto.nacl.salsa20.XSalsa20Poly1305.encrypt	parser-only	fn encrypt(c: []u8, tag: *[tag_length]u8, m: []const u8, ad: []const u8, npub: [nonce_length]u8, k: [key_length]u8) void	
 std.crypto.nacl.salsa20.extend	parser-only	fn extend(comptime rounds: comptime_int, key: [32]u8, nonce: [24]u8) struct { key: [32]u8, nonce: [8]u8 }	
 std.crypto.nacl.salsa20.keyToWords	parser-only	fn keyToWords(key: [32]u8) [8]u32	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash	parser-only	fn Hash(comptime endian: std.builtin.Endian, comptime shift_key: bool) type	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().blocks	parser-only	fn blocks(st: *Self, msg: []const u8) void	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clmul128	parser-only	fn clmul128(x: u128, y: u128) I256	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clmulPclmul	parser-only	fn clmulPclmul(x: u128, y: u128, comptime half: Selector) u128	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clmulPmull	parser-only	fn clmulPmull(x: u128, y: u128, comptime half: Selector) u128	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clmulSoft128	parser-only	fn clmulSoft128(x_: u128, y_: u128, comptime half: Selector) u128	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clmulSoft128_64	parser-only	fn clmulSoft128_64(x_: u128, y_: u128, comptime half: Selector) u128	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clmulSoft32	parser-only	fn clmulSoft32(x: u32, y: u32) u64	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().clsq128	parser-only	fn clsq128(x: u128) I256	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().create	parser-only	fn create(out: *[mac_length]u8, msg: []const u8, key: *const [key_length]u8) void	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().final	parser-only	fn final(st: *Self, out: *[mac_length]u8) void	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().finalResult	parser-only	fn finalResult(d: *Self) [mac_length]u8	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().init	parser-only	fn init(key: *const [key_length]u8) Self	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().initForBlockCount	parser-only	fn initForBlockCount(key: *const [key_length]u8, block_count: usize) Self	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().pad	parser-only	fn pad(st: *Self) void	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().reduce	parser-only	fn reduce(x: I256) u128	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().update	parser-only	fn update(st: *Self, m: []const u8) void	
+std.crypto.onetimeauth.@"ghash_polyval.zig".Hash().xor256	parser-only	fn xor256(x: *I256, y: I256) void	
 std.crypto.onetimeauth.Ghash.create	reflect-only		fn (*[16]u8, []const u8, *const [16]u8) void
 std.crypto.onetimeauth.Ghash.final	reflect-only		fn (*crypto.ghash_polyval.Hash(.big,true), *[16]u8) void
 std.crypto.onetimeauth.Ghash.finalResult	reflect-only		fn (*crypto.ghash_polyval.Hash(.big,true)) [16]u8
@@ -7298,6 +7726,7 @@ std.debug.Pdb.parseDbiStream	both	fn parseDbiStream(self: *Pdb) !void	fn (*debug
 std.debug.Pdb.parseInfoStream	both	fn parseInfoStream(self: *Pdb) !void	fn (*debug.Pdb) @typeInfo(@typeInfo(@TypeOf(debug.Pdb.parseInfoStream)).@"fn".return_type.?).error_union.error_set!void
 std.debug.Pdb.parseIpiStream	both	fn parseIpiStream(self: *Pdb) !void	fn (*debug.Pdb) @typeInfo(@typeInfo(@TypeOf(debug.Pdb.parseIpiStream)).@"fn".return_type.?).error_union.error_set!void
 std.debug.Pdb.readSparseBitVector	parser-only	fn readSparseBitVector(reader: *Io.Reader, gpa: Allocator) ![]u32	
+std.debug.SafetyLock.State.[then].isShared	parser-only	fn isShared(state: State) bool	
 std.debug.SafetyLock.assertLocked	both	fn assertLocked(l: SafetyLock) void	fn (debug.SafetyLock) void
 std.debug.SafetyLock.assertLockedShared	both	fn assertLockedShared(l: SafetyLock) void	fn (debug.SafetyLock) void
 std.debug.SafetyLock.assertUnlocked	both	fn assertUnlocked(l: SafetyLock) void	fn (debug.SafetyLock) void
@@ -7644,6 +8073,68 @@ std.enums.fromInt	both	fn fromInt(comptime E: type, integer: anytype) ?E	fn (com
 std.enums.tagName	both	fn tagName(comptime E: type, e: E) ?[:0]const u8	fn (comptime type, anytype) ?[:0]const u8
 std.enums.values	both	fn values(comptime E: type) []const E	fn (comptime type) callconv(.@"inline") anytype
 std.enums.valuesFromFields	both	fn valuesFromFields(comptime E: type, comptime field_values: []const comptime_int) []const E	fn (comptime type, comptime []const comptime_int) callconv(.@"inline") anytype
+std.fmt.@"parse_float.zig".@"convert_eisel_lemire.zig".U128.mul	parser-only	fn mul(a: u64, b: u64) U128	
+std.fmt.@"parse_float.zig".@"convert_eisel_lemire.zig".U128.new	parser-only	fn new(lo: u64, hi: u64) U128	
+std.fmt.@"parse_float.zig".@"convert_eisel_lemire.zig".computeProductApprox	parser-only	fn computeProductApprox(q: i64, w: u64, comptime precision: usize) U128	
+std.fmt.@"parse_float.zig".@"convert_eisel_lemire.zig".power	parser-only	fn power(q: i32) i32	
+std.fmt.@"parse_float.zig".@"convert_fast.zig".FloatInfo.from	parser-only	fn from(comptime T: type) Self	
+std.fmt.@"parse_float.zig".@"convert_fast.zig".fastIntPow10	parser-only	fn fastIntPow10(comptime T: type, i: usize) T	
+std.fmt.@"parse_float.zig".@"convert_fast.zig".fastPow10	parser-only	fn fastPow10(comptime T: type, i: usize) T	
+std.fmt.@"parse_float.zig".@"convert_fast.zig".isFastPath	parser-only	fn isFastPath(comptime T: type, n: Number(T)) bool	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".@"decimal.zig".isEightDigits	parser-only	fn isEightDigits(v: u64) bool	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal	parser-only	fn Decimal(comptime T: type) type	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().leftShift	parser-only	fn leftShift(self: *Self, shift: usize) void	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().new	parser-only	fn new() Self	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().numberOfDigitsLeftShift	parser-only	fn numberOfDigitsLeftShift(self: *Self, shift: usize) usize	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().parse	parser-only	fn parse(s: []const u8) Self	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().rightShift	parser-only	fn rightShift(self: *Self, shift: usize) void	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().round	parser-only	fn round(self: *Self) MantissaT	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().trim	parser-only	fn trim(self: *Self) void	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().tryAddDigit	parser-only	fn tryAddDigit(self: *Self, digit: u8) void	
+std.fmt.@"parse_float.zig".@"convert_slow.zig".getShift	parser-only	fn getShift(n: usize) usize	
+std.fmt.@"parse_float.zig".convertEiselLemire	parser-only	fn convertEiselLemire(comptime T: type, q: i64, w_: u64) ?BiasedFp(f64)	
+std.fmt.@"parse_float.zig".convertFast	parser-only	fn convertFast(comptime T: type, n: Number(T)) ?T	
+std.fmt.@"parse_float.zig".convertHex	parser-only	fn convertHex(comptime T: type, n_: Number(T)) T	
+std.fmt.@"parse_float.zig".convertSlow	parser-only	fn convertSlow(comptime T: type, s: []const u8) BiasedFp(T)	
+std.fmt.@"parse_float.zig".parse.FloatStream.advance	parser-only	fn advance(self: *FloatStream, n: usize) void	
+std.fmt.@"parse_float.zig".parse.FloatStream.atUnchecked	parser-only	fn atUnchecked(self: *FloatStream, i: usize) u8	
+std.fmt.@"parse_float.zig".parse.FloatStream.first	parser-only	fn first(self: FloatStream) ?u8	
+std.fmt.@"parse_float.zig".parse.FloatStream.firstIs	parser-only	fn firstIs(self: FloatStream, comptime cs: []const u8) bool	
+std.fmt.@"parse_float.zig".parse.FloatStream.firstIsDigit	parser-only	fn firstIsDigit(self: FloatStream, comptime base: u8) bool	
+std.fmt.@"parse_float.zig".parse.FloatStream.firstIsLower	parser-only	fn firstIsLower(self: FloatStream, comptime cs: []const u8) bool	
+std.fmt.@"parse_float.zig".parse.FloatStream.firstUnchecked	parser-only	fn firstUnchecked(self: FloatStream) u8	
+std.fmt.@"parse_float.zig".parse.FloatStream.hasLen	parser-only	fn hasLen(self: FloatStream, n: usize) bool	
+std.fmt.@"parse_float.zig".parse.FloatStream.init	parser-only	fn init(s: []const u8) FloatStream	
+std.fmt.@"parse_float.zig".parse.FloatStream.isEmpty	parser-only	fn isEmpty(self: FloatStream) bool	
+std.fmt.@"parse_float.zig".parse.FloatStream.len	parser-only	fn len(self: FloatStream) usize	
+std.fmt.@"parse_float.zig".parse.FloatStream.offsetTrue	parser-only	fn offsetTrue(self: FloatStream) usize	
+std.fmt.@"parse_float.zig".parse.FloatStream.readU64	parser-only	fn readU64(self: FloatStream) ?u64	
+std.fmt.@"parse_float.zig".parse.FloatStream.readU64Unchecked	parser-only	fn readU64Unchecked(self: FloatStream) u64	
+std.fmt.@"parse_float.zig".parse.FloatStream.reset	parser-only	fn reset(self: *FloatStream) void	
+std.fmt.@"parse_float.zig".parse.FloatStream.scanDigit	parser-only	fn scanDigit(self: *FloatStream, comptime base: u8) ?u8	
+std.fmt.@"parse_float.zig".parse.FloatStream.skipChars	parser-only	fn skipChars(self: *FloatStream, comptime cs: []const u8) void	
+std.fmt.@"parse_float.zig".parse.common.BiasedFp	parser-only	fn BiasedFp(comptime T: type) type	
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().eql	parser-only	fn eql(self: Self, other: Self) bool	
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().inf	parser-only	fn inf(comptime FloatT: type) Self	
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().toFloat	parser-only	fn toFloat(self: Self, comptime FloatT: type, negative: bool) FloatT	
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().zero	parser-only	fn zero() Self	
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().zeroPow2	parser-only	fn zeroPow2(e: i32) Self	
+std.fmt.@"parse_float.zig".parse.common.Number	parser-only	fn Number(comptime T: type) type	
+std.fmt.@"parse_float.zig".parse.common.floatFromUnsigned	parser-only	fn floatFromUnsigned(comptime T: type, comptime MantissaT: type, v: MantissaT) T	
+std.fmt.@"parse_float.zig".parse.common.isDigit	parser-only	fn isDigit(c: u8, comptime base: u8) bool	
+std.fmt.@"parse_float.zig".parse.common.isEightDigits	parser-only	fn isEightDigits(v: u64) bool	
+std.fmt.@"parse_float.zig".parse.common.mantissaType	parser-only	fn mantissaType(comptime T: type) type	
+std.fmt.@"parse_float.zig".parse.min_n_digit_int	parser-only	fn min_n_digit_int(comptime T: type, digit_count: usize) T	
+std.fmt.@"parse_float.zig".parse.parse8Digits	parser-only	fn parse8Digits(v_: u64) u64	
+std.fmt.@"parse_float.zig".parse.parseInfOrNan	parser-only	fn parseInfOrNan(comptime T: type, s: []const u8, negative: bool) ?T	
+std.fmt.@"parse_float.zig".parse.parseNumber	parser-only	fn parseNumber(comptime T: type, s: []const u8, negative: bool) ?Number(T)	
+std.fmt.@"parse_float.zig".parse.parsePartialInfOrNan	parser-only	fn parsePartialInfOrNan(comptime T: type, s: []const u8, negative: bool, n: *usize) ?T	
+std.fmt.@"parse_float.zig".parse.parsePartialNumber	parser-only	fn parsePartialNumber(comptime T: type, s: []const u8, negative: bool, n: *usize) ?Number(T)	
+std.fmt.@"parse_float.zig".parse.parsePartialNumberBase	parser-only	fn parsePartialNumberBase(comptime T: type, stream: *FloatStream, negative: bool, n: *usize, comptime info: ParseInfo) ?Number(T)	
+std.fmt.@"parse_float.zig".parse.parseScientific	parser-only	fn parseScientific(stream: *FloatStream) ?i64	
+std.fmt.@"parse_float.zig".parse.tryParseDigits	parser-only	fn tryParseDigits(comptime T: type, stream: *FloatStream, x: *T, comptime base: u8) void	
+std.fmt.@"parse_float.zig".parse.tryParseNDigits	parser-only	fn tryParseNDigits(comptime T: type, stream: *FloatStream, x: *T, comptime base: u8, comptime n: usize) void	
+std.fmt.@"parse_float.zig".parse.validUnderscores	parser-only	fn validUnderscores(s: []const u8, comptime base: u8) bool	
 std.fmt.Alt	both	fn Alt( comptime Data: type, comptime formatFn: fn (data: Data, writer: *Writer) Writer.Error!void, ) type	fn (comptime type, comptime anytype) type
 std.fmt.Alt().format	parser-only	fn format(self: @This(), writer: *Writer) Writer.Error!void	
 std.fmt.ArgState.hasUnusedArgs	both	fn hasUnusedArgs(self: *@This()) bool	fn (*fmt.ArgState) bool
@@ -8606,6 +9097,40 @@ std.hash_map.eqlString	both	fn eqlString(a: []const u8, b: []const u8) bool	fn (
 std.hash_map.getAutoEqlFn	both	fn getAutoEqlFn(comptime K: type, comptime Context: type) (fn (Context, K, K) bool)	fn (comptime type, comptime type) anytype
 std.hash_map.getAutoHashFn	both	fn getAutoHashFn(comptime K: type, comptime Context: type) (fn (Context, K) u64)	fn (comptime type, comptime type) anytype
 std.hash_map.hashString	both	fn hashString(s: []const u8) u64	fn ([]const u8) u64
+std.heap.@"debug_allocator.zig".DebugAllocator	parser-only	fn DebugAllocator(comptime config: Config) type	
+std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.captureStackTrace	parser-only	fn captureStackTrace( bucket: *BucketHeader, ret_addr: usize, slot_count: usize, slot_index: SlotIndex, trace_kind: TraceKind, ) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.fromPage	parser-only	fn fromPage(page_addr: usize, slot_count: usize) *BucketHeader	
+std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.log2PtrAligns	parser-only	fn log2PtrAligns(bucket: *BucketHeader, slot_count: usize) []mem.Alignment	
+std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.requestedSizes	parser-only	fn requestedSizes(bucket: *BucketHeader, slot_count: usize) []LargestSizeClassInt	
+std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.stackTracePtr	parser-only	fn stackTracePtr( bucket: *BucketHeader, slot_count: usize, slot_index: SlotIndex, trace_kind: TraceKind, ) *[stack_n]usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().BucketHeader.usedBits	parser-only	fn usedBits(bucket: *BucketHeader, index: usize) *usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().LargeAlloc.captureStackTrace	parser-only	fn captureStackTrace(self: *LargeAlloc, ret_addr: usize, trace_kind: TraceKind) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().LargeAlloc.dumpStackTrace	parser-only	fn dumpStackTrace(self: *LargeAlloc, trace_kind: TraceKind) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().LargeAlloc.getStackTrace	parser-only	fn getStackTrace(self: *LargeAlloc, trace_kind: TraceKind) std.debug.StackTrace	
+std.heap.@"debug_allocator.zig".DebugAllocator().alloc	parser-only	fn alloc(context: *anyopaque, len: usize, alignment: mem.Alignment, ret_addr: usize) ?[*]u8	
+std.heap.@"debug_allocator.zig".DebugAllocator().allocator	parser-only	fn allocator(self: *Self) Allocator	
+std.heap.@"debug_allocator.zig".DebugAllocator().bucketAlignsStart	parser-only	fn bucketAlignsStart(slot_count: usize) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().bucketRequestedSizesStart	parser-only	fn bucketRequestedSizesStart(slot_count: usize) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().bucketSize	parser-only	fn bucketSize(slot_count: usize) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().bucketStackFramesStart	parser-only	fn bucketStackFramesStart(slot_count: usize) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().bucketStackTrace	parser-only	fn bucketStackTrace( bucket: *BucketHeader, slot_count: usize, slot_index: SlotIndex, trace_kind: TraceKind, ) StackTrace	
+std.heap.@"debug_allocator.zig".DebugAllocator().calculateSlotCount	parser-only	fn calculateSlotCount(size_class_index: usize) SlotIndex	
+std.heap.@"debug_allocator.zig".DebugAllocator().collectStackTrace	parser-only	fn collectStackTrace(first_trace_addr: usize, addr_buf: *[stack_n]usize) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().deinit	parser-only	fn deinit(self: *Self) std.heap.Check	
+std.heap.@"debug_allocator.zig".DebugAllocator().deinitWithoutLeakChecks	parser-only	fn deinitWithoutLeakChecks(self: *Self) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().detectLeaks	parser-only	fn detectLeaks(self: *Self) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().detectLeaksInBucket	parser-only	fn detectLeaksInBucket( bucket: *BucketHeader, size_class_index: usize, used_bits_count: usize, ) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().flushRetainedMetadata	parser-only	fn flushRetainedMetadata(self: *Self) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().free	parser-only	fn free( context: *anyopaque, old_memory: []u8, alignment: mem.Alignment, return_address: usize, ) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().freeLarge	parser-only	fn freeLarge( self: *Self, old_mem: []u8, alignment: mem.Alignment, ret_addr: usize, ) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().freeRetainedMetadata	parser-only	fn freeRetainedMetadata(self: *Self) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().remap	parser-only	fn remap( context: *anyopaque, memory: []u8, alignment: mem.Alignment, new_len: usize, return_address: usize, ) ?[*]u8	
+std.heap.@"debug_allocator.zig".DebugAllocator().reportDoubleFree	parser-only	fn reportDoubleFree(ret_addr: usize, alloc_stack_trace: StackTrace, free_stack_trace: StackTrace) void	
+std.heap.@"debug_allocator.zig".DebugAllocator().resize	parser-only	fn resize( context: *anyopaque, memory: []u8, alignment: mem.Alignment, new_len: usize, return_address: usize, ) bool	
+std.heap.@"debug_allocator.zig".DebugAllocator().resizeLarge	parser-only	fn resizeLarge( self: *Self, old_mem: []u8, alignment: mem.Alignment, new_size: usize, ret_addr: usize, may_move: bool, ) ?[*]u8	
+std.heap.@"debug_allocator.zig".DebugAllocator().resizeSmall	parser-only	fn resizeSmall( self: *Self, memory: []u8, alignment: mem.Alignment, new_len: usize, return_address: usize, size_class_index: usize, ) bool	
+std.heap.@"debug_allocator.zig".DebugAllocator().usedBitsCount	parser-only	fn usedBitsCount(slot_count: usize) usize	
+std.heap.@"debug_allocator.zig".DebugAllocator().usedBitsSize	parser-only	fn usedBitsSize(slot_count: usize) usize	
 std.heap.ArenaAllocator.FuzzAllocator.alloc	parser-only	fn alloc(ctx: *anyopaque, len: usize, alignment: Alignment, ret_addr: usize) ?[*]u8	
 std.heap.ArenaAllocator.FuzzAllocator.allocator	parser-only	fn allocator(fa: *FuzzAllocator) Allocator	
 std.heap.ArenaAllocator.FuzzAllocator.free	parser-only	fn free(ctx: *anyopaque, memory: []u8, alignment: Alignment, ret_addr: usize) void	
@@ -8969,6 +9494,43 @@ std.http.Server.init	both	fn init(in: *Reader, out: *Writer) Server	fn (*Io.Read
 std.http.Server.receiveHead	both	fn receiveHead(s: *Server) ReceiveHeadError!Request	fn (*http.Server) error{HttpConnectionClosing,HttpHeadersInvalid,HttpHeadersOversize,HttpRequestTruncated,ReadFailed}!http.Server.Request
 std.http.Status.class	both	fn class(self: Status) Class	fn (http.Status) http.Status.Class
 std.http.Status.phrase	both	fn phrase(self: Status) ?[]const u8	fn (http.Status) ?[]const u8
+std.json.@"dynamic.zig".ParseError	parser-only	fn ParseError(comptime Source: type) type	
+std.json.@"dynamic.zig".Value.dump	parser-only	fn dump(v: Value) void	
+std.json.@"dynamic.zig".Value.jsonParse	parser-only	fn jsonParse(allocator: Allocator, source: anytype, options: ParseOptions) ParseError(@TypeOf(source.*))!@This()	
+std.json.@"dynamic.zig".Value.jsonParseFromValue	parser-only	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()	
+std.json.@"dynamic.zig".Value.jsonStringify	parser-only	fn jsonStringify(value: @This(), jws: anytype) !void	
+std.json.@"dynamic.zig".Value.parseFromNumberSlice	parser-only	fn parseFromNumberSlice(s: []const u8) Value	
+std.json.@"dynamic.zig".handleCompleteValue	parser-only	fn handleCompleteValue(stack: *Array, allocator: Allocator, source: anytype, value_: Value, options: ParseOptions) !?Value	
+std.json.@"dynamic.zig".isNumberFormattedLikeAnInteger	parser-only	fn isNumberFormattedLikeAnInteger(value: []const u8) bool	
+std.json.@"hashmap.zig".Value.dump	parser-only	fn dump(v: Value) void	
+std.json.@"hashmap.zig".Value.jsonParse	parser-only	fn jsonParse(allocator: Allocator, source: anytype, options: ParseOptions) ParseError(@TypeOf(source.*))!@This()	
+std.json.@"hashmap.zig".Value.jsonParseFromValue	parser-only	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()	
+std.json.@"hashmap.zig".Value.jsonStringify	parser-only	fn jsonStringify(value: @This(), jws: anytype) !void	
+std.json.@"hashmap.zig".Value.parseFromNumberSlice	parser-only	fn parseFromNumberSlice(s: []const u8) Value	
+std.json.@"hashmap.zig".innerParse	parser-only	fn innerParse( comptime T: type, allocator: Allocator, source: anytype, options: ParseOptions, ) ParseError(@TypeOf(source.*))!T	
+std.json.@"hashmap.zig".innerParseFromValue	parser-only	fn innerParseFromValue( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!T	
+std.json.@"static.zig".ParseError	parser-only	fn ParseError(comptime Source: type) type	
+std.json.@"static.zig".Parsed	parser-only	fn Parsed(comptime T: type) type	
+std.json.@"static.zig".Parsed().deinit	parser-only	fn deinit(self: @This()) void	
+std.json.@"static.zig".Value.dump	parser-only	fn dump(v: Value) void	
+std.json.@"static.zig".Value.jsonParse	parser-only	fn jsonParse(allocator: Allocator, source: anytype, options: ParseOptions) ParseError(@TypeOf(source.*))!@This()	
+std.json.@"static.zig".Value.jsonParseFromValue	parser-only	fn jsonParseFromValue(allocator: Allocator, source: Value, options: ParseOptions) !@This()	
+std.json.@"static.zig".Value.jsonStringify	parser-only	fn jsonStringify(value: @This(), jws: anytype) !void	
+std.json.@"static.zig".Value.parseFromNumberSlice	parser-only	fn parseFromNumberSlice(s: []const u8) Value	
+std.json.@"static.zig".fillDefaultStructValues	parser-only	fn fillDefaultStructValues(comptime T: type, r: *T, fields_seen: *[@typeInfo(T).@"struct".field_names.len]bool) !void	
+std.json.@"static.zig".freeAllocated	parser-only	fn freeAllocated(allocator: Allocator, token: Token) void	
+std.json.@"static.zig".innerParse	parser-only	fn innerParse( comptime T: type, allocator: Allocator, source: anytype, options: ParseOptions, ) ParseError(@TypeOf(source.*))!T	
+std.json.@"static.zig".innerParseArrayFromArrayValue	parser-only	fn innerParseArrayFromArrayValue( comptime T: type, comptime Child: type, comptime len: comptime_int, allocator: Allocator, array: Array, options: ParseOptions, ) !T	
+std.json.@"static.zig".innerParseFromValue	parser-only	fn innerParseFromValue( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!T	
+std.json.@"static.zig".internalParseArray	parser-only	fn internalParseArray( comptime T: type, comptime Child: type, allocator: Allocator, source: anytype, options: ParseOptions, ) !T	
+std.json.@"static.zig".parseFromSlice	parser-only	fn parseFromSlice( comptime T: type, allocator: Allocator, s: []const u8, options: ParseOptions, ) ParseError(Scanner)!Parsed(T)	
+std.json.@"static.zig".parseFromSliceLeaky	parser-only	fn parseFromSliceLeaky( comptime T: type, allocator: Allocator, s: []const u8, options: ParseOptions, ) ParseError(Scanner)!T	
+std.json.@"static.zig".parseFromTokenSource	parser-only	fn parseFromTokenSource( comptime T: type, allocator: Allocator, scanner_or_reader: anytype, options: ParseOptions, ) ParseError(@TypeOf(scanner_or_reader.*))!Parsed(T)	
+std.json.@"static.zig".parseFromTokenSourceLeaky	parser-only	fn parseFromTokenSourceLeaky( comptime T: type, allocator: Allocator, scanner_or_reader: anytype, options: ParseOptions, ) ParseError(@TypeOf(scanner_or_reader.*))!T	
+std.json.@"static.zig".parseFromValue	parser-only	fn parseFromValue( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!Parsed(T)	
+std.json.@"static.zig".parseFromValueLeaky	parser-only	fn parseFromValueLeaky( comptime T: type, allocator: Allocator, source: Value, options: ParseOptions, ) ParseFromValueError!T	
+std.json.@"static.zig".sliceToEnum	parser-only	fn sliceToEnum(comptime T: type, slice: []const u8) !T	
+std.json.@"static.zig".sliceToInt	parser-only	fn sliceToInt(comptime T: type, slice: []const u8) !T	
 std.json.Array.SentinelSlice	reflect-only		fn (comptime json.dynamic.Value) type
 std.json.Array.addManyAsArray	reflect-only		fn (*array_list.AlignedManaged(json.dynamic.Value,null), comptime usize) anytype
 std.json.Array.addManyAsArrayAssumeCapacity	reflect-only		fn (*array_list.AlignedManaged(json.dynamic.Value,null), comptime usize) anytype
@@ -9319,6 +9881,89 @@ std.macho.section_64.sectName	both	fn sectName(sect: *const section_64) []const 
 std.macho.section_64.segName	both	fn segName(sect: *const section_64) []const u8	fn (*const macho.section_64) []const u8
 std.macho.segment_command_64.isWriteable	both	fn isWriteable(seg: segment_command_64) bool	fn (macho.segment_command_64) bool
 std.macho.segment_command_64.segName	both	fn segName(seg: *const segment_command_64) []const u8	fn (*const macho.segment_command_64) []const u8
+std.math.@"acos.zig".acosBinary128	parser-only	fn acosBinary128(x: f128) f128	
+std.math.@"acos.zig".acosBinary16	parser-only	fn acosBinary16(x: f16) f16	
+std.math.@"acos.zig".acosBinary32	parser-only	fn acosBinary32(x: f32) f32	
+std.math.@"acos.zig".acosBinary32Vec	parser-only	fn acosBinary32Vec(comptime vec_len: comptime_int, x: @Vector(vec_len, f32)) @TypeOf(x)	
+std.math.@"acos.zig".acosBinary64	parser-only	fn acosBinary64(x: f64) f64	
+std.math.@"acos.zig".acosBinary64Vec	parser-only	fn acosBinary64Vec(comptime vec_len: comptime_int, x: @Vector(vec_len, f64)) @TypeOf(x)	
+std.math.@"acos.zig".acosExtended80	parser-only	fn acosExtended80(x: f80) f80	
+std.math.@"acos.zig".approxBinary16	parser-only	fn approxBinary16(z: f32) f32	
+std.math.@"acos.zig".rationalApproxBinary128	parser-only	fn rationalApproxBinary128(z: f128) f128	
+std.math.@"acos.zig".rationalApproxBinary32	parser-only	fn rationalApproxBinary32(z: f32) f32	
+std.math.@"acos.zig".rationalApproxBinary64	parser-only	fn rationalApproxBinary64(z: f64) f64	
+std.math.@"acos.zig".rationalApproxExtended80	parser-only	fn rationalApproxExtended80(z: f80) f80	
+std.math.@"acosh.zig".acosh32	parser-only	fn acosh32(x: f32) f32	
+std.math.@"acosh.zig".acosh64	parser-only	fn acosh64(x: f64) f64	
+std.math.@"asin.zig".approxBinary16	parser-only	fn approxBinary16(z: f32) f32	
+std.math.@"asin.zig".asinBinary128	parser-only	fn asinBinary128(x: f128) f128	
+std.math.@"asin.zig".asinBinary16	parser-only	fn asinBinary16(x: f16) f16	
+std.math.@"asin.zig".asinBinary32	parser-only	fn asinBinary32(x: f32) f32	
+std.math.@"asin.zig".asinBinary32Vec	parser-only	fn asinBinary32Vec(comptime vec_len: comptime_int, x: @Vector(vec_len, f32)) @TypeOf(x)	
+std.math.@"asin.zig".asinBinary64	parser-only	fn asinBinary64(x: f64) f64	
+std.math.@"asin.zig".asinBinary64Vec	parser-only	fn asinBinary64Vec(comptime vec_len: comptime_int, x: @Vector(vec_len, f64)) @TypeOf(x)	
+std.math.@"asin.zig".asinExtended80	parser-only	fn asinExtended80(x: f80) f80	
+std.math.@"asin.zig".rationalApproxBinary128	parser-only	fn rationalApproxBinary128(z: f128) f128	
+std.math.@"asin.zig".rationalApproxBinary32	parser-only	fn rationalApproxBinary32(z: f32) f32	
+std.math.@"asin.zig".rationalApproxBinary64	parser-only	fn rationalApproxBinary64(z: f64) f64	
+std.math.@"asin.zig".rationalApproxExtended80	parser-only	fn rationalApproxExtended80(z: f80) f80	
+std.math.@"asinh.zig".asinh32	parser-only	fn asinh32(x: f32) f32	
+std.math.@"asinh.zig".asinh64	parser-only	fn asinh64(x: f64) f64	
+std.math.@"atan.zig".atanBinary128	parser-only	fn atanBinary128(x: f128) f128	
+std.math.@"atan.zig".atanBinary16	parser-only	fn atanBinary16(x: f16) f16	
+std.math.@"atan.zig".atanBinary32	parser-only	fn atanBinary32(x: f32) f32	
+std.math.@"atan.zig".atanBinary32Vec	parser-only	fn atanBinary32Vec(comptime vec_len: comptime_int, x: @Vector(vec_len, f32)) @TypeOf(x)	
+std.math.@"atan.zig".atanBinary64	parser-only	fn atanBinary64(x: f64) f64	
+std.math.@"atan.zig".atanBinary64Vec	parser-only	fn atanBinary64Vec(comptime vec_len: comptime_int, x: @Vector(vec_len, f64)) @TypeOf(x)	
+std.math.@"atan.zig".atanExtended80	parser-only	fn atanExtended80(x: f80) f80	
+std.math.@"atan2.zig".atan2_32	parser-only	fn atan2_32(y: f32, x: f32) f32	
+std.math.@"atan2.zig".atan2_64	parser-only	fn atan2_64(y: f64, x: f64) f64	
+std.math.@"atanh.zig".atanh_32	parser-only	fn atanh_32(x: f32) f32	
+std.math.@"atanh.zig".atanh_64	parser-only	fn atanh_64(x: f64) f64	
+std.math.@"cbrt.zig".cbrt32	parser-only	fn cbrt32(x: f32) f32	
+std.math.@"cbrt.zig".cbrt64	parser-only	fn cbrt64(x: f64) f64	
+std.math.@"cosh.zig".cosh32	parser-only	fn cosh32(x: f32) f32	
+std.math.@"cosh.zig".cosh64	parser-only	fn cosh64(x: f64) f64	
+std.math.@"cosh.zig".expo2	parser-only	fn expo2(x: anytype) @TypeOf(x)	
+std.math.@"expm1.zig".expm1_32	parser-only	fn expm1_32(x_: f32) f32	
+std.math.@"expm1.zig".expm1_64	parser-only	fn expm1_64(x_: f64) f64	
+std.math.@"frexp.zig".Frexp	parser-only	fn Frexp(comptime T: type) type	
+std.math.@"frexp.zig".FrexpTests	parser-only	fn FrexpTests(comptime Float: type) type	
+std.math.@"gamma.zig".lgamma	parser-only	fn lgamma(comptime T: type, x: T) T	
+std.math.@"gamma.zig".series	parser-only	fn series(comptime T: type, abs: T) T	
+std.math.@"gamma.zig".sinpi	parser-only	fn sinpi(comptime T: type, x: T) T	
+std.math.@"hypot.zig".emulateFma	parser-only	fn emulateFma(comptime T: type) bool	
+std.math.@"hypot.zig".hypotFused	parser-only	fn hypotFused(comptime F: type, x: F, y: F) F	
+std.math.@"hypot.zig".hypotUnfused	parser-only	fn hypotUnfused(comptime F: type, x: F, y: F) F	
+std.math.@"ilogb.zig".ilogbX	parser-only	fn ilogbX(comptime T: type, x: T) i32	
+std.math.@"isinf.zig".isNegativeInf	parser-only	fn isNegativeInf(x: anytype) bool	
+std.math.@"isinf.zig".isPositiveInf	parser-only	fn isPositiveInf(x: anytype) bool	
+std.math.@"isnan.zig".isSignalNan	parser-only	fn isSignalNan(x: anytype) bool	
+std.math.@"iszero.zig".isNegativeZero	parser-only	fn isNegativeZero(x: anytype) bool	
+std.math.@"log10.zig".less_than_5	parser-only	fn less_than_5(x: u32) u32	
+std.math.@"log10.zig".log10_int	parser-only	fn log10_int(x: anytype) std.math.Log2Int(@TypeOf(x))	
+std.math.@"log10.zig".log10_int_u8	parser-only	fn log10_int_u8(x: u8) u32	
+std.math.@"log10.zig".pow10	parser-only	fn pow10(comptime y: comptime_int) comptime_int	
+std.math.@"log1p.zig".log1p_32	parser-only	fn log1p_32(x: f32) f32	
+std.math.@"log1p.zig".log1p_64	parser-only	fn log1p_64(x: f64) f64	
+std.math.@"modf.zig".Modf	parser-only	fn Modf(comptime T: type) type	
+std.math.@"modf.zig".ModfTests	parser-only	fn ModfTests(comptime T: type) type	
+std.math.@"nextafter.zig".bitwiseEqual	parser-only	fn bitwiseEqual(comptime T: type, x: T, y: T) bool	
+std.math.@"nextafter.zig".nextAfterFloat	parser-only	fn nextAfterFloat(comptime T: type, x: T, y: T) T	
+std.math.@"nextafter.zig".nextAfterInt	parser-only	fn nextAfterInt(comptime T: type, x: T, y: T) T	
+std.math.@"pow.zig".isOddInteger	parser-only	fn isOddInteger(x: f64) bool	
+std.math.@"signbit.zig".testFloats	parser-only	fn testFloats(comptime Type: type) !void	
+std.math.@"signbit.zig".testInts	parser-only	fn testInts(comptime Type: type) !void	
+std.math.@"sinh.zig".@"expo2.zig".expo2d	parser-only	fn expo2d(x: f64) f64	
+std.math.@"sinh.zig".@"expo2.zig".expo2f	parser-only	fn expo2f(x: f32) f32	
+std.math.@"sinh.zig".expo2	parser-only	fn expo2(x: anytype) @TypeOf(x)	
+std.math.@"sinh.zig".sinh32	parser-only	fn sinh32(x: f32) f32	
+std.math.@"sinh.zig".sinh64	parser-only	fn sinh64(x: f64) f64	
+std.math.@"sqrt.zig".Sqrt	parser-only	fn Sqrt(comptime T: type) type	
+std.math.@"sqrt.zig".sqrt_int	parser-only	fn sqrt_int(comptime T: type, value: T) Sqrt(T)	
+std.math.@"tanh.zig".expo2	parser-only	fn expo2(x: anytype) @TypeOf(x)	
+std.math.@"tanh.zig".tanh32	parser-only	fn tanh32(x: f32) f32	
+std.math.@"tanh.zig".tanh64	parser-only	fn tanh64(x: f64) f64	
 std.math.AlignCastResult	parser-only	fn AlignCastResult(comptime alignment: Alignment, comptime Ptr: type) type	
 std.math.ByteAlignedInt	both	fn ByteAlignedInt(comptime T: type) type	fn (comptime type) type
 std.math.CompareOperator.reverse	both	fn reverse(op: CompareOperator) CompareOperator	fn (math.CompareOperator) math.CompareOperator
@@ -9559,6 +10204,27 @@ std.math.ceilPowerOfTwoAssert	both	fn ceilPowerOfTwoAssert(comptime T: type, val
 std.math.ceilPowerOfTwoPromote	both	fn ceilPowerOfTwoPromote(comptime T: type, value: T) @Int(@typeInfo(T).int.signedness, @typeInfo(T).int.bits + 1)	fn (comptime type, anytype) anytype
 std.math.clamp	both	fn clamp(val: anytype, lower: anytype, upper: anytype) @TypeOf(val, lower, upper)	fn (anytype, anytype, anytype) anytype
 std.math.compare	both	fn compare(a: anytype, op: CompareOperator, b: anytype) bool	fn (anytype, math.CompareOperator, anytype) bool
+std.math.complex.@"atan.zig".atan32	parser-only	fn atan32(z: Complex(f32)) Complex(f32)	
+std.math.complex.@"atan.zig".atan64	parser-only	fn atan64(z: Complex(f64)) Complex(f64)	
+std.math.complex.@"atan.zig".redupif32	parser-only	fn redupif32(x: f32) f32	
+std.math.complex.@"atan.zig".redupif64	parser-only	fn redupif64(x: f64) f64	
+std.math.complex.@"cosh.zig".@"ldexp.zig".frexp_exp32	parser-only	fn frexp_exp32(x: f32, expt: *i32) f32	
+std.math.complex.@"cosh.zig".@"ldexp.zig".frexp_exp64	parser-only	fn frexp_exp64(x: f64, expt: *i32) f64	
+std.math.complex.@"cosh.zig".@"ldexp.zig".ldexp_cexp32	parser-only	fn ldexp_cexp32(z: Complex(f32), expt: i32) Complex(f32)	
+std.math.complex.@"cosh.zig".@"ldexp.zig".ldexp_cexp64	parser-only	fn ldexp_cexp64(z: Complex(f64), expt: i32) Complex(f64)	
+std.math.complex.@"cosh.zig".cosh32	parser-only	fn cosh32(z: Complex(f32)) Complex(f32)	
+std.math.complex.@"cosh.zig".cosh64	parser-only	fn cosh64(z: Complex(f64)) Complex(f64)	
+std.math.complex.@"cosh.zig".ldexp_cexp	parser-only	fn ldexp_cexp(z: anytype, expt: i32) Complex(@TypeOf(z.re, z.im))	
+std.math.complex.@"exp.zig".exp32	parser-only	fn exp32(z: Complex(f32)) Complex(f32)	
+std.math.complex.@"exp.zig".exp64	parser-only	fn exp64(z: Complex(f64)) Complex(f64)	
+std.math.complex.@"exp.zig".ldexp_cexp	parser-only	fn ldexp_cexp(z: anytype, expt: i32) Complex(@TypeOf(z.re, z.im))	
+std.math.complex.@"sinh.zig".ldexp_cexp	parser-only	fn ldexp_cexp(z: anytype, expt: i32) Complex(@TypeOf(z.re, z.im))	
+std.math.complex.@"sinh.zig".sinh32	parser-only	fn sinh32(z: Complex(f32)) Complex(f32)	
+std.math.complex.@"sinh.zig".sinh64	parser-only	fn sinh64(z: Complex(f64)) Complex(f64)	
+std.math.complex.@"sqrt.zig".sqrt32	parser-only	fn sqrt32(z: Complex(f32)) Complex(f32)	
+std.math.complex.@"sqrt.zig".sqrt64	parser-only	fn sqrt64(z: Complex(f64)) Complex(f64)	
+std.math.complex.@"tanh.zig".tanh32	parser-only	fn tanh32(z: Complex(f32)) Complex(f32)	
+std.math.complex.@"tanh.zig".tanh64	parser-only	fn tanh64(z: Complex(f64)) Complex(f64)	
 std.math.complex.Complex	both	fn Complex(comptime T: type) type	fn (comptime type) type
 std.math.complex.Complex().add	parser-only	fn add(self: Self, other: Self) Self	
 std.math.complex.Complex().conjugate	parser-only	fn conjugate(self: Self) Self	
@@ -10686,6 +11352,15 @@ std.os.plan9.syscall_bits.syscall4	reflect-only		fn (os.plan9.SYS, usize, usize,
 std.os.plan9.write	both	fn write(fd: i32, buf: [*]const u8, count: usize) usize	fn (i32, [*]const u8, usize) usize
 std.os.requiresLibC	both	fn requiresLibC() bool	fn () bool
 std.os.targetRequiresLibC	both	fn targetRequiresLibC(target: *const std.Target) bool	fn (*const Target) bool
+std.os.uefi.@"pool_allocator.zig".UefiPoolAllocator.alloc	parser-only	fn alloc( _: *anyopaque, len: usize, alignment: mem.Alignment, ret_addr: usize, ) ?[*]u8	
+std.os.uefi.@"pool_allocator.zig".UefiPoolAllocator.free	parser-only	fn free( _: *anyopaque, buf: []u8, alignment: mem.Alignment, ret_addr: usize, ) void	
+std.os.uefi.@"pool_allocator.zig".UefiPoolAllocator.getHeader	parser-only	fn getHeader(ptr: [*]u8) *[*]align(8) u8	
+std.os.uefi.@"pool_allocator.zig".UefiPoolAllocator.remap	parser-only	fn remap( _: *anyopaque, buf: []u8, alignment: mem.Alignment, new_len: usize, ret_addr: usize, ) ?[*]u8	
+std.os.uefi.@"pool_allocator.zig".UefiPoolAllocator.resize	parser-only	fn resize( _: *anyopaque, buf: []u8, alignment: mem.Alignment, new_len: usize, ret_addr: usize, ) bool	
+std.os.uefi.@"pool_allocator.zig".uefi_alloc	parser-only	fn uefi_alloc( _: *anyopaque, len: usize, alignment: mem.Alignment, ret_addr: usize, ) ?[*]u8	
+std.os.uefi.@"pool_allocator.zig".uefi_free	parser-only	fn uefi_free( _: *anyopaque, buf: []u8, alignment: mem.Alignment, ret_addr: usize, ) void	
+std.os.uefi.@"pool_allocator.zig".uefi_remap	parser-only	fn uefi_remap( _: *anyopaque, buf: []u8, alignment: mem.Alignment, new_len: usize, ret_addr: usize, ) ?[*]u8	
+std.os.uefi.@"pool_allocator.zig".uefi_resize	parser-only	fn uefi_resize( _: *anyopaque, buf: []u8, alignment: mem.Alignment, new_len: usize, ret_addr: usize, ) bool	
 std.os.uefi.DevicePath.Acpi.AdrDevicePath.adrs	both	fn adrs(self: *const AdrDevicePath) []align(1) const u32	fn (*const os.uefi.device_path.DevicePath.Acpi.AdrDevicePath) []align(1) const u32
 std.os.uefi.DevicePath.BiosBootSpecification.BBS101DevicePath.getDescription	both	fn getDescription(self: *const BBS101DevicePath) [*:0]const u8	fn (*const os.uefi.device_path.DevicePath.BiosBootSpecification.BBS101DevicePath) [*:0]const u8
 std.os.uefi.DevicePath.Media.FilePathDevicePath.getPath	both	fn getPath(self: *const FilePathDevicePath) [*:0]align(1) const u16	fn (*const os.uefi.device_path.DevicePath.Media.FilePathDevicePath) [*:0]align(1) const u16
@@ -10820,6 +11495,8 @@ std.os.uefi.protocol.Udp6ServiceBinding.addToHandle	reflect-only		fn (*os.uefi.p
 std.os.uefi.protocol.Udp6ServiceBinding.createChild	reflect-only		fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } })) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!*os.uefi.Handle__opaque
 std.os.uefi.protocol.Udp6ServiceBinding.destroyChild	reflect-only		fn (*os.uefi.protocol.service_binding.ServiceBinding(.{ .time_low = 1726826273, .time_mid = 15512, .time_high_and_version = 19774, .clock_seq_high_and_reserved = 129, .clock_seq_low = 227, .node = .{ ... } }), *os.uefi.Handle__opaque) error{Aborted,AccessDenied,AlreadyStarted,BadBufferSize,BufferTooSmall,CompromisedData,ConnectionFin,ConnectionRefused,ConnectionReset,CrcError,DeviceError,EndOfFile,EndOfMedia,HostUnreachable,HttpError,IcmpError,IncompatibleVersion,InvalidLanguage,InvalidParameter,IpAddressConflict,LoadError,MediaChanged,NetworkUnreachable,NoMapping,NoMedia,NoResponse,NotFound,NotReady,NotStarted,OutOfResources,PortUnreachable,ProtocolError,ProtocolUnreachable,SecurityViolation,TftpError,Timeout,Unexpected,Unsupported,VolumeCorrupted,VolumeFull,WriteProtected}!void
 std.os.uefi.protocol.edid.Override.getEdid	both	fn getEdid(self: *const Override, handle: Handle) GetEdidError!Edid	fn (*const os.uefi.protocol.edid.Override, *os.uefi.Handle__opaque) error{Unexpected,Unsupported}!os.uefi.protocol.edid.Override.Edid
+std.os.uefi.tables.@"boot_services.zig".ProtocolInterfaces	parser-only	fn ProtocolInterfaces(HandleType: type, Interfaces: type) type	
+std.os.uefi.tables.@"boot_services.zig".protocolInterfaces	parser-only	fn protocolInterfaces( handle_arg: anytype, interfaces: anytype, ) ProtocolInterfaces(@TypeOf(handle_arg), @TypeOf(interfaces))	
 std.os.uefi.tables.BootServices.allocatePages	both	fn allocatePages( self: *BootServices, location: AllocateLocation, mem_type: MemoryType, pages: usize, ) AllocatePagesError![]align(4096) Page	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.tables.AllocateLocation, os.uefi.tables.MemoryType, usize) error{InvalidParameter,NotFound,OutOfResources,Unexpected}![]align(4096) [4096]u8
 std.os.uefi.tables.BootServices.allocatePool	both	fn allocatePool( self: *BootServices, pool_type: MemoryType, size: usize, ) AllocatePoolError![]align(8) u8	fn (*os.uefi.tables.boot_services.BootServices, os.uefi.tables.MemoryType, usize) error{InvalidParameter,OutOfResources,Unexpected}![]align(8) u8
 std.os.uefi.tables.BootServices.calculateCrc32	both	fn calculateCrc32( self: *const BootServices, data: []const u8, ) CalculateCrc32Error!u32	fn (*const os.uefi.tables.boot_services.BootServices, []const u8) error{InvalidParameter,Unexpected}!u32
@@ -10966,6 +11643,16 @@ std.os.windows.CONSOLE.USER_IO.SET_CURSOR_POSITION	both	fn SET_CURSOR_POSITION(c
 std.os.windows.CONSOLE.USER_IO.SET_MODE	both	fn SET_MODE(mode: DWORD) Header.With(DWORD)	fn (u32) os.windows.CONSOLE.USER_IO.Header.With(u32)
 std.os.windows.CONSOLE.USER_IO.SET_TEXT_ATTRIBUTE	both	fn SET_TEXT_ATTRIBUTE(attribute: WORD) Header.With(WORD)	fn (u16) os.windows.CONSOLE.USER_IO.Header.With(u16)
 std.os.windows.CONSOLE.USER_IO.WRITE	both	fn WRITE(mode: INFO.WRITE.MODE) Header.With(INFO.WRITE)	fn (os.windows.CONSOLE.USER_IO.INFO.WRITE.MODE) os.windows.CONSOLE.USER_IO.Header.With(os.windows.CONSOLE.USER_IO.INFO.WRITE)
+std.os.windows.CONTEXT.[aarch64].getRegs	parser-only	fn getRegs(ctx: *const CONTEXT) struct { bp: usize, ip: usize, sp: usize }	
+std.os.windows.CONTEXT.[aarch64].setIp	parser-only	fn setIp(ctx: *CONTEXT, ip: usize) void	
+std.os.windows.CONTEXT.[aarch64].setSp	parser-only	fn setSp(ctx: *CONTEXT, sp: usize) void	
+std.os.windows.CONTEXT.[thumb].getRegs	parser-only	fn getRegs(ctx: *const CONTEXT) struct { bp: usize, ip: usize, sp: usize }	
+std.os.windows.CONTEXT.[thumb].setIp	parser-only	fn setIp(ctx: *CONTEXT, ip: usize) void	
+std.os.windows.CONTEXT.[thumb].setSp	parser-only	fn setSp(ctx: *CONTEXT, sp: usize) void	
+std.os.windows.CONTEXT.[x86].getRegs	parser-only	fn getRegs(ctx: *const CONTEXT) struct { bp: usize, ip: usize, sp: usize }	
+std.os.windows.CONTEXT.[x86_64].getRegs	parser-only	fn getRegs(ctx: *const CONTEXT) struct { bp: usize, ip: usize, sp: usize }	
+std.os.windows.CONTEXT.[x86_64].setIp	parser-only	fn setIp(ctx: *CONTEXT, ip: usize) void	
+std.os.windows.CONTEXT.[x86_64].setSp	parser-only	fn setSp(ctx: *CONTEXT, sp: usize) void	
 std.os.windows.CONTEXT.getRegs	reflect-only		fn (*const os.windows.CONTEXT__struct) os.windows.CONTEXT__struct.getRegs__struct
 std.os.windows.CONTEXT.setIp	reflect-only		fn (*os.windows.CONTEXT__struct, usize) void
 std.os.windows.CONTEXT.setSp	reflect-only		fn (*os.windows.CONTEXT__struct, usize) void
@@ -11378,6 +12065,35 @@ std.simd.shiftElementsRight	both	fn shiftElementsRight(vec: anytype, comptime am
 std.simd.suggestVectorLength	both	fn suggestVectorLength(comptime T: type) ?comptime_int	fn (comptime type) ?comptime_int
 std.simd.suggestVectorLengthForCpu	both	fn suggestVectorLengthForCpu(comptime T: type, comptime cpu: std.Target.Cpu) ?comptime_int	fn (comptime type, comptime Target.Cpu) ?comptime_int
 std.simd.vectorLength	parser-only	fn vectorLength(comptime VectorType: type) comptime_int	
+std.sort.@"block.zig".Iterator.begin	parser-only	fn begin(self: *Iterator) void	
+std.sort.@"block.zig".Iterator.finished	parser-only	fn finished(self: *Iterator) bool	
+std.sort.@"block.zig".Iterator.init	parser-only	fn init(size2: usize, min_level: usize) Iterator	
+std.sort.@"block.zig".Iterator.length	parser-only	fn length(self: *Iterator) usize	
+std.sort.@"block.zig".Iterator.nextLevel	parser-only	fn nextLevel(self: *Iterator) bool	
+std.sort.@"block.zig".Iterator.nextRange	parser-only	fn nextRange(self: *Iterator) Range	
+std.sort.@"block.zig".Range.init	parser-only	fn init(start: usize, end: usize) Range	
+std.sort.@"block.zig".Range.length	parser-only	fn length(self: Range) usize	
+std.sort.@"block.zig".binaryFirst	parser-only	fn binaryFirst( comptime T: type, items: []T, value: T, range: Range, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) usize	
+std.sort.@"block.zig".binaryLast	parser-only	fn binaryLast( comptime T: type, items: []T, value: T, range: Range, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) usize	
+std.sort.@"block.zig".blockSwap	parser-only	fn blockSwap(comptime T: type, items: []T, start1: usize, start2: usize, block_size: usize) void	
+std.sort.@"block.zig".findFirstBackward	parser-only	fn findFirstBackward( comptime T: type, items: []T, value: T, range: Range, unique: usize, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) usize	
+std.sort.@"block.zig".findFirstForward	parser-only	fn findFirstForward( comptime T: type, items: []T, value: T, range: Range, unique: usize, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) usize	
+std.sort.@"block.zig".findLastBackward	parser-only	fn findLastBackward( comptime T: type, items: []T, value: T, range: Range, unique: usize, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) usize	
+std.sort.@"block.zig".findLastForward	parser-only	fn findLastForward( comptime T: type, items: []T, value: T, range: Range, unique: usize, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) usize	
+std.sort.@"block.zig".mergeExternal	parser-only	fn mergeExternal( comptime T: type, items: []T, A: Range, B: Range, cache: []T, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) void	
+std.sort.@"block.zig".mergeInPlace	parser-only	fn mergeInPlace( comptime T: type, items: []T, A_arg: Range, B_arg: Range, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) void	
+std.sort.@"block.zig".mergeInternal	parser-only	fn mergeInternal( comptime T: type, items: []T, A: Range, B: Range, buffer: Range, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) void	
+std.sort.@"block.zig".mergeInto	parser-only	fn mergeInto( comptime T: type, from: []T, A: Range, B: Range, into: []T, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) void	
+std.sort.@"block.zig".swap	parser-only	fn swap( comptime T: type, items: []T, order: *[8]u8, x: usize, y: usize, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) void	
+std.sort.@"pdq.zig".breakPatterns	parser-only	fn breakPatterns(a: usize, b: usize, context: anytype) void	
+std.sort.@"pdq.zig".chosePivot	parser-only	fn chosePivot(a: usize, b: usize, pivot: *usize, context: anytype) Hint	
+std.sort.@"pdq.zig".partialInsertionSort	parser-only	fn partialInsertionSort(a: usize, b: usize, context: anytype) bool	
+std.sort.@"pdq.zig".partition	parser-only	fn partition(a: usize, b: usize, pivot: *usize, context: anytype) bool	
+std.sort.@"pdq.zig".partitionEqual	parser-only	fn partitionEqual(a: usize, b: usize, pivot: usize, context: anytype) usize	
+std.sort.@"pdq.zig".pdqContext	parser-only	fn pdqContext(a: usize, b: usize, context: anytype) void	
+std.sort.@"pdq.zig".reverseRange	parser-only	fn reverseRange(a: usize, b: usize, context: anytype) void	
+std.sort.@"pdq.zig".sort3	parser-only	fn sort3(a: usize, b: usize, c: usize, swaps: *usize, context: anytype) void	
+std.sort.@"pdq.zig".unguardedInsertionContext	parser-only	fn unguardedInsertionContext(a: usize, b: usize, context: anytype) void	
 std.sort.IdAndValue.lessThan	parser-only	fn lessThan(context: void, a: IdAndValue, b: IdAndValue) bool	
 std.sort.argMax	both	fn argMax( comptime T: type, items: []const T, context: anytype, comptime lessThan: fn (context: @TypeOf(context), lhs: T, rhs: T) bool, ) ?usize	fn (comptime type, anytype, anytype, comptime anytype) ?usize
 std.sort.argMin	both	fn argMin( comptime T: type, items: []const T, context: anytype, comptime lessThan: fn (@TypeOf(context), lhs: T, rhs: T) bool, ) ?usize	fn (comptime type, anytype, anytype, comptime anytype) ?usize
@@ -13838,6 +14554,14 @@ std.zig.system.linux.CpuinfoParser	parser-only	fn CpuinfoParser(comptime impl: a
 std.zig.system.linux.CpuinfoParser().parse	parser-only	fn parse(arch: Target.Cpu.Arch, reader: *Io.Reader) !?Target.Cpu	
 std.zig.system.linux.aarch64.detectNativeCpuAndFeatures	parser-only	fn detectNativeCpuAndFeatures(arch: Target.Cpu.Arch) ?Target.Cpu	
 std.zig.system.linux.aarch64.mrs	parser-only	fn mrs(comptime feat_reg: []const u8) u64	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.addInstructionFusions	parser-only	fn addInstructionFusions(cpu: *Target.Cpu) void	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.bitField	parser-only	fn bitField(input: u64, offset: u6) u4	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.detectNativeCoreInfo	parser-only	fn detectNativeCoreInfo(midr: u64) CoreInfo	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.detectNativeCpuAndFeatures	parser-only	fn detectNativeCpuAndFeatures(arch: Target.Cpu.Arch, registers: [12]u64) Target.Cpu	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.detectNativeCpuFeatures	parser-only	fn detectNativeCpuFeatures(cpu: *Target.Cpu, registers: *const [11]u64) void	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.detectNativeFeatures	parser-only	fn detectNativeFeatures(arch: Target.Cpu.Arch, model: *const Target.Cpu.Model, registers: [11]u64) Target.Cpu	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.setFeature	parser-only	fn setFeature(cpu: *Target.Cpu, feature: Target.aarch64.Feature, enabled: bool) void	
+std.zig.system.linux.arm.cpuinfo.Impl.@"arm.zig".aarch64.signedBitField	parser-only	fn signedBitField(input: u64, offset: u6) i4	
 std.zig.system.linux.arm.cpuinfo.Impl.cpu_models.isKnown	parser-only	fn isKnown(core: CoreInfo, is_64bit: bool) ?*const Target.Cpu.Model	
 std.zig.system.linux.arm.cpuinfo.Impl.finalize	parser-only	fn finalize(self: *Impl, arch: Target.Cpu.Arch) ?Target.Cpu	
 std.zig.system.linux.arm.cpuinfo.Impl.lineHook	parser-only	fn lineHook(self: *Impl, key: []const u8, value: []const u8) !bool	

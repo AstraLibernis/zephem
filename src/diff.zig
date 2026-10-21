@@ -313,6 +313,21 @@ pub const AliasChange = struct {
     target_moved: bool = false,
 };
 
+/// A const chosen per platform whose `[…]` arms differ between the two maps, compared per tag.
+pub const VariantChange = struct {
+    /// the const, at its new path
+    path: []const u8,
+    /// its old path: differs only when the const moved (an inferred pairing)
+    old_path: []const u8,
+    /// tags (platforms, options) that gained or lost an arm
+    tags_added: []const []const u8,
+    tags_removed: []const []const u8,
+    /// tags on both sides whose arm gained or lost members (or whose arm is in another shape)
+    members: []const TagMembers,
+};
+
+pub const TagMembers = struct { tag: []const u8, added: usize, removed: usize };
+
 /// Everything the diff found, in one place, so the report and the TSV draw from the same facts.
 pub const Result = struct {
     changes: []const Change,
@@ -323,6 +338,7 @@ pub const Result = struct {
     values: []const ValueChange,
     docs: []const DocChange,
     aliases: []const AliasChange,
+    variants: []const VariantChange,
     /// Paths that are part of a move (either end), so the lists can skip them.
     moved: std.StringHashMapUnmanaged(void),
 };
@@ -439,7 +455,10 @@ fn isTag(d: Decl) bool {
 // ---------------------------------------------------------------- analyses ---------
 
 /// Every added / removed / changed declaration, sorted by path. With `include_private` false
-/// a declaration counts only while it is public on the side(s) it exists on.
+/// a declaration counts only while it is public on the side(s) it exists on. Inside a `[…]`
+/// variant (an arm of a const chosen per platform) a path on one side only is not listed here:
+/// arms are compared per tag in `variantChanges`, because adding one tag to a prong relabels the
+/// whole arm.
 pub fn compute(a: std.mem.Allocator, old: Side, new: Side, include_private: bool) ![]const Change {
     var out: std.ArrayList(Change) = .empty;
     for (old.paths) |p| {
@@ -454,11 +473,12 @@ pub fn compute(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
             }
         } else {
             if (!include_private and !isPub(o)) continue;
+            if (variantOf(p) != null) continue;
             try out.append(a, .{ .what = .removed, .path = p, .old = o, .new = null });
         }
     }
     for (new.paths) |p| {
-        if (old.decls.contains(p)) continue;
+        if (old.decls.contains(p) or variantOf(p) != null) continue;
         const n = new.decls.get(p).?;
         if (!include_private and !isPub(n)) continue;
         try out.append(a, .{ .what = .added, .path = p, .old = null, .new = n });
@@ -755,6 +775,102 @@ pub fn aliasChanges(a: std.mem.Allocator, old: Side, new: Side, include_private:
     return out.items;
 }
 
+/// The `[…]` arm a path lies in: the const, the arm's tags (`macos,ios`) and the rest of the path
+/// below the arm (`` for the arm itself, `.TCP` for a member). Null outside any arm. A tuple
+/// field's `[0]` is not an arm: an arm's label starts with a letter.
+pub const Variant = struct { @"const": []const u8, tags: []const u8, rest: []const u8 };
+
+pub fn variantOf(path: []const u8) ?Variant {
+    var from: usize = 0;
+    while (std.mem.findPos(u8, path, from, ".[")) |i| {
+        from = i + 2;
+        if (i + 2 >= path.len or std.ascii.isDigit(path[i + 2])) continue;
+        const close = std.mem.findScalarPos(u8, path, i + 2, ']') orelse return null;
+        return .{ .@"const" = path[0..i], .tags = path[i + 2 .. close], .rest = path[close + 1 ..] };
+    }
+    return null;
+}
+
+/// Per side: const → tag → the set of paths below that tag's arm (`` for the arm itself).
+const VariantTable = std.StringHashMapUnmanaged(std.StringHashMapUnmanaged(std.StringHashMapUnmanaged(void)));
+
+fn variantTable(a: std.mem.Allocator, side: Side, include_private: bool) !VariantTable {
+    var t: VariantTable = .empty;
+    for (side.paths) |p| {
+        const v = variantOf(p) orelse continue;
+        if (!include_private and !isPub(side.decls.get(p).?)) continue;
+        const per_const = try t.getOrPut(a, v.@"const");
+        if (!per_const.found_existing) per_const.value_ptr.* = .empty;
+        var tags = std.mem.splitScalar(u8, v.tags, ',');
+        while (tags.next()) |tag| {
+            const per_tag = try per_const.value_ptr.getOrPut(a, tag);
+            if (!per_tag.found_existing) per_tag.value_ptr.* = .empty;
+            try per_tag.value_ptr.put(a, v.rest, {});
+        }
+    }
+    return t;
+}
+
+/// The arms of consts chosen per platform, compared per tag rather than per path: an arm's
+/// label lists every tag of its prong, so a release that adds one tag to a prong (`maccatalyst`
+/// beside `macos`) relabels the arm, and comparing paths would report the whole arm removed and
+/// re-added. Each arm is expanded to one entry per tag; a const present on both sides (directly,
+/// or through an inferred move) reports the tags that gained or lost an arm and, per tag on both
+/// sides, how many members its arm gained or lost. A const on one side only is already a
+/// removed/added declaration. Sorted by path.
+pub fn variantChanges(a: std.mem.Allocator, old: Side, new: Side, include_private: bool, mv: []const Move) ![]const VariantChange {
+    const ot = try variantTable(a, old, include_private);
+    const nt = try variantTable(a, new, include_private);
+    var moved_to: std.StringHashMapUnmanaged([]const u8) = .empty; // new path → old path
+    for (mv) |m| try moved_to.put(a, m.to, m.from);
+    var out: std.ArrayList(VariantChange) = .empty;
+    var it = nt.iterator();
+    while (it.next()) |e| {
+        const path = e.key_ptr.*;
+        const old_path = if (ot.contains(path)) path else moved_to.get(path) orelse continue;
+        const o = ot.get(old_path) orelse continue;
+        const n = e.value_ptr.*;
+        var added: std.ArrayList([]const u8) = .empty;
+        var removed: std.ArrayList([]const u8) = .empty;
+        var members: std.ArrayList(TagMembers) = .empty;
+        var nit = n.iterator();
+        while (nit.next()) |te| {
+            const old_rest = o.get(te.key_ptr.*) orelse {
+                try added.append(a, te.key_ptr.*);
+                continue;
+            };
+            var plus: usize = 0;
+            var minus: usize = 0;
+            var r = te.value_ptr.keyIterator();
+            while (r.next()) |k| if (!old_rest.contains(k.*)) {
+                plus += 1;
+            };
+            var r2 = old_rest.keyIterator();
+            while (r2.next()) |k| if (!te.value_ptr.contains(k.*)) {
+                minus += 1;
+            };
+            if (plus + minus > 0) try members.append(a, .{ .tag = te.key_ptr.*, .added = plus, .removed = minus });
+        }
+        var oit = o.keyIterator();
+        while (oit.next()) |k| if (!n.contains(k.*)) try removed.append(a, k.*);
+        if (added.items.len + removed.items.len + members.items.len == 0) continue;
+        std.mem.sort([]const u8, added.items, {}, lessThan);
+        std.mem.sort([]const u8, removed.items, {}, lessThan);
+        std.mem.sort(TagMembers, members.items, {}, struct {
+            fn lt(_: void, x: TagMembers, y: TagMembers) bool {
+                return std.mem.order(u8, x.tag, y.tag) == .lt;
+            }
+        }.lt);
+        try out.append(a, .{ .path = path, .old_path = old_path, .tags_added = added.items, .tags_removed = removed.items, .members = members.items });
+    }
+    std.mem.sort(VariantChange, out.items, {}, struct {
+        fn lt(_: void, x: VariantChange, y: VariantChange) bool {
+            return std.mem.order(u8, x.path, y.path) == .lt;
+        }
+    }.lt);
+    return out.items;
+}
+
 /// Run every analysis.
 pub fn analyze(a: std.mem.Allocator, old: Side, new: Side, include_private: bool) !Result {
     const changes = try compute(a, old, new, include_private);
@@ -773,6 +889,7 @@ pub fn analyze(a: std.mem.Allocator, old: Side, new: Side, include_private: bool
         .values = try valueChanges(a, old, new, include_private),
         .docs = try docChanges(a, old, new, include_private),
         .aliases = try aliasChanges(a, old, new, include_private, mv),
+        .variants = try variantChanges(a, old, new, include_private, mv),
         .moved = moved,
     };
 }
@@ -912,7 +1029,7 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
             try w.writeAll("  (order = compiles and is wrong)\n");
         }
     }
-    if (kept.items.len == 0 and r.builtins.len == 0 and r.values.len == 0 and r.docs.len == 0 and r.aliases.len == 0) return;
+    if (kept.items.len == 0 and r.builtins.len == 0 and r.values.len == 0 and r.docs.len == 0 and r.aliases.len == 0 and r.variants.len == 0) return;
 
     // Where it moved.
     if (kept.items.len > 0) {
@@ -1058,6 +1175,32 @@ pub fn report(a: std.mem.Allocator, w: *std.Io.Writer, old_name: []const u8, new
 
     {
         var count: usize = 0;
+        for (r.variants) |v| if (inScope(v.path, o)) {
+            count += 1;
+        };
+        if (count > 0) {
+            try w.print("\n## platform variants — the arms of per-platform consts, compared per tag ({d})\n\n", .{count});
+            var shown: usize = 0;
+            for (r.variants) |v| {
+                if (!inScope(v.path, o)) continue;
+                if (o.limit != 0 and shown == o.limit) {
+                    try w.print("… {d} more\n", .{count - shown});
+                    break;
+                }
+                shown += 1;
+                try w.print("- `{s}`", .{v.path});
+                if (!std.mem.eql(u8, v.path, v.old_path)) try w.print(" (was `{s}`, moved — inferred)", .{v.old_path});
+                try w.writeAll(":");
+                for (v.tags_added) |t| try w.print(" +{s}", .{t});
+                for (v.tags_removed) |t| try w.print(" -{s}", .{t});
+                for (v.members) |m| try w.print(" · [{s}] +{d} -{d}", .{ m.tag, m.added, m.removed });
+                try w.writeAll("\n");
+            }
+        }
+    }
+
+    {
+        var count: usize = 0;
         var hints: usize = 0;
         for (r.docs) |d| if (inScope(d.path, o)) {
             count += 1;
@@ -1130,7 +1273,8 @@ fn section(w: *std.Io.Writer, changes: []const Change, moved: std.StringHashMapU
 /// One row per finding. Columns are stable and only ever appended to:
 /// change · provenance · path · kind_old · kind_new · old · new · detail
 /// (`detail` = the signature failure mode for changed rows, `hint` for flagged doc rows,
-/// `target_moved` for an alias retarget that follows an inferred move; alias rows put the edge
+/// `target_moved` for an alias retarget that follows an inferred move, the tag for a
+/// `variant_members` row, whose old / new are `-removed` / `+added` members; alias rows put the edge
 /// type in kind_old / kind_new and the targets in old / new)
 fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
     try w.writeAll("change\tprovenance\tpath\tkind_old\tkind_new\told\tnew\tdetail\n");
@@ -1177,6 +1321,13 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
             if (al.old) |x| x.target else "",         if (al.new) |x| x.target else "",
             if (al.target_moved) "target_moved" else "",
         });
+    }
+    for (r.variants) |v| {
+        if (!inScope(v.path, o)) continue;
+        const prov: []const u8 = if (std.mem.eql(u8, v.path, v.old_path)) "extracted" else "inferred";
+        for (v.tags_added) |t| try w.print("variant_tag_added\t{s}\t{s}\t\t\t\t{s}\t\n", .{ prov, v.path, t });
+        for (v.tags_removed) |t| try w.print("variant_tag_removed\t{s}\t{s}\t\t\t{s}\t\t\n", .{ prov, v.path, t });
+        for (v.members) |m| try w.print("variant_members\t{s}\t{s}\t\t\t-{d}\t+{d}\t{s}\n", .{ prov, v.path, m.removed, m.added, m.tag });
     }
 }
 
