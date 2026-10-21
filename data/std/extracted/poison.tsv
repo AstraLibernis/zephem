@@ -1,958 +1,909 @@
 path	reason
-std.Build	std/Build.zig:1984:33: error: root source file struct 'r-2' has no member named 'dependencies'
-std.Build.Cache.DepTokenizer.State	<gen>: error: 'State' is not marked 'pub'
-std.Build.Cache.PrefixedPath	<gen>: error: 'PrefixedPath' is not marked 'pub'
-std.Build.Step.InstallArtifact.DylibSymlinkInfo	<gen>: error: 'DylibSymlinkInfo' is not marked 'pub'
+std.Build.package_map	std/Build.zig:1984:33: error: root source file struct 'x-2-6-7' has no member named 'dependencies'
 std.Build.abi.fuzz	error: undefined symbol: fuzzer_init
-std.Build.Configuration.Wip.ExtraSlice	<gen>: error: 'ExtraSlice' is not marked 'pub'
-std.Build.Configuration.Wip.ExtraSlice.Context	<gen>: error: 'ExtraSlice' is not marked 'pub'
-std.Build.Configuration.Wip.TargetsTableContext	<gen>: error: 'TargetsTableContext' is not marked 'pub'
-std.Build.Configuration.Wip.StringTableContext	<gen>: error: 'StringTableContext' is not marked 'pub'
-std.Build.Configuration.Wip.StringTableIndexAdapter	<gen>: error: 'StringTableIndexAdapter' is not marked 'pub'
-std.Build.Configuration.IndexType	<gen>: error: 'IndexType' is not marked 'pub'
-std.Build.PackageInstanceKey	<gen>: error: 'PackageInstanceKey' is not marked 'pub'
-std.Build.AvailableOption	<gen>: error: 'AvailableOption' is not marked 'pub'
-std.Io	std/debug.zig:442:14: error: reached unreachable code
-std.Io.Threaded.Runnable	<gen>: error: 'Runnable' is not marked 'pub'
-std.Io.Threaded.Group	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Threaded.Group.Status	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Threaded.Group.Task	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Threaded.Future	<gen>: error: 'Future' is not marked 'pub'
-std.Io.Threaded.Future.Status	<gen>: error: 'Future' is not marked 'pub'
-std.Io.Threaded.AwaitableId	<gen>: error: 'AwaitableId' is not marked 'pub'
-std.Io.Threaded.AwaitableId.Split	<gen>: error: 'AwaitableId' is not marked 'pub'
-std.Io.Threaded.Thread	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Threaded.Thread.Status	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Threaded.Thread.PackedPtr	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Threaded.Thread.PackedPtr.Split	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Threaded.Syscall	<gen>: error: 'Syscall' is not marked 'pub'
-std.Io.Threaded.AlertableSyscall	<gen>: error: 'AlertableSyscall' is not marked 'pub'
-std.Io.Threaded.WindowsBatchOperationUserdata	<gen>: error: 'WindowsBatchOperationUserdata' is not marked 'pub'
-std.Io.Threaded.Wtf16ToPrefixedFileWOptions	<gen>: error: 'Wtf16ToPrefixedFileWOptions' is not marked 'pub'
-std.Io.Threaded.LocalDevicePathType	<gen>: error: 'LocalDevicePathType' is not marked 'pub'
-std.Io.Threaded.UnixAddress	<gen>: error: 'UnixAddress' is not marked 'pub'
-std.Io.Threaded.LookupDnsWindows	<gen>: error: 'LookupDnsWindows' is not marked 'pub'
-std.Io.Threaded.WindowsEnvironStrings	<gen>: error: 'WindowsEnvironStrings' is not marked 'pub'
-std.Io.Threaded.Spawned	<gen>: error: 'Spawned' is not marked 'pub'
-std.Io.Threaded.WindowsCommandLineCache	<gen>: error: 'WindowsCommandLineCache' is not marked 'pub'
-std.Io.Threaded.parking_futex	<gen>: error: 'parking_futex' is not marked 'pub'
-std.Io.Threaded.parking_futex.Bucket	<gen>: error: 'parking_futex' is not marked 'pub'
-std.Io.Threaded.parking_futex.Waiter	<gen>: error: 'parking_futex' is not marked 'pub'
-std.Io.Threaded.parking_sleep	<gen>: error: 'parking_sleep' is not marked 'pub'
-std.Io.Threaded.ParkingMutex	<gen>: error: 'ParkingMutex' is not marked 'pub'
-std.Io.Threaded.ParkingMutex.State	<gen>: error: 'ParkingMutex' is not marked 'pub'
-std.Io.Threaded.ParkingMutex.Waiter	<gen>: error: 'ParkingMutex' is not marked 'pub'
-std.Io.Threaded.WaitGroup	<gen>: error: 'WaitGroup' is not marked 'pub'
-std.Io.Threaded.OpenFileOptions	<gen>: error: 'OpenFileOptions' is not marked 'pub'
-std.Io.Threaded.OpenFileOptions.Filter	<gen>: error: 'OpenFileOptions' is not marked 'pub'
 std.Io.Dispatch	std/debug.zig:442:14: error: reached unreachable code
-std.Io.Dispatch.Thread	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Dispatch.Thread.List	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Dispatch.Fiber	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Dispatch.Fiber.CancelStatus	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Dispatch.Fiber.CancelStatus.Awaiting	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Dispatch.Fiber.CancelProtection	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Dispatch.Fiber.Queue	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Dispatch.Fiber.PackedPtr	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Dispatch.Fiber.PackedPtr.Split	<gen>: error: 'Fiber' is not marked 'pub'
 std.Io.Dispatch.InitOptions	std/debug.zig:442:14: error: reached unreachable code
-std.Io.Dispatch.SwitchMessage	<gen>: error: 'SwitchMessage' is not marked 'pub'
-std.Io.Dispatch.SwitchMessage.PendingTask	<gen>: error: 'SwitchMessage' is not marked 'pub'
-std.Io.Dispatch.Cancelable	<gen>: error: 'Cancelable' is not marked 'pub'
-std.Io.Dispatch.Sleeper	<gen>: error: 'Sleeper' is not marked 'pub'
-std.Io.Dispatch.Mutex	<gen>: error: 'Mutex' is not marked 'pub'
-std.Io.Dispatch.Mutex.State	<gen>: error: 'Mutex' is not marked 'pub'
-std.Io.Dispatch.Mutex.Waiter	<gen>: error: 'Mutex' is not marked 'pub'
-std.Io.Dispatch.AsyncClosure	<gen>: error: 'AsyncClosure' is not marked 'pub'
-std.Io.Dispatch.Group	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Dispatch.Group.List	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Dispatch.Group.Mutex	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Dispatch.Group.Awaiter	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Dispatch.Group.AsyncClosure	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Dispatch.Futex	<gen>: error: 'Futex' is not marked 'pub'
-std.Io.Dispatch.Futex.Waiter	<gen>: error: 'Futex' is not marked 'pub'
-std.Io.Dispatch.Futex.Waker	<gen>: error: 'Futex' is not marked 'pub'
-std.Io.Dispatch.BatchWaiter	<gen>: error: 'BatchWaiter' is not marked 'pub'
-std.Io.Dispatch.BatchOperationUserdata	<gen>: error: 'BatchOperationUserdata' is not marked 'pub'
-std.Io.Dispatch.Spawned	<gen>: error: 'Spawned' is not marked 'pub'
-std.Io.Dispatch.SleepWaiter	<gen>: error: 'SleepWaiter' is not marked 'pub'
-std.Io.Dispatch.Random	<gen>: error: 'Random' is not marked 'pub'
-std.Io.Kqueue	std/posix.zig:96:26: error: root source file struct 'os.linux' has no member named 'Kevent'
-std.Io.Kqueue.Thread	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Kqueue.Thread.WaitQueueKey	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Kqueue.Thread.List	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Kqueue.Fiber	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Kqueue.Fiber.Queue	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Kqueue.Completion	<gen>: error: 'Completion' is not marked 'pub'
-std.Io.Kqueue.Completion.UserData	<gen>: error: 'Completion' is not marked 'pub'
-std.Io.Kqueue.SwitchMessage	<gen>: error: 'SwitchMessage' is not marked 'pub'
-std.Io.Kqueue.SwitchMessage.PendingTask	<gen>: error: 'SwitchMessage' is not marked 'pub'
-std.Io.Kqueue.AsyncClosure	<gen>: error: 'AsyncClosure' is not marked 'pub'
-std.Io.Uring.Thread	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Uring.Thread.List	<gen>: error: 'Thread' is not marked 'pub'
-std.Io.Uring.Fiber	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.Fiber.CancelStatus	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.Fiber.CancelStatus.Awaiting	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.Fiber.CancelProtection	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.Fiber.Queue	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.Fiber.PackedPtr	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.Fiber.PackedPtr.Split	<gen>: error: 'Fiber' is not marked 'pub'
-std.Io.Uring.CancelRegion	<gen>: error: 'CancelRegion' is not marked 'pub'
-std.Io.Uring.CancelRegion.Sync	<gen>: error: 'CancelRegion' is not marked 'pub'
-std.Io.Uring.CancelRegion.Sync.Maybe	<gen>: error: 'CancelRegion' is not marked 'pub'
-std.Io.Uring.CachedFd	<gen>: error: 'CachedFd' is not marked 'pub'
-std.Io.Uring.CachedFd.Once	<gen>: error: 'CachedFd' is not marked 'pub'
-std.Io.Uring.Completion	<gen>: error: 'Completion' is not marked 'pub'
-std.Io.Uring.Completion.Userdata	<gen>: error: 'Completion' is not marked 'pub'
-std.Io.Uring.SwitchMessage	<gen>: error: 'SwitchMessage' is not marked 'pub'
-std.Io.Uring.SwitchMessage.PendingTask	<gen>: error: 'SwitchMessage' is not marked 'pub'
-std.Io.Uring.AsyncClosure	<gen>: error: 'AsyncClosure' is not marked 'pub'
-std.Io.Uring.Group	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Uring.Group.List	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Uring.Group.Mutex	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Uring.Group.Awaiter	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Uring.Group.AsyncClosure	<gen>: error: 'Group' is not marked 'pub'
-std.Io.Uring.Spawned	<gen>: error: 'Spawned' is not marked 'pub'
-std.Io.Writer.SplatHeaderTestCase	<gen>: error: 'SplatHeaderTestCase' is not marked 'pub'
-std.Io.net.HostName.ResolvConf.Directive	<gen>: error: 'Directive' is not marked 'pub'
-std.Io.net.HostName.ResolvConf.Option	<gen>: error: 'Option' is not marked 'pub'
-std.Io.Dir.SelectiveWalker.StackItem	<gen>: error: 'StackItem' is not marked 'pub'
-std.Io.Condition.State	<gen>: error: 'State' is not marked 'pub'
-std.Io.TypeErasedQueue.Put	<gen>: error: 'Put' is not marked 'pub'
-std.Io.TypeErasedQueue.Get	<gen>: error: 'Get' is not marked 'pub'
-std.Progress.Freelist	<gen>: error: 'Freelist' is not marked 'pub'
-std.Progress.Ipc.Data	<gen>: error: 'Data' is not marked 'pub'
-std.Progress.Ipc.Data.State	<gen>: error: 'Data' is not marked 'pub'
-std.Progress.Node.Storage	<gen>: error: 'Storage' is not marked 'pub'
-std.Progress.Node.Parent	<gen>: error: 'Parent' is not marked 'pub'
-std.Progress.TreeSymbol	<gen>: error: 'TreeSymbol' is not marked 'pub'
-std.Progress.TreeSymbol.Encoding	<gen>: error: 'TreeSymbol' is not marked 'pub'
-std.Progress.Children	<gen>: error: 'Children' is not marked 'pub'
-std.Progress.Serialized	<gen>: error: 'Serialized' is not marked 'pub'
-std.Progress.Serialized.Buffer	<gen>: error: 'Serialized' is not marked 'pub'
-std.Thread.UnsupportedImpl	<gen>: error: 'UnsupportedImpl' is not marked 'pub'
-std.Thread.WindowsThreadImpl	<gen>: error: 'WindowsThreadImpl' is not marked 'pub'
-std.Thread.WindowsThreadImpl.ThreadCompletion	<gen>: error: 'WindowsThreadImpl' is not marked 'pub'
-std.Thread.PosixThreadImpl	<gen>: error: 'PosixThreadImpl' is not marked 'pub'
-std.Thread.WasiThreadImpl	<gen>: error: 'WasiThreadImpl' is not marked 'pub'
-std.Thread.WasiThreadImpl.WasiThread	<gen>: error: 'WasiThreadImpl' is not marked 'pub'
-std.Thread.WasiThreadImpl.Instance	<gen>: error: 'WasiThreadImpl' is not marked 'pub'
-std.Thread.LinuxThreadImpl	<gen>: error: 'LinuxThreadImpl' is not marked 'pub'
-std.Thread.LinuxThreadImpl.ThreadCompletion	<gen>: error: 'LinuxThreadImpl' is not marked 'pub'
-std.Uri	std/Uri.zig:20:21: error: This function has been moved to std.Io.net.HostName.fromUri
-std.array_list.Item	<gen>: error: 'Item' is not marked 'pub'
-std.array_list.ItemUnmanaged	<gen>: error: 'ItemUnmanaged' is not marked 'pub'
-std.array_hash_map.CapacityIndexType	<gen>: error: 'CapacityIndexType' is not marked 'pub'
-std.array_hash_map.Index	<gen>: error: 'Index' is not marked 'pub'
-std.array_hash_map.IndexHeader	<gen>: error: 'IndexHeader' is not marked 'pub'
-std.bit_set.GenericIterator	<gen>: error: 'GenericIterator' is not marked 'pub'
-std.lang.CallingConvention	std/lang.zig:181:17: error: reached unreachable code
-std.c	std/debug.zig:442:14: error: reached unreachable code
-std.c.darwin	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch._os_object_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.once_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.queue_priority_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.queue_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.queue_attr_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.semaphore_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_mach_send_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_mach_recv_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_memorypressure_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_proc_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_vnode_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_timer_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_flags_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.source_type_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dispatch.time_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.EXC	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.EXC.MASK	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.EXCEPTION	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.KEVENT	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.KEVENT.FLAG	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.EXCEPTION	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.MSG	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.PORT	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.RCV	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.SEND	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.TASK	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MACH.TASK.BASIC	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MATTR	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.OS	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.OS.LOG_CATEGORY	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.TASK	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.TASK.VM	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.THREAD	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.THREAD.BASIC	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.THREAD.IDENTIFIER	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.THREAD.STATE	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.VM	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.VM.INHERIT	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.VM.BEHAVIOR	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.VM.REGION	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.dl_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.COPYFILE	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.RENAME	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_msg_option_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_msg_timeout_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_msg_type_name_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_port_right_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_msg_header_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.vm_region_basic_info_64	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.vm_region_extended_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.vm_region_top_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.vm_region_submap_info_64	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.vm_region_submap_short_info_64	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.time_value	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.thread_basic_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.thread_identifier_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.task_vm_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_task_basic_info	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.qos_class_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.UL	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.UL.Op	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.os_unfair_lock	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.os_signpost_id_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.os_log_type_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_timebase_info_data	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.kevent64_s	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_timespec_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.mach_msg_return_t	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.CPUFAMILY	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.PT	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.POSIX_SPAWN	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.E	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.DB_RECORDTYPE	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.TCP	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.MSG	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.IP	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.IPV6	<gen>: error: 'darwin' is not marked 'pub'
-std.c.darwin.IPTOS	<gen>: error: 'darwin' is not marked 'pub'
-std.c.freebsd	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.UMTX_OP	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd._umtx_time	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.Stat	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.cap_rights	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.kinfo_file	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.MFD	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.E	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.IP	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.IPV6	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.IPTOS	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.freebsd.TCP	<gen>: error: 'freebsd' is not marked 'pub'
-std.c.illumos	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.POSIX_FADV	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.priority	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.AT_SUN	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.AF_SUN	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.procfs	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.procfs.misc_header	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.procfs.fdinfo	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.SFD	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.signalfd_siginfo	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.PORT_SOURCE	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.PORT_ALERT	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.FILE_EVENT	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.port_notify	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.file_obj	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.lif_nd_req	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.lif_ifinfo_req	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.lifreq	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.IoCtlCommand	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.IP	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.IPV6	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.IPTOS	<gen>: error: 'illumos' is not marked 'pub'
-std.c.illumos.TCP	<gen>: error: 'illumos' is not marked 'pub'
-std.c.netbsd	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.netbsd._ksiginfo	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.netbsd.E	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.netbsd.IP	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.netbsd.IPV6	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.netbsd.IPTOS	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.netbsd.TCP	<gen>: error: 'netbsd' is not marked 'pub'
-std.c.dragonfly	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.E	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.cmsgcred	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.sf_hdtr	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.IP	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.IPV6	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.IPTOS	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.dragonfly.TCP	<gen>: error: 'dragonfly' is not marked 'pub'
-std.c.haiku	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.system_info	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.E	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.DirEnt	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.IP	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.IPV6	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.IPTOS	<gen>: error: 'haiku' is not marked 'pub'
-std.c.haiku.TCP	<gen>: error: 'haiku' is not marked 'pub'
-std.c.openbsd	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.pthread_spinlock_t	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.FUTEX	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.login_cap_t	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.auth_item_t	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.BI	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.AUTH	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.TCFLUSH	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.TCIO	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.E	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.IP	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.IPV6	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.IPTOS	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.openbsd.TCP	<gen>: error: 'openbsd' is not marked 'pub'
-std.c.serenity	<gen>: error: 'serenity' is not marked 'pub'
-std.c.serenity.FUTEX	<gen>: error: 'serenity' is not marked 'pub'
-std.c.serenity.PERF_EVENT	<gen>: error: 'serenity' is not marked 'pub'
-std.c.serenity.IP	<gen>: error: 'serenity' is not marked 'pub'
-std.c.serenity.IPV6	<gen>: error: 'serenity' is not marked 'pub'
-std.c.serenity.IPTOS	<gen>: error: 'serenity' is not marked 'pub'
-std.c.common_linux_Sigaction	<gen>: error: 'common_linux_Sigaction' is not marked 'pub'
-std.c.posix_msghdr	<gen>: error: 'posix_msghdr' is not marked 'pub'
-std.c.posix_msghdr_const	<gen>: error: 'posix_msghdr_const' is not marked 'pub'
-std.c.posix_cmsghdr	<gen>: error: 'posix_cmsghdr' is not marked 'pub'
-std.c.sigrt_private	<gen>: error: 'sigrt_private' is not marked 'pub'
-std.c.private	<gen>: error: 'private' is not marked 'pub'
-std.compress.flate.Compress.token	<gen>: error: 'token' is not marked 'pub'
-std.compress.flate.Compress.token.ShortCode	<gen>: error: 'token' is not marked 'pub'
-std.compress.flate.Compress.token.LookupLenCode	<gen>: error: 'token' is not marked 'pub'
-std.compress.flate.Compress.token.LookupDistCode	<gen>: error: 'token' is not marked 'pub'
-std.compress.flate.Compress.PackedOptionalU15	<gen>: error: 'PackedOptionalU15' is not marked 'pub'
-std.compress.flate.Compress.BitWriter	<gen>: error: 'BitWriter' is not marked 'pub'
-std.compress.flate.Compress.TokenBufferEntryHeader	<gen>: error: 'TokenBufferEntryHeader' is not marked 'pub'
-std.compress.flate.Compress.BlockHeader	<gen>: error: 'BlockHeader' is not marked 'pub'
-std.compress.flate.Compress.BlockHeader.Dynamic	<gen>: error: 'BlockHeader' is not marked 'pub'
-std.compress.flate.Compress.huffman	<gen>: error: 'huffman' is not marked 'pub'
-std.compress.flate.Compress.huffman.Node	<gen>: error: 'huffman' is not marked 'pub'
-std.compress.flate.Compress.FreqBufIndex	<gen>: error: 'FreqBufIndex' is not marked 'pub'
-std.compress.flate.Compress.PackedContainer	<gen>: error: 'PackedContainer' is not marked 'pub'
-std.compress.flate.Compress.Huffman.CodesBuf	<gen>: error: 'CodesBuf' is not marked 'pub'
-std.compress.flate.Decompress.BlockType	<gen>: error: 'BlockType' is not marked 'pub'
-std.compress.flate.Decompress.State	<gen>: error: 'State' is not marked 'pub'
-std.compress.flate.Decompress.HuffmanDecoder	<gen>: error: 'HuffmanDecoder' is not marked 'pub'
-std.compress.lzma.Decode.ProcessingStatus	<gen>: error: 'ProcessingStatus' is not marked 'pub'
-std.compress.zstd.Decompress.State	<gen>: error: 'State' is not marked 'pub'
-std.compress.zstd.Decompress.State.InFrame	<gen>: error: 'State' is not marked 'pub'
-std.compress.zstd.Decompress.Frame.Zstandard.Decode.StateData	<gen>: error: 'StateData' is not marked 'pub'
-std.compress.zstd.Decompress.Frame.Zstandard.Decode.WhichFse	<gen>: error: 'WhichFse' is not marked 'pub'
-std.compress.zstd.Decompress.Frame.Zstandard.Decode.Sequence	<gen>: error: 'Sequence' is not marked 'pub'
-std.compress.zstd.Decompress.Bits	<gen>: error: 'Bits' is not marked 'pub'
-std.compress.zstd.Decompress.ReverseBitReader	<gen>: error: 'ReverseBitReader' is not marked 'pub'
-std.compress.zstd.Decompress.BitReader	<gen>: error: 'BitReader' is not marked 'pub'
-std.static_string_map.TestEnum	<gen>: error: 'TestEnum' is not marked 'pub'
-std.static_string_map.TestKV	<gen>: error: 'TestKV' is not marked 'pub'
-std.static_string_map.TestKVVoid	<gen>: error: 'TestKVVoid' is not marked 'pub'
-std.crypto.aead.aegis.variants	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.aead.aegis.variants.State128X	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.aead.aegis.variants.Aegis128XGeneric	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.aead.aegis.variants.State256X	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.aead.aegis.variants.Aegis256XGeneric	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.aead.aegis.variants.AegisMac	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.aead.aes_ccm.cbc_mac	<gen>: error: 'cbc_mac' is not marked 'pub'
-std.crypto.aead.aes_ccm.cbc_mac.CbcMac	<gen>: error: 'cbc_mac' is not marked 'pub'
-std.crypto.aead.aes_ccm.AesCcm	<gen>: error: 'AesCcm' is not marked 'pub'
-std.crypto.aead.ascon.AsconAead128.AeadState	<gen>: error: 'AeadState' is not marked 'pub'
-std.crypto.auth.siphash.SipHashStateless	<gen>: error: 'SipHashStateless' is not marked 'pub'
-std.crypto.auth.siphash.SipHash	<gen>: error: 'SipHash' is not marked 'pub'
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble	<gen>: error: 'ScalarDouble' is not marked 'pub'
-std.crypto.kem.hybrid.NistCurveGroup	<gen>: error: 'NistCurveGroup' is not marked 'pub'
-std.crypto.kem.hybrid.X25519Group	<gen>: error: 'X25519Group' is not marked 'pub'
-std.crypto.ecc.P256.scalar.common	<gen>: error: 'common' is not marked 'pub'
-std.crypto.ecc.P256.scalar.common.FieldParams	<gen>: error: 'common' is not marked 'pub'
-std.crypto.ecc.P256.scalar.common.Field	<gen>: error: 'common' is not marked 'pub'
-std.crypto.ecc.P256.scalar.ScalarDouble	<gen>: error: 'ScalarDouble' is not marked 'pub'
-std.crypto.ecc.P384.scalar.ScalarDouble	<gen>: error: 'ScalarDouble' is not marked 'pub'
-std.crypto.ecc.Secp256k1.scalar.ScalarDouble	<gen>: error: 'ScalarDouble' is not marked 'pub'
-std.crypto.hash.ascon.variants	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.State	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.AsconAead128	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.AsconAead128.AeadState	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.AsconHash256	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.AsconXof128	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.AsconCxof128	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.ascon.variants.AsconCxof128.Options	<gen>: error: 'variants' is not marked 'pub'
-std.crypto.hash.blake2.RoundParam	<gen>: error: 'RoundParam' is not marked 'pub'
-std.crypto.hash.Sha1.RoundParam	<gen>: error: 'RoundParam' is not marked 'pub'
-std.crypto.hash.sha2.Sha2x32	<gen>: error: 'Sha2x32' is not marked 'pub'
-std.crypto.hash.sha2.RoundParam256	<gen>: error: 'RoundParam256' is not marked 'pub'
-std.crypto.hash.sha2.Sha2x64	<gen>: error: 'Sha2x64' is not marked 'pub'
-std.crypto.hash.sha2.RoundParam512	<gen>: error: 'RoundParam512' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.KangarooVariant	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.RightEncoded	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.MultiSliceView	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.LeafBatchContext	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.BatchResult	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.SelectLeafContext	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.FinalLeafContext	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.kangarootwelve.KTHash	<gen>: error: 'kangarootwelve' is not marked 'pub'
-std.crypto.hash.sha3.ShakeLike	<gen>: error: 'ShakeLike' is not marked 'pub'
-std.crypto.hash.sha3.CShakeLike	<gen>: error: 'CShakeLike' is not marked 'pub'
-std.crypto.hash.sha3.KMacLike	<gen>: error: 'KMacLike' is not marked 'pub'
-std.crypto.hash.sha3.TupleHashLike	<gen>: error: 'TupleHashLike' is not marked 'pub'
-std.crypto.pwhash.argon2.PhcFormatHasher	<gen>: error: 'PhcFormatHasher' is not marked 'pub'
-std.crypto.pwhash.argon2.PhcFormatHasher.HashResult	<gen>: error: 'PhcFormatHasher' is not marked 'pub'
-std.crypto.pwhash.bcrypt.phc_format	<gen>: error: 'phc_format' is not marked 'pub'
-std.crypto.pwhash.bcrypt.phc_format.BinValue	<gen>: error: 'phc_format' is not marked 'pub'
-std.crypto.pwhash.bcrypt.State.Halves	<gen>: error: 'Halves' is not marked 'pub'
-std.crypto.pwhash.bcrypt.pbkdf_prf	<gen>: error: 'pbkdf_prf' is not marked 'pub'
-std.crypto.pwhash.bcrypt.crypt_format	<gen>: error: 'crypt_format' is not marked 'pub'
-std.crypto.pwhash.bcrypt.PhcFormatHasher	<gen>: error: 'PhcFormatHasher' is not marked 'pub'
-std.crypto.pwhash.bcrypt.PhcFormatHasher.HashResult	<gen>: error: 'PhcFormatHasher' is not marked 'pub'
-std.crypto.pwhash.bcrypt.CryptFormatHasher	<gen>: error: 'CryptFormatHasher' is not marked 'pub'
-std.crypto.pwhash.scrypt.QuarterRound	<gen>: error: 'QuarterRound' is not marked 'pub'
-std.crypto.pwhash.scrypt.crypt_format	<gen>: error: 'crypt_format' is not marked 'pub'
-std.crypto.pwhash.scrypt.crypt_format.HashResult	<gen>: error: 'crypt_format' is not marked 'pub'
-std.crypto.pwhash.scrypt.crypt_format.BinValue	<gen>: error: 'crypt_format' is not marked 'pub'
-std.crypto.pwhash.scrypt.crypt_format.CustomB64Codec	<gen>: error: 'crypt_format' is not marked 'pub'
-std.crypto.pwhash.scrypt.PhcFormatHasher	<gen>: error: 'PhcFormatHasher' is not marked 'pub'
-std.crypto.pwhash.scrypt.PhcFormatHasher.HashResult	<gen>: error: 'PhcFormatHasher' is not marked 'pub'
-std.crypto.pwhash.scrypt.CryptFormatHasher	<gen>: error: 'CryptFormatHasher' is not marked 'pub'
-std.crypto.sign.ecdsa.TestVector	<gen>: error: 'TestVector' is not marked 'pub'
-std.crypto.sign.mldsa.Params	<gen>: error: 'Params' is not marked 'pub'
-std.crypto.sign.mldsa.Poly	<gen>: error: 'Poly' is not marked 'pub'
-std.crypto.sign.mldsa.PolyVec	<gen>: error: 'PolyVec' is not marked 'pub'
-std.crypto.sign.mldsa.Mat	<gen>: error: 'Mat' is not marked 'pub'
-std.crypto.sign.mldsa.MLDSAImpl	<gen>: error: 'MLDSAImpl' is not marked 'pub'
-std.crypto.nacl.salsa20	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.SalsaVecImpl	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.SalsaNonVecImpl	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.Salsa	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.XSalsa	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.XSalsa20Poly1305	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.SecretBox	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.Box	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.nacl.salsa20.SealedBox	<gen>: error: 'salsa20' is not marked 'pub'
-std.crypto.ff.WideLimb	<gen>: error: 'WideLimb' is not marked 'pub'
-std.crypto.ff.Fe_	<gen>: error: 'Fe_' is not marked 'pub'
-std.crypto.ff.ct_protected	<gen>: error: 'ct_protected' is not marked 'pub'
-std.crypto.ff.ct_unprotected	<gen>: error: 'ct_unprotected' is not marked 'pub'
-std.crypto.codecs.asn1.der.Decoder.Oid	<gen>: error: 'Oid' is not marked 'pub'
-std.crypto.codecs.asn1.der.Decoder.Oid.TestCase	<gen>: error: 'Oid' is not marked 'pub'
-std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	<gen>: error: 'Oid' is not marked 'pub'
-std.crypto.codecs.asn1.der.Encoder.ArrayListReverse	<gen>: error: 'ArrayListReverse' is not marked 'pub'
-std.crypto.codecs.asn1.Tag.FirstTag	<gen>: error: 'FirstTag' is not marked 'pub'
-std.crypto.codecs.asn1.Tag.NextTag	<gen>: error: 'NextTag' is not marked 'pub'
-std.crypto.tls.Client.KeyShare	<gen>: error: 'KeyShare' is not marked 'pub'
-std.crypto.tls.Client.CertificatePublicKey	<gen>: error: 'CertificatePublicKey' is not marked 'pub'
-std.crypto.Certificate.Bundle.MapContext	<gen>: error: 'MapContext' is not marked 'pub'
-std.crypto.Certificate.Date	<gen>: error: 'Date' is not marked 'pub'
-std.debug.Dwarf.Unwind.VirtualMachine.ColumnRange	<gen>: error: 'ColumnRange' is not marked 'pub'
-std.debug.Dwarf.Unwind.VirtualMachine.OpcodeByte	<gen>: error: 'OpcodeByte' is not marked 'pub'
-std.debug.Dwarf.Unwind.SortedFdeEntry	<gen>: error: 'SortedFdeEntry' is not marked 'pub'
-std.debug.Dwarf.Unwind.EntryHeader	<gen>: error: 'EntryHeader' is not marked 'pub'
-std.debug.Dwarf.Unwind.EhPointerContext	<gen>: error: 'EhPointerContext' is not marked 'pub'
-std.debug.Dwarf.Abbrev.Attr	<gen>: error: 'Attr' is not marked 'pub'
-std.debug.Dwarf.Abbrev.Table	<gen>: error: 'Table' is not marked 'pub'
-std.debug.Dwarf.Die.Attr	<gen>: error: 'Attr' is not marked 'pub'
-std.debug.Dwarf.PcRange	<gen>: error: 'PcRange' is not marked 'pub'
-std.debug.Dwarf.Func	<gen>: error: 'Func' is not marked 'pub'
-std.debug.Dwarf.DebugRangeIterator	<gen>: error: 'DebugRangeIterator' is not marked 'pub'
-std.debug.Dwarf.FileEntry	<gen>: error: 'FileEntry' is not marked 'pub'
-std.debug.Dwarf.LineNumberProgram	<gen>: error: 'LineNumberProgram' is not marked 'pub'
-std.debug.Dwarf.UnitHeader	<gen>: error: 'UnitHeader' is not marked 'pub'
-std.debug.Pdb.BinaryAnnotation.RangeIterator.PartialRange	<gen>: error: 'PartialRange' is not marked 'pub'
-std.debug.Pdb.Msf	<gen>: error: 'Msf' is not marked 'pub'
-std.debug.Pdb.MsfStream	<gen>: error: 'MsfStream' is not marked 'pub'
-std.debug.ElfFile.Section	<gen>: error: 'Section' is not marked 'pub'
-std.debug.ElfFile.Section.Id	<gen>: error: 'Section' is not marked 'pub'
-std.debug.ElfFile.LoadInnerResult	<gen>: error: 'LoadInnerResult' is not marked 'pub'
-std.debug.MachOFile.OFile	<gen>: error: 'OFile' is not marked 'pub'
-std.debug.MachOFile.OFile.SymbolAdapter	<gen>: error: 'OFile' is not marked 'pub'
-std.debug.MachOFile.DsymFile	<gen>: error: 'DsymFile' is not marked 'pub'
-std.debug.MachOFile.Symbol	<gen>: error: 'Symbol' is not marked 'pub'
-std.debug.cpu_context.Aarch64	<gen>: error: 'Aarch64' is not marked 'pub'
-std.debug.cpu_context.Alpha	<gen>: error: 'Alpha' is not marked 'pub'
-std.debug.cpu_context.Arc	<gen>: error: 'Arc' is not marked 'pub'
-std.debug.cpu_context.Arm	<gen>: error: 'Arm' is not marked 'pub'
-std.debug.cpu_context.Csky	<gen>: error: 'Csky' is not marked 'pub'
-std.debug.cpu_context.Hexagon	<gen>: error: 'Hexagon' is not marked 'pub'
-std.debug.cpu_context.Kvx	<gen>: error: 'Kvx' is not marked 'pub'
-std.debug.cpu_context.Lanai	<gen>: error: 'Lanai' is not marked 'pub'
-std.debug.cpu_context.LoongArch	<gen>: error: 'LoongArch' is not marked 'pub'
-std.debug.cpu_context.M68k	<gen>: error: 'M68k' is not marked 'pub'
-std.debug.cpu_context.M88k	<gen>: error: 'M88k' is not marked 'pub'
-std.debug.cpu_context.Mips	<gen>: error: 'Mips' is not marked 'pub'
-std.debug.cpu_context.Or1k	<gen>: error: 'Or1k' is not marked 'pub'
-std.debug.cpu_context.Powerpc	<gen>: error: 'Powerpc' is not marked 'pub'
-std.debug.cpu_context.Riscv	<gen>: error: 'Riscv' is not marked 'pub'
-std.debug.cpu_context.S390x	<gen>: error: 'S390x' is not marked 'pub'
-std.debug.cpu_context.Sparc	<gen>: error: 'Sparc' is not marked 'pub'
-std.debug.cpu_context.Ve	<gen>: error: 'Ve' is not marked 'pub'
-std.debug.cpu_context.X86_16	<gen>: error: 'X86_16' is not marked 'pub'
-std.debug.cpu_context.X86_16.GprName	<gen>: error: 'X86_16' is not marked 'pub'
-std.debug.cpu_context.X86	<gen>: error: 'X86' is not marked 'pub'
-std.debug.cpu_context.X86.GprName	<gen>: error: 'X86' is not marked 'pub'
-std.debug.cpu_context.X86_64	<gen>: error: 'X86_64' is not marked 'pub'
-std.debug.cpu_context.X86_64.GprName	<gen>: error: 'X86_64' is not marked 'pub'
-std.debug.StackIterator	<gen>: error: 'StackIterator' is not marked 'pub'
-std.debug.StackIterator.FpUsability	<gen>: error: 'StackIterator' is not marked 'pub'
-std.debug.StackIterator.Result	<gen>: error: 'StackIterator' is not marked 'pub'
-std.debug.PrintSourceAddressOptions	<gen>: error: 'PrintSourceAddressOptions' is not marked 'pub'
-std.elf	std/elf.zig:563:51: error: enum 'elf.STB' has no member named 'MIBS_SPLIT_COMMON'
-std.elf.STT	std/elf.zig:798:77: error: overflow of integer type 'u4' with value '17'
-std.fmt.float.RoundMode	<gen>: error: 'RoundMode' is not marked 'pub'
-std.fs.path.PosixPath	<gen>: error: 'PosixPath' is not marked 'pub'
-std.fs.path.WindowsUNC	<gen>: error: 'WindowsUNC' is not marked 'pub'
-std.fs.path.DiskDesignatorKind	<gen>: error: 'DiskDesignatorKind' is not marked 'pub'
-std.spirv	std/spirv.zig:4:45: error: pointers with address space 'input' are not supported on x86
-std.hash.auto_hash	<gen>: error: 'auto_hash' is not marked 'pub'
-std.hash.auto_hash.HashStrategy	<gen>: error: 'auto_hash' is not marked 'pub'
-std.hash.fnv	<gen>: error: 'fnv' is not marked 'pub'
-std.hash.fnv.Fnv1a	<gen>: error: 'fnv' is not marked 'pub'
-std.hash.fnv.verify	<gen>: error: 'fnv' is not marked 'pub'
-std.hash.cityhash.CityHash64.WeakPair	<gen>: error: 'WeakPair' is not marked 'pub'
-std.hash.wyhash	<gen>: error: 'wyhash' is not marked 'pub'
-std.hash.wyhash.Wyhash	<gen>: error: 'wyhash' is not marked 'pub'
-std.hash.wyhash.TestVector	<gen>: error: 'wyhash' is not marked 'pub'
-std.hash.xxhash	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash64	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash64.Accumulator	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash64.Size	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash32	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash32.Accumulator	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash3	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash3.InputBlock	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash.xxhash.XxHash3.Accumulator	<gen>: error: 'xxhash' is not marked 'pub'
-std.hash_map.Custom	<gen>: error: 'Custom' is not marked 'pub'
-std.heap	std/heap.zig:18:74: error: unimplemented
-std.heap.ArenaAllocator.Node	<gen>: error: 'Node' is not marked 'pub'
-std.heap.ArenaAllocator.Node.Size	<gen>: error: 'Node' is not marked 'pub'
-std.heap.ArenaAllocator.PushResult	<gen>: error: 'PushResult' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzContext	<gen>: error: 'FuzzContext' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzContext.Alloc	<gen>: error: 'FuzzContext' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzContext.Alloc.Len	<gen>: error: 'FuzzContext' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzContext.Alloc.Index	<gen>: error: 'FuzzContext' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzContext.Action	<gen>: error: 'FuzzContext' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzContext.Init	<gen>: error: 'FuzzContext' is not marked 'pub'
-std.heap.ArenaAllocator.FuzzAllocator	<gen>: error: 'FuzzAllocator' is not marked 'pub'
-std.heap.SmpAllocator.Thread	<gen>: error: 'Thread' is not marked 'pub'
-std.heap.SafeAllocator.Thread	<gen>: error: 'Thread' is not marked 'pub'
-std.heap.SafeAllocator.Allocs	<gen>: error: 'Allocs' is not marked 'pub'
-std.heap.SafeAllocator.Allocs.Entry	<gen>: error: 'Allocs' is not marked 'pub'
-std.heap.SafeAllocator.Allocs.Entry.Kind	<gen>: error: 'Allocs' is not marked 'pub'
-std.heap.SafeAllocator.Bucket	<gen>: error: 'Bucket' is not marked 'pub'
-std.heap.SafeAllocator.Bucket.AllocCount	<gen>: error: 'Bucket' is not marked 'pub'
-std.heap.SafeAllocator.Bucket.Fill	<gen>: error: 'Bucket' is not marked 'pub'
-std.heap.SafeAllocator.AllocFooter	<gen>: error: 'AllocFooter' is not marked 'pub'
-std.heap.SafeAllocator.AllocFooter.Data	<gen>: error: 'AllocFooter' is not marked 'pub'
-std.heap.SafeAllocator.AllocFooter.Data.Len	<gen>: error: 'AllocFooter' is not marked 'pub'
-std.heap.SafeAllocator.AllocFooter.Extended	<gen>: error: 'AllocFooter' is not marked 'pub'
-std.heap.SafeAllocator.AllocFooter.Extended.Container	<gen>: error: 'AllocFooter' is not marked 'pub'
-std.heap.SafeAllocator.AllocFooter.Modify	<gen>: error: 'AllocFooter' is not marked 'pub'
-std.heap.SafeAllocator.FormatMemory	<gen>: error: 'FormatMemory' is not marked 'pub'
-std.heap.SafeAllocator.fuzz_probs	<gen>: error: 'fuzz_probs' is not marked 'pub'
-std.heap.SafeAllocator.fuzz_probs.Op	<gen>: error: 'fuzz_probs' is not marked 'pub'
-std.heap.SafeAllocator.FuzzSingleThreadedContext	<gen>: error: 'FuzzSingleThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzSingleThreadedAllocator	<gen>: error: 'FuzzSingleThreadedAllocator' is not marked 'pub'
-std.heap.SafeAllocator.FuzzSingleThreadedAllocator.AllocInfo	<gen>: error: 'FuzzSingleThreadedAllocator' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedContext	<gen>: error: 'FuzzMultiThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedContext.ThreadOps	<gen>: error: 'FuzzMultiThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedContext.ThreadOps.Run	<gen>: error: 'FuzzMultiThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedContext.ThreadOps.Op	<gen>: error: 'FuzzMultiThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedContext.ThreadOps.Op.Realloc	<gen>: error: 'FuzzMultiThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedContext.ThreadOps.Op.MemoryDependency	<gen>: error: 'FuzzMultiThreadedContext' is not marked 'pub'
-std.heap.SafeAllocator.FuzzMultiThreadedAllocator	<gen>: error: 'FuzzMultiThreadedAllocator' is not marked 'pub'
+std.Io.Kqueue.kevent	std/posix.zig:96:26: error: root source file struct 'os.linux' has no member named 'Kevent'
+std.Uri.getHost	std/Uri.zig:20:21: error: This function has been moved to std.Io.net.HostName.fromUri
+std.Uri.getHostAlloc	std/Uri.zig:21:26: error: This function has been deleted. See std.Io.net.HostName.fromUri instead
+std.lang.CallingConvention.kernel	std/lang.zig:181:17: error: reached unreachable code
+std.c._mh_execute_header	std/debug.zig:442:14: error: reached unreachable code
+std.c.SC	std/os/linux.zig:107:25: error: root source file struct 'os.linux.x86_64' has no member named 'SC'
+std.c.user_desc	std/os/linux.zig:109:32: error: root source file struct 'os.linux.x86_64' has no member named 'user_desc'
+std.c._errno	std/c.zig:12089:12: error: dependency on libc must be explicitly specified in the build command
+std.c.opendir	std/c.zig:10568:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fdopendir	std/c.zig:10569:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rewinddir	std/c.zig:10570:12: error: dependency on libc must be explicitly specified in the build command
+std.c.closedir	std/c.zig:10571:12: error: dependency on libc must be explicitly specified in the build command
+std.c.telldir	std/c.zig:10572:12: error: dependency on libc must be explicitly specified in the build command
+std.c.seekdir	std/c.zig:10573:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigwait	std/c.zig:10575:12: error: dependency on libc must be explicitly specified in the build command
+std.c.alarm	std/c.zig:10577:12: error: dependency on libc must be explicitly specified in the build command
+std.c.close	std/c.zig:11984:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_getres	std/c.zig:11985:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_gettime	std/c.zig:11986:12: error: dependency on libc must be explicitly specified in the build command
+std.c.statx	std/c.zig:10613:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwent	std/c.zig:10615:12: error: dependency on libc must be explicitly specified in the build command
+std.c.endpwent	std/c.zig:10616:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setpwent	std/c.zig:10617:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwnam	std/c.zig:10618:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwnam_r	std/c.zig:10619:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwuid	std/c.zig:10620:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwuid_r	std/c.zig:10621:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrent	std/c.zig:10622:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setgrent	std/c.zig:10623:12: error: dependency on libc must be explicitly specified in the build command
+std.c.endgrent	std/c.zig:10624:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrnam	std/c.zig:10625:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrnam_r	std/c.zig:10626:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrgid	std/c.zig:10627:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrgid_r	std/c.zig:10628:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getrlimit64	std/c.zig:10629:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lseek64	std/c.zig:10630:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mmap64	std/c.zig:10631:12: error: dependency on libc must be explicitly specified in the build command
+std.c.open64	std/c.zig:10632:12: error: dependency on libc must be explicitly specified in the build command
+std.c.openat64	std/c.zig:10633:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pread64	std/c.zig:10634:12: error: dependency on libc must be explicitly specified in the build command
+std.c.preadv64	std/c.zig:10635:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwrite64	std/c.zig:10636:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwritev64	std/c.zig:10637:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendfile64	std/c.zig:10638:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setrlimit64	std/c.zig:10639:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sched_getaffinity	std/c.zig:10664:12: error: dependency on libc must be explicitly specified in the build command
+std.c.eventfd	std/c.zig:10665:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_ctl	std/c.zig:10667:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_create1	std/c.zig:10668:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_wait	std/c.zig:10669:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_pwait	std/c.zig:10670:12: error: dependency on libc must be explicitly specified in the build command
+std.c.timerfd_create	std/c.zig:10678:12: error: dependency on libc must be explicitly specified in the build command
+std.c.timerfd_settime	std/c.zig:10679:12: error: dependency on libc must be explicitly specified in the build command
+std.c.timerfd_gettime	std/c.zig:10685:12: error: dependency on libc must be explicitly specified in the build command
+std.c.inotify_init1	std/c.zig:10687:12: error: dependency on libc must be explicitly specified in the build command
+std.c.inotify_add_watch	std/c.zig:10688:12: error: dependency on libc must be explicitly specified in the build command
+std.c.inotify_rm_watch	std/c.zig:10689:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fallocate64	std/c.zig:10691:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fopen64	std/c.zig:10692:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ftruncate64	std/c.zig:10693:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fallocate	std/c.zig:10694:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendfile	std/c.zig:12009:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getauxval	std/c.zig:10702:12: error: dependency on libc must be explicitly specified in the build command
+std.c.elf_aux_info	std/c.zig:10703:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dl_iterate_phdr	std/c.zig:10830:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigaltstack	std/c.zig:12019:12: error: dependency on libc must be explicitly specified in the build command
+std.c.memfd_create	std/c.zig:10837:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pipe2	std/c.zig:12004:12: error: dependency on libc must be explicitly specified in the build command
+std.c.copy_file_range	std/c.zig:11987:12: error: dependency on libc must be explicitly specified in the build command
+std.c.signalfd	std/c.zig:10848:12: error: dependency on libc must be explicitly specified in the build command
+std.c.prlimit	std/c.zig:10850:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mincore	std/c.zig:10851:12: error: dependency on libc must be explicitly specified in the build command
+std.c.madvise	std/c.zig:10857:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getdirentries	std/c.zig:11992:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getdents	std/c.zig:11993:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getrusage	std/c.zig:11998:12: error: dependency on libc must be explicitly specified in the build command
+std.c.gettimeofday	std/c.zig:11999:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mlock	std/c.zig:12035:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mlock2	std/c.zig:12036:12: error: dependency on libc must be explicitly specified in the build command
+std.c.munlock	std/c.zig:12037:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mlockall	std/c.zig:12038:12: error: dependency on libc must be explicitly specified in the build command
+std.c.munlockall	std/c.zig:12039:12: error: dependency on libc must be explicitly specified in the build command
+std.c.msync	std/c.zig:12001:12: error: dependency on libc must be explicitly specified in the build command
+std.c.nanosleep	std/c.zig:12002:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readdir	std/c.zig:12005:12: error: dependency on libc must be explicitly specified in the build command
+std.c.realpath	std/c.zig:12006:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sched_yield	std/c.zig:12008:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigaction	std/c.zig:12010:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigfillset	std/c.zig:12013:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigaddset	std/c.zig:12012:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigemptyset	std/c.zig:12014:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigdelset	std/c.zig:12011:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigismember	std/c.zig:12015:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigprocmask	std/c.zig:12016:12: error: dependency on libc must be explicitly specified in the build command
+std.c.socket	std/c.zig:12017:12: error: dependency on libc must be explicitly specified in the build command
+std.c.socketpair	std/c.zig:12018:12: error: dependency on libc must be explicitly specified in the build command
+std.c.stat	std/c.zig:12051:12: error: dependency on libc must be explicitly specified in the build command
+std.c.malloc_usable_size	std/c.zig:12032:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_memalign	std/c.zig:12033:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysconf	std/c.zig:12020:12: error: dependency on libc must be explicitly specified in the build command
+std.c.flock	std/c.zig:11988:12: error: dependency on libc must be explicitly specified in the build command
+std.c.environ	std/c.zig:1:1: error: dependency on libc must be explicitly specified in the build command
+std.c.fopen	std/c.zig:11057:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fclose	std/c.zig:11058:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fwrite	std/c.zig:11059:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fread	std/c.zig:11060:12: error: dependency on libc must be explicitly specified in the build command
+std.c.printf	std/c.zig:11062:12: error: dependency on libc must be explicitly specified in the build command
+std.c.abort	std/c.zig:11063:12: error: dependency on libc must be explicitly specified in the build command
+std.c.exit	std/c.zig:11064:12: error: dependency on libc must be explicitly specified in the build command
+std.c._Exit	std/c.zig:11065:12: error: dependency on libc must be explicitly specified in the build command
+std.c._exit	std/c.zig:11066:12: error: dependency on libc must be explicitly specified in the build command
+std.c.isatty	std/c.zig:11067:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lseek	std/c.zig:11068:12: error: dependency on libc must be explicitly specified in the build command
+std.c.open	std/c.zig:11069:12: error: dependency on libc must be explicitly specified in the build command
+std.c.openat	std/c.zig:11070:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ftruncate	std/c.zig:11071:12: error: dependency on libc must be explicitly specified in the build command
+std.c.raise	std/c.zig:11072:12: error: dependency on libc must be explicitly specified in the build command
+std.c.read	std/c.zig:11073:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readv	std/c.zig:11074:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pread	std/c.zig:11075:12: error: dependency on libc must be explicitly specified in the build command
+std.c.preadv	std/c.zig:11076:12: error: dependency on libc must be explicitly specified in the build command
+std.c.writev	std/c.zig:11077:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwritev	std/c.zig:11078:12: error: dependency on libc must be explicitly specified in the build command
+std.c.write	std/c.zig:11079:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwrite	std/c.zig:11080:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mmap	std/c.zig:11081:12: error: dependency on libc must be explicitly specified in the build command
+std.c.munmap	std/c.zig:11082:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mremap	std/c.zig:11083:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mprotect	std/c.zig:11084:12: error: dependency on libc must be explicitly specified in the build command
+std.c.link	std/c.zig:11085:12: error: dependency on libc must be explicitly specified in the build command
+std.c.linkat	std/c.zig:11086:12: error: dependency on libc must be explicitly specified in the build command
+std.c.unlink	std/c.zig:11087:12: error: dependency on libc must be explicitly specified in the build command
+std.c.unlinkat	std/c.zig:11088:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getcwd	std/c.zig:11089:12: error: dependency on libc must be explicitly specified in the build command
+std.c.waitpid	std/c.zig:11090:12: error: dependency on libc must be explicitly specified in the build command
+std.c.wait4	std/c.zig:12022:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fork	std/c.zig:11989:12: error: dependency on libc must be explicitly specified in the build command
+std.c.access	std/c.zig:11116:12: error: dependency on libc must be explicitly specified in the build command
+std.c.faccessat	std/c.zig:11117:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pipe	std/c.zig:11118:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mkdir	std/c.zig:11119:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mkdirat	std/c.zig:11120:12: error: dependency on libc must be explicitly specified in the build command
+std.c.symlink	std/c.zig:11121:12: error: dependency on libc must be explicitly specified in the build command
+std.c.symlinkat	std/c.zig:11122:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rename	std/c.zig:11123:12: error: dependency on libc must be explicitly specified in the build command
+std.c.renameat	std/c.zig:11124:12: error: dependency on libc must be explicitly specified in the build command
+std.c.chdir	std/c.zig:11125:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchdir	std/c.zig:11126:12: error: dependency on libc must be explicitly specified in the build command
+std.c.execve	std/c.zig:11127:12: error: dependency on libc must be explicitly specified in the build command
+std.c.execveat	std/c.zig:11128:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dup	std/c.zig:11129:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dup2	std/c.zig:11130:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dup3	std/c.zig:11131:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readlink	std/c.zig:11132:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readlinkat	std/c.zig:11133:12: error: dependency on libc must be explicitly specified in the build command
+std.c.chmod	std/c.zig:11134:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchmod	std/c.zig:11135:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchmodat	std/c.zig:11136:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchown	std/c.zig:11137:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchownat	std/c.zig:11138:12: error: dependency on libc must be explicitly specified in the build command
+std.c.umask	std/c.zig:11139:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rmdir	std/c.zig:11141:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getenv	std/c.zig:11142:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysctl	std/c.zig:11143:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysctlbyname	std/c.zig:11144:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysctlnametomib	std/c.zig:11145:12: error: dependency on libc must be explicitly specified in the build command
+std.c.tcgetattr	std/c.zig:11146:12: error: dependency on libc must be explicitly specified in the build command
+std.c.tcsetattr	std/c.zig:11147:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fcntl	std/c.zig:11148:12: error: dependency on libc must be explicitly specified in the build command
+std.c.uname	std/c.zig:11149:12: error: dependency on libc must be explicitly specified in the build command
+std.c.gethostname	std/c.zig:11151:12: error: dependency on libc must be explicitly specified in the build command
+std.c.shutdown	std/c.zig:11152:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bind	std/c.zig:11153:12: error: dependency on libc must be explicitly specified in the build command
+std.c.listen	std/c.zig:11154:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getsockname	std/c.zig:11155:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpeername	std/c.zig:11156:12: error: dependency on libc must be explicitly specified in the build command
+std.c.connect	std/c.zig:11157:12: error: dependency on libc must be explicitly specified in the build command
+std.c.accept	std/c.zig:11158:12: error: dependency on libc must be explicitly specified in the build command
+std.c.accept4	std/c.zig:11159:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getsockopt	std/c.zig:11160:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setsockopt	std/c.zig:11161:12: error: dependency on libc must be explicitly specified in the build command
+std.c.send	std/c.zig:11162:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendto	std/c.zig:11163:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendmsg	std/c.zig:11171:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendmmsg	std/c.zig:11172:12: error: dependency on libc must be explicitly specified in the build command
+std.c.recv	std/c.zig:11174:12: error: dependency on libc must be explicitly specified in the build command
+std.c.recvfrom	std/c.zig:11180:12: error: dependency on libc must be explicitly specified in the build command
+std.c.recvmsg	std/c.zig:12007:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kill	std/c.zig:11194:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setuid	std/c.zig:11196:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setgid	std/c.zig:11197:12: error: dependency on libc must be explicitly specified in the build command
+std.c.seteuid	std/c.zig:11198:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setegid	std/c.zig:11199:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setreuid	std/c.zig:11200:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setregid	std/c.zig:11201:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setresuid	std/c.zig:11202:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setresgid	std/c.zig:11203:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setpgid	std/c.zig:11204:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getuid	std/c.zig:11205:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgid	std/c.zig:11206:12: error: dependency on libc must be explicitly specified in the build command
+std.c.geteuid	std/c.zig:11207:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getegid	std/c.zig:11208:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getresuid	std/c.zig:11209:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getresgid	std/c.zig:11210:12: error: dependency on libc must be explicitly specified in the build command
+std.c.malloc	std/c.zig:11212:12: error: dependency on libc must be explicitly specified in the build command
+std.c.calloc	std/c.zig:11213:12: error: dependency on libc must be explicitly specified in the build command
+std.c.realloc	std/c.zig:11214:12: error: dependency on libc must be explicitly specified in the build command
+std.c.free	std/c.zig:11215:12: error: dependency on libc must be explicitly specified in the build command
+std.c.futimes	std/c.zig:11217:12: error: dependency on libc must be explicitly specified in the build command
+std.c.utimes	std/c.zig:11218:12: error: dependency on libc must be explicitly specified in the build command
+std.c.utimensat	std/c.zig:11220:12: error: dependency on libc must be explicitly specified in the build command
+std.c.futimens	std/c.zig:11221:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_create	std/c.zig:11223:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_setcancelstate	std/c.zig:11244:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cancel	std/c.zig:11245:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_init	std/c.zig:11246:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_setstack	std/c.zig:11247:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_setstacksize	std/c.zig:11248:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_setguardsize	std/c.zig:11249:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_destroy	std/c.zig:11250:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_self	std/c.zig:11251:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_join	std/c.zig:11252:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_detach	std/c.zig:11253:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_atfork	std/c.zig:11254:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_key_create	std/c.zig:11259:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_key_delete	std/c.zig:11263:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_getspecific	std/c.zig:11264:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_setspecific	std/c.zig:11265:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_sigmask	std/c.zig:11266:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_setname_np	std/c.zig:12024:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_getname_np	std/c.zig:11274:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_kill	std/c.zig:11275:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_exit	std/c.zig:11276:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ptrace	std/c.zig:12042:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_init	std/c.zig:11295:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_destroy	std/c.zig:11296:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_open	std/c.zig:11297:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_close	std/c.zig:11298:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_post	std/c.zig:11299:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_wait	std/c.zig:11300:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_trywait	std/c.zig:11301:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_timedwait	std/c.zig:11302:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_getvalue	std/c.zig:11303:12: error: dependency on libc must be explicitly specified in the build command
+std.c.shm_open	std/c.zig:12021:12: error: dependency on libc must be explicitly specified in the build command
+std.c.shm_unlink	std/c.zig:11309:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kqueue	std/c.zig:11311:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kevent	std/c.zig:11312:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_create	std/c.zig:11321:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_associate	std/c.zig:11322:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_dissociate	std/c.zig:11329:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_send	std/c.zig:11330:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_sendn	std/c.zig:11331:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_get	std/c.zig:11338:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_getn	std/c.zig:11339:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_alert	std/c.zig:11346:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getaddrinfo	std/c.zig:11348:12: error: dependency on libc must be explicitly specified in the build command
+std.c.freeaddrinfo	std/c.zig:11357:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getnameinfo	std/c.zig:11359:12: error: dependency on libc must be explicitly specified in the build command
+std.c.gai_strerror	std/c.zig:11369:12: error: dependency on libc must be explicitly specified in the build command
+std.c.poll	std/c.zig:11371:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ppoll	std/c.zig:11372:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dn_expand	std/c.zig:11374:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_init	std/c.zig:11389:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_lock	std/c.zig:11390:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_unlock	std/c.zig:11391:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_trylock	std/c.zig:11392:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_destroy	std/c.zig:11393:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_lock	std/c.zig:11396:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_unlock	std/c.zig:11397:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_trylock	std/c.zig:11398:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_destroy	std/c.zig:11399:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_wait	std/c.zig:11402:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_timedwait	std/c.zig:11403:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_signal	std/c.zig:11404:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_broadcast	std/c.zig:11405:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_destroy	std/c.zig:11406:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_destroy	std/c.zig:11408:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_rdlock	std/c.zig:11409:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_wrlock	std/c.zig:11410:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_tryrdlock	std/c.zig:11411:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_trywrlock	std/c.zig:11412:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_unlock	std/c.zig:11413:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlopen	std/c.zig:11422:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlclose	std/c.zig:11423:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlsym	std/c.zig:11424:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlerror	std/c.zig:11425:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sync	std/c.zig:11430:12: error: dependency on libc must be explicitly specified in the build command
+std.c.syncfs	std/c.zig:11431:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fsync	std/c.zig:11432:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fdatasync	std/c.zig:11433:12: error: dependency on libc must be explicitly specified in the build command
+std.c.prctl	std/c.zig:11435:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getrlimit	std/c.zig:11437:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setrlimit	std/c.zig:11438:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fmemopen	std/c.zig:11440:12: error: dependency on libc must be explicitly specified in the build command
+std.c.syslog	std/c.zig:11442:12: error: dependency on libc must be explicitly specified in the build command
+std.c.openlog	std/c.zig:11443:12: error: dependency on libc must be explicitly specified in the build command
+std.c.closelog	std/c.zig:11444:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setlogmask	std/c.zig:11445:12: error: dependency on libc must be explicitly specified in the build command
+std.c.if_nametoindex	std/c.zig:11447:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpid	std/c.zig:11449:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getppid	std/c.zig:11450:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setsid	std/c.zig:11451:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setlocale	std/c.zig:11473:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_getthreadid_np	std/c.zig:11518:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_set_name_np	std/c.zig:11519:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_get_name_np	std/c.zig:11520:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_nanosleep	std/c.zig:12003:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ioctl	std/c.zig:12000:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bzero	std/c.zig:11541:12: error: dependency on libc must be explicitly specified in the build command
+std.c.swab	std/c.zig:11981:16: error: dependency on libc must be explicitly specified in the build command
+std.c.strncmp	std/c.zig:11548:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strcasecmp	std/c.zig:11549:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strncasecmp	std/c.zig:11550:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strdup	std/c.zig:11976:16: error: dependency on libc must be explicitly specified in the build command
+std.c.strnlen	std/c.zig:11555:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strndup	std/c.zig:11556:12: error: dependency on libc must be explicitly specified in the build command
+std.c.wcsnlen	std/c.zig:11557:12: error: dependency on libc must be explicitly specified in the build command
+std.c.wcsdup	std/c.zig:11978:16: error: dependency on libc must be explicitly specified in the build command
+std.c.ffs	std/c.zig:11563:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ffsl	std/c.zig:11564:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ffsll	std/c.zig:11565:12: error: dependency on libc must be explicitly specified in the build command
+std.c.erand48	std/c.zig:11567:12: error: dependency on libc must be explicitly specified in the build command
+std.c.jrand48	std/c.zig:11568:12: error: dependency on libc must be explicitly specified in the build command
+std.c.nrand48	std/c.zig:11569:12: error: dependency on libc must be explicitly specified in the build command
+std.c.insque	std/c.zig:11571:12: error: dependency on libc must be explicitly specified in the build command
+std.c.remque	std/c.zig:11572:12: error: dependency on libc must be explicitly specified in the build command
+std.c.imaxabs	std/c.zig:11574:12: error: dependency on libc must be explicitly specified in the build command
+std.c.imaxdiv	std/c.zig:11575:12: error: dependency on libc must be explicitly specified in the build command
+std.c.abs	std/c.zig:11577:12: error: dependency on libc must be explicitly specified in the build command
+std.c.labs	std/c.zig:11578:12: error: dependency on libc must be explicitly specified in the build command
+std.c.llabs	std/c.zig:11579:12: error: dependency on libc must be explicitly specified in the build command
+std.c.div	std/c.zig:11581:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ldiv	std/c.zig:11582:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lldiv	std/c.zig:11583:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atoi	std/c.zig:11585:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atol	std/c.zig:11586:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atoll	std/c.zig:11587:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtol	std/c.zig:11589:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoll	std/c.zig:11590:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoul	std/c.zig:11591:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoull	std/c.zig:11592:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoimax	std/c.zig:11593:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoumax	std/c.zig:11594:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bsearch	std/c.zig:11596:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atan	std/c.zig:11605:12: error: dependency on libc must be explicitly specified in the build command
+std.c.copysign	std/c.zig:11606:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fdim	std/c.zig:11607:12: error: dependency on libc must be explicitly specified in the build command
+std.c.frexp	std/c.zig:11608:12: error: dependency on libc must be explicitly specified in the build command
+std.c.hypot	std/c.zig:11609:12: error: dependency on libc must be explicitly specified in the build command
+std.c.modff	std/c.zig:11610:12: error: dependency on libc must be explicitly specified in the build command
+std.c.modf	std/c.zig:11611:12: error: dependency on libc must be explicitly specified in the build command
+std.c.modfl	std/c.zig:11612:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rintf	std/c.zig:11613:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rint	std/c.zig:11614:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rintl	std/c.zig:11615:12: error: dependency on libc must be explicitly specified in the build command
+std.c.AF_SUN	std/debug.zig:442:14: error: reached unreachable code
+std.c.AT_SUN	std/debug.zig:442:14: error: reached unreachable code
+std.c.FILE_EVENT	std/debug.zig:442:14: error: reached unreachable code
+std.c.GETCONTEXT	std/debug.zig:442:14: error: reached unreachable code
+std.c.GETUSTACK	std/debug.zig:442:14: error: reached unreachable code
+std.c.PORT_ALERT	std/debug.zig:442:14: error: reached unreachable code
+std.c.PORT_SOURCE	std/debug.zig:442:14: error: reached unreachable code
+std.c.POSIX_FADV	std/debug.zig:442:14: error: reached unreachable code
+std.c.SETCONTEXT	std/debug.zig:442:14: error: reached unreachable code
+std.c.SETUSTACK	std/debug.zig:442:14: error: reached unreachable code
+std.c.SFD	std/debug.zig:442:14: error: reached unreachable code
+std.c.ctid_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.file_obj	std/debug.zig:442:14: error: reached unreachable code
+std.c.id_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.lif_ifinfo_req	std/debug.zig:442:14: error: reached unreachable code
+std.c.lif_nd_req	std/debug.zig:442:14: error: reached unreachable code
+std.c.lifreq	std/debug.zig:442:14: error: reached unreachable code
+std.c.major_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.minor_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.poolid_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.port_notify	std/debug.zig:442:14: error: reached unreachable code
+std.c.priority	std/debug.zig:442:14: error: reached unreachable code
+std.c.procfs	std/debug.zig:442:14: error: reached unreachable code
+std.c.projid_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.signalfd_siginfo	std/debug.zig:442:14: error: reached unreachable code
+std.c.taskid_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.zoneid_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.B_ABSOLUTE_TIMEOUT	std/debug.zig:442:14: error: reached unreachable code
+std.c.B_OS_NAME_LENGTH	std/debug.zig:442:14: error: reached unreachable code
+std.c.B_TIMEOUT_REAL_TIME_BASE	std/debug.zig:442:14: error: reached unreachable code
+std.c.DirEnt	std/debug.zig:442:14: error: reached unreachable code
+std.c._kern_acquire_sem_etc	std/c/haiku.zig:19:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_create_sem	std/c/haiku.zig:17:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_delete_sem	std/c/haiku.zig:18:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_open_dir	std/c/haiku.zig:21:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_read_dir	std/c/haiku.zig:22:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_read_stat	std/c/haiku.zig:24:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_release_sem_etc	std/c/haiku.zig:20:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c._kern_rewind_dir	std/c/haiku.zig:23:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c.area_id	std/debug.zig:442:14: error: reached unreachable code
+std.c.find_thread	std/c/haiku.zig:27:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c.get_system_info	std/c/haiku.zig:28:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c.on_exit_thread	std/c/haiku.zig:26:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c.port_id	std/debug.zig:442:14: error: reached unreachable code
+std.c.readv_pos	std/c/haiku.zig:32:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c.sem_id	std/debug.zig:442:14: error: reached unreachable code
+std.c.status_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.system_info	std/debug.zig:442:14: error: reached unreachable code
+std.c.team_id	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_id	std/debug.zig:442:14: error: reached unreachable code
+std.c.writev_pos	std/c/haiku.zig:33:12: error: dependency on dynamic library 'root' requires enabling Position Independent Code; fixed by '-lroot' or '-fPIC'
+std.c.AUTH	std/debug.zig:442:14: error: reached unreachable code
+std.c.BI	std/debug.zig:442:14: error: reached unreachable code
+std.c.PTHREAD_STACK_MIN	std/debug.zig:442:14: error: reached unreachable code
+std.c.TCFLUSH	std/debug.zig:442:14: error: reached unreachable code
+std.c.TCIO	std/debug.zig:442:14: error: reached unreachable code
+std.c.auth_approval	std/c/openbsd.zig:55:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_call	std/c/openbsd.zig:74:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_cat	std/c/openbsd.zig:81:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_challenge	std/c/openbsd.zig:75:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_check_change	std/c/openbsd.zig:77:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_check_expire	std/c/openbsd.zig:76:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_checknologin	std/c/openbsd.zig:82:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_clean	std/c/openbsd.zig:67:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_close	std/c/openbsd.zig:60:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_clrenv	std/c/openbsd.zig:68:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_clroption	std/c/openbsd.zig:69:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_clroptions	std/c/openbsd.zig:70:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_getitem	std/c/openbsd.zig:63:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_getpwd	std/c/openbsd.zig:78:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_getstate	std/c/openbsd.zig:66:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_getvalue	std/c/openbsd.zig:72:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_item_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.auth_mkvalue	std/c/openbsd.zig:80:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_open	std/c/openbsd.zig:59:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_session_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.auth_setdata	std/c/openbsd.zig:61:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_setenv	std/c/openbsd.zig:71:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_setitem	std/c/openbsd.zig:62:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_setoption	std/c/openbsd.zig:64:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_setpwd	std/c/openbsd.zig:79:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_setstate	std/c/openbsd.zig:65:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_userchallenge	std/c/openbsd.zig:56:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_usercheck	std/c/openbsd.zig:58:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_userokay	std/c/openbsd.zig:54:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_userresponse	std/c/openbsd.zig:57:12: error: dependency on libc must be explicitly specified in the build command
+std.c.auth_verify	std/c/openbsd.zig:73:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bcrypt	std/c/openbsd.zig:91:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bcrypt_checkpass	std/c/openbsd.zig:93:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bcrypt_gensalt	std/c/openbsd.zig:90:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bcrypt_newhash	std/c/openbsd.zig:92:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwnam_shadow	std/c/openbsd.zig:86:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwuid_shadow	std/c/openbsd.zig:85:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getthrid	std/c/openbsd.zig:25:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_cap_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.login_close	std/c/openbsd.zig:48:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getcapbool	std/c/openbsd.zig:43:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getcapnum	std/c/openbsd.zig:44:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getcapsize	std/c/openbsd.zig:45:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getcapstr	std/c/openbsd.zig:46:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getcaptime	std/c/openbsd.zig:47:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getclass	std/c/openbsd.zig:41:12: error: dependency on libc must be explicitly specified in the build command
+std.c.login_getstyle	std/c/openbsd.zig:42:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pledge	std/c/openbsd.zig:23:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pw_dup	std/c/openbsd.zig:94:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setclasscontext	std/c/openbsd.zig:49:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setpassent	std/c/openbsd.zig:87:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setusercontext	std/c/openbsd.zig:50:12: error: dependency on libc must be explicitly specified in the build command
+std.c.uid_from_user	std/c/openbsd.zig:88:12: error: dependency on libc must be explicitly specified in the build command
+std.c.unveil	std/c/openbsd.zig:24:12: error: dependency on libc must be explicitly specified in the build command
+std.c.user_from_uid	std/c/openbsd.zig:89:12: error: dependency on libc must be explicitly specified in the build command
+std.c.CAP_RIGHTS_VERSION	std/debug.zig:442:14: error: reached unreachable code
+std.c.KINFO_FILE_SIZE	std/debug.zig:442:14: error: reached unreachable code
+std.c.UMTX_ABSTIME	std/debug.zig:442:14: error: reached unreachable code
+std.c.UMTX_OP	std/debug.zig:442:14: error: reached unreachable code
+std.c._umtx_op	std/c/freebsd.zig:81:12: error: dependency on libc must be explicitly specified in the build command
+std.c._umtx_time	std/debug.zig:442:14: error: reached unreachable code
+std.c.cap_rights	std/debug.zig:442:14: error: reached unreachable code
+std.c.fflags_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.fsblkcnt_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.fsfilcnt_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.kinfo_file	std/debug.zig:442:14: error: reached unreachable code
+std.c.kinfo_getfile	std/c/freebsd.zig:31:12: error: dependency on libc must be explicitly specified in the build command
+std.c.CALENDAR_CLOCK	std/debug.zig:442:14: error: reached unreachable code
+std.c.COPYFILE	std/debug.zig:442:14: error: reached unreachable code
+std.c.CPUFAMILY	std/debug.zig:442:14: error: reached unreachable code
+std.c.PT	std/debug.zig:442:14: error: reached unreachable code
+std.c.DB_RECORDTYPE	std/debug.zig:442:14: error: reached unreachable code
+std.c.EXC	std/debug.zig:442:14: error: reached unreachable code
+std.c.EXCEPTION	std/debug.zig:442:14: error: reached unreachable code
+std.c.KEVENT	std/debug.zig:442:14: error: reached unreachable code
+std.c.MACH	std/debug.zig:442:14: error: reached unreachable code
+std.c.MACH_MSG_TYPE	std/c/darwin.zig:233:27: error: use MACH.MSG.TYPE
+std.c.MACH_PORT_RIGHT	std/c/darwin.zig:234:29: error: use MACH.PORT.RIGHT
+std.c.MACH_TASK_BASIC_INFO	std/c/darwin.zig:235:34: error: use MACH.TASK.BASIC.INFO
+std.c.MACH_TASK_BASIC_INFO_COUNT	std/c/darwin.zig:236:40: error: use MACH.TASK.BASIC.INFO_COUNT
+std.c.MATTR	std/debug.zig:442:14: error: reached unreachable code
+std.c.NSVersionOfRunTimeLibrary	std/c/darwin.zig:354:12: error: dependency on libc must be explicitly specified in the build command
+std.c.OPEN_MAX	std/debug.zig:442:14: error: reached unreachable code
+std.c.OS	std/debug.zig:442:14: error: reached unreachable code
+std.c.POSIX_SPAWN	std/debug.zig:442:14: error: reached unreachable code
+std.c.SYSPROTO_EVENT	std/debug.zig:442:14: error: reached unreachable code
+std.c.SYSPROTO_CONTROL	std/debug.zig:442:14: error: reached unreachable code
+std.c.TASK	std/debug.zig:442:14: error: reached unreachable code
+std.c.TASK_NULL	std/c/darwin.zig:280:23: error: use TASK.NULL
+std.c.TASK_VM_INFO	std/c/darwin.zig:281:26: error: use TASK.VM.INFO
+std.c.TASK_VM_INFO_COUNT	std/c/darwin.zig:282:32: error: use TASK.VM.INFO_COUNT
+std.c.THREAD	std/debug.zig:442:14: error: reached unreachable code
+std.c.THREAD_BASIC_INFO	std/c/darwin.zig:307:31: error: use THREAD.BASIC.INFO
+std.c.THREAD_BASIC_INFO_COUNT	std/c/darwin.zig:308:37: error: use THREAD.BASIC.INFO_COUNT
+std.c.THREAD_IDENTIFIER_INFO_COUNT	std/c/darwin.zig:309:42: error: use THREAD.IDENTIFIER.INFO_COUNT
+std.c.THREAD_NULL	std/c/darwin.zig:306:25: error: use THREAD.NULL
+std.c.THREAD_STATE_NONE	std/c/darwin.zig:310:31: error: use THREAD.STATE.NONE
+std.c.UL	std/debug.zig:442:14: error: reached unreachable code
+std.c.VM	std/debug.zig:442:14: error: reached unreachable code
+std.c._NSGetExecutablePath	std/c/darwin.zig:355:12: error: dependency on libc must be explicitly specified in the build command
+std.c.__getdirentries64	std/c/darwin.zig:381:12: error: dependency on libc must be explicitly specified in the build command
+std.c.__ulock_wait	std/c/darwin.zig:950:12: error: dependency on libc must be explicitly specified in the build command
+std.c.__ulock_wait2	std/c/darwin.zig:949:12: error: dependency on libc must be explicitly specified in the build command
+std.c.__ulock_wake	std/c/darwin.zig:951:12: error: dependency on libc must be explicitly specified in the build command
+std.c._dyld_get_image_header	std/c/darwin.zig:357:12: error: dependency on libc must be explicitly specified in the build command
+std.c._dyld_get_image_name	std/c/darwin.zig:359:12: error: dependency on libc must be explicitly specified in the build command
+std.c._dyld_get_image_vmaddr_slide	std/c/darwin.zig:358:12: error: dependency on libc must be explicitly specified in the build command
+std.c._dyld_image_count	std/c/darwin.zig:356:12: error: dependency on libc must be explicitly specified in the build command
+std.c._dyld_get_image_header_containing_address	std/c/darwin.zig:360:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dyld_image_path_containing_address	std/c/darwin.zig:361:12: error: dependency on libc must be explicitly specified in the build command
+std.c._host_page_size	std/c/darwin.zig:879:12: error: dependency on libc must be explicitly specified in the build command
+std.c.boolean_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.clock_get_time	std/c/darwin.zig:416:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_serv_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.clock_res_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.@"close$NOCANCEL"	std/c/darwin.zig:414:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dispatch	std/c/darwin/dispatch.zig:26:8: error: dependency on libc must be explicitly specified in the build command
+std.c.fcopyfile	std/c/darwin.zig:380:12: error: dependency on libc must be explicitly specified in the build command
+std.c.renameatx_np	std/c/darwin.zig:393:12: error: dependency on libc must be explicitly specified in the build command
+std.c.host_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.integer_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.ipc_space_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.ipc_space_port_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.kern_return_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_size_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.kevent64	std/c/darwin.zig:399:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kevent64_s	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_absolute_time	std/c/darwin.zig:395:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_continuous_time	std/c/darwin.zig:396:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_hdr	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_host_self	std/c/darwin.zig:415:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_msg	std/c/darwin.zig:511:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_msg_return_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_type_number_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_port_allocate	std/c/darwin.zig:844:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_port_array_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_port_deallocate	std/c/darwin.zig:849:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_port_insert_right	std/c/darwin.zig:850:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_port_name_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_port_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_task_basic_info	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_task_self	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_timebase_info	std/c/darwin.zig:397:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_timebase_info_data	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_timespec_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_vm_address_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_vm_protect	std/c/darwin.zig:836:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_vm_read	std/c/darwin.zig:554:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_vm_region	std/c/darwin.zig:574:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_vm_region_recurse	std/c/darwin.zig:583:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mach_vm_size_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_vm_write	std/c/darwin.zig:568:12: error: dependency on libc must be explicitly specified in the build command
+std.c.natural_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.os_log_create	std/c/darwin.zig:987:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_log_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.os_log_type_enabled	std/c/darwin.zig:988:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_log_type_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.os_signpost_enabled	std/c/darwin.zig:993:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_signpost_id_generate	std/c/darwin.zig:966:16: error: expected type 'bool', found 'comptime_int'
+std.c.os_signpost_id_make_with_pointer	std/c/darwin.zig:966:16: error: expected type 'bool', found 'comptime_int'
+std.c.os_signpost_id_t	std/c/darwin.zig:966:16: error: expected type 'bool', found 'comptime_int'
+std.c.os_signpost_interval_begin	std/c/darwin.zig:966:16: error: expected type 'bool', found 'comptime_int'
+std.c.os_signpost_interval_end	std/c/darwin.zig:966:16: error: expected type 'bool', found 'comptime_int'
+std.c.os_unfair_lock	std/debug.zig:442:14: error: reached unreachable code
+std.c.os_unfair_lock_assert_not_owner	std/c/darwin.zig:962:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_unfair_lock_assert_owner	std/c/darwin.zig:961:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_unfair_lock_lock	std/c/darwin.zig:958:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_unfair_lock_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.os_unfair_lock_trylock	std/c/darwin.zig:960:12: error: dependency on libc must be explicitly specified in the build command
+std.c.os_unfair_lock_unlock	std/c/darwin.zig:959:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pid_for_task	std/c/darwin.zig:553:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn	std/c/darwin.zig:1278:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_addchdir_np	std/c/darwin.zig:1276:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_addclose	std/c/darwin.zig:1262:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_adddup2	std/c/darwin.zig:1270:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_addfchdir_np	std/c/darwin.zig:1277:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_addinherit_np	std/c/darwin.zig:1275:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_addopen	std/c/darwin.zig:1263:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_destroy	std/c/darwin.zig:1261:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_init	std/c/darwin.zig:1260:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawn_file_actions_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.posix_spawnattr_destroy	std/c/darwin.zig:1255:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawnattr_getflags	std/c/darwin.zig:1256:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawnattr_getpgroup	std/c/darwin.zig:1257:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawnattr_init	std/c/darwin.zig:1254:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawnattr_setflags	std/c/darwin.zig:1258:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawnattr_setpgroup	std/c/darwin.zig:1259:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_spawnattr_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.posix_spawnp	std/c/darwin.zig:1286:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_get_qos_class_np	std/c/darwin.zig:997:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_set_qos_class_np	std/c/darwin.zig:996:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_get_qos_class_np	std/c/darwin.zig:999:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_set_qos_class_self_np	std/c/darwin.zig:998:12: error: dependency on libc must be explicitly specified in the build command
+std.c.qos_class_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_flavor_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_for_pid	std/c/darwin.zig:552:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_get_exception_ports	std/c/darwin.zig:530:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_info	std/c/darwin.zig:857:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_info_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_name_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_resume	std/c/darwin.zig:549:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_set_exception_ports	std/c/darwin.zig:539:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_suspend	std/c/darwin.zig:550:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_threads	std/c/darwin.zig:701:12: error: dependency on libc must be explicitly specified in the build command
+std.c.task_vm_info_data_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_basic_info	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_get_state	std/c/darwin.zig:706:12: error: dependency on libc must be explicitly specified in the build command
+std.c.thread_identifier_info	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_info	std/c/darwin.zig:718:12: error: dependency on libc must be explicitly specified in the build command
+std.c.thread_info_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_resume	std/c/darwin.zig:724:12: error: dependency on libc must be explicitly specified in the build command
+std.c.thread_set_state	std/c/darwin.zig:712:12: error: dependency on libc must be explicitly specified in the build command
+std.c.vm_address_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_deallocate	std/c/darwin.zig:880:12: error: dependency on libc must be explicitly specified in the build command
+std.c.vm_machine_attribute	std/c/darwin.zig:881:12: error: dependency on libc must be explicitly specified in the build command
+std.c.vm_machine_attribute_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_machine_attribute_val_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_map_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_offset_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_prot_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_basic_info_64	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_extended_info	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_info_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_recurse_info_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_submap_info_64	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_submap_short_info_64	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_top_info	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_behavior_array_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_behavior_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_data_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_data_type_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_flavor_array_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_handler_array_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_handler_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_mask_array_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_mask_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_port_array_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_port_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.exception_type_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_exception_data_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_exception_data_type_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_bits_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_id_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_header_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_option_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_size_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_timeout_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_msg_type_name_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.mach_port_right_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.memory_object_offset_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.policy_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_policy_flavor_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_policy_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_read_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.task_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_act_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_flavor_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_port_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_state_flavor_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_state_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.thread_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.time_value_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm32_object_id_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_behavior_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_inherit_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_map_read_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_object_id_t	std/debug.zig:442:14: error: reached unreachable code
+std.c.vm_region_flavor_t	std/debug.zig:442:14: error: reached unreachable code
+std.c._lwp_self	std/c/netbsd.zig:16:12: error: dependency on libc must be explicitly specified in the build command
+std.c._lwp_park	std/c/netbsd.zig:18:12: error: dependency on libc must be explicitly specified in the build command
+std.c._lwp_unpark	std/c/netbsd.zig:30:12: error: dependency on libc must be explicitly specified in the build command
+std.c._lwp_unpark_all	std/c/netbsd.zig:31:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lwp_gettid	std/c/dragonfly.zig:11:12: error: dependency on libc must be explicitly specified in the build command
+std.c.umtx_sleep	std/c/dragonfly.zig:13:12: error: dependency on libc must be explicitly specified in the build command
+std.c.umtx_wakeup	std/c/dragonfly.zig:14:12: error: dependency on libc must be explicitly specified in the build command
+std.c.PERF_EVENT	std/c/serenity.zig:28:31: error: backing integer bit width does not match total bit width of fields
+std.c.disown	std/c/serenity.zig:50:12: error: dependency on libc must be explicitly specified in the build command
+std.c.profiling_enable	std/c/serenity.zig:28:31: error: backing integer bit width does not match total bit width of fields
+std.c.profiling_disable	std/c/serenity.zig:53:12: error: dependency on libc must be explicitly specified in the build command
+std.c.profiling_free_buffer	std/c/serenity.zig:54:12: error: dependency on libc must be explicitly specified in the build command
+std.c.purge	std/c/serenity.zig:58:12: error: dependency on libc must be explicitly specified in the build command
+std.c.perf_event	std/c/serenity.zig:28:31: error: backing integer bit width does not match total bit width of fields
+std.c.perf_register_string	std/c/serenity.zig:61:12: error: dependency on libc must be explicitly specified in the build command
+std.c.get_stack_bounds	std/c/serenity.zig:63:12: error: dependency on libc must be explicitly specified in the build command
+std.c.anon_create	std/c/serenity.zig:65:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getkeymap	std/c/serenity.zig:67:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setkeymap	std/c/serenity.zig:68:12: error: dependency on libc must be explicitly specified in the build command
+std.elf.STB_MIPS_SPLIT_COMMON	std/elf.zig:563:51: error: enum 'elf.STB' has no member named 'MIBS_SPLIT_COMMON'
+std.elf.STT_ARM_16BIT	std/elf.zig:798:77: error: overflow of integer type 'u4' with value '17'
+std.elf.STT.ARM_16BIT	std/elf.zig:798:77: error: overflow of integer type 'u4' with value '17'
+std.spirv.position_in	std/spirv.zig:4:45: error: pointers with address space 'input' are not supported on x86
+std.spirv.position_out	std/spirv.zig:5:46: error: pointers with address space 'output' are not supported on x86
+std.spirv.point_size_in	std/spirv.zig:6:47: error: pointers with address space 'input' are not supported on x86
+std.spirv.point_size_out	std/spirv.zig:7:48: error: pointers with address space 'output' are not supported on x86
+std.spirv.invocation_id	std/spirv.zig:8:48: error: constant values with address space 'input' are not supported on x86
+std.spirv.frag_coord	std/spirv.zig:9:57: error: constant values with address space 'input' are not supported on x86
+std.spirv.point_coord	std/spirv.zig:10:58: error: constant values with address space 'input' are not supported on x86
+std.spirv.frag_depth	std/spirv.zig:15:43: error: mutable values with address space 'output' are not supported on x86
+std.spirv.num_workgroups	std/spirv.zig:16:61: error: constant values with address space 'input' are not supported on x86
+std.spirv.workgroup_size	std/spirv.zig:17:61: error: constant values with address space 'input' are not supported on x86
+std.spirv.workgroup_id	std/spirv.zig:18:59: error: constant values with address space 'input' are not supported on x86
+std.spirv.local_invocation_id	std/spirv.zig:19:66: error: constant values with address space 'input' are not supported on x86
+std.spirv.global_invocation_id	std/spirv.zig:20:67: error: constant values with address space 'input' are not supported on x86
+std.spirv.vertex_index	std/spirv.zig:21:47: error: constant values with address space 'input' are not supported on x86
+std.spirv.instance_index	std/spirv.zig:22:49: error: constant values with address space 'input' are not supported on x86
+std.heap.WasmAllocator	std/heap.zig:18:74: error: unimplemented
+std.heap.c_allocator	std/c.zig:11212:12: error: dependency on libc must be explicitly specified in the build command
+std.heap.wasm_allocator	std/heap.zig:18:74: error: unimplemented
+std.heap.brk_allocator	std/heap/BrkAllocator.zig:15:35: error: unsupported
 std.heap.BrkAllocator	std/heap/BrkAllocator.zig:15:35: error: unsupported
-std.heap.c_allocator_impl	<gen>: error: 'c_allocator_impl' is not marked 'pub'
-std.http.Client	std/http/Client.zig:1485:58: error: root source file struct 'posix' has no member named 'SocketError'
-std.http.Client.Connection.Plain	<gen>: error: 'Plain' is not marked 'pub'
-std.http.Client.Connection.Tls	<gen>: error: 'Tls' is not marked 'pub'
-std.json.Scanner.State	<gen>: error: 'State' is not marked 'pub'
-std.json.Stringify.IndentationMode	<gen>: error: 'IndentationMode' is not marked 'pub'
+std.http.Client.ConnectUnixError	std/http/Client.zig:1485:58: error: root source file struct 'posix' has no member named 'SocketError'
+std.http.Client.connectUnix	std/http/Client.zig:1485:58: error: root source file struct 'posix' has no member named 'SocketError'
 std.macho.PROT	std/macho.zig:702:33: error: expected type 'macho.vm_prot_t', found 'comptime_int'
-std.math.float	<gen>: error: 'float' is not marked 'pub'
-std.math.float.long_double	<gen>: error: 'float' is not marked 'pub'
-std.math.float.FloatRepr	<gen>: error: 'float' is not marked 'pub'
-std.math.big.int.Constants	<gen>: error: 'Constants' is not marked 'pub'
-std.math.big.int.AccOp	<gen>: error: 'AccOp' is not marked 'pub'
-std.math.big.int.Case	<gen>: error: 'Case' is not marked 'pub'
-std.meta	std/meta.zig:246:29: error: deprecated in favor of @hasDecl
-std.meta.TupleTester	<gen>: error: 'TupleTester' is not marked 'pub'
-std.os.linux	std/os/linux.zig:77:34: error: root source file struct 'os.linux.x86_64' has no member named 'syscall7'
-std.os.linux.vdso	<gen>: error: 'vdso' is not marked 'pub'
-std.os.linux.dl	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.DynLib	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.LinkMap	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.LinkMap.Iterator	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.RDebug	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.ElfDynLib	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.ElfDynLib.HashTable	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.ElfDynLib.GnuHashSection32	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.ElfDynLib.GnuHashSection64	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.dl.DlDynLib	<gen>: error: 'dl' is not marked 'pub'
-std.os.linux.tls.Variant	<gen>: error: 'Variant' is not marked 'pub'
-std.os.linux.tls.ZigTcb	<gen>: error: 'ZigTcb' is not marked 'pub'
-std.os.linux.tls.Dtv	<gen>: error: 'Dtv' is not marked 'pub'
-std.os.linux.tls.AreaDesc	<gen>: error: 'AreaDesc' is not marked 'pub'
-std.os.linux.BPF.Insn.Source	<gen>: error: 'Source' is not marked 'pub'
-std.os.linux.BPF.Insn.Mode	<gen>: error: 'Mode' is not marked 'pub'
-std.os.linux.BPF.Insn.ImmOrReg	<gen>: error: 'ImmOrReg' is not marked 'pub'
-std.os.linux.TFD_TIMER	<gen>: error: 'TFD_TIMER' is not marked 'pub'
-std.os.linux.k_sigaction_funcs	<gen>: error: 'k_sigaction_funcs' is not marked 'pub'
-std.os.linux.vfs_cap_data.Data	<gen>: error: 'Data' is not marked 'pub'
-std.os.linux.siginfo_fields_union	<gen>: error: 'siginfo_fields_union' is not marked 'pub'
-std.os.linux.PERF.RECORD.MISC	<gen>: error: 'MISC' is not marked 'pub'
-std.os.linux.PERF.RECORD.MISC.CPU_MODE	<gen>: error: 'MISC' is not marked 'pub'
+std.meta.declarationInfo	std/meta.zig:246:29: error: deprecated in favor of @hasDecl
+std.meta.fields	std/meta.zig:248:20: error: deprecated in favor of @typeInfo
+std.os.linux.syscall7	std/os/linux.zig:77:34: error: root source file struct 'os.linux.x86_64' has no member named 'syscall7'
+std.os.linux.socketcall	std/os/linux.zig:80:36: error: root source file struct 'os.linux.x86_64' has no member named 'socketcall'
+std.os.linux.syscall_pipe	std/os/linux.zig:81:38: error: root source file struct 'os.linux.x86_64' has no member named 'syscall_pipe'
+std.os.linux.syscall_fork	std/os/linux.zig:82:38: error: root source file struct 'os.linux.x86_64' has no member named 'syscall_fork'
+std.os.linux.syscall_lseek	std/os/linux.zig:83:39: error: root source file struct 'os.linux.x86_64' has no member named 'syscall_lseek'
+std.os.linux.SC	std/os/linux.zig:107:25: error: root source file struct 'os.linux.x86_64' has no member named 'SC'
+std.os.linux.user_desc	std/os/linux.zig:109:32: error: root source file struct 'os.linux.x86_64' has no member named 'user_desc'
 std.os.linux.AUDIT	std/os/linux.zig:11027:24: error: enum 'elf.EM' has no member named 'FRV'
 std.os.linux.AUDIT.ARCH	std/os/linux.zig:11027:24: error: enum 'elf.EM' has no member named 'FRV'
 std.os.plan9.ExecData	<gen>: error: cannot load opaque type 'anyopaque'
-std.os.uefi.tables.RuntimeServices.DebugDisposition.Bits	<gen>: error: 'Bits' is not marked 'pub'
-std.os.wasi	std/os/wasi.zig:25:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
-std.os.emscripten	std/os/emscripten.zig:831:12: error: dependency on libc must be explicitly specified in the build command
-std.os.emscripten.siginfo_fields_union	<gen>: error: 'siginfo_fields_union' is not marked 'pub'
-std.os.windows	std/os/windows.zig:4082:19: error: Deprecated: choose between `CHAR` or `WCHAR` directly instead.
+std.os.wasi.args_get	std/os/wasi.zig:25:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.args_sizes_get	std/os/wasi.zig:26:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.clock_res_get	std/os/wasi.zig:28:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.clock_time_get	std/os/wasi.zig:29:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.environ_get	std/os/wasi.zig:31:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.environ_sizes_get	std/os/wasi.zig:32:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_advise	std/os/wasi.zig:34:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_allocate	std/os/wasi.zig:35:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_close	std/os/wasi.zig:36:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_datasync	std/os/wasi.zig:37:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_pread	std/os/wasi.zig:38:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_pwrite	std/os/wasi.zig:39:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_read	std/os/wasi.zig:40:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_readdir	std/os/wasi.zig:41:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_renumber	std/os/wasi.zig:42:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_seek	std/os/wasi.zig:43:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_sync	std/os/wasi.zig:44:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_tell	std/os/wasi.zig:45:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_write	std/os/wasi.zig:46:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_fdstat_get	std/os/wasi.zig:48:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_fdstat_set_flags	std/os/wasi.zig:49:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_fdstat_set_rights	std/os/wasi.zig:50:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_filestat_get	std/os/wasi.zig:52:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_filestat_set_size	std/os/wasi.zig:53:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_filestat_set_times	std/os/wasi.zig:54:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_prestat_get	std/os/wasi.zig:56:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.fd_prestat_dir_name	std/os/wasi.zig:57:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_create_directory	std/os/wasi.zig:59:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_filestat_get	std/os/wasi.zig:60:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_filestat_set_times	std/os/wasi.zig:61:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_link	std/os/wasi.zig:62:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_open	std/os/wasi.zig:63:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_readlink	std/os/wasi.zig:64:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_remove_directory	std/os/wasi.zig:65:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_rename	std/os/wasi.zig:66:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_symlink	std/os/wasi.zig:67:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.path_unlink_file	std/os/wasi.zig:68:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.poll_oneoff	std/os/wasi.zig:70:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.proc_exit	std/os/wasi.zig:72:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.random_get	std/os/wasi.zig:74:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.sched_yield	std/os/wasi.zig:76:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.sock_accept	std/os/wasi.zig:78:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.sock_recv	std/os/wasi.zig:79:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.sock_send	std/os/wasi.zig:80:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.wasi.sock_shutdown	std/os/wasi.zig:81:12: error: dependency on dynamic library 'wasi_snapshot_preview1' requires enabling Position Independent Code; fixed by '-lwasi_snapshot_preview1' or '-fPIC'
+std.os.emscripten.emscripten_async_wget	std/os/emscripten.zig:831:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_wget_data	std/os/emscripten.zig:834:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_wget2	std/os/emscripten.zig:839:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_wget2_data	std/os/emscripten.zig:845:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_wget2_abort	std/os/emscripten.zig:846:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_wget	std/os/emscripten.zig:847:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_wget_data	std/os/emscripten.zig:848:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_run_script	std/os/emscripten.zig:849:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_run_script_int	std/os/emscripten.zig:850:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_run_script_string	std/os/emscripten.zig:851:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_run_script	std/os/emscripten.zig:852:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_load_script	std/os/emscripten.zig:853:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_main_loop	std/os/emscripten.zig:854:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_main_loop_timing	std/os/emscripten.zig:855:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_main_loop_timing	std/os/emscripten.zig:856:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_main_loop_arg	std/os/emscripten.zig:857:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_pause_main_loop	std/os/emscripten.zig:858:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_resume_main_loop	std/os/emscripten.zig:859:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_cancel_main_loop	std/os/emscripten.zig:860:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_socket_error_callback	std/os/emscripten.zig:865:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_socket_open_callback	std/os/emscripten.zig:866:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_socket_listen_callback	std/os/emscripten.zig:867:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_socket_connection_callback	std/os/emscripten.zig:868:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_socket_message_callback	std/os/emscripten.zig:869:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_socket_close_callback	std/os/emscripten.zig:870:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten._emscripten_push_main_loop_blocker	std/os/emscripten.zig:871:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten._emscripten_push_uncounted_main_loop_blocker	std/os/emscripten.zig:872:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_main_loop_expected_blockers	std/os/emscripten.zig:873:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_async_call	std/os/emscripten.zig:874:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_exit_with_live_runtime	std/os/emscripten.zig:875:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_force_exit	std/os/emscripten.zig:876:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_device_pixel_ratio	std/os/emscripten.zig:877:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_window_title	std/os/emscripten.zig:878:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_window_title	std/os/emscripten.zig:879:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_screen_size	std/os/emscripten.zig:880:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_hide_mouse	std/os/emscripten.zig:881:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_set_canvas_size	std/os/emscripten.zig:882:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_canvas_size	std/os/emscripten.zig:883:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_now	std/os/emscripten.zig:884:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_num_logical_cores	std/os/emscripten.zig:885:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_random	std/os/emscripten.zig:886:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_async_load	std/os/emscripten.zig:888:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_async_store	std/os/emscripten.zig:889:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_async_delete	std/os/emscripten.zig:890:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_async_exists	std/os/emscripten.zig:892:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_load	std/os/emscripten.zig:893:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_store	std/os/emscripten.zig:894:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_delete	std/os/emscripten.zig:895:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_exists	std/os/emscripten.zig:896:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_load_blob	std/os/emscripten.zig:897:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_store_blob	std/os/emscripten.zig:898:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_read_from_blob	std/os/emscripten.zig:899:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_idb_free_blob	std/os/emscripten.zig:900:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_run_preload_plugins	std/os/emscripten.zig:901:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_run_preload_plugins_data	std/os/emscripten.zig:903:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_lazy_load_code	std/os/emscripten.zig:904:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_create_worker	std/os/emscripten.zig:906:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_destroy_worker	std/os/emscripten.zig:907:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_call_worker	std/os/emscripten.zig:909:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_worker_respond	std/os/emscripten.zig:910:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_worker_respond_provisionally	std/os/emscripten.zig:911:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_worker_queue_size	std/os/emscripten.zig:912:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_compiler_setting	std/os/emscripten.zig:913:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_has_asyncify	std/os/emscripten.zig:914:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_debugger	std/os/emscripten.zig:915:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_preloaded_image_data	std/os/emscripten.zig:917:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_preloaded_image_data_from_FILE	std/os/emscripten.zig:918:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_log	std/os/emscripten.zig:919:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_get_callstack	std/os/emscripten.zig:920:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_print_double	std/os/emscripten.zig:921:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_scan_registers	std/os/emscripten.zig:923:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_scan_stack	std/os/emscripten.zig:924:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_dlopen	std/os/emscripten.zig:926:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_dlopen_promise	std/os/emscripten.zig:927:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_throw_number	std/os/emscripten.zig:928:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_throw_string	std/os/emscripten.zig:929:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_sleep	std/os/emscripten.zig:930:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_promise_create	std/os/emscripten.zig:945:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_promise_destroy	std/os/emscripten.zig:946:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_promise_resolve	std/os/emscripten.zig:947:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_promise_then	std/os/emscripten.zig:948:12: error: dependency on libc must be explicitly specified in the build command
+std.os.emscripten.emscripten_promise_all	std/os/emscripten.zig:949:12: error: dependency on libc must be explicitly specified in the build command
+std.os.windows.TCHAR	std/os/windows.zig:4082:19: error: Deprecated: choose between `CHAR` or `WCHAR` directly instead.
+std.os.windows.LPTSTR	std/os/windows.zig:4083:20: error: Deprecated: choose between `LPSTR` or `LPWSTR` directly instead.
+std.os.windows.LPCTSTR	std/os/windows.zig:4084:21: error: Deprecated: choose between `LPCSTR` or `LPCWSTR` directly instead.
+std.os.windows.PTSTR	std/os/windows.zig:4085:19: error: Deprecated: choose between `PSTR` or `PWSTR` directly instead.
+std.os.windows.PCTSTR	std/os/windows.zig:4086:20: error: Deprecated: choose between `PCSTR` or `PCWSTR` directly instead.
+std.os.windows.FLOATING_SAVE_AREA	std/os/windows.zig:4614:13: error: FLOATING_SAVE_AREA only defined on x86
+std.os.windows.NEON128	std/os/windows.zig:4662:13: error: NEON128 only defined on aarch64
 std.os.windows.kernel32	std/os/windows/kernel32.zig:16:12: error: dependency on dynamic library 'kernel32' requires enabling Position Independent Code; fixed by '-lkernel32' or '-fPIC'
 std.os.windows.ntdll	std/os/windows/ntdll.zig:66:12: error: dependency on dynamic library 'ntdll' requires enabling Position Independent Code; fixed by '-lntdll' or '-fPIC'
-std.os.windows.crypt32	std/os/windows/crypt32.zig:112:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertOpenStore	std/os/windows/crypt32.zig:112:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertCloseStore	std/os/windows/crypt32.zig:126:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertEnumCertificatesInStore	std/os/windows/crypt32.zig:131:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertFreeCertificateContext	std/os/windows/crypt32.zig:136:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertAddEncodedCertificateToStore	std/os/windows/crypt32.zig:140:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertOpenSystemStoreW	std/os/windows/crypt32.zig:149:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertGetCertificateChain	std/os/windows/crypt32.zig:263:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertFreeCertificateChain	std/os/windows/crypt32.zig:274:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
+std.os.windows.crypt32.CertVerifyCertificateChainPolicy	std/os/windows/crypt32.zig:278:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
 std.os.windows.OBJECT.ATTRIBUTES.Flags	std/os/windows.zig:124:18: error: no field named 'INHERIT' in struct 'os.windows.OBJECT.ATTRIBUTES'
-std.os.windows.AFD	std/os/windows.zig:1271:34: error: backing integer bit width does not match total bit width of fields
 std.os.windows.AFD.TRANSMIT_FILE_INFO	std/os/windows.zig:1271:34: error: backing integer bit width does not match total bit width of fields
 std.os.windows.AFD.TRANSMIT_FILE_INFO.FLAGS	std/os/windows.zig:1271:34: error: backing integer bit width does not match total bit width of fields
-std.os.windows.TDI.ADDRESS	std/os/windows.zig:1362:19: error: enum tag value '6' for field 'IPX' already taken
 std.os.windows.TDI.ADDRESS.TYPE	std/os/windows.zig:1362:19: error: enum tag value '6' for field 'IPX' already taken
-std.os.windows.IOCTL.AFD.CONTROL_CODE	<gen>: error: 'CONTROL_CODE' is not marked 'pub'
-std.os.windows.STRING	<gen>: error: 'STRING' is not marked 'pub'
-std.os.windows.Bool	<gen>: error: 'Bool' is not marked 'pub'
-std.os.windows.PEB.UnknownStaticServerDataIndirection	<gen>: error: 'UnknownStaticServerDataIndirection' is not marked 'pub'
-std.os.windows.LDR	std/os/windows.zig:5366:29: error: backing integer bit width does not match total bit width of fields
 std.os.windows.LDR.LOAD	std/os/windows.zig:5366:29: error: backing integer bit width does not match total bit width of fields
-std.os.windows.BASE_STATIC_SERVER_DATA	<gen>: error: 'BASE_STATIC_SERVER_DATA' is not marked 'pub'
-std.os.windows.BASE_STATIC_SERVER_DATA.ForeignString	<gen>: error: 'BASE_STATIC_SERVER_DATA' is not marked 'pub'
-std.posix	std/os/linux.zig:77:34: error: root source file struct 'os.linux.x86_64' has no member named 'syscall7'
-std.process.Args.Iterator.Windows.next_strategy	<gen>: error: 'next_strategy' is not marked 'pub'
-std.process.Args.Iterator.Windows.skip_strategy	<gen>: error: 'skip_strategy' is not marked 'pub'
-std.sort.IdAndValue	<gen>: error: 'IdAndValue' is not marked 'pub'
-std.tar.Writer.Header.default_mode	<gen>: error: 'default_mode' is not marked 'pub'
-std.tar.Header	<gen>: error: 'Header' is not marked 'pub'
-std.tar.Header.Kind	<gen>: error: 'Header' is not marked 'pub'
-std.tar.Header.Chksums	<gen>: error: 'Header' is not marked 'pub'
-std.tar.PaxAttributeKind	<gen>: error: 'PaxAttributeKind' is not marked 'pub'
-std.tar.PaxIterator.Attribute	<gen>: error: 'Attribute' is not marked 'pub'
-std.testing	std/testing.zig:21:80: error: not testing
-std.testing.SliceDiffer	<gen>: error: 'SliceDiffer' is not marked 'pub'
-std.testing.BytesDiffer	<gen>: error: 'BytesDiffer' is not marked 'pub'
-std.testing.Smith.EnumField	<gen>: error: 'EnumField' is not marked 'pub'
-std.tz.Tz.Header	<gen>: error: 'Header' is not marked 'pub'
-std.unicode.Surrogates	<gen>: error: 'Surrogates' is not marked 'pub'
-std.valgrind.memcheck.CountResult	<gen>: error: 'CountResult' is not marked 'pub'
-std.zig.tokenizer	<gen>: error: 'tokenizer' is not marked 'pub'
-std.zig.tokenizer.Token	<gen>: error: 'tokenizer' is not marked 'pub'
-std.zig.tokenizer.Token.Loc	<gen>: error: 'tokenizer' is not marked 'pub'
-std.zig.tokenizer.Token.Tag	<gen>: error: 'tokenizer' is not marked 'pub'
-std.zig.tokenizer.Tokenizer	<gen>: error: 'tokenizer' is not marked 'pub'
-std.zig.tokenizer.Tokenizer.State	<gen>: error: 'tokenizer' is not marked 'pub'
-std.zig.string_literal.Error.FormatMessage	<gen>: error: 'FormatMessage' is not marked 'pub'
-std.zig.Ast.Parse	<gen>: error: 'Parse' is not marked 'pub'
-std.zig.Ast.Parse.SmallSpan	<gen>: error: 'Parse' is not marked 'pub'
-std.zig.Ast.Parse.Members	<gen>: error: 'Parse' is not marked 'pub'
-std.zig.Ast.Parse.Assoc	<gen>: error: 'Parse' is not marked 'pub'
-std.zig.Ast.Parse.OperInfo	<gen>: error: 'Parse' is not marked 'pub'
-std.zig.Ast.Parse.PtrModifiers	<gen>: error: 'Parse' is not marked 'pub'
-std.zig.Ast.Render.Container	<gen>: error: 'Container' is not marked 'pub'
-std.zig.Ast.Render.Space	<gen>: error: 'Space' is not marked 'pub'
-std.zig.Ast.Render.QuoteBehavior	<gen>: error: 'QuoteBehavior' is not marked 'pub'
-std.zig.Ast.Render.AutoIndentingStream	<gen>: error: 'AutoIndentingStream' is not marked 'pub'
-std.zig.Ast.Render.AutoIndentingStream.IndentType	<gen>: error: 'AutoIndentingStream' is not marked 'pub'
-std.zig.Ast.Render.AutoIndentingStream.StackElem	<gen>: error: 'AutoIndentingStream' is not marked 'pub'
-std.zig.Ast.Render.AutoIndentingStream.SpaceElem	<gen>: error: 'AutoIndentingStream' is not marked 'pub'
-std.zig.AstGen.ResultInfo	<gen>: error: 'ResultInfo' is not marked 'pub'
-std.zig.AstGen.ResultInfo.Loc	<gen>: error: 'ResultInfo' is not marked 'pub'
-std.zig.AstGen.ResultInfo.Loc.DestructureComponent	<gen>: error: 'ResultInfo' is not marked 'pub'
-std.zig.AstGen.ResultInfo.Loc.PtrResultLoc	<gen>: error: 'ResultInfo' is not marked 'pub'
-std.zig.AstGen.ResultInfo.Context	<gen>: error: 'ResultInfo' is not marked 'pub'
-std.zig.AstGen.BlockKind	<gen>: error: 'BlockKind' is not marked 'pub'
-std.zig.AstGen.Scratch	<gen>: error: 'Scratch' is not marked 'pub'
-std.zig.AstGen.Scratch.Slice	<gen>: error: 'Scratch' is not marked 'pub'
-std.zig.AstGen.WipDecls	<gen>: error: 'WipDecls' is not marked 'pub'
-std.zig.AstGen.ContainerMemberResult	<gen>: error: 'ContainerMemberResult' is not marked 'pub'
-std.zig.AstGen.SwitchNonErr	<gen>: error: 'SwitchNonErr' is not marked 'pub'
-std.zig.AstGen.ComptimeBlockInfo	<gen>: error: 'ComptimeBlockInfo' is not marked 'pub'
-std.zig.AstGen.Sign	<gen>: error: 'Sign' is not marked 'pub'
-std.zig.AstGen.Callee	<gen>: error: 'Callee' is not marked 'pub'
-std.zig.AstGen.IndexSlice	<gen>: error: 'IndexSlice' is not marked 'pub'
-std.zig.AstGen.Scope	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.Unwrapped	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.Tag	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.IdCat	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.LocalVal	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.LocalPtr	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.Defer	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.Namespace	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.Scope.Top	<gen>: error: 'Scope' is not marked 'pub'
-std.zig.AstGen.GenZir	<gen>: error: 'GenZir' is not marked 'pub'
-std.zig.AstGen.GenZir.Label	<gen>: error: 'GenZir' is not marked 'pub'
-std.zig.AstGen.GenZir.BranchTarget	<gen>: error: 'GenZir' is not marked 'pub'
-std.zig.AstGen.LineColumn	<gen>: error: 'LineColumn' is not marked 'pub'
-std.zig.AstGen.SourceCursor	<gen>: error: 'SourceCursor' is not marked 'pub'
-std.zig.AstGen.ScanContainerResult	<gen>: error: 'ScanContainerResult' is not marked 'pub'
-std.zig.AstGen.DeclarationName	<gen>: error: 'DeclarationName' is not marked 'pub'
-std.zig.Zir.ExtraData	<gen>: error: 'ExtraData' is not marked 'pub'
-std.zig.ZonGen.StringLiteralResult	<gen>: error: 'StringLiteralResult' is not marked 'pub'
-std.zig.system.darwin.macos.SystemVersionTokenizer	<gen>: error: 'SystemVersionTokenizer' is not marked 'pub'
-std.zig.system.darwin.macos.SystemVersionTokenizer.State	<gen>: error: 'SystemVersionTokenizer' is not marked 'pub'
-std.zig.system.darwin.macos.SystemVersionTokenizer.Token	<gen>: error: 'SystemVersionTokenizer' is not marked 'pub'
-std.zig.system.darwin.macos.SystemVersionTokenizer.Tag	<gen>: error: 'SystemVersionTokenizer' is not marked 'pub'
-std.zig.system.darwin.macos.SystemVersionTokenizer.Tag.Kind	<gen>: error: 'SystemVersionTokenizer' is not marked 'pub'
-std.zig.system.freebsd.aarch64	<gen>: error: 'aarch64' is not marked 'pub'
-std.zig.system.freebsd.arm	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.freebsd.powerpc	<gen>: error: 'powerpc' is not marked 'pub'
-std.zig.system.linux.CpuinfoParser	<gen>: error: 'CpuinfoParser' is not marked 'pub'
-std.zig.system.linux.aarch64	<gen>: error: 'aarch64' is not marked 'pub'
-std.zig.system.linux.arm	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.linux.arm.cpuinfo	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.linux.arm.cpuinfo.Impl	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.linux.arm.cpuinfo.Impl.cpu_models	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.linux.arm.cpuinfo.Impl.cpu_models.E	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.linux.csky	<gen>: error: 'csky' is not marked 'pub'
-std.zig.system.linux.csky.cpuinfo	<gen>: error: 'csky' is not marked 'pub'
-std.zig.system.linux.csky.cpuinfo.Impl	<gen>: error: 'csky' is not marked 'pub'
-std.zig.system.linux.m68k	<gen>: error: 'm68k' is not marked 'pub'
-std.zig.system.linux.m68k.cpuinfo	<gen>: error: 'm68k' is not marked 'pub'
-std.zig.system.linux.m68k.cpuinfo.Impl	<gen>: error: 'm68k' is not marked 'pub'
-std.zig.system.linux.mips	<gen>: error: 'mips' is not marked 'pub'
-std.zig.system.linux.mips.cpuinfo	<gen>: error: 'mips' is not marked 'pub'
-std.zig.system.linux.mips.cpuinfo.Impl	<gen>: error: 'mips' is not marked 'pub'
-std.zig.system.linux.powerpc	<gen>: error: 'powerpc' is not marked 'pub'
-std.zig.system.linux.powerpc.cpuinfo	<gen>: error: 'powerpc' is not marked 'pub'
-std.zig.system.linux.powerpc.cpuinfo.Impl	<gen>: error: 'powerpc' is not marked 'pub'
-std.zig.system.linux.riscv	<gen>: error: 'riscv' is not marked 'pub'
-std.zig.system.linux.riscv.cpuinfo	<gen>: error: 'riscv' is not marked 'pub'
-std.zig.system.linux.riscv.cpuinfo.Impl	<gen>: error: 'riscv' is not marked 'pub'
-std.zig.system.linux.s390x	<gen>: error: 's390x' is not marked 'pub'
-std.zig.system.linux.s390x.cpuinfo	<gen>: error: 's390x' is not marked 'pub'
-std.zig.system.linux.s390x.cpuinfo.Impl	<gen>: error: 's390x' is not marked 'pub'
-std.zig.system.linux.sparc	<gen>: error: 'sparc' is not marked 'pub'
-std.zig.system.linux.sparc.cpuinfo	<gen>: error: 'sparc' is not marked 'pub'
-std.zig.system.linux.sparc.cpuinfo.Impl	<gen>: error: 'sparc' is not marked 'pub'
-std.zig.system.netbsd.aarch64	<gen>: error: 'aarch64' is not marked 'pub'
-std.zig.system.netbsd.aarch64.sysctl_cpu_id	<gen>: error: 'aarch64' is not marked 'pub'
-std.zig.system.openbsd.aarch64	<gen>: error: 'aarch64' is not marked 'pub'
-std.zig.system.openbsd.arm	<gen>: error: 'arm' is not marked 'pub'
-std.zig.system.openbsd.powerpc	<gen>: error: 'powerpc' is not marked 'pub'
-std.zig.system.openbsd.riscv	<gen>: error: 'riscv' is not marked 'pub'
-std.zig.system.LdInfo	<gen>: error: 'LdInfo' is not marked 'pub'
-std.zig.AstRlAnnotate.ResultInfo	<gen>: error: 'ResultInfo' is not marked 'pub'
-std.zig.AstRlAnnotate.Block	<gen>: error: 'Block' is not marked 'pub'
-std.zig.WindowsSdk.Registry	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.Registry.Cache	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.Registry.Software	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.Registry.Software.Root	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.Registry.Wow64	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.Registry.Key	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.Registry.Key.ValueEntry	<gen>: error: 'Registry' is not marked 'pub'
-std.zig.WindowsSdk.MsvcLibDir	<gen>: error: 'MsvcLibDir' is not marked 'pub'
-std.zig.llvm.BitcodeReader.Block.Info	<gen>: error: 'Info' is not marked 'pub'
-std.zig.llvm.BitcodeReader.State	<gen>: error: 'State' is not marked 'pub'
-std.zig.llvm.BitcodeReader.Abbrev	<gen>: error: 'Abbrev' is not marked 'pub'
-std.zig.llvm.BitcodeReader.Abbrev.Builtin	<gen>: error: 'Abbrev' is not marked 'pub'
-std.zig.llvm.BitcodeReader.Abbrev.Operand	<gen>: error: 'Abbrev' is not marked 'pub'
-std.zig.llvm.BitcodeReader.Abbrev.Operand.Encoding	<gen>: error: 'Abbrev' is not marked 'pub'
-std.zig.llvm.BitcodeReader.Abbrev.Store	<gen>: error: 'Abbrev' is not marked 'pub'
-std.zig.llvm.Builder.ir	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.BlockId	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.FixedMetadataKind	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.BlockInfoBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.Version	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.String	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.Variable	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.Variable.AddrSpaceAndIsConst	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.Function	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.Alias	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ParamattrBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ParamattrBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ParamattrBlock.Entry	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ParamattrGroupBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ParamattrGroupBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.SetType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Null	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Undef	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Poison	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Integer	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Half	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Float	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Double	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Fp80	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Fp128	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Aggregate	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.String	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.CString	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Cast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Binary	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.Cmp	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.ExtractElement	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.InsertElement	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.ShuffleVector	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.ShuffleVectorEx	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.BlockAddress	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.ConstantsBlock.DsoLocalEquivalentOrNoCfi	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.DeclareBlocks	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Call	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Call.CallType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.CallFast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.CallFast.CallType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.FNeg	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.FNegFast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Binary	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.BinaryNoWrap	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.BinaryExact	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.BinaryFast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Cmp	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.CmpFast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Select	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.SelectFast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Cast	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.TruncNoWrap	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.TruncNoWrap.Flags	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Alloca	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Alloca.Flags	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.RetVoid	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Ret	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.GetElementPtr	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ExtractValue	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.InsertValue	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ExtractElement	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.InsertElement	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ShuffleVector	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Unreachable	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Load	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.LoadAtomic	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Store	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.StoreAtomic	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.BrUnconditional	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.BrConditional	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.VaArg	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.AtomicRmw	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.CmpXchg	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.Fence	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.DebugLoc	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.DebugLocAgain	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ColdOperandBundle	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.IndirectBr	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ValueSymtabBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ValueSymtabBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.ValueSymtabBlock.BlockEntry	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.MetadataBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.MetadataBlock.Value	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.MetadataAttachmentBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.MetadataAttachmentBlock.AttachmentGlobalSingle	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.FunctionBlock.MetadataAttachmentBlock.AttachmentInstructionSingle	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Strings	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.File	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.CompileUnit	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Subprogram	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.LexicalBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Location	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.BasicType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.CompositeType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.DerivedType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.SubroutineType	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Enumerator	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Enumerator.Flags	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Subrange	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Expression	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Node	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.LocalVar	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Parameter	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.GlobalVar	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.GlobalVarExpression	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Constant	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.Name	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.NamedNode	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataBlock.GlobalDeclAttachment	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.NumEntry	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Simple	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Opaque	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Integer	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.StructAnon	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.StructNamed	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.StructName	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Array	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Vector	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Pointer	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Target	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.TypeBlock.Function	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.OperandBundleTagsBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.OperandBundleTagsBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.OperandBundleTagsBlock.OperandBundleTag	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataKindBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.ModuleBlock.MetadataKindBlock.Kind	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.IdentificationBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.IdentificationBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.IdentificationBlock.Version	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.IdentificationBlock.Epoch	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.StrtabBlock	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.StrtabBlock.Code	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.ir.StrtabBlock.Blob	<gen>: error: 'ir' is not marked 'pub'
-std.zig.llvm.Builder.DataLayout.PrimitiveSpec	<gen>: error: 'PrimitiveSpec' is not marked 'pub'
-std.zig.llvm.Builder.DataLayout.PrimitiveSpec.Context	<gen>: error: 'PrimitiveSpec' is not marked 'pub'
-std.zig.llvm.Builder.DataLayout.PointerSpec	<gen>: error: 'PointerSpec' is not marked 'pub'
-std.zig.llvm.Builder.DataLayout.PointerSpec.NullPtrRepr	<gen>: error: 'PointerSpec' is not marked 'pub'
-std.zig.llvm.Builder.String.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.String.Adapter	<gen>: error: 'Adapter' is not marked 'pub'
-std.zig.llvm.Builder.Type.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Type.FormatData.Mode	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Type.Size	<gen>: error: 'Size' is not marked 'pub'
-std.zig.llvm.Builder.Attribute.Index.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Attribute.Index.FormatData.Flags	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Attribute.Kind.ATTR_KIND	<gen>: error: 'ATTR_KIND' is not marked 'pub'
-std.zig.llvm.Builder.Attribute.Storage	<gen>: error: 'Storage' is not marked 'pub'
-std.zig.llvm.Builder.Attributes.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.StrtabString.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.StrtabString.Adapter	<gen>: error: 'Adapter' is not marked 'pub'
-std.zig.llvm.Builder.Global.Index.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Intrinsic.Signature	<gen>: error: 'Signature' is not marked 'pub'
-std.zig.llvm.Builder.Intrinsic.Signature.Parameter	<gen>: error: 'Signature' is not marked 'pub'
-std.zig.llvm.Builder.Intrinsic.Signature.Parameter.Kind	<gen>: error: 'Signature' is not marked 'pub'
-std.zig.llvm.Builder.Function.Instruction.Index.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Function.ExtraDataTrail	<gen>: error: 'ExtraDataTrail' is not marked 'pub'
-std.zig.llvm.Builder.WipFunction.Block.Index	<gen>: error: 'Index' is not marked 'pub'
-std.zig.llvm.Builder.WipFunction.ExtraDataTrail	<gen>: error: 'ExtraDataTrail' is not marked 'pub'
-std.zig.llvm.Builder.MemoryAccessInfo	<gen>: error: 'MemoryAccessInfo' is not marked 'pub'
-std.zig.llvm.Builder.Constant.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Value.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Metadata.String.Adapter	<gen>: error: 'Adapter' is not marked 'pub'
-std.zig.llvm.Builder.Metadata.String.FormatData	<gen>: error: 'FormatData' is not marked 'pub'
-std.zig.llvm.Builder.Metadata.Formatter	<gen>: error: 'Formatter' is not marked 'pub'
-std.zig.llvm.Builder.Metadata.Formatter.FormatData	<gen>: error: 'Formatter' is not marked 'pub'
-std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node	<gen>: error: 'Formatter' is not marked 'pub'
-std.zig.llvm.Builder.Metadata.Formatter.FormatData.Node.ValueData	<gen>: error: 'Formatter' is not marked 'pub'
-std.zig.llvm.Builder.QuoteBehavior	<gen>: error: 'QuoteBehavior' is not marked 'pub'
-std.zig.llvm.Builder.TypeExtraDataTrail	<gen>: error: 'TypeExtraDataTrail' is not marked 'pub'
-std.zig.llvm.Builder.ConstantExtraDataTrail	<gen>: error: 'ConstantExtraDataTrail' is not marked 'pub'
-std.zig.llvm.Builder.MetadataExtraDataTrail	<gen>: error: 'MetadataExtraDataTrail' is not marked 'pub'
-std.zig.llvm.Builder.FormatFlags	<gen>: error: 'FormatFlags' is not marked 'pub'
-std.zig.parser_generated_oracle.Def	<gen>: error: 'Def' is not marked 'pub'
-std.zig.parser_generated_oracle.Parser	<gen>: error: 'Parser' is not marked 'pub'
-std.zig.c_translation.helpers.CIntLiteralBase	<gen>: error: 'CIntLiteralBase' is not marked 'pub'
-std.zig.Directories.LocalCacheStrategy	<gen>: error: 'LocalCacheStrategy' is not marked 'pub'
-std.zip.GeneralPurposeFlags	<gen>: error: 'GeneralPurposeFlags' is not marked 'pub'
-std.zip.FileExtents	<gen>: error: 'FileExtents' is not marked 'pub'
-std.zon.parse.Diagnostics.Error.Options	<gen>: error: 'Options' is not marked 'pub'
-std.zon.parse.Diagnostics.Note.Options	<gen>: error: 'Options' is not marked 'pub'
-std.zon.parse.InnerOptions	<gen>: error: 'InnerOptions' is not marked 'pub'
-std.zon.parse.Parser	<gen>: error: 'Parser' is not marked 'pub'
-std.zon.stringify.Serializer	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.Options	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.ContainerOptions	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.ValueOptions	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.EmitCodepointLiterals	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.CodePointOptions	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.WriteCodepointOptions	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.StringOptions	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.MultilineStringOptions	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.Tuple	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.Struct	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.Container	<gen>: error: 'Serializer' is not marked 'pub'
-std.zon.stringify.Serializer.Container.FieldStyle	<gen>: error: 'Serializer' is not marked 'pub'
+std.posix.system	std/os/linux.zig:77:34: error: root source file struct 'os.linux.x86_64' has no member named 'syscall7'
+std.posix.AF_SUN	std/posix.zig:73:26: error: root source file struct 'os.linux' has no member named 'AF_SUN'
+std.posix.AT_SUN	std/posix.zig:77:26: error: root source file struct 'os.linux' has no member named 'AT_SUN'
+std.posix.CTL	std/posix.zig:80:23: error: root source file struct 'os.linux' has no member named 'CTL'
+std.posix.HW	std/posix.zig:88:22: error: root source file struct 'os.linux' has no member named 'HW'
+std.posix.KERN	std/posix.zig:95:24: error: root source file struct 'os.linux' has no member named 'KERN'
+std.posix.Kevent	std/posix.zig:96:26: error: root source file struct 'os.linux' has no member named 'Kevent'
+std.posix.SC	std/os/linux.zig:107:25: error: root source file struct 'os.linux.x86_64' has no member named 'SC'
+std.posix._SC	std/posix.zig:147:23: error: root source file struct 'os.linux' has no member named '_SC'
+std.posix.file_obj	std/posix.zig:160:28: error: root source file struct 'os.linux' has no member named 'file_obj'
+std.posix.port_event	std/posix.zig:175:30: error: root source file struct 'os.linux' has no member named 'port_event'
+std.posix.port_notify	std/posix.zig:176:31: error: root source file struct 'os.linux' has no member named 'port_notify'
+std.posix.port_t	std/posix.zig:177:26: error: root source file struct 'os.linux' has no member named 'port_t'
+std.posix.timestamp_t	std/posix.zig:192:31: error: root source file struct 'os.linux' has no member named 'timestamp_t'
+std.posix.user_desc	std/os/linux.zig:109:32: error: root source file struct 'os.linux.x86_64' has no member named 'user_desc'
+std.testing.allocator	std/testing.zig:21:80: error: not testing
+std.testing.io	std/testing.zig:24:59: error: not testing
+std.testing.environ	std/testing.zig:26:64: error: not testing

@@ -32,7 +32,7 @@ Self-checked both ways: `index.zig` asserts root span == total rows and every sp
 non-match a miss, it **compares** them and tags every path by which witness sees it:
 `read+run` (both agree — @@CON_RR@@), `run-only` (only when reflected, e.g. a generic
 member like `Sha256.digest_length` — @@CON_RUNONLY@@), `read-only` (text read it but it
-can't run here: poison, or the `std` root — @@CON_READONLY@@). One row per path in
+can't run here: a private decl or one under a private or poison container, a failing decl, or the `std` root — @@CON_READONLY@@). One row per path in
 `nodes ∪ resolved` (@@N_CONSENSUS@@), **zero blanks**. Verified by `zephem overlays --check`.
 
 ### `canon.tsv` — dedup / dealias families

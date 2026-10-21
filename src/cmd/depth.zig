@@ -107,7 +107,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     try w.print("[L5] reflecting {d} container(s) — {s}, {d} lanes, {d}s timeout per compile\n", .{ all_targets.len, @tagName(mode), jcount, timeout_s });
     const counts = try depth.sweep(c, all_targets, skips, env.zig_exe, template, env.std_dir, try std.fs.path.join(a, &.{ scratch_root, "scratch" }), outdir, timeout_s, jcount, mode);
-    try w.print("[L5] resolved: {d} containers, {d} rows   poison: {d}   skipped: {d} (uninstantiated `()` factories)   attempted: {d}\n", .{ counts.resolved_containers, counts.resolved_rows, counts.poison, counts.skipped, counts.attempted });
+    try w.print("[L5] resolved: {d} containers + {d} partial, {d} rows   poison: {d} containers + {d} decls   private: {d}   skipped: {d} (uninstantiated `()` factories)   attempted: {d}\n", .{ counts.resolved_containers, counts.partial, counts.resolved_rows, counts.poison, counts.decl_poison, counts.private, counts.skipped, counts.attempted });
     if (mode == .batched) try w.print("[L5] probe {d} ms ({d} compiles) · run {d} ms ({d} compiles) · {d} solo\n", .{ counts.probe_ms, counts.probe_compiles, counts.run_ms, counts.run_compiles, counts.solo_compiles });
     try w.flush();
 

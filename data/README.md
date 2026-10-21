@@ -23,7 +23,7 @@ At a glance — the parser's shape model is **68,845 nodes across 343 files**
 (the tree), **144,975 attributes** (14,028 docs, 11,697 sigs, 32,299 values,
 68,844 locations, 1,520 test bodies, 1,344 modifiers, 485 error members),
 and **60,588 typed edges**; reflect adds
-3,158 containers resolved, and six derivatives key back to the tree at the same `path`.
+3,162 containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## versions/ — one frozen folder per Zig version
 

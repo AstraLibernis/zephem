@@ -284,25 +284,29 @@ ship today, all self-verifying and byte-identical on rerun:
 - **`data/std/extracted/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, driven by `zephem depth`: containers are probed in batches to find the
   ones that fail to compile, the rest reflected ~50 per binary, so a poison decl never kills the
-  sweep. On zig 0.17.0: 4,332 containers swept → **3,158 resolved (16,997
-  rows) / 957 genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
-  reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
+  sweep; inside a container that fails, the decls that fail on their own are found and the rest
+  reflected. On zig 0.17.0: 4,332 containers swept → **3,162 resolved + 18
+  partial (21,527 rows) / 15 poison containers + 893 failing
+  decls / 920 private** (each failure recorded in `data/std/extracted/poison.tsv` with the
+  compiler's exact reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   Its reproducibility harness is `zephem depth --check`, separate from `zephem std --check`: an
-  L5 rebuild compiles every container (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each), batched — see PLAN.md).
+  L5 rebuild compiles every container (about 61 s cold for the full sweep, the rescue of partly
+  failing containers included: 60.7 s ± 0.3 s on a Ryzen 7 9800X3D, 16 threads; hyperfine, 5
+  runs, compiler cache wiped before each — see docs/reproducibility.md).
 
 - **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from
   `zephem overlays`. Rather than force the text view (`nodes.tsv`) and the reflected view
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
-  **every** path by which witness can see it: `read+run` (both independently agree — 14,003),
+  **every** path by which witness can see it: `read+run` (both independently agree — 16,552),
   `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
-  2,909), `read-only` (text read it but it can't run here: poison, private, or the `std`
-  root — 13,283). The two single-witness buckets **are** the differences; the agreement
-  is independent evidence. One row per path in `nodes ∪ resolved` (30,195), **zero blanks**,
+  4,883), `read-only` (text read it but it can't run here: poison, private, or the `std`
+  root — 10,734). The two single-witness buckets **are** the differences; the agreement
+  is independent evidence. One row per path in `nodes ∪ resolved` (32,169), **zero blanks**,
   enforced by `zephem overlays --check` and deterministic (`--check`).
 
 - **`data/std/derived/canon.tsv`** (dedup / dealias) — `path · canon` from `zephem overlays`. The
   compiler resolves every type to a canonical `@typeName`, so two paths that name the *same*
-  underlying type collide on it. This overlay surfaces exactly those collisions — **355 paths in 149
+  underlying type collide on it. This overlay surfaces exactly those collisions — **678 paths in 265
   alias/dup families** (e.g. `std.BufMap` and `std.buf_map.BufMap` → `buf_map.BufMap`) — while
   excluding primitive / error-set / anonymous identities that collide by accident, not by aliasing.
   Reads `resolved.tsv` alone; verified by `zephem overlays --check`, deterministic (`--check`).

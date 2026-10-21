@@ -26,6 +26,11 @@ pub const One = struct {
     resolved: []const []const u8, // resolved rows (normalized), empty if poison/skipped
     poison: ?[]const u8, // "path\treason", or null
     skipped: bool = false, // structurally unreflectable (a `()` factory container) — not attempted
+    /// reached only through a private decl (`'x' is not marked 'pub'`): not reflectable from
+    /// outside its file, which is a fact about the path, not a failure of the container
+    private: bool = false,
+    /// a `partial` container (rescued): its decls that still fail, one "path.decl\treason" each
+    decl_poison: []const []const u8 = &.{},
 };
 
 /// `.batched` (the default) and `.solo` produce byte-identical datasets; `.solo` is the
@@ -38,6 +43,11 @@ pub const Counts = struct {
     resolved_rows: usize,
     poison: usize,
     skipped: usize,
+    /// reached only through a private decl
+    private: usize = 0,
+    /// rescued: some decls resolved, `decl_poison` of them failed on their own
+    partial: usize = 0,
+    decl_poison: usize = 0,
     /// batched only: wall time of each phase, and how many compiles each ran (batches, the
     /// halves of split batches, and solo runs)
     probe_ms: u64 = 0,
@@ -97,6 +107,10 @@ pub fn sweep(
         .batched => try sweepBatched(c, sctx, jobs, &phases),
     };
 
+    // rescue the containers a compile error failed (not a timeout): one bad decl must not
+    // blank the rest. Results replace the poison in place.
+    try rescueAll(c, sctx, jobs, results);
+
     // assemble in target order
     var status: std.Io.Writer.Allocating = .init(c.a);
     var resolved: std.Io.Writer.Allocating = .init(c.a);
@@ -121,14 +135,20 @@ pub fn sweep(
         try status.writer.print("{s}\n", .{one.status});
         if (one.skipped) {
             counts.skipped += 1;
+        } else if (one.private) {
+            counts.private += 1;
         } else if (one.poison) |p| {
             try poison.writer.print("{s}\n", .{p});
             counts.poison += 1;
         } else {
-            counts.resolved_containers += 1;
+            if (one.decl_poison.len > 0) counts.partial += 1 else counts.resolved_containers += 1;
             for (one.resolved) |row| {
                 try resolved.writer.print("{s}\n", .{row});
                 counts.resolved_rows += 1;
+            }
+            for (one.decl_poison) |p| {
+                try poison.writer.print("{s}\n", .{p});
+                counts.decl_poison += 1;
             }
         }
     }
@@ -152,7 +172,7 @@ fn reflectOne(cx: SweepCtx, i: usize) One {
     // (instantiate the generic, then reflect). Provably safe: no `()` container resolves.
     if (std.mem.find(u8, path, "()") != null) return skippedOne(a, path);
 
-    const rfile = std.fmt.allocPrint(a, "{s}/r-{d}.zig", .{ cx.scratch_dir, i }) catch return poisonOne(a, path, "scratch alloc failed");
+    const rfile = a.print("{s}/r-{d}.zig", .{ cx.scratch_dir, i }) catch return poisonOne(a, path, "scratch alloc failed");
     return soloReflect(a, cx.io, cx.zig_exe, cx.template, cx.std_dir, cx.timeout_s, path, skip, rfile);
 }
 
@@ -165,17 +185,17 @@ fn soloReflect(a: std.mem.Allocator, io: std.Io, zig_exe: []const u8, template: 
     const out = proc.runTimed(a, io, &.{ zig_exe, "run", rfile }, timeout_s) catch return poisonOne(a, path, "spawn failed");
 
     if (out.exit_code == 0) {
-        const status = std.fmt.allocPrint(a, "{s}\tresolved\t{d}", .{ path, 0 }) catch path;
+        const status = a.print("{s}\tresolved\t{d}", .{ path, 0 }) catch path;
         // Out of memory here must not produce a container marked `resolved` with rows missing —
         // it is recorded like any other failure: not resolved, with the reason.
         const rows = parseRows(a, out.stdout, true) catch return poisonOne(a, path, "out of memory reading resolver output");
-        return .{ .status = std.fmt.allocPrint(a, "{s}\tresolved\t{d}", .{ path, rows.len }) catch status, .resolved = rows, .poison = null };
+        return .{ .status = a.print("{s}\tresolved\t{d}", .{ path, rows.len }) catch status, .resolved = rows, .poison = null };
     }
     if (out.exit_code == 124) {
-        return poisonOne(a, path, std.fmt.allocPrint(a, "timeout after {d}s", .{timeout_s}) catch "timeout");
+        return poisonOne(a, path, a.print("timeout after {d}s", .{timeout_s}) catch "timeout");
     }
     var reason = normReason(a, firstErrorLine(out.stderr), std_dir, rfile);
-    if (reason.len == 0) reason = std.fmt.allocPrint(a, "exit {d}", .{out.exit_code}) catch "exit";
+    if (reason.len == 0) reason = a.print("exit {d}", .{out.exit_code}) catch "exit";
     return poisonOne(a, path, reason);
 }
 
@@ -196,7 +216,7 @@ fn parseRows(a: std.mem.Allocator, stdout: []const u8, has_header: bool) ![]cons
 /// A `()` factory container is structurally unreflectable standalone — recorded as skipped.
 fn skippedOne(a: std.mem.Allocator, path: []const u8) One {
     return .{
-        .status = std.fmt.allocPrint(a, "{s}\tskipped\t0", .{path}) catch path,
+        .status = a.print("{s}\tskipped\t0", .{path}) catch path,
         .resolved = &.{},
         .poison = null,
         .skipped = true,
@@ -204,19 +224,222 @@ fn skippedOne(a: std.mem.Allocator, path: []const u8) One {
 }
 
 fn poisonOne(a: std.mem.Allocator, path: []const u8, reason: []const u8) One {
-    const status = std.fmt.allocPrint(a, "{s}\tpoison\t0", .{path}) catch path;
-    const p = std.fmt.allocPrint(a, "{s}\t{s}", .{ path, reason }) catch path;
+    if (std.mem.startsWith(u8, reason, "<gen>") and std.mem.find(u8, reason, "is not marked 'pub'") != null) {
+        return .{ .status = a.print("{s}\tprivate\t0", .{path}) catch path, .resolved = &.{}, .poison = null, .private = true };
+    }
+    const status = a.print("{s}\tpoison\t0", .{path}) catch path;
+    const p = a.print("{s}\t{s}", .{ path, reason }) catch path;
     return .{ .status = status, .resolved = &.{}, .poison = p };
+}
+
+/// A container that failed on a compile error may fail on only some of its decls: reflecting
+/// evaluates every decl in one compile, so a single `@compileError` or foreign-target decl blanks
+/// the whole container (`std.os.linux`, `std.c`, `std.posix`). Three phases, each spread over the
+/// lanes:
+///   1. ask the compiler for each failed container's decl names (listing them evaluates none);
+///   2. analyse the decls in chunks of `rescue_chunk` (`build-obj -fno-emit-bin`, as the batched
+///      probes do), halving a failing chunk until each failing decl stands alone — chunks rather
+///      than whole containers, so `std.c`'s hundreds of libc externs do not serialise on one lane;
+///   3. reflect each container's clean decls in one run.
+/// The container becomes `partial`: every decl that resolves, plus one poison row per decl that
+/// fails on its own. A failing decl that is itself a map container (in SKIP) has its own status
+/// row and is not repeated; a container that fails only through those is `resolved`. One whose
+/// names cannot be listed, or with nothing clean, stays poison.
+fn rescueAll(c: Ctx, sctx: SweepCtx, jobs: usize, results: []One) !void {
+    const a = c.a;
+    var failed: std.ArrayList(usize) = .empty;
+    for (results, 0..) |one, i| if (one.poison) |p| {
+        if (std.mem.find(u8, p, "\ttimeout after ") == null) try failed.append(a, i);
+    };
+    if (failed.items.len == 0) return;
+
+    const Ctx1 = struct { sctx: SweepCtx, idx: []const usize };
+    const names = try proc.parMap(?[]const []const u8, a, jobs, failed.items.len, Ctx1{ .sctx = sctx, .idx = failed.items }, struct {
+        fn go(x: Ctx1, k: usize) ?[]const []const u8 {
+            var r = Rescue.init(x.sctx, x.idx[k], 0);
+            return r.declNames();
+        }
+    }.go);
+
+    const Chunk = struct { k: usize, set: []const []const u8 };
+    var chunks: std.ArrayList(Chunk) = .empty;
+    for (names, 0..) |maybe, k| if (maybe) |ns| {
+        var s: usize = 0;
+        while (s < ns.len) : (s += rescue_chunk) try chunks.append(a, .{ .k = k, .set = ns[s..@min(s + rescue_chunk, ns.len)] });
+    };
+    const Split = struct { good: []const []const u8, bad: []const []const u8, ok: bool };
+    const Ctx2 = struct { sctx: SweepCtx, idx: []const usize, chunks: []const Chunk };
+    const splits = try proc.parMap(Split, a, jobs, chunks.items.len, Ctx2{ .sctx = sctx, .idx = failed.items, .chunks = chunks.items }, struct {
+        fn go(x: Ctx2, j: usize) Split {
+            const ch = x.chunks[j];
+            var r = Rescue.init(x.sctx, x.idx[ch.k], j + 1);
+            var good: std.ArrayList([]const u8) = .empty;
+            var bad: std.ArrayList([]const u8) = .empty;
+            r.bisect(ch.set, &good, &bad) catch return .{ .good = &.{}, .bad = &.{}, .ok = false };
+            return .{ .good = good.items, .bad = bad.items, .ok = true };
+        }
+    }.go);
+
+    // merge the chunks per container, in decl order (chunks were cut in order)
+    const goods = try a.alloc(std.ArrayList([]const u8), failed.items.len);
+    const bads = try a.alloc(std.ArrayList([]const u8), failed.items.len);
+    const ok = try a.alloc(bool, failed.items.len);
+    for (goods, bads, ok, names) |*g, *b, *o, n| {
+        g.* = .empty;
+        b.* = .empty;
+        o.* = n != null;
+    }
+    for (chunks.items, splits) |ch, sp| {
+        if (!sp.ok) ok[ch.k] = false;
+        try goods[ch.k].appendSlice(a, sp.good);
+        try bads[ch.k].appendSlice(a, sp.bad);
+    }
+
+    const Ctx3 = struct { sctx: SweepCtx, idx: []const usize, goods: []const std.ArrayList([]const u8), bads: []const std.ArrayList([]const u8), ok: []const bool };
+    const rescued = try proc.parMap(?One, a, jobs, failed.items.len, Ctx3{ .sctx = sctx, .idx = failed.items, .goods = goods, .bads = bads, .ok = ok }, struct {
+        fn go(x: Ctx3, k: usize) ?One {
+            if (!x.ok[k] or x.goods[k].items.len == 0) return null;
+            var r = Rescue.init(x.sctx, x.idx[k], std.math.maxInt(u32));
+            const rows = r.reflect(x.goods[k].items) orelse return null;
+            const bad = x.bads[k].items;
+            return .{
+                .status = r.a.print("{s}\t{s}\t{d}", .{ r.path, if (bad.len > 0) "partial" else "resolved", rows.len }) catch return null,
+                .resolved = rows,
+                .poison = null,
+                .decl_poison = bad,
+            };
+        }
+    }.go);
+    for (failed.items, rescued) |i, maybe| if (maybe) |one| {
+        results[i] = one;
+    };
+}
+
+/// Decls per rescue chunk: small enough that a chunk of libc externs bisects in a few seconds,
+/// large enough that a clean chunk costs one compile.
+const rescue_chunk = 16;
+
+/// One container's rescue compiles. Thread-safe like `reflectOne`: page-allocator only, scratch
+/// files unique per (container, chunk, compile).
+const Rescue = struct {
+    a: std.mem.Allocator,
+    cx: SweepCtx,
+    path: []const u8,
+    skip: []const []const u8,
+    i: usize,
+    part: usize, // the rescue chunk (0 for the names, maxInt for the final run)
+    n: usize = 0, // compiles so far in this chunk: names the scratch files
+    last: []const u8 = "", // the scratch file of the latest compile (normReason strips it)
+
+    fn init(cx: SweepCtx, i: usize, part: usize) Rescue {
+        return .{ .a = std.heap.page_allocator, .cx = cx, .path = cx.targets[i], .skip = cx.skips[i], .i = i, .part = part }; // zsnag:ok — R009: thread-safe per-lane allocator, as in reflectOne
+    }
+
+    fn scratch(r: *Rescue) ![]const u8 {
+        r.n += 1;
+        return r.a.print("{s}/x-{d}-{d}-{d}.zig", .{ r.cx.scratch_dir, r.i, r.part, r.n });
+    }
+
+    /// The template's helpers for this container, reflecting only `set` (all decls when null).
+    fn source(r: *Rescue, set: ?[]const []const u8) ![]const u8 {
+        const src = helpers(try genSource(r.a, r.cx.template, r.path, r.skip));
+        const s = set orelse return src;
+        const only = try r.a.print("const ONLY: ?[]const []const u8 = &{s};", .{try skipLiteral(r.a, s)});
+        return util.replaceAll(r.a, src, "const ONLY: ?[]const []const u8 = null;", only);
+    }
+
+    /// The container's decl names as the compiler lists them, or null if that does not compile.
+    fn declNames(r: *Rescue) ?[]const []const u8 {
+        const body = r.a.print("{s}" ++
+            \\pub fn main(init: std.process.Init) !void {{
+            \\    var wbuf: [1 << 16]u8 = undefined;
+            \\    var fw = std.Io.File.stdout().writerStreaming(init.io, &wbuf);
+            \\    const w = &fw.interface;
+            \\    if (comptime @TypeOf(TARGET) == type) {{
+            \\        inline for (comptime declsOf(TARGET) orelse &.{{}}) |d| try w.print("{{s}}\n", .{{d}});
+            \\    }}
+            \\    try w.flush();
+            \\}}
+            \\
+        , .{r.source(null) catch return null}) catch return null;
+        const out = r.compile("run", body) catch return null;
+        if (out.exit_code != 0) return null;
+        var names: std.ArrayList([]const u8) = .empty;
+        var lines = std.mem.splitScalar(u8, out.stdout, '\n');
+        while (lines.next()) |ln| if (ln.len > 0) names.append(r.a, ln) catch return null;
+        return names.items;
+    }
+
+    /// Analyse `set`; when it fails, split it, down to single decls, which become poison rows.
+    fn bisect(r: *Rescue, set: []const []const u8, good: *std.ArrayList([]const u8), bad: *std.ArrayList([]const u8)) !void {
+        if (set.len == 0) return;
+        const body = try r.a.print("{s}" ++
+            \\export fn zephem_rescue() void {{
+            \\    var wbuf: [1 << 16]u8 = undefined;
+            \\    var dw: std.Io.Writer = .fixed(&wbuf);
+            \\    emit(&dw, &SKIP, TARGET_PATH, TARGET, DESCEND, true) catch {{}};
+            \\}}
+            \\
+        , .{try r.source(set)});
+        const out = try r.compile("build-obj", body);
+        if (out.exit_code == 0) return good.appendSlice(r.a, set);
+        if (set.len == 1) {
+            for (r.skip) |c| if (std.mem.eql(u8, bareName(c), set[0])) return; // a map container: its own status row says it
+            const why = if (out.exit_code == 124)
+                try r.a.print("timeout after {d}s", .{r.cx.timeout_s})
+            else
+                normReason(r.a, firstErrorLine(out.stderr), r.cx.std_dir, r.last);
+            return bad.append(r.a, try r.a.print("{s}.{s}\t{s}", .{ r.path, try quoteDecl(r.a, set[0]), if (why.len > 0) why else "compile failed" }));
+        }
+        const mid = set.len / 2;
+        try r.bisect(set[0..mid], good, bad);
+        try r.bisect(set[mid..], good, bad);
+    }
+
+    /// Reflect `set` (decls that analyse cleanly) in one run: their rows, or null if it fails.
+    fn reflect(r: *Rescue, set: []const []const u8) ?[]const []const u8 {
+        const body = r.a.print("{s}" ++
+            \\pub fn main(init: std.process.Init) !void {{
+            \\    var wbuf: [1 << 16]u8 = undefined;
+            \\    var fw = std.Io.File.stdout().writerStreaming(init.io, &wbuf);
+            \\    const w = &fw.interface;
+            \\    try emit(w, &SKIP, TARGET_PATH, TARGET, DESCEND, true);
+            \\    try w.flush();
+            \\}}
+            \\
+        , .{r.source(set) catch return null}) catch return null;
+        const out = r.compile("run", body) catch return null;
+        if (out.exit_code != 0) return null;
+        return parseRows(r.a, out.stdout, false) catch null;
+    }
+
+
+    /// `zig run` / `zig build-obj -fno-emit-bin` on a scratch file holding `body`.
+    fn compile(r: *Rescue, how: []const u8, body: []const u8) !proc.Output {
+        const file = try r.scratch();
+        r.last = file;
+        try util.writeFile(r.cx.io, file, body);
+        _ = compiles_solo.fetchAdd(1, .monotonic);
+        if (std.mem.eql(u8, how, "run")) return proc.runTimed(r.a, r.cx.io, &.{ r.cx.zig_exe, "run", file }, r.cx.timeout_s);
+        return proc.runTimed(r.a, r.cx.io, &.{ r.cx.zig_exe, "build-obj", "-fno-emit-bin", file }, r.cx.timeout_s);
+    }
+};
+
+/// A decl name as the map writes it in a path: `@"…"` when it is not a plain identifier or
+/// shadows a primitive (the rule `quoteId` applies in the template).
+fn quoteDecl(a: std.mem.Allocator, name: []const u8) ![]const u8 {
+    if (std.zig.isValidId(name) and !std.zig.primitives.isPrimitive(name)) return name;
+    return a.print("@\"{s}\"", .{name});
 }
 
 /// Rewrite the template's three TARGET lines for `path`. The access chain is the path tail
 /// appended to `@import("std")` (dropping the leading "std").
 fn genSource(a: std.mem.Allocator, template: []const u8, path: []const u8, skip: []const []const u8) ![]const u8 {
     const tail = if (std.mem.eql(u8, path, "std")) "" else path[3..];
-    const target_path_line = try std.fmt.allocPrint(a, "const TARGET_PATH = {s};", .{try zigString(a, path)});
-    const target_line = try std.fmt.allocPrint(a, "const TARGET = @import(\"std\"){s};", .{tail});
+    const target_path_line = try a.print("const TARGET_PATH = {s};", .{try zigString(a, path)});
+    const target_line = try a.print("const TARGET = @import(\"std\"){s};", .{tail});
 
-    const skip_line = try std.fmt.allocPrint(a, "const SKIP = {s};", .{try skipLiteral(a, skip)});
+    const skip_line = try a.print("const SKIP = {s};", .{try skipLiteral(a, skip)});
 
     var out: std.Io.Writer.Allocating = .init(a);
     var lines = std.mem.splitScalar(u8, template, '\n');
@@ -286,7 +509,7 @@ fn firstErrorLine(stderr: []const u8) []const u8 {
 
 /// Render a poison reason location-independent: the scratch file → `<gen>`, the std dir → `std/`.
 fn normReason(a: std.mem.Allocator, reason: []const u8, std_dir: []const u8, rfile: []const u8) []const u8 {
-    const std_prefix = std.fmt.allocPrint(a, "{s}/", .{std_dir}) catch return reason;
+    const std_prefix = a.print("{s}/", .{std_dir}) catch return reason;
     const s1 = replaceAll(a, reason, rfile, "<gen>") catch reason;
     return dropGenLocation(a, replaceAll(a, s1, std_prefix, "std/") catch s1);
 }
@@ -308,7 +531,7 @@ fn dropGenLocation(a: std.mem.Allocator, reason: []const u8) []const u8 {
         } else if (!std.ascii.isDigit(ch)) return reason; // not `L:C:` — leave it alone
     }
     if (colons < 2) return reason;
-    return std.fmt.allocPrint(a, "{s}{s}", .{ head, reason[i..] }) catch reason;
+    return a.print("{s}{s}", .{ head, reason[i..] }) catch reason;
 }
 
 const replaceAll = util.replaceAll;
@@ -438,7 +661,7 @@ fn helpers(template: []const u8) []const u8 {
 /// `@import("std")` plus the path tail, as genSource writes it.
 fn targetExpr(a: std.mem.Allocator, path: []const u8) ![]const u8 {
     const tail = if (std.mem.eql(u8, path, "std")) "" else path[3..];
-    return std.fmt.allocPrint(a, "@import(\"std\"){s}", .{tail});
+    return a.print("@import(\"std\"){s}", .{tail});
 }
 
 /// The SKIP array literal. Entries are BARE decl names — the template compares them with
@@ -457,7 +680,7 @@ fn skipLiteral(a: std.mem.Allocator, skip: []const []const u8) ![]const u8 {
 /// (`std.coff.OptionalHeader.@"PE32+"`); pasting them raw between quotes broke the generated
 /// file, and the four containers involved were recorded as compiler poison.
 fn zigString(a: std.mem.Allocator, s: []const u8) ![]const u8 {
-    return std.fmt.allocPrint(a, "\"{f}\"", .{std.zig.fmtString(s)});
+    return a.print("\"{f}\"", .{std.zig.fmtString(s)});
 }
 
 /// `@"PE32+"` → `PE32+`; any other name unchanged.
@@ -520,7 +743,7 @@ pub fn selfTest(c: Ctx, zig_exe: []const u8, template: []const u8, scratch_dir: 
 }
 
 fn scratchName(a: std.mem.Allocator, s: SweepCtx, kind: []const u8, g: usize, depth: usize, first: usize) ![]const u8 {
-    return std.fmt.allocPrint(a, "{s}/{s}-{d}-{d}-{d}.zig", .{ s.scratch_dir, kind, g, depth, first });
+    return a.print("{s}/{s}-{d}-{d}-{d}.zig", .{ s.scratch_dir, kind, g, depth, first });
 }
 
 fn probeSet(a: std.mem.Allocator, s: SweepCtx, set: []const usize, g: usize, depth: usize, out: *std.ArrayList(Verdict)) !void {
@@ -534,7 +757,7 @@ fn probeSet(a: std.mem.Allocator, s: SweepCtx, set: []const usize, g: usize, dep
     const ranges = try a.alloc([2]usize, set.len); // 1-based [first, last] line of each probe
     for (set, 0..) |i, k| {
         const path = s.targets[i];
-        const body = try std.fmt.allocPrint(a,
+        const body = try a.print(
             \\export fn zephem_probe_{d}() void {{
             \\    var wbuf: [1 << 16]u8 = undefined;
             \\    var dw: std.Io.Writer = .fixed(&wbuf);
@@ -636,7 +859,7 @@ fn runSet(a: std.mem.Allocator, s: SweepCtx, set: []const usize, g: usize, depth
     }
     for (set, 0..) |i, k| {
         const path = s.targets[i];
-        const status = try std.fmt.allocPrint(a, "{s}\tresolved\t{d}", .{ path, rows[k].items.len });
+        const status = try a.print("{s}\tresolved\t{d}", .{ path, rows[k].items.len });
         try out.append(a, .{ .i = i, .what = .settled, .one = .{ .status = status, .resolved = rows[k].items, .poison = null } });
     }
 }

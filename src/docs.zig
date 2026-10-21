@@ -166,6 +166,10 @@ fn computeSubs(c: Ctx) ![]const Sub {
     try add(&list, a, "@@N_RESOLVED@@", try commafy(a, resolved.rows.len));
     try add(&list, a, "@@N_RES_CONT@@", try commafy(a, eqCount(status, "status", "resolved")));
     try add(&list, a, "@@N_POISON@@", try commafy(a, poison.rows.len));
+    try add(&list, a, "@@N_POISON_CONT@@", try commafy(a, eqCount(status, "status", "poison")));
+    try add(&list, a, "@@N_DECL_POISON@@", try commafy(a, poison.rows.len - eqCount(status, "status", "poison")));
+    try add(&list, a, "@@N_PARTIAL@@", try commafy(a, eqCount(status, "status", "partial")));
+    try add(&list, a, "@@N_PRIVATE@@", try commafy(a, eqCount(status, "status", "private")));
     try add(&list, a, "@@N_SKIPPED@@", try commafy(a, eqCount(status, "status", "skipped")));
     try add(&list, a, "@@N_INDEX@@", try commafy(a, index.rows.len));
     try add(&list, a, "@@N_ATTRS@@", try commafy(a, attrs.rows.len));

@@ -283,11 +283,15 @@ ship today, all self-verifying and byte-identical on rerun:
 - **`data/std/extracted/resolved.tsv`** (L5 resolved depth) — `path · kind · detail` from
   `reflect/resolve.zig`, driven by `zephem depth`: containers are probed in batches to find the
   ones that fail to compile, the rest reflected ~50 per binary, so a poison decl never kills the
-  sweep. On @@ZIG@@: @@N_INDEX@@ containers swept → **@@N_RES_CONT@@ resolved (@@N_RESOLVED@@
-  rows) / @@N_POISON@@ genuine poison** (each recorded in `data/std/extracted/poison.tsv` with the compiler's exact
-  reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
+  sweep; inside a container that fails, the decls that fail on their own are found and the rest
+  reflected. On @@ZIG@@: @@N_INDEX@@ containers swept → **@@N_RES_CONT@@ resolved + @@N_PARTIAL@@
+  partial (@@N_RESOLVED@@ rows) / @@N_POISON_CONT@@ poison containers + @@N_DECL_POISON@@ failing
+  decls / @@N_PRIVATE@@ private** (each failure recorded in `data/std/extracted/poison.tsv` with the
+  compiler's exact reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   Its reproducibility harness is `zephem depth --check`, separate from `zephem std --check`: an
-  L5 rebuild compiles every container (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each), batched — see PLAN.md).
+  L5 rebuild compiles every container (about 61 s cold for the full sweep, the rescue of partly
+  failing containers included: 60.7 s ± 0.3 s on a Ryzen 7 9800X3D, 16 threads; hyperfine, 5
+  runs, compiler cache wiped before each — see docs/reproducibility.md).
 
 - **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from
   `zephem overlays`. Rather than force the text view (`nodes.tsv`) and the reflected view

@@ -31,16 +31,16 @@ Self-checked both ways: `index.zig` asserts root span == total rows and every sp
 `path · origin · owner`, from `zephem overlays` over `nodes.tsv` (text view) and
 `resolved.tsv` (reflected view). Rather than force the two to match 1:1 and call every
 non-match a miss, it **compares** them and tags every path by which witness sees it:
-`read+run` (both agree — 14,003), `run-only` (only when reflected, e.g. a generic
-member like `Sha256.digest_length` — 2,909), `read-only` (text read it but it
-can't run here: poison, or the `std` root — 13,283). One row per path in
-`nodes ∪ resolved` (30,195), **zero blanks**. Verified by `zephem overlays --check`.
+`read+run` (both agree — 16,552), `run-only` (only when reflected, e.g. a generic
+member like `Sha256.digest_length` — 4,883), `read-only` (text read it but it
+can't run here: a private decl or one under a private or poison container, a failing decl, or the `std` root — 10,734). One row per path in
+`nodes ∪ resolved` (32,169), **zero blanks**. Verified by `zephem overlays --check`.
 
 ### `canon.tsv` — dedup / dealias families
 `path · canon`, from `zephem overlays` over `resolved.tsv` alone. The compiler resolves
 every type to a canonical `@typeName`, so two paths that name the *same* underlying type
-collide on it. This surfaces exactly those collisions — **355 paths in
-149 families** (each `canon` shared by ≥ 2 paths). Verified by
+collide on it. This surfaces exactly those collisions — **678 paths in
+265 families** (each `canon` shared by ≥ 2 paths). Verified by
 `zephem overlays --check` (every family complete and backed by `resolved.tsv`).
 
 ### `doccov.tsv` — documentation coverage
@@ -59,9 +59,9 @@ nodes). Verified by `zephem overlays --check`.
 ### `callcard.tsv` — as-written ⋈ resolved
 `path · witness · sig · resolved`, from `zephem overlays` — the merge of the `sig`
 attributes (as-written) and `resolved.tsv` (typed) on a normalized path. One row per
-callable (13,978): `both` (4,908 — the resolved column fills in real types
-where the source said `@This()`/`Self`), `reflect-only` (2,281), `parser-only`
-(6,789 — a private or uninstantiated-factory fn the compiler couldn't build here,
+callable (14,055): `both` (5,536 — the resolved column fills in real types
+where the source said `@This()`/`Self`), `reflect-only` (2,358), `parser-only`
+(6,161 — a private or uninstantiated-factory fn the compiler couldn't build here,
 no resolved type). Verified by `zephem overlays --check`.
 
 ---

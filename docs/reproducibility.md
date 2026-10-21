@@ -108,6 +108,22 @@ std grew to 68,845 nodes / 4,332 containers)*
 Outcome on 0.17.0: 4,332 containers attempted = 3,158 resolved (16,997 rows) + 957 poison + 217
 skipped, every partition check ✓, and both `depth --check` sweeps byte-identical to the manifest.
 
+### Timings — the sweep with the rescue (2026-10-21)
+
+*(same desktop; Zig 0.17.0; release build)*
+
+| sweep | wall time | how measured |
+|---|---|---|
+| full L5 sweep, batched, rescue included, **cold** | **60.7 s ± 0.3 s** | hyperfine, 5 runs, compiler cache + scratch wiped before each |
+| `zephem depth --check` (two sweeps) | 137 s | 1 run |
+
+The rescue finds, inside each container that fails to compile, the decls that fail on their own
+(analysing the decls in chunks of 16, halving a failing chunk), then reflects the rest: on 0.17.0
+about 2,600 extra compiles, +4,530 resolved rows (16,997 → 21,527). Most of its time is `std.c`,
+whose libc externs (~550 of 893 failing decls) cannot be analysed without linking libc. Outcome:
+4,332 containers = 3,162 resolved + 18 partial (21,527 rows) + 15 poison + 920 private + 217
+skipped, with 893 failing decls; both `depth --check` sweeps byte-identical to the manifest.
+
 ### Timings — the batched sweep (2026-09-28)
 
 *(desktop: Ryzen 7 9800X3D, 8 cores / 16 threads, 24 GiB cgroup; Zig 0.16.0; release build)*

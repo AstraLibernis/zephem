@@ -97,12 +97,12 @@ Everything below is self-verifying and byte-identical on rerun.
 | **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,520 `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 4,332 containers, self-checked both ways |
-| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,158 resolved / 957 genuine poison, zero dups |
-| **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 14,003 / run-only 2,909 / read-only 13,283; 0 blanks |
-| **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ 355 paths in 149 alias/dup families (shared resolved `@typeName`); self-checked |
+| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,162 resolved + 18 partial / 15 poison containers + 893 failing decls / 920 private, zero dups |
+| **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 16,552 / run-only 4,883 / read-only 10,734; 0 blanks |
+| **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ 678 paths in 265 alias/dup families (shared resolved `@typeName`); self-checked |
 | **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 20% of nodes documented (14,028 carry `///` docs); per-kind, self-checked vs map + docs overlay |
 | **signature shapes** — `sigshape.tsv` | `zephem overlays` | ✅ 11,697 signatures classed by first-param / Io / generic; self-checked vs the `sig` attrs |
-| **call-card** — `callcard.tsv` | `zephem overlays` | ✅ sigs ⋈ resolved merge, 13,978 callables: 4,908 both / 2,281 reflect-only / 6,789 parser-only |
+| **call-card** — `callcard.tsv` | `zephem overlays` | ✅ sigs ⋈ resolved merge, 14,055 callables: 5,536 both / 2,358 reflect-only / 6,161 parser-only |
 | **doc regeneration** | `zephem docs` | ✅ every markdown doc regenerated from `templates/` with live numbers from `data/std/`; byte-identical on `--check` |
 | **reproducibility** | `--check` + `SHA256SUMS` | ✅ map/index instant; L5 in its own `zephem depth --check` (full sweep, machine-dependent) |
 

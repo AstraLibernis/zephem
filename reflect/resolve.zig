@@ -39,6 +39,10 @@ const TARGET = @import("std").crypto.hash.sha2;
 // descend into them — they get reflected on their own turn, and descending here would emit
 // their decls a second time (with a divergent @typeName), the dup/conflict the verifier rejects.
 const SKIP = [_][]const u8{};
+// ONLY = when set, reflect just these direct decls of the container (the rescue of a container
+// that one bad decl fails: src/depth.zig bisects its decls). Null for an ordinary sweep. Not
+// rewritten by line prefix like the three above; the rescue generates its own entry point.
+const ONLY: ?[]const []const u8 = null;
 // ────────────────────────────────────────────────────────────────────────────────────────
 
 /// How many levels of nested *type* decls to descend. 1 = the container's own decls plus,
@@ -100,6 +104,8 @@ fn emit(w: *std.Io.Writer, comptime skip_list: []const []const u8, comptime path
     @setEvalBranchQuota(2_000_000); // big namespaces (std, os.linux) blow past the 1000 default
     const decls = comptime declsOf(T) orelse return;
     inline for (decls) |d| {
+        // before `@field`: an excluded decl is never evaluated, so it cannot fail the compile
+        if (comptime top and ONLY != null and !inSkip(ONLY.?, d)) continue;
         const field = @field(T, d);
         const FT = @TypeOf(field);
         const child = path ++ "." ++ comptime quoteId(d);

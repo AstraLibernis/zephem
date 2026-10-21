@@ -32,17 +32,20 @@ path · kind · detail
 
 ## 2. What it produces (`../data/std/extracted/`)
 
-Every container in the map is swept, with one of three outcomes — it **resolved**, it's **poison**
-(the compiler errored), or it's **skipped** (an uninstantiated `()` factory: no type args, so there
-is nothing to reflect yet).
+Every container in the map is swept, with one of five outcomes — it **resolved**; it is
+**partial** (some of its decls fail on their own: they are found by analysing the decls in
+halves, and the rest are reflected); it's **poison** (the container itself fails); it's
+**private** (reachable only through a private decl, so not reflectable from outside its file);
+or it's **skipped** (an uninstantiated `()` factory: no type args, so there is nothing to reflect
+yet).
 
 | dataset | purpose | shape |
 |---|---|---|
 | `resolved.tsv` | the resolved facts — const values, expanded generics, typed fn sigs. `kind ∈ type · const_int · const_bool · fn · const_other` | `path · kind · detail` |
-| `poison.tsv` | the containers that *didn't* resolve, each with the compiler's own first error line (platform / foreign lib / `@compileError` / timeout) | `path · reason` |
-| `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the resolved/poison/skipped split from it | `path · status · n_rows` |
+| `poison.tsv` | what *didn't* resolve — a poison container, or a failing decl of a partial one — each with the compiler's own first error line (platform / foreign lib / libc / `@compileError` / timeout) | `path · reason` |
+| `status.tsv` | the per-container ledger — one row per attempted container; the verifier re-derives the five buckets from it | `path · status · n_rows` |
 
-On @@ZIG@@: **@@N_INDEX@@ containers swept → @@N_RES_CONT@@ resolved (@@N_RESOLVED@@ rows) / @@N_POISON@@ genuine poison / @@N_SKIPPED@@ skipped.**
+On @@ZIG@@: **@@N_INDEX@@ containers swept → @@N_RES_CONT@@ resolved + @@N_PARTIAL@@ partial (@@N_RESOLVED@@ rows) / @@N_POISON_CONT@@ poison + @@N_DECL_POISON@@ failing decls / @@N_PRIVATE@@ private / @@N_SKIPPED@@ skipped.**
 
 ### Planned — the same sweep, more facts
 
@@ -93,7 +96,7 @@ reproducibility would false-fail.
 resolves twice, every poison reason is a real compiler error or a timeout.
 
 > Reproducibility is **separate from the commit on purpose** — a sweep compiles every container
-> (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each); the old one-per-process sweep took minutes), so it is *never* wired into
+> (about 61 s cold for the full sweep, the rescue included; the old one-per-process sweep took minutes), so it is *never* wired into
 > `zephem std`'s `--check`, which must stay fast. See [`../docs/reproducibility.md`](../docs/reproducibility.md).
 
 ## 4. The files

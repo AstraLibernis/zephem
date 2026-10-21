@@ -114,19 +114,24 @@ poison here.
 
 ### `resolved.tsv` — resolved depth
 `path · kind · detail`. Resolved const values, expanded generics, typed signatures.
-On @@ZIG@@: **@@N_RES_CONT@@ containers resolved (@@N_RESOLVED@@ rows).**
+On @@ZIG@@: **@@N_RES_CONT@@ containers resolved and @@N_PARTIAL@@ partly resolved (@@N_RESOLVED@@ rows).**
 
 ### `poison.tsv` — what didn't resolve
-`path · reason`. Decls that failed to resolve, each with the compiler's exact reason
-(platform / foreign lib / `@compileError` / timeout). **@@N_POISON@@ genuine poison.**
-The tree now includes private decls (many platform/foreign-lib) and uninstantiated `()`
-factory containers, so poison is higher than the pub-only parser's was — each is an honest
-"the compiler couldn't build this here", not a miss.
+`path · reason`, each with the compiler's exact first error line (platform / foreign lib /
+libc / `@compileError` / timeout). Two kinds of row: a **container** that fails as a whole
+(@@N_POISON_CONT@@), and a **decl** of a `partial` container (@@N_DECL_POISON@@) — reflecting
+evaluates every decl of a container in one compile, so one bad decl used to blank the rest;
+the sweep now finds the decls that fail on their own and reflects the others. Each is an
+honest "the compiler couldn't build this here", not a miss.
 
 ### `status.tsv` — the per-container ledger
-`path · status · n_rows`. One row per container the sweep attempted; the verifier
-re-derives the buckets from this and reconciles them against `resolved`/`poison`.
+`path · status · n_rows`. One row per container the sweep attempted, with one of five
+statuses: `resolved` (@@N_RES_CONT@@), `partial` (@@N_PARTIAL@@ — some decls failed on their
+own), `poison` (@@N_POISON_CONT@@), `private` (@@N_PRIVATE@@ — reachable only through a private
+decl, so not reflectable from outside its file: a fact about the path, not a failure) and
+`skipped` (@@N_SKIPPED@@ — an uninstantiated `()` factory). The verifier re-derives the buckets
+from this and reconciles them against `resolved`/`poison`.
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).
-The reflect sweep compiles every container (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each)), so its rebuild harness is
+The reflect sweep compiles every container (about 61 s cold for the full sweep, the rescue included; docs/reproducibility.md), so its rebuild harness is
 `zephem depth --check`, separate from `zephem std`'s `--check` (see `PLAN.md`).

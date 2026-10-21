@@ -115,19 +115,24 @@ poison here.
 
 ### `resolved.tsv` — resolved depth
 `path · kind · detail`. Resolved const values, expanded generics, typed signatures.
-On zig 0.17.0: **3,158 containers resolved (16,997 rows).**
+On zig 0.17.0: **3,162 containers resolved and 18 partly resolved (21,527 rows).**
 
 ### `poison.tsv` — what didn't resolve
-`path · reason`. Decls that failed to resolve, each with the compiler's exact reason
-(platform / foreign lib / `@compileError` / timeout). **957 genuine poison.**
-The tree now includes private decls (many platform/foreign-lib) and uninstantiated `()`
-factory containers, so poison is higher than the pub-only parser's was — each is an honest
-"the compiler couldn't build this here", not a miss.
+`path · reason`, each with the compiler's exact first error line (platform / foreign lib /
+libc / `@compileError` / timeout). Two kinds of row: a **container** that fails as a whole
+(15), and a **decl** of a `partial` container (893) — reflecting
+evaluates every decl of a container in one compile, so one bad decl used to blank the rest;
+the sweep now finds the decls that fail on their own and reflects the others. Each is an
+honest "the compiler couldn't build this here", not a miss.
 
 ### `status.tsv` — the per-container ledger
-`path · status · n_rows`. One row per container the sweep attempted; the verifier
-re-derives the buckets from this and reconciles them against `resolved`/`poison`.
+`path · status · n_rows`. One row per container the sweep attempted, with one of five
+statuses: `resolved` (3,162), `partial` (18 — some decls failed on their
+own), `poison` (15), `private` (920 — reachable only through a private
+decl, so not reflectable from outside its file: a fact about the path, not a failure) and
+`skipped` (217 — an uninstantiated `()` factory). The verifier re-derives the buckets
+from this and reconciles them against `resolved`/`poison`.
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).
-The reflect sweep compiles every container (about 16.5 s ± 0.1 s cold for the full sweep on a Ryzen 7 9800X3D (16 threads; hyperfine, 10 runs, compiler cache wiped before each)), so its rebuild harness is
+The reflect sweep compiles every container (about 61 s cold for the full sweep, the rescue included; docs/reproducibility.md), so its rebuild harness is
 `zephem depth --check`, separate from `zephem std`'s `--check` (see `PLAN.md`).

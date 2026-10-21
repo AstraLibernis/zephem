@@ -5,8 +5,10 @@
 //! `scripts/verify_depth.nu`). Never trusts status.tsv on its own: re-reads the buckets + the map
 //! and checks they reconcile.
 //!
-//!   PARTITION     each attempted container once, resolved OR poison; poison file == status slice
-//!   CONSERVATION  Σ status.n_rows (resolved) == rows in resolved.tsv
+//!   PARTITION     each attempted container once: resolved, partial (rescued: some decls failed
+//!                 alone), poison, private (reached only through a private decl) or skipped;
+//!                 poison file == the poison containers + the failing decls of the partial ones
+//!   CONSERVATION  Σ status.n_rows (resolved + partial) == rows in resolved.tsv
 //!   REGISTRATION  every attempted container is a real container in index.tsv
 //!   HONEST POISON every reason is a compiler `error:` line or a `timeout after` tag
 //!   PRISTINE      no path resolves to two conflicting (kind, detail)
@@ -15,6 +17,7 @@ const std = @import("std");
 const Ctx = @import("../ctx.zig").Ctx;
 const rel = @import("../relation.zig");
 const util = @import("../util.zig");
+const parse = @import("parse"); // `parent`: the quote-aware one the map is built with
 
 pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool {
     const a = c.a;
@@ -41,34 +44,48 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
     var dups: usize = 0;
     var bad_status: usize = 0;
     var n_res: usize = 0;
+    var n_part: usize = 0;
+    var n_priv: usize = 0;
     var n_skip: usize = 0;
     var status_poison = std.StringHashMap(void).init(a);
+    var status_partial = std.StringHashMap(void).init(a);
     for (status.rows) |r| {
         const gop = try seen.getOrPut(r[sp]);
         if (gop.found_existing) dups += 1;
         const st = r[sst];
         if (std.mem.eql(u8, st, "resolved")) {
             n_res += 1;
+        } else if (std.mem.eql(u8, st, "partial")) {
+            n_part += 1;
+            try status_partial.put(r[sp], {});
         } else if (std.mem.eql(u8, st, "poison")) {
             try status_poison.put(r[sp], {});
+        } else if (std.mem.eql(u8, st, "private")) {
+            n_priv += 1;
         } else if (std.mem.eql(u8, st, "skipped")) {
             n_skip += 1;
         } else bad_status += 1;
     }
     const n_poi = status_poison.count();
-    // poison.tsv path set must equal the status poison slice
+    // Every poison.tsv row is a `poison` container, or one decl of a `partial` container (its
+    // parent); every `poison` container has its row, and every `partial` one at least one decl.
+    var set_mismatch = false;
     var pfile_set = std.StringHashMap(void).init(a);
+    var partial_with_rows = std.StringHashMap(void).init(a);
+    var n_decl_poison: usize = 0;
     const pp = poison.col("path");
-    for (poison.rows) |r| try pfile_set.put(r[pp], {});
-    var set_mismatch = pfile_set.count() != status_poison.count();
-    if (!set_mismatch) {
-        var it = status_poison.keyIterator();
-        while (it.next()) |k| if (!pfile_set.contains(k.*)) {
-            set_mismatch = true;
-            break;
-        };
+    for (poison.rows) |r| {
+        const p = r[pp];
+        if (status_poison.contains(p)) {
+            try pfile_set.put(p, {});
+        } else if (status_partial.contains(parse.parent(p))) {
+            try partial_with_rows.put(parse.parent(p), {});
+            n_decl_poison += 1;
+        } else set_mismatch = true;
     }
-    try w.print("partition:    {d} attempted = {d} resolved + {d} poison + {d} skipped\n", .{ status.rows.len, n_res, n_poi, n_skip });
+    if (pfile_set.count() != status_poison.count() or partial_with_rows.count() != status_partial.count()) set_mismatch = true;
+    const n_attempted = n_res + n_part + n_poi + n_priv + n_skip;
+    try w.print("partition:    {d} attempted = {d} resolved + {d} partial + {d} poison + {d} private + {d} skipped   ({d} decl poison rows)\n", .{ status.rows.len, n_res, n_part, n_poi, n_priv, n_skip, n_decl_poison });
     if (dups > 0) {
         try w.print("  ✗ {d} container(s) appear twice in status\n", .{dups});
         ok = false;
@@ -78,20 +95,20 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
         ok = false;
     }
     if (set_mismatch) {
-        try w.writeAll("  ✗ poison status set ≠ poison.tsv paths\n");
+        try w.writeAll("  ✗ poison.tsv ≠ the poison containers plus the failing decls of the partial ones\n");
         ok = false;
     }
-    if (n_res + n_poi + n_skip != status.rows.len) {
+    if (n_attempted != status.rows.len) {
         try w.writeAll("  ✗ buckets don't sum to attempted\n");
         ok = false;
     }
-    if (dups == 0 and bad_status == 0 and !set_mismatch and n_res + n_poi + n_skip == status.rows.len)
-        try w.writeAll("  ✓ every container is resolved, poison, or skipped; the poison file agrees with the ledger\n");
+    if (dups == 0 and bad_status == 0 and !set_mismatch and n_attempted == status.rows.len)
+        try w.writeAll("  ✓ every container is resolved, partial, poison, private, or skipped; the poison file agrees with the ledger\n");
 
     // 2. CONSERVATION
     var declared: usize = 0;
     for (status.rows) |r| {
-        if (std.mem.eql(u8, r[sst], "resolved")) declared += std.fmt.parseInt(usize, r[sn], 10) catch 0;
+        if (std.mem.eql(u8, r[sst], "resolved") or std.mem.eql(u8, r[sst], "partial")) declared += std.fmt.parseInt(usize, r[sn], 10) catch 0;
     }
     const actual = resolved.rows.len;
     try w.print("conservation: Σ resolved n_rows = {d}   resolved.tsv rows = {d}\n", .{ declared, actual });
