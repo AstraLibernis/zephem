@@ -14,6 +14,16 @@ auto-update.
 > `cut -f1 nodes.tsv` step now includes private rows (no longer apples-to-apples without a
 > `vis == pub` filter). Left frozen on purpose — to regenerate against current data is a new audit.
 
+> **The current check (2026-10-22, Zig 0.17.0, zephem v0.7.0).** That new audit is now a script:
+> [`tools/autodoc-witness/run.sh`](../../tools/autodoc-witness/run.sh) `<out-dir>` drives autodoc's
+> own `Walk.zig`/`Decl.zig` (copied from the compiler at run time) plus an independent source
+> lister over the live map. Of the 19,627 public declarations autodoc's browser reaches, 17,937
+> match a map path exactly, 1,661 match under another path (a re-export the map names at its
+> home), and 29 are missing — all declared inside a function body or a `test`, which no path
+> reaches. Of the public map paths autodoc's own lookup resolves, all land on the same source
+> declaration except 27, which cite another line of the same thing (a factory's `fn` line where
+> the map cites its `return struct`; an alias's own line). The figures below are the 2026-07 audit's.
+
 | | |
 |---|---|
 | Measured | 2026-07-07 |

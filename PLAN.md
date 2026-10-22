@@ -76,6 +76,19 @@ never folded into the base.
    rebaking a stale index; builtins are mapped; queries follow alias/delegates edges and suggest
    the nearest name on a miss; Windows builds; ReleaseSafe by default; code relicensed to
    GPL-3.0-or-later (the datasets stay MIT).
+12. **every Zig, every reachable name** (2026-10-17 → 10-22, v0.7.0) — ported to Zig 0.17.0, with
+   one frozen map per version in `data/versions/<v>/` and `zephem diff <old> <new>`, re-computed
+   independently by `zig build verify-diff`. The extractor is built by the Zig whose std it maps,
+   so every version folder is made by one extractor; a run that loses data stops instead of
+   passing. Checked against two outside witnesses: the compiler (every path it resolves now
+   answers a lookup; 4,883 did not) and autodoc (`tools/autodoc-witness/`). The map no longer cuts
+   aliases to bare `std` (~1,240 per version), records per-platform switch arms as `[…]` variants,
+   follows imports inside switch arms, labeled blocks and call arguments (55 files never read),
+   walks multi-return factories and field-type containers, gives each declaration one home (its
+   best placement: public, its own name, shortest), maps the factory-body consts the product's
+   surface names, and resolves through aliases part-way along a path and through comptime
+   params. Reflection no longer blanks a container one bad decl breaks (+4,500 resolved rows).
+   `map doc` shows field types and const values; concurrent runs no longer collide.
 
 ---
 
@@ -94,7 +107,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, 88,421 nodes (79,348 pub / 9,073 priv) / 533 files, depth 9; connectivity-checked |
 | **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 190,408 facts keyed by `path`: 12,824 sigs · 15,897 `///` docs · 44,725 field/const values · 88,420 locations · 1,932 test bodies · 1,386 modifiers · 490 error members; each keys onto a real node |
 | **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 74,861 typed refs (63,236 has_type · 5,639 alias · 4,056 error_set · 1,149 imports · 31 delegates), resolved to a scope; 98% of resolvable ones land on a node/primitive; local/cross verified to resolve |
-| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
+| **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`; earlier conditional returns as `<fn>().[return<k>]`; body consts the product's public members name, private under `<fn>()`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,932 `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 6,434 containers, self-checked both ways |
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,157 resolved + 18 partial / 15 poison containers + 893 failing decls / 913 private, zero dups |
@@ -129,7 +142,8 @@ Zig said so" contract.
      raw test count over the ~10.6k public-fn+type API surface.
 2. **Example-coverage overlay** (derive) — which of the public API surface has a demonstrated usage
    and which doesn't. `doccov` for *examples*. Surfaces the honest gap; does not fill it.
-3. **L6 — version diff** — what changed between Zig versions; needs a second pinned snapshot.
+3. ~~**L6 — version diff**~~ — shipped in v0.7.0: `zephem diff <old> <new>` over the frozen
+   `data/versions/` folders ([docs/release-diff.md](docs/release-diff.md)).
 
 Each new dataset registers with a harness and ships its own backward check.
 
@@ -147,8 +161,10 @@ purpose-groupings.
 are descended under `<fn>()`; `@import` is followed into one organism.
 
 **Still to add to the parser (raw source facts):**
-1. **Opaque / multi-branch factories** — a `fn(…) type` built via `@Type` or comptime branching
-   is invisible to text; resolving its members needs instantiated reflection (Phase D).
+1. **Opaque factories** — a `fn(…) type` built via `@Type` is invisible to text; resolving its
+   members needs instantiated reflection (Phase D). (A factory that returns different
+   `struct {…}` literals under conditions is walked since v0.7.0: each earlier return is a
+   `<fn>().[return<k>]` variant.)
 2. **Facts still captured only as opaque text** — parameter names ⋈ types ⋈ defaults, and pointer
    decorations (sentinel/const/volatile/align, optionality) sit inside the raw `sig` string or are
    stripped by `extractBase` to a base identifier; decomposing them into queryable facts is the

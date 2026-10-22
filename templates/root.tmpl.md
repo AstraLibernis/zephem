@@ -253,6 +253,9 @@ sanity-check, not a correctness proof — [`docs/comparison/autodoc-vs-zephem.md
 lines this snapshot up against Zig's own autodoc extraction: on the shared public surface the
 two reach a near-identical set, and zephem additionally carries fields, enum tags, private
 decls, the edge graph, and the resolved layer. See that note for the method and figures.
+The check is kept re-runnable: `tools/autodoc-witness/run.sh <out-dir>` drives autodoc's own
+walker against the live map and an independent source lister, in about 25 s. Re-run it after
+regenerating for a new Zig.
 
 ### Reading it efficiently: the table of contents
 
@@ -291,8 +294,8 @@ ship today, all self-verifying and byte-identical on rerun:
   decls / @@N_PRIVATE@@ private** (each failure recorded in `data/std/extracted/poison.tsv` with the
   compiler's exact reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   Its reproducibility harness is `zephem depth --check`, separate from `zephem std --check`: an
-  L5 rebuild compiles every container (about 61 s cold for the full sweep, the rescue of partly
-  failing containers included: 60.7 s ± 0.3 s on a Ryzen 7 9800X3D, 16 threads; hyperfine, 5
+  L5 rebuild compiles every container (about 59 s cold for the full sweep, the rescue of partly
+  failing containers included: 59.0 s ± 0.3 s on a Ryzen 7 9800X3D, 16 threads; hyperfine, 5
   runs, compiler cache wiped before each — see docs/reproducibility.md).
 
 - **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from

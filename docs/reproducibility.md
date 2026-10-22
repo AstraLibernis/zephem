@@ -108,6 +108,18 @@ std grew to 68,845 nodes / 4,332 containers)*
 Outcome on 0.17.0: 4,332 containers attempted = 3,158 resolved (16,997 rows) + 957 poison + 217
 skipped, every partition check ✓, and both `depth --check` sweeps byte-identical to the manifest.
 
+### Timings — the sweep at v0.7.0 (2026-10-22)
+
+*(same desktop; Zig 0.17.0; release build; the zcanon daemon stopped)*
+
+| sweep | wall time | how measured |
+|---|---|---|
+| full L5 sweep, batched, rescue included, **cold** | **59.0 s ± 0.3 s** | hyperfine, 5 runs, `.zig-cache/zephem-depth` + `~/.cache/zig` wiped before each |
+
+6,434 containers = 3,157 resolved + 18 partial (21,429 rows) + 15 poison + 913 private + 2,331
+skipped. More files are walked than on 2026-10-21 (532 vs 483), and the extra containers are
+mostly `[…]` arms and `()` factories, which are skipped without a compile.
+
 ### Timings — the sweep with the rescue (2026-10-21)
 
 *(same desktop; Zig 0.17.0; release build)*
