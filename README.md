@@ -240,7 +240,7 @@ $ zig build std
            rows: 88381   files: 533   private: 9049
 [index]    containers: 6428   root span: 88381   max depth: 9
 [attrs]    190334 rows — doc 15897 · sig 12820 · value 44705 · example 1932
-[edges]    74833 rows — resolved 70988 / unresolved 1614
+[edges]    74833 rows — resolved 71082 / unresolved 1520
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.

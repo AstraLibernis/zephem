@@ -549,12 +549,32 @@ fn isGenericParam(w: *W, src: []const u8, base: []const u8) bool {
     }
 }
 
-/// Record a fn's comptime type params (`comptime T: type`, `anytype`) under `owner`, so a
-/// reference to `T` from `owner` or below resolves to a `generic` scope, not unresolved.
+/// Is `head`, the first segment of a dotted path written at `src`, a comptime param in scope, or
+/// an alias (chain) ending at one?
+fn genericHead(w: *W, src: []const u8, container: []const u8, head: []const u8, fuel: u8) bool {
+    if (isGenericParam(w, src, head)) return true;
+    var node = resolveBare(w, container, head) orelse return false;
+    var f = fuel;
+    while (f > 0) : (f -= 1) {
+        const t = w.aliases.get(node) orelse return false;
+        const r = resolve(w, node, t, f - 1);
+        switch (r.scope) {
+            .generic => return true,
+            .local, .cross => node = r.target,
+            else => return false,
+        }
+    }
+    return false;
+}
+
+/// Record a fn's compile-time params under `owner` — a type (`T: type`), `anytype`, or any
+/// `comptime` one (`comptime flag: @EnumLiteral()`) — so a reference to one from `owner` or below
+/// (`T`, `T.Index`, `flags = flag`) resolves to a `generic` scope: fixed per instance, no node.
 fn registerTypeParams(w: *W, ast: *const Ast, proto: *const Ast.full.FnProto, owner: []const u8) !void {
     var pit = proto.iterate(ast);
     while (pit.next()) |p| {
-        const is_type_param = p.anytype_ellipsis3 != null or
+        const is_comptime = if (p.comptime_noalias) |t| ast.tokenTag(t) == .keyword_comptime else false;
+        const is_type_param = is_comptime or p.anytype_ellipsis3 != null or
             (p.type_expr != null and std.mem.eql(u8, std.mem.trim(u8, ast.getNodeSource(p.type_expr.?), " \t\r\n"), "type"));
         if (is_type_param) if (p.name_token) |nt| {
             const key = try std.fmt.allocPrint(w.arena, "{s}#{s}", .{ owner, ast.tokenSlice(nt) });
@@ -589,7 +609,33 @@ fn memberOf(w: *W, b: []const u8, rest: []const u8, fuel: u8) ?[]const u8 {
         const produced = instanceOf(w, r.target, fuel - 1) orelse return null;
         return memberOf(w, produced, rest, fuel - 1);
     }
+    // A node part-way down `rest` defined as something else (`Edwards25519.scalar`, an alias of
+    // `Curve25519.scalar`, in `.scalar.CompressedScalar`): continue from there. The deepest such
+    // node first, as `resolveRooted` takes the longest prefix.
+    var k = rest.len;
+    while (lastDot(rest[0..k])) |d| {
+        k = d;
+        if (k == 0) break;
+        const mid = std.fmt.allocPrint(w.arena, "{s}{s}", .{ b, rest[0..k] }) catch return null;
+        if (!w.node_set.contains(mid)) continue;
+        if (w.aliases.get(mid) == null and w.instances.get(mid) == null) continue;
+        return memberOf(w, mid, rest[k..], fuel - 1);
+    }
     return null;
+}
+
+/// The last `.` in `s` outside a `@"…"` quoted name (where a dot is part of the name).
+fn lastDot(s: []const u8) ?usize {
+    var inq = false;
+    var last: ?usize = null;
+    for (s, 0..) |c, j| {
+        if (inq) {
+            if (c == '"') inq = false;
+        } else if (c == '"') {
+            inq = true;
+        } else if (c == '.') last = j;
+    }
+    return last;
 }
 
 /// The node of the type a factory fn returns: `<f>()` when the walk descended it; through an
@@ -672,8 +718,11 @@ fn resolve(w: *W, src: []const u8, raw: []const u8, fuel: u8) Res {
     if (dotted and fuel > 0) {
         if (resolvePrefixed(w, container, base, fuel - 1)) |p| return placed(container, p);
     }
-    // GENERIC PARAM: a comptime type param (T/K/V) declared by a factory ancestor.
+    // GENERIC PARAM: a comptime param (T/K/V) declared by a factory ancestor — or a path through
+    // one (`T.Index`, `Curve.scalar.Scalar` where `Curve` aliases the param): what it names is
+    // fixed per instance, so it has no node either.
     if (!dotted and isGenericParam(w, src, base)) return Res{ .scope = .generic, .target = base };
+    if (dotted and genericHead(w, src, container, base[0..std.mem.findScalar(u8, base, '.').?], fuel)) return Res{ .scope = .generic, .target = base };
     return Res{ .scope = .unresolved, .target = raw };
 }
 

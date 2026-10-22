@@ -27,6 +27,7 @@ const root_zig =
     \\    pub const Lib = @import("home.zig").Lib;
     \\};
     \\pub const Lib = @import("home.zig").Lib;
+    \\pub const Gen = @import("gen.zig");
     \\pub const is_debug = @import("builtin").mode == .Debug;
     \\pub const os_tag = builtin.os.tag;
     \\
@@ -180,10 +181,32 @@ const home_zig =
     \\pub const Lib = struct {};
     \\
 ;
+// Paths through a comptime param, and through an alias part-way along a path.
+const gen_zig =
+    \\pub fn Box(comptime T: type, comptime flag_arg: u8) type {
+    \\    return struct {
+    \\        pub const Curve = T;
+    \\        pub const flag = flag_arg;
+    \\        pub const n = Curve.len;
+    \\        pub fn get() T.Index {}
+    \\    };
+    \\}
+    \\pub const Cs = struct {
+    \\    pub const Compressed = u8;
+    \\};
+    \\pub const Ew = struct {
+    \\    pub const scalar = Cs;
+    \\};
+    \\pub const Ed = struct {
+    \\    pub const Curve = Ew;
+    \\};
+    \\pub const Comp = Ed.Curve.scalar.Compressed;
+    \\
+;
 const Out = struct { nodes: []const u8, edges: []const u8, attrs: []const u8, passes: usize };
 
 fn extract(a: std.mem.Allocator, io: std.Io, tmp: std.testing.TmpDir) !Out {
-    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig }, .{ "plat.zig", plat_zig }, .{ "arch_x86_64.zig", arch_x86_64_zig }, .{ "arch_other.zig", arch_other_zig }, .{ "impl_a.zig", impl_a_zig }, .{ "impl_b.zig", impl_b_zig }, .{ "fiat.zig", fiat_zig }, .{ "home.zig", home_zig } };
+    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig }, .{ "plat.zig", plat_zig }, .{ "arch_x86_64.zig", arch_x86_64_zig }, .{ "arch_other.zig", arch_other_zig }, .{ "impl_a.zig", impl_a_zig }, .{ "impl_b.zig", impl_b_zig }, .{ "fiat.zig", fiat_zig }, .{ "home.zig", home_zig }, .{ "gen.zig", gen_zig } };
     for (files) |f| try tmp.dir.writeFile(io, .{ .sub_path = f[0], .data = f[1] });
     const base = try tmp.dir.realPathFileAlloc(io, ".", a);
     const p = struct {
@@ -306,6 +329,13 @@ test "extractor: every fixed case produces its row" {
     // shorter path over a deeper one. One pass places them first-met, the next settles: a home
     // seeded from the first pass must not be dropped as "selected elsewhere" (a third pass).
     try std.testing.expectEqual(@as(usize, 2), o.passes);
+    // A path through a comptime param — a type, a non-type `comptime` one, or an alias of one —
+    // is `generic` (fixed per instance), not unresolved.
+    try expectRow(o.edges, "std.Gen.Box().get\thas_type\tT.Index\tgeneric");
+    try expectRow(o.edges, "std.Gen.Box().flag\talias\tflag_arg\tgeneric");
+    try expectRow(o.edges, "std.Gen.Box().n\talias\tCurve.len\tgeneric");
+    // An alias part-way along a path is followed: Ed.Curve → Ew, Ew.scalar → Cs.
+    try expectRow(o.edges, "std.Gen.Comp\talias\tstd.Gen.Cs.Compressed\tlocal");
     try expectRow(o.nodes, "std.Curve.add\tfn\tadd\tpub");
     try expectRow(o.edges, "std.Renamed\talias\tstd.Curve\tlocal");
     try expectRow(o.nodes, "std.Shown\tstruct\tShown\tpub");

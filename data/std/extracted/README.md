@@ -83,14 +83,14 @@ in a second pass against the walked node set. **74,833 edges**, six types:
 |---|---|---|
 | `primitive` | 31,271 | a language builtin (`i32`, `usize`, `type`, …) |
 | `local` | 19,729 | a node inside `src`'s own container (incl. `@This()`) |
-| `cross` | 18,703 | a node elsewhere in the tree |
+| `cross` | 18,705 | a node elsewhere in the tree |
 | `module` | 1,228 | outside the tree: an `@import` itself, or a path into a module that is not walked, kept whole (`builtin.os.tag`) |
-| `unresolved` | 1,614 | couldn't place it (comptime-built, exotic) |
+| `unresolved` | 1,520 | couldn't place it (comptime-built, exotic) |
 | `inline` | 1,003 | an inline `struct{…}`/`enum{…}` literal target |
-| `generic` | 1,285 | a comptime type parameter in scope |
+| `generic` | 1,377 | a comptime type parameter in scope |
 
-**70,988 of 74,833 edges (98% of the resolvable ones)** land on a
-node, primitive, or generic param; 1,614 stay unresolved.
+**71,082 of 74,833 edges (98% of the resolvable ones)** land on a
+node, primitive, or generic param; 1,520 stay unresolved.
 
 the backward check in `zephem std` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to
