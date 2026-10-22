@@ -288,7 +288,7 @@ ship today, all self-verifying and byte-identical on rerun:
   ones that fail to compile, the rest reflected ~50 per binary, so a poison decl never kills the
   sweep; inside a container that fails, the decls that fail on their own are found and the rest
   reflected. On zig 0.17.0: 6,428 containers swept → **3,157 resolved + 18
-  partial (21,429 rows) / 17 poison containers + 893 failing
+  partial (21,429 rows) / 15 poison containers + 893 failing
   decls / 913 private** (each failure recorded in `data/std/extracted/poison.tsv` with the
   compiler's exact reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   Its reproducibility harness is `zephem depth --check`, separate from `zephem std --check`: an

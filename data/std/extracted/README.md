@@ -127,7 +127,7 @@ On zig 0.17.0: **3,157 containers resolved and 18 partly resolved (21,429 rows).
 ### `poison.tsv` — what didn't resolve
 `path · reason`, each with the compiler's exact first error line (platform / foreign lib /
 libc / `@compileError` / timeout). Two kinds of row: a **container** that fails as a whole
-(17), and a **decl** of a `partial` container (893) — reflecting
+(15), and a **decl** of a `partial` container (893) — reflecting
 evaluates every decl of a container in one compile, so one bad decl used to blank the rest;
 the sweep now finds the decls that fail on their own and reflects the others. Each is an
 honest "the compiler couldn't build this here", not a miss.
@@ -135,9 +135,9 @@ honest "the compiler couldn't build this here", not a miss.
 ### `status.tsv` — the per-container ledger
 `path · status · n_rows`. One row per container the sweep attempted, with one of five
 statuses: `resolved` (3,157), `partial` (18 — some decls failed on their
-own), `poison` (17), `private` (913 — reachable only through a private
+own), `poison` (15), `private` (913 — reachable only through a private
 decl, so not reflectable from outside its file: a fact about the path, not a failure) and
-`skipped` (2,323 — no Zig expression reaches it: an uninstantiated `()` factory, a `[…]` variant, a private `@"f.zig"` file node; or a switch-built `const` that is a container only through its variants, reflected as a decl of its parent). The verifier re-derives the buckets
+`skipped` (2,325 — no Zig expression reaches it: an uninstantiated `()` factory, a `[…]` variant, a private `@"f.zig"` file node; or a switch-built `const` that is a container only through its variants, reflected as a decl of its parent). The verifier re-derives the buckets
 from this and reconciles them against `resolved`/`poison`.
 
 Verified by the backward check in `zephem depth` (conservation, registration vs the map, no duplicates).

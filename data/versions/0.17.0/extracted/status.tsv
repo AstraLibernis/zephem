@@ -20,8 +20,8 @@ std.Build.Cache.Manifest.InputPath	resolved	3
 std.Build.Cache.Manifest.InputPath.contents	skipped	0
 std.Build.Cache.Manifest.InputPath.contents.pop_off	skipped	0
 std.Build.Cache.Manifest.InputPath.contents.req_len	skipped	0
-std.Build.Cache.Manifest.InputPath.contents.Unwrapped	poison	0
-std.Build.Cache.Manifest.InputPath.contents.Populated	poison	0
+std.Build.Cache.Manifest.InputPath.contents.Unwrapped	skipped	0
+std.Build.Cache.Manifest.InputPath.contents.Populated	skipped	0
 std.Build.Cache.Manifest.InputPath.handle	skipped	0
 std.Build.Cache.Manifest.InputPath.Handle	resolved	0
 std.Build.Cache.Manifest.InputPath.Index	resolved	3

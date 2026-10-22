@@ -97,7 +97,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,932 `test {}` bodies, escaped to one row, anchored to the enclosing node |
 | **table of contents** — `index.tsv` | `derive/index.zig` | ✅ contiguous-block index, 6,428 containers, self-checked both ways |
-| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,157 resolved + 18 partial / 17 poison containers + 893 failing decls / 913 private, zero dups |
+| **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,157 resolved + 18 partial / 15 poison containers + 893 failing decls / 913 private, zero dups |
 | **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 16,413 / run-only 4,924 / read-only 20,583; 0 blanks |
 | **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ 674 paths in 265 alias/dup families (shared resolved `@typeName`); self-checked |
 | **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 18% of nodes documented (15,895 carry `///` docs); per-kind, self-checked vs map + docs overlay |
