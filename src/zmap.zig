@@ -21,7 +21,7 @@ const rel = @import("relation.zig");
 const redirect = @import("redirect.zig");
 const lookup = @import("lookup.zig");
 
-const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8, arity: []const u8, rdetail: []const u8, aka: []const u8 };
+const Node = struct { path: []const u8, kind: []const u8, name: []const u8, vis: []const u8, sig: []const u8, doc: []const u8, mod: []const u8, errmembers: []const u8, arity: []const u8, rdetail: []const u8, aka: []const u8, ftype: []const u8, fval: []const u8 };
 /// The baked lookup table, searched in place. Nothing is parsed up front: parsing all 63k rows
 /// into structs and hash maps cost ~26 ms of a ~30 ms `map` call (reading the 9 MB file costs
 /// ~2). A row is found by searching for `\n<path>\t` and split only when it is printed or
@@ -84,6 +84,8 @@ fn parse(row: []const u8) Node {
         .sig = f[6],
         .doc = f[7],
         .rdetail = f[9],
+        .ftype = f[11],
+        .fval = f[12],
         .vis = f[14],
         .mod = f[15],
         .aka = f[16],
@@ -325,6 +327,16 @@ fn cmdDoc(c: Ctx, out: *std.Io.Writer, map: *const Map, path_in: []const u8) !Ou
             const parts = sigfmt.split(a, n.sig);
             try out.print("  {s}\n", .{parts.sig});
             if (parts.doc.len > 0) try out.print("  ⌁ (params) {s}\n", .{parts.doc});
+        }
+        // a field/tag/const's payload as written, as `look` shows it: `: type = value`, `: type`,
+        // or `= value`. The written type is the only one a field whose type is an expression
+        // (`*const fn (…) void`) has: no node to link it to.
+        if (n.ftype.len > 0 and n.fval.len > 0) {
+            try out.print("  : {s} = {s}\n", .{ n.ftype, n.fval });
+        } else if (n.ftype.len > 0) {
+            try out.print("  : {s}\n", .{n.ftype});
+        } else if (n.fval.len > 0) {
+            try out.print("  = {s}\n", .{n.fval});
         }
         if (n.errmembers.len > 0) try out.print("  errors: {s}\n", .{n.errmembers});
         // The compiler-resolved type, in full — the one place a whole inferred error set shows

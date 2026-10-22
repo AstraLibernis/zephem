@@ -90,6 +90,8 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // `look` folds a long error set to its TRUE top-level count; `map doc` shows it whole.
     try expectLook(c, w, &fails, "look folds an error set to its true count", &.{ "Client.InitError", "--limit", "2" }, &.{"error{…47 members}"});
     try expectMap(c, w, &fails, "map doc shows the resolved error set whole", &.{ "doc", "std.crypto.tls.Client.InitError" }, &.{ "→ error{", "WriteFailed}" });
+    try expectMap(c, w, &fails, "map doc shows a field's written type", &.{ "doc", "std.Io.Threaded.Runnable.startFn" }, &.{": *const fn (*Runnable, *Thread, *Threaded) void"});
+    try expectMap(c, w, &fails, "map doc shows a const's value", &.{ "doc", "std.math.pi" }, &.{"= 3.14159265358979"});
 
     // ── builtins ── from the compiler's table + the language reference, both in the toolchain.
     try expectLook(c, w, &fails, "look finds a builtin by name, exact first", &.{ "intCast", "--limit", "1" }, &.{ "@intCast  (builtin)", "@intCast(int: anytype) anytype" });
