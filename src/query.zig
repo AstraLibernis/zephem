@@ -99,3 +99,19 @@ pub fn allContain(hay: []const u8, terms: []const []const u8) bool {
     for (terms) |t| if (!ciContains(hay, t)) return false;
     return true;
 }
+
+/// Does ONE alternative name in `aka` (the lookup's `, `-joined list) contain every term?
+///
+/// An alternative name ranks like the path because it is a name the caller would write
+/// (`ArrayList append` → `Aligned().append`). A name through a platform arm
+/// (`std.posix.system.[else].[linux].mmap`) is not writable, so it is shown but never ranks:
+/// otherwise `linux` in the arm lifts `std.c.mmap` level with `std.os.linux.mmap`. Terms must
+/// meet in one name, not be gathered across several.
+pub fn akaContains(aka: []const u8, terms: []const []const u8) bool {
+    var it = std.mem.splitSequence(u8, aka, ", ");
+    while (it.next()) |name| {
+        if (std.mem.find(u8, name, ".[") != null) continue;
+        if (allContain(name, terms)) return true;
+    }
+    return false;
+}

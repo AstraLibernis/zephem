@@ -22,3 +22,12 @@ test "a term equal to the platform segment opts back in; a substring does not" {
     // in std.c.COPYFILE the segment is the decl itself — `copy` must not match it, `copyfile` does
     try testing.expect(!query.platformDemoted("std.c.COPYFILE", &.{"copyfile"}));
 }
+
+test "an alternative name ranks only if one writable name holds every term" {
+    const aka = "std.Io.Threaded.linux_copy_file_range_sys.[then].mmap, std.posix.system.[then].mmap";
+    try testing.expect(!query.akaContains(aka, &.{ "linux", "mmap" })); // only through a platform arm
+    try testing.expect(query.akaContains("std.ArrayList.append, std.array_list.Aligned().append", &.{ "arraylist", "append" }));
+    // terms spread over two names are not one name the caller would write
+    try testing.expect(!query.akaContains("std.foo.alpha, std.bar.beta", &.{ "alpha", "beta" }));
+    try testing.expect(!query.akaContains("", &.{"x"}));
+}

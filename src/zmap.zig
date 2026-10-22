@@ -217,7 +217,7 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: *const Map, terms_raw: []const []co
         const alt: []const u8 = if (direct) "" else n.aka;
         if (!direct and !allIn(terms, &.{ n.path, n.name, n.sig, n.doc, alt })) continue;
         // exact name · name contains every term · path/alternative name · elsewhere (as `look`)
-        const rank: u8 = if (terms.len == 1 and n.name.len == terms[0].len and ciContains(n.name, terms[0])) 0 else if (allIn(terms, &.{n.name})) 1 else if (allIn(terms, &.{n.path}) or allIn(terms, &.{alt})) 2 else 3;
+        const rank: u8 = if (terms.len == 1 and n.name.len == terms[0].len and ciContains(n.name, terms[0])) 0 else if (allIn(terms, &.{n.name})) 1 else if (allIn(terms, &.{n.path}) or query.akaContains(alt, terms)) 2 else 3;
         const priv = std.mem.eql(u8, n.vis, "priv");
         if (priv) npriv += 1;
         const plat = query.platformDemoted(n.path, terms);

@@ -264,7 +264,7 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
         // A match through an alternative name (`ArrayList append` → `Aligned().append`) is as
         // good as a path match: it is the name the caller would actually write.
         // exact name (`args` → `Args`) · name contains every term · path/alternative name · elsewhere
-        const rank: u8 = if (terms.len == 1 and exactName(name, terms[0])) 0 else if (allContain(name, terms)) 1 else if (allContain(p, terms) or allContain(field(line, COL_AKA), terms)) 2 else 3;
+        const rank: u8 = if (terms.len == 1 and exactName(name, terms[0])) 0 else if (allContain(name, terms)) 1 else if (allContain(p, terms) or query.akaContains(field(line, COL_AKA), terms)) 2 else 3;
         const priv = std.mem.eql(u8, field(line, COL_VIS), "priv");
         if (priv) npriv += 1;
         const plat = query.platformDemoted(p, terms);

@@ -61,6 +61,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     try expectMap(c, w, &fails, "map doc rewrites the path people type", &.{ "doc", "std.ArrayList.append" }, &.{ "is std.array_list.Aligned().append", "fn append(" });
     try expectMap(c, w, &fails, "map doc follows alias then delegates", &.{ "doc", "std.StringHashMap().get" }, &.{"std.hash_map.HashMap().get"});
     try expectMap(c, w, &fails, "map find matches through the alternative name", &.{ "find", "StringHashMap", "getPtr" }, &.{"std.hash_map.HashMap().getPtr"});
+    try expectMap(c, w, &fails, "a platform-arm alternative name does not outrank the path", &.{ "find", "linux", "mmap", "--limit", "1" }, &.{"std.os.linux.mmap"});
 
     // ── outcomes ── the previous battery discarded these with `_ =`, which is how "map could
     // never return 3" shipped. A hit, a miss and their exit meanings are asserted facts now.
