@@ -34,7 +34,16 @@ const names = [_][]const u8{
     "derived/index.tsv",
 };
 
-const check_base = ".zig-cache/zephem-check";
+/// This run's own working dir under .zig-cache — the staging dir, the --check rebuilds and the
+/// extractor binary — so concurrent runs (an editor's `zig build check --watch` beside a manual one)
+/// never share a path: a shared one let one run delete or replace what the other was using.
+fn scratchDir(c: Ctx) ![]const u8 {
+    var id: [8]u8 = undefined;
+    c.io.random(&id);
+    const dir = try vars.repoFile(c, try c.a.print(".zig-cache/zephem-run-{x}", .{&id}));
+    try std.Io.Dir.cwd().createDirPath(c.io, dir);
+    return dir;
+}
 
 pub fn run(c: Ctx, args: []const []const u8) !void {
     const usage =
@@ -63,7 +72,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const env = try toolchain.probe(c);
     const root = try std.fs.path.join(c.a, &.{ env.std_dir, "std.zig" });
     const zver = env.version;
-    const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env), .zig_exe = env.zig_exe, .zig_version = zver };
+    const scratch = try scratchDir(c);
+    defer std.Io.Dir.cwd().deleteTree(c.io, scratch) catch {}; // zsnag:ok — best-effort cleanup of this run's own dir; nothing reads it after
+    const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env), .zig_exe = env.zig_exe, .zig_version = zver, .scratch = scratch };
 
     var buf: [4096]u8 = undefined;
     var ow = std.Io.File.stdout().writerStreaming(c.io, &buf);
@@ -80,8 +91,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     // committed map untouched.
     try w.print("[forward]  scanning {s}  (zig {s}, depth {d})\n", .{ root, zver, depth });
     if (src.langref == null) try w.writeAll("[builtins] ⚠ this toolchain ships no doc/langref.html — builtins get names and arity only\n");
-    const stage = try vars.repoFile(c, ".zig-cache/zephem-std-stage");
-    std.Io.Dir.cwd().deleteTree(c.io, stage) catch {}; // zsnag:ok — best-effort scratch cleanup; regen rewrites every file it later reads
+    const stage = try join(c.a, src.scratch, "stage");
     _ = try regen(c, src, stage);
     // PINNED: first line the version (consumers read it), second the target triple (the reflect
     // layer is target-scoped — a Windows decl poisons on linux, usize=u64 here, etc.).
@@ -102,13 +112,13 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     for (names ++ [_][]const u8{"PINNED"}) |name| {
         try cwd.copyFile(try join(c.a, stage, name), cwd, try join(c.a, data_dir, name), c.io, .{});
     }
-    cwd.deleteTree(c.io, stage) catch {}; // zsnag:ok — best-effort scratch cleanup after install; nothing reads it again
     try writeManifest(c, data_dir, try join(c.a, data_dir, "SHA256SUMS"));
     try w.writeAll("build_std: ✓ true (forward == backward) and recorded — run --check to prove it rebuilds.\n");
     try w.flush();
 }
 
-const Sources = struct { root: []const u8, builtin_fn: []const u8, langref: ?[]const u8, zig_exe: []const u8, zig_version: []const u8 };
+/// `scratch`: this run's own working dir (`scratchDir`).
+const Sources = struct { root: []const u8, builtin_fn: []const u8, langref: ?[]const u8, zig_exe: []const u8, zig_version: []const u8, scratch: []const u8 };
 
 /// `doc/langref.html` beside the toolchain's `lib/` (the layout of the official tarballs), or
 /// null when this install has no docs.
@@ -142,7 +152,7 @@ fn regen(c: Ctx, src: Sources, out_dir: []const u8) !void {
 fn buildExtractor(c: Ctx, src: Sources) ![]const u8 {
     const dir = try vars.repoFile(c, try c.a.print(".zig-cache/zephem-extract/{s}", .{src.zig_version}));
     try std.Io.Dir.cwd().createDirPath(c.io, dir);
-    const bin = try join(c.a, dir, "walk");
+    const bin = try join(c.a, src.scratch, "walk"); // per run: a concurrent run must not replace the binary this one runs
     try runChecked(c, &.{
         src.zig_exe,                                          "build-exe",
         "-OReleaseSafe",                                      try vars.repoFile(c, "parse/main.zig"),
@@ -216,9 +226,8 @@ fn proveReproducible(c: Ctx, src: Sources, data_dir: []const u8, zver: []const u
     };
     const recorded = try manifest.parse(c.a, man_bytes);
 
-    const dir_a = try join(c.a, check_base, "a");
-    const dir_b = try join(c.a, check_base, "b");
-    std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {}; // zsnag:ok — best-effort scratch cleanup; regen overwrites every file it later reads
+    const dir_a = try join(c.a, src.scratch, "check-a");
+    const dir_b = try join(c.a, src.scratch, "check-b");
     _ = try regen(c, src, dir_a);
     _ = try regen(c, src, dir_b);
 
@@ -235,7 +244,6 @@ fn proveReproducible(c: Ctx, src: Sources, data_dir: []const u8, zver: []const u
             name, mark(intrinsic), mark(regression), mark(integrity),
         });
     }
-    std.Io.Dir.cwd().deleteTree(c.io, check_base) catch {}; // zsnag:ok — best-effort scratch cleanup after the check; nothing reads it again
 
     if (ok) {
         try w.writeAll("reproducible: ✓ two fresh rebuilds agree, reproduce the manifest, and the snapshot matches it\n");
