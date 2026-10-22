@@ -5143,14 +5143,6 @@ std.crypto.core.modes.ctr	fn	fn (comptime anytype, anytype, []u8, []const u8, an
 std.crypto.core.modes.ctrSlice	fn	fn (comptime anytype, anytype, []u8, []const u8, anytype, builtin.Endian, comptime usize, comptime usize) void
 std.crypto.dh.X25519	type	crypto.25519.x25519.X25519
 std.crypto.dh.X25519.Curve	type	crypto.25519.curve25519.Curve25519
-std.crypto.dh.X25519.secret_length	const_int	32
-std.crypto.dh.X25519.public_length	const_int	32
-std.crypto.dh.X25519.shared_length	const_int	32
-std.crypto.dh.X25519.seed_length	const_int	32
-std.crypto.dh.X25519.KeyPair	type	crypto.25519.x25519.X25519.KeyPair
-std.crypto.dh.X25519.recoverPublicKey	fn	fn ([32]u8) error{IdentityElement}![32]u8
-std.crypto.dh.X25519.publicKeyFromEd25519	fn	fn (crypto.25519.ed25519.Ed25519.PublicKey) error{IdentityElement,InvalidEncoding}![32]u8
-std.crypto.dh.X25519.scalarmult	fn	fn ([32]u8, [32]u8) error{IdentityElement}![32]u8
 std.crypto.dh.X25519.Curve.Fe	type	crypto.25519.field.Fe
 std.crypto.dh.X25519.Curve.scalar	type	crypto.25519.scalar
 std.crypto.dh.X25519.Curve.fromBytes	fn	fn ([32]u8) crypto.25519.curve25519.Curve25519
@@ -5163,64 +5155,14 @@ std.crypto.dh.X25519.Curve.clampedMul	fn	fn (crypto.25519.curve25519.Curve25519,
 std.crypto.dh.X25519.Curve.mul	fn	fn (crypto.25519.curve25519.Curve25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.curve25519.Curve25519
 std.crypto.dh.X25519.Curve.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.curve25519.Curve25519
 std.crypto.dh.X25519.Curve.fromEdwards25519	fn	fn (crypto.25519.edwards25519.Edwards25519) error{IdentityElement}!crypto.25519.curve25519.Curve25519
-std.crypto.dh.X25519.Curve.Fe.zero	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.one	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.sqrtm1	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.curve25519BasePoint	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519d	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519d2	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtamd	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519eonemsqd	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqdmone	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtadm1	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519a_32	const_int	486662
-std.crypto.dh.X25519.Curve.Fe.edwards25519a	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtam2	const_other	crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.isZero	fn	fn (crypto.25519.field.Fe) bool
-std.crypto.dh.X25519.Curve.Fe.equivalent	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) bool
-std.crypto.dh.X25519.Curve.Fe.fromBytes	fn	fn ([32]u8) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.toBytes	fn	fn (crypto.25519.field.Fe) [32]u8
-std.crypto.dh.X25519.Curve.Fe.fromBytes64	fn	fn ([64]u8) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.rejectNonCanonical	fn	fn ([32]u8, comptime bool) error{NonCanonical}!void
-std.crypto.dh.X25519.Curve.Fe.add	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.sub	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.neg	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.isNegative	fn	fn (crypto.25519.field.Fe) bool
-std.crypto.dh.X25519.Curve.Fe.cMov	fn	fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
-std.crypto.dh.X25519.Curve.Fe.cSwap2	fn	fn (*crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, u64) void
-std.crypto.dh.X25519.Curve.Fe.mul	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.sq	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.sq2	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.mul32	fn	fn (crypto.25519.field.Fe, comptime u32) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.invert	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.pow2523	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.abs	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.Fe.isSquare	fn	fn (crypto.25519.field.Fe) bool
-std.crypto.dh.X25519.Curve.Fe.sqrt	fn	fn (crypto.25519.field.Fe) error{NotSquare}!crypto.25519.field.Fe
-std.crypto.dh.X25519.Curve.scalar.field_order	const_int	7237005577332262213973186563042994240857116359379907606001950938285454250989
-std.crypto.dh.X25519.Curve.scalar.CompressedScalar	type	[32]u8
-std.crypto.dh.X25519.Curve.scalar.zero	const_other	[32]u8
-std.crypto.dh.X25519.Curve.scalar.rejectNonCanonical	fn	fn ([32]u8) error{NonCanonical}!void
-std.crypto.dh.X25519.Curve.scalar.reduce	fn	fn ([32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.reduce64	fn	fn ([64]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.clamp	fn	fn (*[32]u8) void
-std.crypto.dh.X25519.Curve.scalar.mul	fn	fn ([32]u8, [32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.mulAdd	fn	fn ([32]u8, [32]u8, [32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.mul8	fn	fn ([32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.add	fn	fn ([32]u8, [32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.neg	fn	fn ([32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.sub	fn	fn ([32]u8, [32]u8) [32]u8
-std.crypto.dh.X25519.Curve.scalar.random	fn	fn (Io) [32]u8
-std.crypto.dh.X25519.Curve.scalar.Scalar	type	crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes	fn	fn ([32]u8) crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes64	fn	fn ([64]u8) crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.toBytes	fn	fn (*const crypto.25519.scalar.Scalar) [32]u8
-std.crypto.dh.X25519.Curve.scalar.Scalar.isZero	fn	fn (crypto.25519.scalar.Scalar) bool
-std.crypto.dh.X25519.Curve.scalar.Scalar.add	fn	fn (crypto.25519.scalar.Scalar, crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.mul	fn	fn (crypto.25519.scalar.Scalar, crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.sq	fn	fn (crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.invert	fn	fn (crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.random	fn	fn (Io) crypto.25519.scalar.Scalar
+std.crypto.dh.X25519.secret_length	const_int	32
+std.crypto.dh.X25519.public_length	const_int	32
+std.crypto.dh.X25519.shared_length	const_int	32
+std.crypto.dh.X25519.seed_length	const_int	32
+std.crypto.dh.X25519.KeyPair	type	crypto.25519.x25519.X25519.KeyPair
+std.crypto.dh.X25519.recoverPublicKey	fn	fn ([32]u8) error{IdentityElement}![32]u8
+std.crypto.dh.X25519.publicKeyFromEd25519	fn	fn (crypto.25519.ed25519.Ed25519.PublicKey) error{IdentityElement,InvalidEncoding}![32]u8
+std.crypto.dh.X25519.scalarmult	fn	fn ([32]u8, [32]u8) error{IdentityElement}![32]u8
 std.crypto.dh.X25519.KeyPair.generateDeterministic	fn	fn ([32]u8) error{IdentityElement}!crypto.25519.x25519.X25519.KeyPair
 std.crypto.dh.X25519.KeyPair.generate	fn	fn (Io) crypto.25519.x25519.X25519.KeyPair
 std.crypto.dh.X25519.KeyPair.fromEd25519	fn	fn (crypto.25519.ed25519.Ed25519.KeyPair) error{IdentityElement,InvalidEncoding}!crypto.25519.x25519.X25519.KeyPair
@@ -5306,6 +5248,11 @@ std.crypto.kem.ml_kem.MLKem1024.PublicKey	type	crypto.ml_kem.Kyber(.{ .name = &.
 std.crypto.kem.ml_kem.MLKem1024.SecretKey	type	crypto.ml_kem.Kyber(.{ .name = &.{ ... }[0..(...)], .ml_kem = true, .k = 4, .eta1 = 2, .du = 11, .dv = 5 }).SecretKey
 std.crypto.kem.ml_kem.MLKem1024.KeyPair	type	crypto.ml_kem.Kyber(.{ .name = &.{ ... }[0..(...)], .ml_kem = true, .k = 4, .eta1 = 2, .du = 11, .dv = 5 }).KeyPair
 std.crypto.ecc.Curve25519	type	crypto.25519.curve25519.Curve25519
+std.crypto.ecc.Edwards25519	type	crypto.25519.edwards25519.Edwards25519
+std.crypto.ecc.P256	type	crypto.pcurves.p256.P256
+std.crypto.ecc.P384	type	crypto.pcurves.p384.P384
+std.crypto.ecc.Ristretto255	type	crypto.25519.ristretto255.Ristretto255
+std.crypto.ecc.Secp256k1	type	crypto.pcurves.secp256k1.Secp256k1
 std.crypto.ecc.Curve25519.Fe	type	crypto.25519.field.Fe
 std.crypto.ecc.Curve25519.scalar	type	crypto.25519.scalar
 std.crypto.ecc.Curve25519.fromBytes	fn	fn ([32]u8) crypto.25519.curve25519.Curve25519
@@ -5318,11 +5265,64 @@ std.crypto.ecc.Curve25519.clampedMul	fn	fn (crypto.25519.curve25519.Curve25519, 
 std.crypto.ecc.Curve25519.mul	fn	fn (crypto.25519.curve25519.Curve25519, [32]u8) error{IdentityElement,WeakPublicKey}!crypto.25519.curve25519.Curve25519
 std.crypto.ecc.Curve25519.elligator2	fn	fn (crypto.25519.field.Fe) crypto.25519.curve25519.Curve25519
 std.crypto.ecc.Curve25519.fromEdwards25519	fn	fn (crypto.25519.edwards25519.Edwards25519) error{IdentityElement}!crypto.25519.curve25519.Curve25519
-std.crypto.ecc.Edwards25519	type	crypto.25519.edwards25519.Edwards25519
-std.crypto.ecc.P256	type	crypto.pcurves.p256.P256
-std.crypto.ecc.P384	type	crypto.pcurves.p384.P384
-std.crypto.ecc.Ristretto255	type	crypto.25519.ristretto255.Ristretto255
-std.crypto.ecc.Secp256k1	type	crypto.pcurves.secp256k1.Secp256k1
+std.crypto.ecc.Curve25519.Fe.zero	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.one	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.sqrtm1	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.curve25519BasePoint	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519d	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519d2	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtamd	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519eonemsqd	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519sqdmone	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtadm1	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519a_32	const_int	486662
+std.crypto.ecc.Curve25519.Fe.edwards25519a	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtam2	const_other	crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.isZero	fn	fn (crypto.25519.field.Fe) bool
+std.crypto.ecc.Curve25519.Fe.equivalent	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) bool
+std.crypto.ecc.Curve25519.Fe.fromBytes	fn	fn ([32]u8) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.toBytes	fn	fn (crypto.25519.field.Fe) [32]u8
+std.crypto.ecc.Curve25519.Fe.fromBytes64	fn	fn ([64]u8) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.rejectNonCanonical	fn	fn ([32]u8, comptime bool) error{NonCanonical}!void
+std.crypto.ecc.Curve25519.Fe.add	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.sub	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.neg	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.isNegative	fn	fn (crypto.25519.field.Fe) bool
+std.crypto.ecc.Curve25519.Fe.cMov	fn	fn (*crypto.25519.field.Fe, crypto.25519.field.Fe, u64) void
+std.crypto.ecc.Curve25519.Fe.cSwap2	fn	fn (*crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, *crypto.25519.field.Fe, u64) void
+std.crypto.ecc.Curve25519.Fe.mul	fn	fn (crypto.25519.field.Fe, crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.sq	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.sq2	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.mul32	fn	fn (crypto.25519.field.Fe, comptime u32) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.invert	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.pow2523	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.abs	fn	fn (crypto.25519.field.Fe) crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.Fe.isSquare	fn	fn (crypto.25519.field.Fe) bool
+std.crypto.ecc.Curve25519.Fe.sqrt	fn	fn (crypto.25519.field.Fe) error{NotSquare}!crypto.25519.field.Fe
+std.crypto.ecc.Curve25519.scalar.field_order	const_int	7237005577332262213973186563042994240857116359379907606001950938285454250989
+std.crypto.ecc.Curve25519.scalar.CompressedScalar	type	[32]u8
+std.crypto.ecc.Curve25519.scalar.zero	const_other	[32]u8
+std.crypto.ecc.Curve25519.scalar.rejectNonCanonical	fn	fn ([32]u8) error{NonCanonical}!void
+std.crypto.ecc.Curve25519.scalar.reduce	fn	fn ([32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.reduce64	fn	fn ([64]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.clamp	fn	fn (*[32]u8) void
+std.crypto.ecc.Curve25519.scalar.mul	fn	fn ([32]u8, [32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.mulAdd	fn	fn ([32]u8, [32]u8, [32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.mul8	fn	fn ([32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.add	fn	fn ([32]u8, [32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.neg	fn	fn ([32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.sub	fn	fn ([32]u8, [32]u8) [32]u8
+std.crypto.ecc.Curve25519.scalar.random	fn	fn (Io) [32]u8
+std.crypto.ecc.Curve25519.scalar.Scalar	type	crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes	fn	fn ([32]u8) crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes64	fn	fn ([64]u8) crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.toBytes	fn	fn (*const crypto.25519.scalar.Scalar) [32]u8
+std.crypto.ecc.Curve25519.scalar.Scalar.isZero	fn	fn (crypto.25519.scalar.Scalar) bool
+std.crypto.ecc.Curve25519.scalar.Scalar.add	fn	fn (crypto.25519.scalar.Scalar, crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.mul	fn	fn (crypto.25519.scalar.Scalar, crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.sq	fn	fn (crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.invert	fn	fn (crypto.25519.scalar.Scalar) crypto.25519.scalar.Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.random	fn	fn (Io) crypto.25519.scalar.Scalar
 std.crypto.ecc.Edwards25519.Fe	type	crypto.25519.field.Fe
 std.crypto.ecc.Edwards25519.Fe.zero	const_other	crypto.25519.field.Fe
 std.crypto.ecc.Edwards25519.Fe.one	const_other	crypto.25519.field.Fe

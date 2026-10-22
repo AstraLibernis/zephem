@@ -209,7 +209,7 @@ query rebakes the lookup table once (≈90 ms).
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to
 `data/std/extracted/`. On zig 0.17.0 that is **88,381 nodes across 533 files**
-(79,332 public, 9,049 private), max nesting depth 9 — carrying 190,332
+(79,332 public, 9,049 private), max nesting depth 9 — carrying 190,334
 attributes and 74,833 typed edges.
 
 ```sh
@@ -239,8 +239,8 @@ $ zig build std
 [forward]  scanning .../std.zig  (zig 0.17.0, depth 9)
            rows: 88381   files: 533   private: 9049
 [index]    containers: 6428   root span: 88381   max depth: 9
-[attrs]    190332 rows — doc 15895 · sig 12820 · value 44705 · example 1932
-[edges]    74833 rows — resolved 70975 / unresolved 1627
+[attrs]    190334 rows — doc 15897 · sig 12820 · value 44705 · example 1932
+[edges]    74833 rows — resolved 70988 / unresolved 1614
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.
@@ -356,7 +356,7 @@ The extractor is **three engines**, split by *what each reads*:
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
   [parse/README.md](parse/README.md)). `parse/walk.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
-  the Attributes (`attrs.tsv` — 12,820 signatures, 15,895 `///` docs, 44,705 field/const
+  the Attributes (`attrs.tsv` — 12,820 signatures, 15,897 `///` docs, 44,705 field/const
   values, 88,380 locations, 1,932 test bodies, 1,385 modifiers, 490 error
   members), and the Edges (`edges.tsv` — 74,833
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one

@@ -48,7 +48,7 @@ off its `path`, and the verifier reconciles the tree by that — every non-root 
 itself a node.
 
 ### `attrs.tsv` — Attributes (a node's own facts)
-`path · attr · value`. Sparse: a row exists only where the fact is present. **190,332 rows**
+`path · attr · value`. Sparse: a row exists only where the fact is present. **190,334 rows**
 across nine attributes:
 
 | attr | value | count |
@@ -57,7 +57,7 @@ across nine attributes:
 | `value` | a `field`'s default, or a `const`'s initializer as written (whitespace-collapsed, never shortened) | 44,705 |
 | `when` | a variant's condition: its switch prong's values (`.linux, .emscripten`, `else`) or its `if` condition | 2,508 |
 | `type` | the type as written on a `field`, or on a `const`/`var` declared `: T` (the `has_type` edge keeps only the name it references: `?*Node` → `Node`) | 22,217 |
-| `doc` | the decl's `///` doc-comment, whitespace-collapsed; a file's namespace adds the file's own `//!` doc | 15,895 |
+| `doc` | the decl's `///` doc-comment, whitespace-collapsed; a file's namespace adds the file's own `//!` doc | 15,897 |
 | `sig` | a `fn`'s as-written signature (`fn` keyword through return type, body excluded) | 12,820 |
 | `example` | a `test {}` body verbatim (tabs/newlines escaped so it stays one row) | 1,932 |
 | `mod` | a decl's qualifiers — `extern` (with its library: `extern "c"`)/`export`/`inline`/`noinline`/`threadlocal`/`comptime`/`var` (sparse; `var` distinguishes a mutable global from a `const`) | 1,385 |
@@ -82,15 +82,15 @@ in a second pass against the walked node set. **74,833 edges**, six types:
 | scope | count | meaning |
 |---|---|---|
 | `primitive` | 31,271 | a language builtin (`i32`, `usize`, `type`, …) |
-| `local` | 19,716 | a node inside `src`'s own container (incl. `@This()`) |
+| `local` | 19,729 | a node inside `src`'s own container (incl. `@This()`) |
 | `cross` | 18,703 | a node elsewhere in the tree |
 | `module` | 1,228 | outside the tree: an `@import` itself, or a path into a module that is not walked, kept whole (`builtin.os.tag`) |
-| `unresolved` | 1,627 | couldn't place it (comptime-built, exotic) |
+| `unresolved` | 1,614 | couldn't place it (comptime-built, exotic) |
 | `inline` | 1,003 | an inline `struct{…}`/`enum{…}` literal target |
 | `generic` | 1,285 | a comptime type parameter in scope |
 
-**70,975 of 74,833 edges (98% of the resolvable ones)** land on a
-node, primitive, or generic param; 1,627 stay unresolved.
+**70,988 of 74,833 edges (98% of the resolvable ones)** land on a
+node, primitive, or generic param; 1,614 stay unresolved.
 
 the backward check in `zephem std` proves the shapes reconcile: every non-root path's **parent is a node** (the tree
 is connected), every **attr keys onto a real node**, and every **`local`/`cross` edge resolves to

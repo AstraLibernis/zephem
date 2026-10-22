@@ -65057,276 +65057,8 @@ std.crypto.dh	loc	crypto.zig:113
 std.crypto.dh	doc	Diffie-Hellman key exchange functions.
 std.crypto.dh.X25519	loc	crypto/25519/x25519.zig:13
 std.crypto.dh.X25519	doc	X25519 DH function.
-std.crypto.dh.X25519.Curve	loc	crypto/25519/curve25519.zig:9
-std.crypto.dh.X25519.Curve	doc	Group operations over Curve25519.
-std.crypto.dh.X25519.Curve.Fe	loc	crypto/25519/field.zig:14
-std.crypto.dh.X25519.Curve.Fe	doc	The underlying prime field.
-std.crypto.dh.X25519.Curve.Fe.limbs	loc	crypto/25519/field.zig:15
-std.crypto.dh.X25519.Curve.Fe.limbs	type	[5]u64
-std.crypto.dh.X25519.Curve.Fe.MASK51	type	u64
-std.crypto.dh.X25519.Curve.Fe.MASK51	loc	crypto/25519/field.zig:17
-std.crypto.dh.X25519.Curve.Fe.MASK51	value	0x7ffffffffffff
-std.crypto.dh.X25519.Curve.Fe.zero	loc	crypto/25519/field.zig:20
-std.crypto.dh.X25519.Curve.Fe.zero	doc	0
-std.crypto.dh.X25519.Curve.Fe.zero	value	Fe{ .limbs = .{ 0, 0, 0, 0, 0 } }
-std.crypto.dh.X25519.Curve.Fe.one	loc	crypto/25519/field.zig:23
-std.crypto.dh.X25519.Curve.Fe.one	doc	1
-std.crypto.dh.X25519.Curve.Fe.one	value	Fe{ .limbs = .{ 1, 0, 0, 0, 0 } }
-std.crypto.dh.X25519.Curve.Fe.sqrtm1	loc	crypto/25519/field.zig:26
-std.crypto.dh.X25519.Curve.Fe.sqrtm1	doc	sqrt(-1)
-std.crypto.dh.X25519.Curve.Fe.sqrtm1	value	Fe{ .limbs = .{ 1718705420411056, 234908883556509, 2233514472574048, 2117202627021982, 765476049583133 } }
-std.crypto.dh.X25519.Curve.Fe.curve25519BasePoint	loc	crypto/25519/field.zig:29
-std.crypto.dh.X25519.Curve.Fe.curve25519BasePoint	doc	The Curve25519 base point
-std.crypto.dh.X25519.Curve.Fe.curve25519BasePoint	value	Fe{ .limbs = .{ 9, 0, 0, 0, 0 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519d	loc	crypto/25519/field.zig:32
-std.crypto.dh.X25519.Curve.Fe.edwards25519d	doc	Edwards25519 d = 37095705934669439343138083508754565189542113879843219016388785533085940283555
-std.crypto.dh.X25519.Curve.Fe.edwards25519d	value	Fe{ .limbs = .{ 929955233495203, 466365720129213, 1662059464998953, 2033849074728123, 1442794654840575 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519d2	loc	crypto/25519/field.zig:35
-std.crypto.dh.X25519.Curve.Fe.edwards25519d2	doc	Edwards25519 2d
-std.crypto.dh.X25519.Curve.Fe.edwards25519d2	value	Fe{ .limbs = .{ 1859910466990425, 932731440258426, 1072319116312658, 1815898335770999, 633789495995903 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtamd	loc	crypto/25519/field.zig:38
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtamd	doc	Edwards25519 1/sqrt(a-d)
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtamd	value	Fe{ .limbs = .{ 278908739862762, 821645201101625, 8113234426968, 1777959178193151, 2118520810568447 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519eonemsqd	loc	crypto/25519/field.zig:41
-std.crypto.dh.X25519.Curve.Fe.edwards25519eonemsqd	doc	Edwards25519 1-d^2
-std.crypto.dh.X25519.Curve.Fe.edwards25519eonemsqd	value	Fe{ .limbs = .{ 1136626929484150, 1998550399581263, 496427632559748, 118527312129759, 45110755273534 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqdmone	loc	crypto/25519/field.zig:44
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqdmone	doc	Edwards25519 (d-1)^2
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqdmone	value	Fe{ .limbs = .{ 1507062230895904, 1572317787530805, 683053064812840, 317374165784489, 1572899562415810 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtadm1	loc	crypto/25519/field.zig:47
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtadm1	doc	Edwards25519 sqrt(ad-1) with a = -1 (mod p)
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtadm1	value	Fe{ .limbs = .{ 2241493124984347, 425987919032274, 2207028919301688, 1220490630685848, 974799131293748 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519a_32	type	u32
-std.crypto.dh.X25519.Curve.Fe.edwards25519a_32	loc	crypto/25519/field.zig:50
-std.crypto.dh.X25519.Curve.Fe.edwards25519a_32	doc	Edwards25519 A, as a single limb
-std.crypto.dh.X25519.Curve.Fe.edwards25519a_32	value	486662
-std.crypto.dh.X25519.Curve.Fe.edwards25519a	loc	crypto/25519/field.zig:53
-std.crypto.dh.X25519.Curve.Fe.edwards25519a	doc	Edwards25519 A
-std.crypto.dh.X25519.Curve.Fe.edwards25519a	value	Fe{ .limbs = .{ @as(u64, edwards25519a_32), 0, 0, 0, 0 } }
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtam2	loc	crypto/25519/field.zig:56
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtam2	doc	Edwards25519 sqrt(A-2)
-std.crypto.dh.X25519.Curve.Fe.edwards25519sqrtam2	value	Fe{ .limbs = .{ 1693982333959686, 608509411481997, 2235573344831311, 947681270984193, 266558006233600 } }
-std.crypto.dh.X25519.Curve.Fe.isZero	loc	crypto/25519/field.zig:59
-std.crypto.dh.X25519.Curve.Fe.isZero	doc	Return true if the field element is zero
-std.crypto.dh.X25519.Curve.Fe.isZero	sig	fn isZero(fe: Fe) bool
-std.crypto.dh.X25519.Curve.Fe.equivalent	loc	crypto/25519/field.zig:67
-std.crypto.dh.X25519.Curve.Fe.equivalent	doc	Return true if both field elements are equivalent
-std.crypto.dh.X25519.Curve.Fe.equivalent	sig	fn equivalent(a: Fe, b: Fe) bool
-std.crypto.dh.X25519.Curve.Fe.fromBytes	loc	crypto/25519/field.zig:72
-std.crypto.dh.X25519.Curve.Fe.fromBytes	doc	Unpack a field element
-std.crypto.dh.X25519.Curve.Fe.fromBytes	sig	fn fromBytes(s: [32]u8) Fe
-std.crypto.dh.X25519.Curve.Fe.toBytes	loc	crypto/25519/field.zig:84
-std.crypto.dh.X25519.Curve.Fe.toBytes	doc	Pack a field element
-std.crypto.dh.X25519.Curve.Fe.toBytes	sig	fn toBytes(fe: Fe) [32]u8
-std.crypto.dh.X25519.Curve.Fe.fromBytes64	loc	crypto/25519/field.zig:97
-std.crypto.dh.X25519.Curve.Fe.fromBytes64	doc	Map a 64 bytes big endian string into a field element
-std.crypto.dh.X25519.Curve.Fe.fromBytes64	sig	fn fromBytes64(s: [64]u8) Fe
-std.crypto.dh.X25519.Curve.Fe.rejectNonCanonical	loc	crypto/25519/field.zig:119
-std.crypto.dh.X25519.Curve.Fe.rejectNonCanonical	doc	Reject non-canonical encodings of an element, possibly ignoring the top bit
-std.crypto.dh.X25519.Curve.Fe.rejectNonCanonical	sig	fn rejectNonCanonical(s: [32]u8, comptime ignore_extra_bit: bool) NonCanonicalError!void
-std.crypto.dh.X25519.Curve.Fe.reduce	loc	crypto/25519/field.zig:134
-std.crypto.dh.X25519.Curve.Fe.reduce	doc	Reduce a field element mod 2^255-19
-std.crypto.dh.X25519.Curve.Fe.reduce	sig	fn reduce(fe: *Fe) void
-std.crypto.dh.X25519.Curve.Fe.add	loc	crypto/25519/field.zig:171
-std.crypto.dh.X25519.Curve.Fe.add	doc	Add a field element
-std.crypto.dh.X25519.Curve.Fe.add	sig	fn add(a: Fe, b: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.sub	loc	crypto/25519/field.zig:181
-std.crypto.dh.X25519.Curve.Fe.sub	doc	Subtract a field element
-std.crypto.dh.X25519.Curve.Fe.sub	sig	fn sub(a: Fe, b: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.neg	loc	crypto/25519/field.zig:200
-std.crypto.dh.X25519.Curve.Fe.neg	doc	Negate a field element
-std.crypto.dh.X25519.Curve.Fe.neg	sig	fn neg(a: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.isNegative	loc	crypto/25519/field.zig:205
-std.crypto.dh.X25519.Curve.Fe.isNegative	doc	Return true if a field element is negative
-std.crypto.dh.X25519.Curve.Fe.isNegative	sig	fn isNegative(a: Fe) bool
-std.crypto.dh.X25519.Curve.Fe.cMov	loc	crypto/25519/field.zig:210
-std.crypto.dh.X25519.Curve.Fe.cMov	doc	Conditonally replace a field element with `a` if `c` is positive
-std.crypto.dh.X25519.Curve.Fe.cMov	sig	fn cMov(fe: *Fe, a: Fe, c: u64) void
-std.crypto.dh.X25519.Curve.Fe.cSwap2	loc	crypto/25519/field.zig:228
-std.crypto.dh.X25519.Curve.Fe.cSwap2	doc	Conditionally swap two pairs of field elements if `c` is positive
-std.crypto.dh.X25519.Curve.Fe.cSwap2	sig	fn cSwap2(a0: *Fe, b0: *Fe, a1: *Fe, b1: *Fe, c: u64) void
-std.crypto.dh.X25519.Curve.Fe._carry128	loc	crypto/25519/field.zig:251
-std.crypto.dh.X25519.Curve.Fe._carry128	sig	fn _carry128(r: *[5]u128) Fe
-std.crypto.dh.X25519.Curve.Fe.mul	loc	crypto/25519/field.zig:272
-std.crypto.dh.X25519.Curve.Fe.mul	doc	Multiply two field elements
-std.crypto.dh.X25519.Curve.Fe.mul	sig	fn mul(a: Fe, b: Fe) callconv(bloaty_inline) Fe
-std.crypto.dh.X25519.Curve.Fe._sq	loc	crypto/25519/field.zig:295
-std.crypto.dh.X25519.Curve.Fe._sq	sig	fn _sq(a: Fe, comptime double: bool) Fe
-std.crypto.dh.X25519.Curve.Fe.sq	loc	crypto/25519/field.zig:324
-std.crypto.dh.X25519.Curve.Fe.sq	doc	Square a field element
-std.crypto.dh.X25519.Curve.Fe.sq	sig	fn sq(a: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.sq2	loc	crypto/25519/field.zig:329
-std.crypto.dh.X25519.Curve.Fe.sq2	doc	Square and double a field element
-std.crypto.dh.X25519.Curve.Fe.sq2	sig	fn sq2(a: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.mul32	loc	crypto/25519/field.zig:334
-std.crypto.dh.X25519.Curve.Fe.mul32	doc	Multiply a field element with a small (32-bit) integer
-std.crypto.dh.X25519.Curve.Fe.mul32	sig	fn mul32(a: Fe, comptime n: u32) Fe
-std.crypto.dh.X25519.Curve.Fe.sqn	loc	crypto/25519/field.zig:349
-std.crypto.dh.X25519.Curve.Fe.sqn	doc	Square a field element `n` times
-std.crypto.dh.X25519.Curve.Fe.sqn	sig	fn sqn(a: Fe, n: usize) Fe
-std.crypto.dh.X25519.Curve.Fe.invert	loc	crypto/25519/field.zig:359
-std.crypto.dh.X25519.Curve.Fe.invert	doc	Return the inverse of a field element, or 0 if a=0.
-std.crypto.dh.X25519.Curve.Fe.invert	sig	fn invert(a: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.pow2523	loc	crypto/25519/field.zig:374
-std.crypto.dh.X25519.Curve.Fe.pow2523	doc	Return a^((p-5)/8) = a^(2^252-3) Used to compute square roots since we have p=5 (mod 8); see Cohen and Frey.
-std.crypto.dh.X25519.Curve.Fe.pow2523	sig	fn pow2523(a: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.abs	loc	crypto/25519/field.zig:386
-std.crypto.dh.X25519.Curve.Fe.abs	doc	Return the absolute value of a field element
-std.crypto.dh.X25519.Curve.Fe.abs	sig	fn abs(a: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.isSquare	loc	crypto/25519/field.zig:393
-std.crypto.dh.X25519.Curve.Fe.isSquare	doc	Return true if the field element is a square
-std.crypto.dh.X25519.Curve.Fe.isSquare	sig	fn isSquare(a: Fe) bool
-std.crypto.dh.X25519.Curve.Fe.uncheckedSqrt	loc	crypto/25519/field.zig:406
-std.crypto.dh.X25519.Curve.Fe.uncheckedSqrt	sig	fn uncheckedSqrt(x2: Fe) Fe
-std.crypto.dh.X25519.Curve.Fe.sqrt	loc	crypto/25519/field.zig:418
-std.crypto.dh.X25519.Curve.Fe.sqrt	doc	Compute the square root of `x2`, returning `error.NotSquare` if `x2` was not a square
-std.crypto.dh.X25519.Curve.Fe.sqrt	sig	fn sqrt(x2: Fe) NotSquareError!Fe
-std.crypto.dh.X25519.Curve.scalar	loc	crypto/25519/curve25519.zig:13
-std.crypto.dh.X25519.Curve.scalar	doc	Field arithmetic mod the order of the main subgroup.
-std.crypto.dh.X25519.Curve.scalar.std	loc	crypto/25519/scalar.zig:1
-std.crypto.dh.X25519.Curve.scalar.crypto	loc	crypto/25519/scalar.zig:2
-std.crypto.dh.X25519.Curve.scalar.mem	loc	crypto/25519/scalar.zig:3
-std.crypto.dh.X25519.Curve.scalar.NonCanonicalError	loc	crypto/25519/scalar.zig:5
-std.crypto.dh.X25519.Curve.scalar.field_order	type	u256
-std.crypto.dh.X25519.Curve.scalar.field_order	loc	crypto/25519/scalar.zig:8
-std.crypto.dh.X25519.Curve.scalar.field_order	doc	The scalar field order.
-std.crypto.dh.X25519.Curve.scalar.field_order	value	7237005577332262213973186563042994240857116359379907606001950938285454250989
-std.crypto.dh.X25519.Curve.scalar.CompressedScalar	loc	crypto/25519/scalar.zig:11
-std.crypto.dh.X25519.Curve.scalar.CompressedScalar	doc	A compressed scalar
-std.crypto.dh.X25519.Curve.scalar.CompressedScalar	value	[32]u8
-std.crypto.dh.X25519.Curve.scalar.zero	loc	crypto/25519/scalar.zig:14
-std.crypto.dh.X25519.Curve.scalar.zero	doc	Zero
-std.crypto.dh.X25519.Curve.scalar.zero	value	[_]u8{0} ** 32
-std.crypto.dh.X25519.Curve.scalar.field_order_s	loc	crypto/25519/scalar.zig:16
-std.crypto.dh.X25519.Curve.scalar.field_order_s	value	s: { var s: [32]u8 = undefined; mem.writeInt(u256, &s, field_order, .little); break :s s; }
-std.crypto.dh.X25519.Curve.scalar.rejectNonCanonical	loc	crypto/25519/scalar.zig:23
-std.crypto.dh.X25519.Curve.scalar.rejectNonCanonical	doc	Reject a scalar whose encoding is not canonical.
-std.crypto.dh.X25519.Curve.scalar.rejectNonCanonical	sig	fn rejectNonCanonical(s: CompressedScalar) NonCanonicalError!void
-std.crypto.dh.X25519.Curve.scalar.reduce	loc	crypto/25519/scalar.zig:40
-std.crypto.dh.X25519.Curve.scalar.reduce	doc	Reduce a scalar to the field size.
-std.crypto.dh.X25519.Curve.scalar.reduce	sig	fn reduce(s: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.reduce64	loc	crypto/25519/scalar.zig:46
-std.crypto.dh.X25519.Curve.scalar.reduce64	doc	Reduce a 64-bytes scalar to the field size.
-std.crypto.dh.X25519.Curve.scalar.reduce64	sig	fn reduce64(s: [64]u8) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.clamp	loc	crypto/25519/scalar.zig:53
-std.crypto.dh.X25519.Curve.scalar.clamp	doc	Perform the X25519 "clamping" operation. The scalar is then guaranteed to be a multiple of the cofactor.
-std.crypto.dh.X25519.Curve.scalar.clamp	sig	fn clamp(s: *CompressedScalar) void
-std.crypto.dh.X25519.Curve.scalar.mul	loc	crypto/25519/scalar.zig:59
-std.crypto.dh.X25519.Curve.scalar.mul	doc	Return a*b (mod L)
-std.crypto.dh.X25519.Curve.scalar.mul	sig	fn mul(a: CompressedScalar, b: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.mulAdd	loc	crypto/25519/scalar.zig:64
-std.crypto.dh.X25519.Curve.scalar.mulAdd	doc	Return a*b+c (mod L)
-std.crypto.dh.X25519.Curve.scalar.mulAdd	sig	fn mulAdd(a: CompressedScalar, b: CompressedScalar, c: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.mul8	loc	crypto/25519/scalar.zig:69
-std.crypto.dh.X25519.Curve.scalar.mul8	doc	Return a*8 (mod L)
-std.crypto.dh.X25519.Curve.scalar.mul8	sig	fn mul8(s: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.add	loc	crypto/25519/scalar.zig:78
-std.crypto.dh.X25519.Curve.scalar.add	doc	Return a+b (mod L)
-std.crypto.dh.X25519.Curve.scalar.add	sig	fn add(a: CompressedScalar, b: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.neg	loc	crypto/25519/scalar.zig:83
-std.crypto.dh.X25519.Curve.scalar.neg	doc	Return -s (mod L)
-std.crypto.dh.X25519.Curve.scalar.neg	sig	fn neg(s: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.sub	loc	crypto/25519/scalar.zig:99
-std.crypto.dh.X25519.Curve.scalar.sub	doc	Return (a-b) (mod L)
-std.crypto.dh.X25519.Curve.scalar.sub	sig	fn sub(a: CompressedScalar, b: CompressedScalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.random	loc	crypto/25519/scalar.zig:104
-std.crypto.dh.X25519.Curve.scalar.random	doc	Return a random scalar < L
-std.crypto.dh.X25519.Curve.scalar.random	sig	fn random(io: std.Io) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.Scalar	loc	crypto/25519/scalar.zig:109
-std.crypto.dh.X25519.Curve.scalar.Scalar	doc	A scalar in unpacked representation
-std.crypto.dh.X25519.Curve.scalar.Scalar.Limbs	loc	crypto/25519/scalar.zig:110
-std.crypto.dh.X25519.Curve.scalar.Scalar.Limbs	value	[5]u64
-std.crypto.dh.X25519.Curve.scalar.Scalar.limbs	loc	crypto/25519/scalar.zig:111
-std.crypto.dh.X25519.Curve.scalar.Scalar.limbs	type	Limbs
-std.crypto.dh.X25519.Curve.scalar.Scalar.limbs	value	undefined
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes	loc	crypto/25519/scalar.zig:114
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes	doc	Unpack a 32-byte representation of a scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes	sig	fn fromBytes(bytes: CompressedScalar) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes64	loc	crypto/25519/scalar.zig:120
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes64	doc	Unpack a 64-byte representation of a scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.fromBytes64	sig	fn fromBytes64(bytes: [64]u8) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.toBytes	loc	crypto/25519/scalar.zig:126
-std.crypto.dh.X25519.Curve.scalar.Scalar.toBytes	doc	Pack a scalar into bytes
-std.crypto.dh.X25519.Curve.scalar.Scalar.toBytes	sig	fn toBytes(expanded: *const Scalar) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.isZero	loc	crypto/25519/scalar.zig:137
-std.crypto.dh.X25519.Curve.scalar.Scalar.isZero	doc	Return true if the scalar is zero
-std.crypto.dh.X25519.Curve.scalar.Scalar.isZero	sig	fn isZero(n: Scalar) bool
-std.crypto.dh.X25519.Curve.scalar.Scalar.add	loc	crypto/25519/scalar.zig:143
-std.crypto.dh.X25519.Curve.scalar.Scalar.add	doc	Return x+y (mod L)
-std.crypto.dh.X25519.Curve.scalar.Scalar.add	sig	fn add(x: Scalar, y: Scalar) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.mul	loc	crypto/25519/scalar.zig:200
-std.crypto.dh.X25519.Curve.scalar.Scalar.mul	doc	Return x*r (mod L)
-std.crypto.dh.X25519.Curve.scalar.Scalar.mul	sig	fn mul(x: Scalar, y: Scalar) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.sq	loc	crypto/25519/scalar.zig:512
-std.crypto.dh.X25519.Curve.scalar.Scalar.sq	doc	Return x^2 (mod L)
-std.crypto.dh.X25519.Curve.scalar.Scalar.sq	sig	fn sq(x: Scalar) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.sqn	loc	crypto/25519/scalar.zig:517
-std.crypto.dh.X25519.Curve.scalar.Scalar.sqn	doc	Square a scalar `n` times
-std.crypto.dh.X25519.Curve.scalar.Scalar.sqn	sig	fn sqn(x: Scalar, comptime n: comptime_int) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.sqn_mul	loc	crypto/25519/scalar.zig:527
-std.crypto.dh.X25519.Curve.scalar.Scalar.sqn_mul	doc	Square and multiply
-std.crypto.dh.X25519.Curve.scalar.Scalar.sqn_mul	sig	fn sqn_mul(x: Scalar, comptime n: comptime_int, y: Scalar) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.invert	loc	crypto/25519/scalar.zig:532
-std.crypto.dh.X25519.Curve.scalar.Scalar.invert	doc	Return the inverse of a scalar (mod L), or 0 if x=0.
-std.crypto.dh.X25519.Curve.scalar.Scalar.invert	sig	fn invert(x: Scalar) Scalar
-std.crypto.dh.X25519.Curve.scalar.Scalar.random	loc	crypto/25519/scalar.zig:563
-std.crypto.dh.X25519.Curve.scalar.Scalar.random	doc	Return a random scalar < L.
-std.crypto.dh.X25519.Curve.scalar.Scalar.random	sig	fn random(io: std.Io) Scalar
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble	loc	crypto/25519/scalar.zig:575
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.Limbs	loc	crypto/25519/scalar.zig:576
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.Limbs	value	[10]u64
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.limbs	loc	crypto/25519/scalar.zig:577
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.limbs	type	Limbs
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.limbs	value	undefined
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.fromBytes64	loc	crypto/25519/scalar.zig:579
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.fromBytes64	sig	fn fromBytes64(bytes: [64]u8) ScalarDouble
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.fromBytes32	loc	crypto/25519/scalar.zig:589
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.fromBytes32	sig	fn fromBytes32(bytes: CompressedScalar) ScalarDouble
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.toBytes	loc	crypto/25519/scalar.zig:600
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.toBytes	sig	fn toBytes(expanded_double: *ScalarDouble) CompressedScalar
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.reduce	loc	crypto/25519/scalar.zig:605
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.reduce	doc	Barrett reduction
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble.reduce	sig	fn reduce(expanded: *ScalarDouble, comptime limbs_count: usize) Scalar
-std.crypto.dh.X25519.Curve.scalar	example	test "scalar25519" {\n    const bytes: [32]u8 = .{ 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 255 };\n    var x = Scalar.fromBytes(bytes);\n    var y = x.toBytes();\n    try rejectNonCanonical(y);\n    var buf: [128]u8 = undefined;\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&y}), "1E979B917937F3DE71D18077F961F6CEFF01030405060708010203040506070F");\n\n    const reduced = reduce(field_order_s);\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&reduced}), "0000000000000000000000000000000000000000000000000000000000000000");\n}
-std.crypto.dh.X25519.Curve.scalar	example	test "non-canonical scalar25519" {\n    const too_targe: [32]u8 = .{ 0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };\n    try std.testing.expectError(error.NonCanonical, rejectNonCanonical(too_targe));\n}
-std.crypto.dh.X25519.Curve.scalar	example	test "mulAdd overflow check" {\n    const a: [32]u8 = [_]u8{0xff} ** 32;\n    const b: [32]u8 = [_]u8{0xff} ** 32;\n    const c: [32]u8 = [_]u8{0xff} ** 32;\n    const x = mulAdd(a, b, c);\n    var buf: [128]u8 = undefined;\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&x}), "D14DF91389432C25AD60FF9791B9FD1D67BEF517D273ECCE3D9A307C1B419903");\n}
-std.crypto.dh.X25519.Curve.scalar	example	test "scalar field inversion" {\n    const bytes: [32]u8 = .{ 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };\n    const x = Scalar.fromBytes(bytes);\n    const inv = x.invert();\n    const recovered_x = inv.invert();\n    try std.testing.expectEqualSlices(u8, &bytes, &recovered_x.toBytes());\n}
-std.crypto.dh.X25519.Curve.scalar	example	test "random scalar" {\n    const io = std.testing.io;\n    const s1 = random(io);\n    const s2 = random(io);\n    try std.testing.expect(!mem.eql(u8, &s1, &s2));\n}
-std.crypto.dh.X25519.Curve.scalar	example	test "64-bit reduction" {\n    const bytes = field_order_s ++ [_]u8{0} ** 32;\n    const x = Scalar.fromBytes64(bytes);\n    try std.testing.expect(x.isZero());\n}
-std.crypto.dh.X25519.Curve.x	loc	crypto/25519/curve25519.zig:15
-std.crypto.dh.X25519.Curve.x	type	Fe
-std.crypto.dh.X25519.Curve.fromBytes	loc	crypto/25519/curve25519.zig:18
-std.crypto.dh.X25519.Curve.fromBytes	doc	Decode a Curve25519 point from its compressed (X) coordinates.
-std.crypto.dh.X25519.Curve.fromBytes	sig	fn fromBytes(s: [32]u8) Curve25519
-std.crypto.dh.X25519.Curve.toBytes	loc	crypto/25519/curve25519.zig:23
-std.crypto.dh.X25519.Curve.toBytes	doc	Encode a Curve25519 point.
-std.crypto.dh.X25519.Curve.toBytes	sig	fn toBytes(p: Curve25519) [32]u8
-std.crypto.dh.X25519.Curve.basePoint	loc	crypto/25519/curve25519.zig:28
-std.crypto.dh.X25519.Curve.basePoint	doc	The Curve25519 base point.
-std.crypto.dh.X25519.Curve.basePoint	value	Curve25519{ .x = Fe.curve25519BasePoint }
-std.crypto.dh.X25519.Curve.rejectNonCanonical	loc	crypto/25519/curve25519.zig:31
-std.crypto.dh.X25519.Curve.rejectNonCanonical	doc	Check that the encoding of a Curve25519 point is canonical.
-std.crypto.dh.X25519.Curve.rejectNonCanonical	sig	fn rejectNonCanonical(s: [32]u8) NonCanonicalError!void
-std.crypto.dh.X25519.Curve.rejectIdentity	loc	crypto/25519/curve25519.zig:36
-std.crypto.dh.X25519.Curve.rejectIdentity	doc	Reject the neutral element.
-std.crypto.dh.X25519.Curve.rejectIdentity	sig	fn rejectIdentity(p: Curve25519) IdentityElementError!void
-std.crypto.dh.X25519.Curve.clearCofactor	loc	crypto/25519/curve25519.zig:43
-std.crypto.dh.X25519.Curve.clearCofactor	doc	Multiply a point by the cofactor, returning WeakPublicKey if the element is in a small-order group.
-std.crypto.dh.X25519.Curve.clearCofactor	sig	fn clearCofactor(p: Curve25519) WeakPublicKeyError!Curve25519
-std.crypto.dh.X25519.Curve.ladder	loc	crypto/25519/curve25519.zig:48
-std.crypto.dh.X25519.Curve.ladder	sig	fn ladder(p: Curve25519, s: [32]u8, comptime bits: usize) IdentityElementError!Curve25519
-std.crypto.dh.X25519.Curve.clampedMul	loc	crypto/25519/curve25519.zig:89
-std.crypto.dh.X25519.Curve.clampedMul	doc	Multiply a Curve25519 point by a scalar after "clamping" it. Clamping forces the scalar to be a multiple of the cofactor in order to prevent small subgroups attacks. This is the standard way to use Curve25519 for a DH operation. Return error.IdentityElement if the resulting point is the identity element.
-std.crypto.dh.X25519.Curve.clampedMul	sig	fn clampedMul(p: Curve25519, s: [32]u8) IdentityElementError!Curve25519
-std.crypto.dh.X25519.Curve.mul	loc	crypto/25519/curve25519.zig:99
-std.crypto.dh.X25519.Curve.mul	doc	Multiply a Curve25519 point by a scalar without clamping it. Return error.IdentityElement if the resulting point is the identity element or error.WeakPublicKey if the public key is a low-order point.
-std.crypto.dh.X25519.Curve.mul	sig	fn mul(p: Curve25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Curve25519
-std.crypto.dh.X25519.Curve.elligator2	loc	crypto/25519/curve25519.zig:105
-std.crypto.dh.X25519.Curve.elligator2	doc	Elligator2 map for Curve25519.
-std.crypto.dh.X25519.Curve.elligator2	sig	fn elligator2(r: Fe) Curve25519
-std.crypto.dh.X25519.Curve.fromEdwards25519	loc	crypto/25519/curve25519.zig:118
-std.crypto.dh.X25519.Curve.fromEdwards25519	doc	Compute the Curve25519 equivalent to an Edwards25519 point. Note that the function doesn't check that the input point is on the prime order group, e.g. that it is an Ed25519 public key for which an Ed25519 secret key exists. If this is required, for example for compatibility with libsodium's strict validation policy, the caller can call the `rejectUnexpectedSubgroup` function on the input point before calling this function.
-std.crypto.dh.X25519.Curve.fromEdwards25519	sig	fn fromEdwards25519(p: crypto.ecc.Edwards25519) IdentityElementError!Curve25519
+std.crypto.dh.X25519.Curve	loc	crypto/25519/x25519.zig:15
+std.crypto.dh.X25519.Curve	doc	The underlying elliptic curve.
 std.crypto.dh.X25519.secret_length	loc	crypto/25519/x25519.zig:17
 std.crypto.dh.X25519.secret_length	doc	Length (in bytes) of a secret key.
 std.crypto.dh.X25519.secret_length	value	32
@@ -65584,7 +65316,276 @@ std.crypto.kem.ml_kem.MLKem1024	loc	crypto/ml_kem.zig:190
 std.crypto.kem.ml_kem.MLKem1024	value	Kyber(.{ .name = "ML-KEM-1024", .ml_kem = true, .k = 4, .eta1 = 2, .du = 11, .dv = 5, })
 std.crypto.ecc	loc	crypto.zig:125
 std.crypto.ecc	doc	Elliptic-curve arithmetic.
-std.crypto.ecc.Curve25519	loc	crypto.zig:126
+std.crypto.ecc.Curve25519	loc	crypto/25519/curve25519.zig:9
+std.crypto.ecc.Curve25519	doc	Group operations over Curve25519.
+std.crypto.ecc.Curve25519.Fe	loc	crypto/25519/field.zig:14
+std.crypto.ecc.Curve25519.Fe	doc	The underlying prime field.
+std.crypto.ecc.Curve25519.Fe.limbs	loc	crypto/25519/field.zig:15
+std.crypto.ecc.Curve25519.Fe.limbs	type	[5]u64
+std.crypto.ecc.Curve25519.Fe.MASK51	type	u64
+std.crypto.ecc.Curve25519.Fe.MASK51	loc	crypto/25519/field.zig:17
+std.crypto.ecc.Curve25519.Fe.MASK51	value	0x7ffffffffffff
+std.crypto.ecc.Curve25519.Fe.zero	loc	crypto/25519/field.zig:20
+std.crypto.ecc.Curve25519.Fe.zero	doc	0
+std.crypto.ecc.Curve25519.Fe.zero	value	Fe{ .limbs = .{ 0, 0, 0, 0, 0 } }
+std.crypto.ecc.Curve25519.Fe.one	loc	crypto/25519/field.zig:23
+std.crypto.ecc.Curve25519.Fe.one	doc	1
+std.crypto.ecc.Curve25519.Fe.one	value	Fe{ .limbs = .{ 1, 0, 0, 0, 0 } }
+std.crypto.ecc.Curve25519.Fe.sqrtm1	loc	crypto/25519/field.zig:26
+std.crypto.ecc.Curve25519.Fe.sqrtm1	doc	sqrt(-1)
+std.crypto.ecc.Curve25519.Fe.sqrtm1	value	Fe{ .limbs = .{ 1718705420411056, 234908883556509, 2233514472574048, 2117202627021982, 765476049583133 } }
+std.crypto.ecc.Curve25519.Fe.curve25519BasePoint	loc	crypto/25519/field.zig:29
+std.crypto.ecc.Curve25519.Fe.curve25519BasePoint	doc	The Curve25519 base point
+std.crypto.ecc.Curve25519.Fe.curve25519BasePoint	value	Fe{ .limbs = .{ 9, 0, 0, 0, 0 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519d	loc	crypto/25519/field.zig:32
+std.crypto.ecc.Curve25519.Fe.edwards25519d	doc	Edwards25519 d = 37095705934669439343138083508754565189542113879843219016388785533085940283555
+std.crypto.ecc.Curve25519.Fe.edwards25519d	value	Fe{ .limbs = .{ 929955233495203, 466365720129213, 1662059464998953, 2033849074728123, 1442794654840575 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519d2	loc	crypto/25519/field.zig:35
+std.crypto.ecc.Curve25519.Fe.edwards25519d2	doc	Edwards25519 2d
+std.crypto.ecc.Curve25519.Fe.edwards25519d2	value	Fe{ .limbs = .{ 1859910466990425, 932731440258426, 1072319116312658, 1815898335770999, 633789495995903 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtamd	loc	crypto/25519/field.zig:38
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtamd	doc	Edwards25519 1/sqrt(a-d)
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtamd	value	Fe{ .limbs = .{ 278908739862762, 821645201101625, 8113234426968, 1777959178193151, 2118520810568447 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519eonemsqd	loc	crypto/25519/field.zig:41
+std.crypto.ecc.Curve25519.Fe.edwards25519eonemsqd	doc	Edwards25519 1-d^2
+std.crypto.ecc.Curve25519.Fe.edwards25519eonemsqd	value	Fe{ .limbs = .{ 1136626929484150, 1998550399581263, 496427632559748, 118527312129759, 45110755273534 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519sqdmone	loc	crypto/25519/field.zig:44
+std.crypto.ecc.Curve25519.Fe.edwards25519sqdmone	doc	Edwards25519 (d-1)^2
+std.crypto.ecc.Curve25519.Fe.edwards25519sqdmone	value	Fe{ .limbs = .{ 1507062230895904, 1572317787530805, 683053064812840, 317374165784489, 1572899562415810 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtadm1	loc	crypto/25519/field.zig:47
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtadm1	doc	Edwards25519 sqrt(ad-1) with a = -1 (mod p)
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtadm1	value	Fe{ .limbs = .{ 2241493124984347, 425987919032274, 2207028919301688, 1220490630685848, 974799131293748 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519a_32	type	u32
+std.crypto.ecc.Curve25519.Fe.edwards25519a_32	loc	crypto/25519/field.zig:50
+std.crypto.ecc.Curve25519.Fe.edwards25519a_32	doc	Edwards25519 A, as a single limb
+std.crypto.ecc.Curve25519.Fe.edwards25519a_32	value	486662
+std.crypto.ecc.Curve25519.Fe.edwards25519a	loc	crypto/25519/field.zig:53
+std.crypto.ecc.Curve25519.Fe.edwards25519a	doc	Edwards25519 A
+std.crypto.ecc.Curve25519.Fe.edwards25519a	value	Fe{ .limbs = .{ @as(u64, edwards25519a_32), 0, 0, 0, 0 } }
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtam2	loc	crypto/25519/field.zig:56
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtam2	doc	Edwards25519 sqrt(A-2)
+std.crypto.ecc.Curve25519.Fe.edwards25519sqrtam2	value	Fe{ .limbs = .{ 1693982333959686, 608509411481997, 2235573344831311, 947681270984193, 266558006233600 } }
+std.crypto.ecc.Curve25519.Fe.isZero	loc	crypto/25519/field.zig:59
+std.crypto.ecc.Curve25519.Fe.isZero	doc	Return true if the field element is zero
+std.crypto.ecc.Curve25519.Fe.isZero	sig	fn isZero(fe: Fe) bool
+std.crypto.ecc.Curve25519.Fe.equivalent	loc	crypto/25519/field.zig:67
+std.crypto.ecc.Curve25519.Fe.equivalent	doc	Return true if both field elements are equivalent
+std.crypto.ecc.Curve25519.Fe.equivalent	sig	fn equivalent(a: Fe, b: Fe) bool
+std.crypto.ecc.Curve25519.Fe.fromBytes	loc	crypto/25519/field.zig:72
+std.crypto.ecc.Curve25519.Fe.fromBytes	doc	Unpack a field element
+std.crypto.ecc.Curve25519.Fe.fromBytes	sig	fn fromBytes(s: [32]u8) Fe
+std.crypto.ecc.Curve25519.Fe.toBytes	loc	crypto/25519/field.zig:84
+std.crypto.ecc.Curve25519.Fe.toBytes	doc	Pack a field element
+std.crypto.ecc.Curve25519.Fe.toBytes	sig	fn toBytes(fe: Fe) [32]u8
+std.crypto.ecc.Curve25519.Fe.fromBytes64	loc	crypto/25519/field.zig:97
+std.crypto.ecc.Curve25519.Fe.fromBytes64	doc	Map a 64 bytes big endian string into a field element
+std.crypto.ecc.Curve25519.Fe.fromBytes64	sig	fn fromBytes64(s: [64]u8) Fe
+std.crypto.ecc.Curve25519.Fe.rejectNonCanonical	loc	crypto/25519/field.zig:119
+std.crypto.ecc.Curve25519.Fe.rejectNonCanonical	doc	Reject non-canonical encodings of an element, possibly ignoring the top bit
+std.crypto.ecc.Curve25519.Fe.rejectNonCanonical	sig	fn rejectNonCanonical(s: [32]u8, comptime ignore_extra_bit: bool) NonCanonicalError!void
+std.crypto.ecc.Curve25519.Fe.reduce	loc	crypto/25519/field.zig:134
+std.crypto.ecc.Curve25519.Fe.reduce	doc	Reduce a field element mod 2^255-19
+std.crypto.ecc.Curve25519.Fe.reduce	sig	fn reduce(fe: *Fe) void
+std.crypto.ecc.Curve25519.Fe.add	loc	crypto/25519/field.zig:171
+std.crypto.ecc.Curve25519.Fe.add	doc	Add a field element
+std.crypto.ecc.Curve25519.Fe.add	sig	fn add(a: Fe, b: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.sub	loc	crypto/25519/field.zig:181
+std.crypto.ecc.Curve25519.Fe.sub	doc	Subtract a field element
+std.crypto.ecc.Curve25519.Fe.sub	sig	fn sub(a: Fe, b: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.neg	loc	crypto/25519/field.zig:200
+std.crypto.ecc.Curve25519.Fe.neg	doc	Negate a field element
+std.crypto.ecc.Curve25519.Fe.neg	sig	fn neg(a: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.isNegative	loc	crypto/25519/field.zig:205
+std.crypto.ecc.Curve25519.Fe.isNegative	doc	Return true if a field element is negative
+std.crypto.ecc.Curve25519.Fe.isNegative	sig	fn isNegative(a: Fe) bool
+std.crypto.ecc.Curve25519.Fe.cMov	loc	crypto/25519/field.zig:210
+std.crypto.ecc.Curve25519.Fe.cMov	doc	Conditonally replace a field element with `a` if `c` is positive
+std.crypto.ecc.Curve25519.Fe.cMov	sig	fn cMov(fe: *Fe, a: Fe, c: u64) void
+std.crypto.ecc.Curve25519.Fe.cSwap2	loc	crypto/25519/field.zig:228
+std.crypto.ecc.Curve25519.Fe.cSwap2	doc	Conditionally swap two pairs of field elements if `c` is positive
+std.crypto.ecc.Curve25519.Fe.cSwap2	sig	fn cSwap2(a0: *Fe, b0: *Fe, a1: *Fe, b1: *Fe, c: u64) void
+std.crypto.ecc.Curve25519.Fe._carry128	loc	crypto/25519/field.zig:251
+std.crypto.ecc.Curve25519.Fe._carry128	sig	fn _carry128(r: *[5]u128) Fe
+std.crypto.ecc.Curve25519.Fe.mul	loc	crypto/25519/field.zig:272
+std.crypto.ecc.Curve25519.Fe.mul	doc	Multiply two field elements
+std.crypto.ecc.Curve25519.Fe.mul	sig	fn mul(a: Fe, b: Fe) callconv(bloaty_inline) Fe
+std.crypto.ecc.Curve25519.Fe._sq	loc	crypto/25519/field.zig:295
+std.crypto.ecc.Curve25519.Fe._sq	sig	fn _sq(a: Fe, comptime double: bool) Fe
+std.crypto.ecc.Curve25519.Fe.sq	loc	crypto/25519/field.zig:324
+std.crypto.ecc.Curve25519.Fe.sq	doc	Square a field element
+std.crypto.ecc.Curve25519.Fe.sq	sig	fn sq(a: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.sq2	loc	crypto/25519/field.zig:329
+std.crypto.ecc.Curve25519.Fe.sq2	doc	Square and double a field element
+std.crypto.ecc.Curve25519.Fe.sq2	sig	fn sq2(a: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.mul32	loc	crypto/25519/field.zig:334
+std.crypto.ecc.Curve25519.Fe.mul32	doc	Multiply a field element with a small (32-bit) integer
+std.crypto.ecc.Curve25519.Fe.mul32	sig	fn mul32(a: Fe, comptime n: u32) Fe
+std.crypto.ecc.Curve25519.Fe.sqn	loc	crypto/25519/field.zig:349
+std.crypto.ecc.Curve25519.Fe.sqn	doc	Square a field element `n` times
+std.crypto.ecc.Curve25519.Fe.sqn	sig	fn sqn(a: Fe, n: usize) Fe
+std.crypto.ecc.Curve25519.Fe.invert	loc	crypto/25519/field.zig:359
+std.crypto.ecc.Curve25519.Fe.invert	doc	Return the inverse of a field element, or 0 if a=0.
+std.crypto.ecc.Curve25519.Fe.invert	sig	fn invert(a: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.pow2523	loc	crypto/25519/field.zig:374
+std.crypto.ecc.Curve25519.Fe.pow2523	doc	Return a^((p-5)/8) = a^(2^252-3) Used to compute square roots since we have p=5 (mod 8); see Cohen and Frey.
+std.crypto.ecc.Curve25519.Fe.pow2523	sig	fn pow2523(a: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.abs	loc	crypto/25519/field.zig:386
+std.crypto.ecc.Curve25519.Fe.abs	doc	Return the absolute value of a field element
+std.crypto.ecc.Curve25519.Fe.abs	sig	fn abs(a: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.isSquare	loc	crypto/25519/field.zig:393
+std.crypto.ecc.Curve25519.Fe.isSquare	doc	Return true if the field element is a square
+std.crypto.ecc.Curve25519.Fe.isSquare	sig	fn isSquare(a: Fe) bool
+std.crypto.ecc.Curve25519.Fe.uncheckedSqrt	loc	crypto/25519/field.zig:406
+std.crypto.ecc.Curve25519.Fe.uncheckedSqrt	sig	fn uncheckedSqrt(x2: Fe) Fe
+std.crypto.ecc.Curve25519.Fe.sqrt	loc	crypto/25519/field.zig:418
+std.crypto.ecc.Curve25519.Fe.sqrt	doc	Compute the square root of `x2`, returning `error.NotSquare` if `x2` was not a square
+std.crypto.ecc.Curve25519.Fe.sqrt	sig	fn sqrt(x2: Fe) NotSquareError!Fe
+std.crypto.ecc.Curve25519.scalar	loc	crypto/25519/curve25519.zig:13
+std.crypto.ecc.Curve25519.scalar	doc	Field arithmetic mod the order of the main subgroup.
+std.crypto.ecc.Curve25519.scalar.std	loc	crypto/25519/scalar.zig:1
+std.crypto.ecc.Curve25519.scalar.crypto	loc	crypto/25519/scalar.zig:2
+std.crypto.ecc.Curve25519.scalar.mem	loc	crypto/25519/scalar.zig:3
+std.crypto.ecc.Curve25519.scalar.NonCanonicalError	loc	crypto/25519/scalar.zig:5
+std.crypto.ecc.Curve25519.scalar.field_order	type	u256
+std.crypto.ecc.Curve25519.scalar.field_order	loc	crypto/25519/scalar.zig:8
+std.crypto.ecc.Curve25519.scalar.field_order	doc	The scalar field order.
+std.crypto.ecc.Curve25519.scalar.field_order	value	7237005577332262213973186563042994240857116359379907606001950938285454250989
+std.crypto.ecc.Curve25519.scalar.CompressedScalar	loc	crypto/25519/scalar.zig:11
+std.crypto.ecc.Curve25519.scalar.CompressedScalar	doc	A compressed scalar
+std.crypto.ecc.Curve25519.scalar.CompressedScalar	value	[32]u8
+std.crypto.ecc.Curve25519.scalar.zero	loc	crypto/25519/scalar.zig:14
+std.crypto.ecc.Curve25519.scalar.zero	doc	Zero
+std.crypto.ecc.Curve25519.scalar.zero	value	[_]u8{0} ** 32
+std.crypto.ecc.Curve25519.scalar.field_order_s	loc	crypto/25519/scalar.zig:16
+std.crypto.ecc.Curve25519.scalar.field_order_s	value	s: { var s: [32]u8 = undefined; mem.writeInt(u256, &s, field_order, .little); break :s s; }
+std.crypto.ecc.Curve25519.scalar.rejectNonCanonical	loc	crypto/25519/scalar.zig:23
+std.crypto.ecc.Curve25519.scalar.rejectNonCanonical	doc	Reject a scalar whose encoding is not canonical.
+std.crypto.ecc.Curve25519.scalar.rejectNonCanonical	sig	fn rejectNonCanonical(s: CompressedScalar) NonCanonicalError!void
+std.crypto.ecc.Curve25519.scalar.reduce	loc	crypto/25519/scalar.zig:40
+std.crypto.ecc.Curve25519.scalar.reduce	doc	Reduce a scalar to the field size.
+std.crypto.ecc.Curve25519.scalar.reduce	sig	fn reduce(s: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.reduce64	loc	crypto/25519/scalar.zig:46
+std.crypto.ecc.Curve25519.scalar.reduce64	doc	Reduce a 64-bytes scalar to the field size.
+std.crypto.ecc.Curve25519.scalar.reduce64	sig	fn reduce64(s: [64]u8) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.clamp	loc	crypto/25519/scalar.zig:53
+std.crypto.ecc.Curve25519.scalar.clamp	doc	Perform the X25519 "clamping" operation. The scalar is then guaranteed to be a multiple of the cofactor.
+std.crypto.ecc.Curve25519.scalar.clamp	sig	fn clamp(s: *CompressedScalar) void
+std.crypto.ecc.Curve25519.scalar.mul	loc	crypto/25519/scalar.zig:59
+std.crypto.ecc.Curve25519.scalar.mul	doc	Return a*b (mod L)
+std.crypto.ecc.Curve25519.scalar.mul	sig	fn mul(a: CompressedScalar, b: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.mulAdd	loc	crypto/25519/scalar.zig:64
+std.crypto.ecc.Curve25519.scalar.mulAdd	doc	Return a*b+c (mod L)
+std.crypto.ecc.Curve25519.scalar.mulAdd	sig	fn mulAdd(a: CompressedScalar, b: CompressedScalar, c: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.mul8	loc	crypto/25519/scalar.zig:69
+std.crypto.ecc.Curve25519.scalar.mul8	doc	Return a*8 (mod L)
+std.crypto.ecc.Curve25519.scalar.mul8	sig	fn mul8(s: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.add	loc	crypto/25519/scalar.zig:78
+std.crypto.ecc.Curve25519.scalar.add	doc	Return a+b (mod L)
+std.crypto.ecc.Curve25519.scalar.add	sig	fn add(a: CompressedScalar, b: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.neg	loc	crypto/25519/scalar.zig:83
+std.crypto.ecc.Curve25519.scalar.neg	doc	Return -s (mod L)
+std.crypto.ecc.Curve25519.scalar.neg	sig	fn neg(s: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.sub	loc	crypto/25519/scalar.zig:99
+std.crypto.ecc.Curve25519.scalar.sub	doc	Return (a-b) (mod L)
+std.crypto.ecc.Curve25519.scalar.sub	sig	fn sub(a: CompressedScalar, b: CompressedScalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.random	loc	crypto/25519/scalar.zig:104
+std.crypto.ecc.Curve25519.scalar.random	doc	Return a random scalar < L
+std.crypto.ecc.Curve25519.scalar.random	sig	fn random(io: std.Io) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.Scalar	loc	crypto/25519/scalar.zig:109
+std.crypto.ecc.Curve25519.scalar.Scalar	doc	A scalar in unpacked representation
+std.crypto.ecc.Curve25519.scalar.Scalar.Limbs	loc	crypto/25519/scalar.zig:110
+std.crypto.ecc.Curve25519.scalar.Scalar.Limbs	value	[5]u64
+std.crypto.ecc.Curve25519.scalar.Scalar.limbs	loc	crypto/25519/scalar.zig:111
+std.crypto.ecc.Curve25519.scalar.Scalar.limbs	type	Limbs
+std.crypto.ecc.Curve25519.scalar.Scalar.limbs	value	undefined
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes	loc	crypto/25519/scalar.zig:114
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes	doc	Unpack a 32-byte representation of a scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes	sig	fn fromBytes(bytes: CompressedScalar) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes64	loc	crypto/25519/scalar.zig:120
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes64	doc	Unpack a 64-byte representation of a scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.fromBytes64	sig	fn fromBytes64(bytes: [64]u8) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.toBytes	loc	crypto/25519/scalar.zig:126
+std.crypto.ecc.Curve25519.scalar.Scalar.toBytes	doc	Pack a scalar into bytes
+std.crypto.ecc.Curve25519.scalar.Scalar.toBytes	sig	fn toBytes(expanded: *const Scalar) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.Scalar.isZero	loc	crypto/25519/scalar.zig:137
+std.crypto.ecc.Curve25519.scalar.Scalar.isZero	doc	Return true if the scalar is zero
+std.crypto.ecc.Curve25519.scalar.Scalar.isZero	sig	fn isZero(n: Scalar) bool
+std.crypto.ecc.Curve25519.scalar.Scalar.add	loc	crypto/25519/scalar.zig:143
+std.crypto.ecc.Curve25519.scalar.Scalar.add	doc	Return x+y (mod L)
+std.crypto.ecc.Curve25519.scalar.Scalar.add	sig	fn add(x: Scalar, y: Scalar) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.mul	loc	crypto/25519/scalar.zig:200
+std.crypto.ecc.Curve25519.scalar.Scalar.mul	doc	Return x*r (mod L)
+std.crypto.ecc.Curve25519.scalar.Scalar.mul	sig	fn mul(x: Scalar, y: Scalar) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.sq	loc	crypto/25519/scalar.zig:512
+std.crypto.ecc.Curve25519.scalar.Scalar.sq	doc	Return x^2 (mod L)
+std.crypto.ecc.Curve25519.scalar.Scalar.sq	sig	fn sq(x: Scalar) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.sqn	loc	crypto/25519/scalar.zig:517
+std.crypto.ecc.Curve25519.scalar.Scalar.sqn	doc	Square a scalar `n` times
+std.crypto.ecc.Curve25519.scalar.Scalar.sqn	sig	fn sqn(x: Scalar, comptime n: comptime_int) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.sqn_mul	loc	crypto/25519/scalar.zig:527
+std.crypto.ecc.Curve25519.scalar.Scalar.sqn_mul	doc	Square and multiply
+std.crypto.ecc.Curve25519.scalar.Scalar.sqn_mul	sig	fn sqn_mul(x: Scalar, comptime n: comptime_int, y: Scalar) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.invert	loc	crypto/25519/scalar.zig:532
+std.crypto.ecc.Curve25519.scalar.Scalar.invert	doc	Return the inverse of a scalar (mod L), or 0 if x=0.
+std.crypto.ecc.Curve25519.scalar.Scalar.invert	sig	fn invert(x: Scalar) Scalar
+std.crypto.ecc.Curve25519.scalar.Scalar.random	loc	crypto/25519/scalar.zig:563
+std.crypto.ecc.Curve25519.scalar.Scalar.random	doc	Return a random scalar < L.
+std.crypto.ecc.Curve25519.scalar.Scalar.random	sig	fn random(io: std.Io) Scalar
+std.crypto.ecc.Curve25519.scalar.ScalarDouble	loc	crypto/25519/scalar.zig:575
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.Limbs	loc	crypto/25519/scalar.zig:576
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.Limbs	value	[10]u64
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.limbs	loc	crypto/25519/scalar.zig:577
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.limbs	type	Limbs
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.limbs	value	undefined
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.fromBytes64	loc	crypto/25519/scalar.zig:579
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.fromBytes64	sig	fn fromBytes64(bytes: [64]u8) ScalarDouble
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.fromBytes32	loc	crypto/25519/scalar.zig:589
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.fromBytes32	sig	fn fromBytes32(bytes: CompressedScalar) ScalarDouble
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.toBytes	loc	crypto/25519/scalar.zig:600
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.toBytes	sig	fn toBytes(expanded_double: *ScalarDouble) CompressedScalar
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.reduce	loc	crypto/25519/scalar.zig:605
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.reduce	doc	Barrett reduction
+std.crypto.ecc.Curve25519.scalar.ScalarDouble.reduce	sig	fn reduce(expanded: *ScalarDouble, comptime limbs_count: usize) Scalar
+std.crypto.ecc.Curve25519.scalar	example	test "scalar25519" {\n    const bytes: [32]u8 = .{ 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 255 };\n    var x = Scalar.fromBytes(bytes);\n    var y = x.toBytes();\n    try rejectNonCanonical(y);\n    var buf: [128]u8 = undefined;\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&y}), "1E979B917937F3DE71D18077F961F6CEFF01030405060708010203040506070F");\n\n    const reduced = reduce(field_order_s);\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&reduced}), "0000000000000000000000000000000000000000000000000000000000000000");\n}
+std.crypto.ecc.Curve25519.scalar	example	test "non-canonical scalar25519" {\n    const too_targe: [32]u8 = .{ 0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };\n    try std.testing.expectError(error.NonCanonical, rejectNonCanonical(too_targe));\n}
+std.crypto.ecc.Curve25519.scalar	example	test "mulAdd overflow check" {\n    const a: [32]u8 = [_]u8{0xff} ** 32;\n    const b: [32]u8 = [_]u8{0xff} ** 32;\n    const c: [32]u8 = [_]u8{0xff} ** 32;\n    const x = mulAdd(a, b, c);\n    var buf: [128]u8 = undefined;\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&x}), "D14DF91389432C25AD60FF9791B9FD1D67BEF517D273ECCE3D9A307C1B419903");\n}
+std.crypto.ecc.Curve25519.scalar	example	test "scalar field inversion" {\n    const bytes: [32]u8 = .{ 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };\n    const x = Scalar.fromBytes(bytes);\n    const inv = x.invert();\n    const recovered_x = inv.invert();\n    try std.testing.expectEqualSlices(u8, &bytes, &recovered_x.toBytes());\n}
+std.crypto.ecc.Curve25519.scalar	example	test "random scalar" {\n    const io = std.testing.io;\n    const s1 = random(io);\n    const s2 = random(io);\n    try std.testing.expect(!mem.eql(u8, &s1, &s2));\n}
+std.crypto.ecc.Curve25519.scalar	example	test "64-bit reduction" {\n    const bytes = field_order_s ++ [_]u8{0} ** 32;\n    const x = Scalar.fromBytes64(bytes);\n    try std.testing.expect(x.isZero());\n}
+std.crypto.ecc.Curve25519.x	loc	crypto/25519/curve25519.zig:15
+std.crypto.ecc.Curve25519.x	type	Fe
+std.crypto.ecc.Curve25519.fromBytes	loc	crypto/25519/curve25519.zig:18
+std.crypto.ecc.Curve25519.fromBytes	doc	Decode a Curve25519 point from its compressed (X) coordinates.
+std.crypto.ecc.Curve25519.fromBytes	sig	fn fromBytes(s: [32]u8) Curve25519
+std.crypto.ecc.Curve25519.toBytes	loc	crypto/25519/curve25519.zig:23
+std.crypto.ecc.Curve25519.toBytes	doc	Encode a Curve25519 point.
+std.crypto.ecc.Curve25519.toBytes	sig	fn toBytes(p: Curve25519) [32]u8
+std.crypto.ecc.Curve25519.basePoint	loc	crypto/25519/curve25519.zig:28
+std.crypto.ecc.Curve25519.basePoint	doc	The Curve25519 base point.
+std.crypto.ecc.Curve25519.basePoint	value	Curve25519{ .x = Fe.curve25519BasePoint }
+std.crypto.ecc.Curve25519.rejectNonCanonical	loc	crypto/25519/curve25519.zig:31
+std.crypto.ecc.Curve25519.rejectNonCanonical	doc	Check that the encoding of a Curve25519 point is canonical.
+std.crypto.ecc.Curve25519.rejectNonCanonical	sig	fn rejectNonCanonical(s: [32]u8) NonCanonicalError!void
+std.crypto.ecc.Curve25519.rejectIdentity	loc	crypto/25519/curve25519.zig:36
+std.crypto.ecc.Curve25519.rejectIdentity	doc	Reject the neutral element.
+std.crypto.ecc.Curve25519.rejectIdentity	sig	fn rejectIdentity(p: Curve25519) IdentityElementError!void
+std.crypto.ecc.Curve25519.clearCofactor	loc	crypto/25519/curve25519.zig:43
+std.crypto.ecc.Curve25519.clearCofactor	doc	Multiply a point by the cofactor, returning WeakPublicKey if the element is in a small-order group.
+std.crypto.ecc.Curve25519.clearCofactor	sig	fn clearCofactor(p: Curve25519) WeakPublicKeyError!Curve25519
+std.crypto.ecc.Curve25519.ladder	loc	crypto/25519/curve25519.zig:48
+std.crypto.ecc.Curve25519.ladder	sig	fn ladder(p: Curve25519, s: [32]u8, comptime bits: usize) IdentityElementError!Curve25519
+std.crypto.ecc.Curve25519.clampedMul	loc	crypto/25519/curve25519.zig:89
+std.crypto.ecc.Curve25519.clampedMul	doc	Multiply a Curve25519 point by a scalar after "clamping" it. Clamping forces the scalar to be a multiple of the cofactor in order to prevent small subgroups attacks. This is the standard way to use Curve25519 for a DH operation. Return error.IdentityElement if the resulting point is the identity element.
+std.crypto.ecc.Curve25519.clampedMul	sig	fn clampedMul(p: Curve25519, s: [32]u8) IdentityElementError!Curve25519
+std.crypto.ecc.Curve25519.mul	loc	crypto/25519/curve25519.zig:99
+std.crypto.ecc.Curve25519.mul	doc	Multiply a Curve25519 point by a scalar without clamping it. Return error.IdentityElement if the resulting point is the identity element or error.WeakPublicKey if the public key is a low-order point.
+std.crypto.ecc.Curve25519.mul	sig	fn mul(p: Curve25519, s: [32]u8) (IdentityElementError || WeakPublicKeyError)!Curve25519
+std.crypto.ecc.Curve25519.elligator2	loc	crypto/25519/curve25519.zig:105
+std.crypto.ecc.Curve25519.elligator2	doc	Elligator2 map for Curve25519.
+std.crypto.ecc.Curve25519.elligator2	sig	fn elligator2(r: Fe) Curve25519
+std.crypto.ecc.Curve25519.fromEdwards25519	loc	crypto/25519/curve25519.zig:118
+std.crypto.ecc.Curve25519.fromEdwards25519	doc	Compute the Curve25519 equivalent to an Edwards25519 point. Note that the function doesn't check that the input point is on the prime order group, e.g. that it is an Ed25519 public key for which an Ed25519 secret key exists. If this is required, for example for compatibility with libsodium's strict validation policy, the caller can call the `rejectUnexpectedSubgroup` function on the input point before calling this function.
+std.crypto.ecc.Curve25519.fromEdwards25519	sig	fn fromEdwards25519(p: crypto.ecc.Edwards25519) IdentityElementError!Curve25519
 std.crypto.ecc.Edwards25519	loc	crypto/25519/edwards25519.zig:15
 std.crypto.ecc.Edwards25519	doc	Group operations over Edwards25519.
 std.crypto.ecc.Edwards25519.Fe	loc	crypto/25519/edwards25519.zig:17
@@ -89617,10 +89618,11 @@ std.math.nextAfter	sig	fn nextAfter(comptime T: type, x: T, y: T) T
 std.math.signbit	loc	math/signbit.zig:6
 std.math.signbit	doc	Returns whether x is negative or negative 0.
 std.math.signbit	sig	fn signbit(x: anytype) bool
-std.math.scalbn	loc	math/ldexp.zig:8
-std.math.scalbn	doc	Returns x * 2^n.
-std.math.scalbn	sig	fn ldexp(x: anytype, n: i32) @TypeOf(x)
-std.math.ldexp	loc	math.zig:216
+std.math.scalbn	loc	math/scalbn.zig:7
+std.math.scalbn	doc	Returns a * FLT_RADIX ^ exp. Zig only supports binary base IEEE-754 floats. Hence FLT_RADIX=2, and this is an alias for ldexp.
+std.math.ldexp	loc	math/ldexp.zig:8
+std.math.ldexp	doc	Returns x * 2^n.
+std.math.ldexp	sig	fn ldexp(x: anytype, n: i32) @TypeOf(x)
 std.math.pow	loc	math/pow.zig:33
 std.math.pow	doc	Returns x raised to the power of y (x^y). Special Cases: - pow(x, +-0) = 1 for any x - pow(1, y) = 1 for any y - pow(x, 1) = x for any x - pow(nan, y) = nan for any y != 0 - pow(x, nan) = nan for any x != 1 - pow(+-0, y) = +-inf for y an odd integer < 0 - pow(+-0, -inf) = +inf - pow(+-0, +inf) = +0 - pow(+-0, y) = +inf for finite y < 0 and not an odd integer - pow(+-0, y) = +-0 for finite y an odd integer > 0 - pow(+-0, y) = +0 for finite y > 0 and not an odd integer - pow(-1, +-inf) = 1 - pow(x, +inf) = +inf for |x| > 1 - pow(x, -inf) = +0 for |x| > 1 - pow(x, +inf) = +0 for |x| < 1 - pow(x, -inf) = +inf for |x| < 1 - pow(+inf, y) = +inf for y > 0 - pow(+inf, y) = +0 for y < 0 - pow(-inf, y) = pow(-0, -y) - pow(x, y) = nan for finite x < 0 and finite non-integer y
 std.math.pow	sig	fn pow(comptime T: type, x: T, y: T) T
@@ -173891,31 +173893,6 @@ std.crypto.dh.@"x25519.zig"	example	test "rfc7748 one iteration" {\n    const in
 std.crypto.dh.@"x25519.zig"	example	test "rfc7748 1,000 iterations" {\n    // These iteration tests are slow so we always skip them. Results have been verified.\n    if (true) {\n        return error.SkipZigTest;\n    }\n\n    const initial_value = [32]u8{ 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };\n    const expected_output = [32]u8{ 0x68, 0x4c, 0xf5, 0x9b, 0xa8, 0x33, 0x09, 0x55, 0x28, 0x00, 0xef, 0x56, 0x6f, 0x2f, 0x4d, 0x3c, 0x1c, 0x38, 0x87, 0xc4, 0x93, 0x60, 0xe3, 0x87, 0x5f, 0x2e, 0xb9, 0x4d, 0x99, 0x53, 0x2c, 0x51 };\n\n    var k: [32]u8 = initial_value.*;\n    var u: [32]u8 = initial_value.*;\n\n    var i: usize = 0;\n    while (i < 1000) : (i += 1) {\n        const output = try X25519.scalarmult(&k, &u);\n        u = k;\n        k = output;\n    }\n\n    try std.testing.expectEqual(k, expected_output);\n}
 std.crypto.dh.@"x25519.zig"	example	test "rfc7748 1,000,000 iterations" {\n    if (true) {\n        return error.SkipZigTest;\n    }\n\n    const initial_value = [32]u8{ 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };\n    const expected_output = [32]u8{ 0x7c, 0x39, 0x11, 0xe0, 0xab, 0x25, 0x86, 0xfd, 0x86, 0x44, 0x97, 0x29, 0x7e, 0x57, 0x5e, 0x6f, 0x3b, 0xc6, 0x01, 0xc0, 0x88, 0x3c, 0x30, 0xdf, 0x5f, 0x4d, 0xd2, 0xd2, 0x4f, 0x66, 0x54, 0x24 };\n\n    var k: [32]u8 = initial_value.*;\n    var u: [32]u8 = initial_value.*;\n\n    var i: usize = 0;\n    while (i < 1000000) : (i += 1) {\n        const output = try X25519.scalarmult(&k, &u);\n        u = k;\n        k = output;\n    }\n\n    try std.testing.expectEqual(k[0..], expected_output);\n}
 std.crypto.dh.@"x25519.zig"	example	test "edwards25519 -> curve25519 map" {\n    const ed_kp = try crypto.sign.Ed25519.KeyPair.generateDeterministic([_]u8{0x42} ** 32);\n    const mont_kp = try X25519.KeyPair.fromEd25519(ed_kp);\n    try htest.assertEqual("90e7595fc89e52fdfddce9c6a43d74dbf6047025ee0462d2d172e8b6a2841d6e", &mont_kp.secret_key);\n    try htest.assertEqual("cc4f2cdb695dd766f34118eb67b98652fed1d8bc49c330b119bbfa8a64989378", &mont_kp.public_key);\n}
-std.crypto.dh.X25519.@"curve25519.zig"	loc	crypto/25519/curve25519.zig:1
-std.crypto.dh.X25519.@"curve25519.zig".std	loc	crypto/25519/curve25519.zig:1
-std.crypto.dh.X25519.@"curve25519.zig".crypto	loc	crypto/25519/curve25519.zig:2
-std.crypto.dh.X25519.@"curve25519.zig".IdentityElementError	loc	crypto/25519/curve25519.zig:4
-std.crypto.dh.X25519.@"curve25519.zig".NonCanonicalError	loc	crypto/25519/curve25519.zig:5
-std.crypto.dh.X25519.@"curve25519.zig".WeakPublicKeyError	loc	crypto/25519/curve25519.zig:6
-std.crypto.dh.X25519.@"curve25519.zig"	example	test "curve25519" {\n    var s = [32]u8{ 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };\n    const p = try Curve25519.basePoint.clampedMul(s);\n    try p.rejectIdentity();\n    var buf: [128]u8 = undefined;\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&p.toBytes()}), "E6F2A4D1C28EE5C7AD0329268255A468AD407D2672824C0C0EB30EA6EF450145");\n    const q = try p.clampedMul(s);\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&q.toBytes()}), "3614E119FFE55EC55B87D6B19971A9F4CBC78EFE80BEC55B96392BABCC712537");\n\n    try Curve25519.rejectNonCanonical(s);\n    s[31] |= 0x80;\n    try std.testing.expectError(error.NonCanonical, Curve25519.rejectNonCanonical(s));\n}
-std.crypto.dh.X25519.@"curve25519.zig"	example	test "non-affine edwards25519 to curve25519 projection" {\n    const skh = "90e7595fc89e52fdfddce9c6a43d74dbf6047025ee0462d2d172e8b6a2841d6e";\n    var sk: [32]u8 = undefined;\n    _ = std.fmt.hexToBytes(&sk, skh) catch unreachable;\n    const edp = try crypto.ecc.Edwards25519.basePoint.mul(sk);\n    const xp = try Curve25519.fromEdwards25519(edp);\n    const expected_hex = "cc4f2cdb695dd766f34118eb67b98652fed1d8bc49c330b119bbfa8a64989378";\n    var expected: [32]u8 = undefined;\n    _ = std.fmt.hexToBytes(&expected, expected_hex) catch unreachable;\n    try std.testing.expectEqualSlices(u8, &xp.toBytes(), &expected);\n}
-std.crypto.dh.X25519.@"curve25519.zig"	example	test "elligator2" {\n    const Fe = Curve25519.Fe;\n\n    // RFC 9380 Appendix J.4.2 test vector (curve25519_XMD:SHA-512_ELL2_NU_)\n    // u = 0x608d892b641f0328523802a6603427c26e55e6f27e71a91a478148d45b5093cd\n    // Q.x = 0x51125222da5e763d97f3c10fcc92ea6860b9ccbbd2eb1285728f566721c1e65b\n    const u = Fe.fromBytes(.{\n        0xcd, 0x93, 0x50, 0x5b, 0xd4, 0x48, 0x81, 0x47, 0x1a, 0xa9, 0x71, 0x7e, 0xf2, 0xe6, 0x55, 0x6e,\n        0xc2, 0x27, 0x34, 0x60, 0xa6, 0x02, 0x38, 0x52, 0x28, 0x03, 0x1f, 0x64, 0x2b, 0x89, 0x8d, 0x60,\n    });\n    const p = Curve25519.elligator2(u);\n    try std.testing.expectEqual([32]u8{\n        0x5b, 0xe6, 0xc1, 0x21, 0x67, 0x56, 0x8f, 0x72, 0x85, 0x12, 0xeb, 0xd2, 0xbb, 0xcc, 0xb9, 0x60,\n        0x68, 0xea, 0x92, 0xcc, 0x0f, 0xc1, 0xf3, 0x97, 0x3d, 0x76, 0x5e, 0xda, 0x22, 0x52, 0x12, 0x51,\n    }, p.toBytes());\n}
-std.crypto.dh.X25519.@"curve25519.zig"	example	test "small order check" {\n    var s: [32]u8 = [_]u8{1} ++ [_]u8{0} ** 31;\n    const small_order_ss: [7][32]u8 = .{\n        .{\n            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0 (order 4)\n        },\n        .{\n            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 1 (order 1)\n        },\n        .{\n            0xe0, 0xeb, 0x7a, 0x7c, 0x3b, 0x41, 0xb8, 0xae, 0x16, 0x56, 0xe3, 0xfa, 0xf1, 0x9f, 0xc4, 0x6a, 0xda, 0x09, 0x8d, 0xeb, 0x9c, 0x32, 0xb1, 0xfd, 0x86, 0x62, 0x05, 0x16, 0x5f, 0x49, 0xb8, 0x00, // 325606250916557431795983626356110631294008115727848805560023387167927233504 (order 8) */\n        },\n        .{\n            0x5f, 0x9c, 0x95, 0xbc, 0xa3, 0x50, 0x8c, 0x24, 0xb1, 0xd0, 0xb1, 0x55, 0x9c, 0x83, 0xef, 0x5b, 0x04, 0x44, 0x5c, 0xc4, 0x58, 0x1c, 0x8e, 0x86, 0xd8, 0x22, 0x4e, 0xdd, 0xd0, 0x9f, 0x11, 0x57, // 39382357235489614581723060781553021112529911719440698176882885853963445705823 (order 8)\n        },\n        .{\n            0xec, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, // p-1 (order 2)\n        },\n        .{\n            0xed, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, // p (=0, order 4)\n        },\n        .{\n            0xee, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, // p+1 (=1, order 1)\n        },\n    };\n    for (small_order_ss) |small_order_s| {\n        try std.testing.expectError(error.WeakPublicKey, Curve25519.fromBytes(small_order_s).clearCofactor());\n        try std.testing.expectError(error.WeakPublicKey, Curve25519.fromBytes(small_order_s).mul(s));\n        var extra = small_order_s;\n        extra[31] ^= 0x80;\n        try std.testing.expectError(error.WeakPublicKey, Curve25519.fromBytes(extra).mul(s));\n        var valid = small_order_s;\n        valid[31] = 0x40;\n        s[0] = 0;\n        try std.testing.expectError(error.IdentityElement, Curve25519.fromBytes(valid).mul(s));\n    }\n}
-std.crypto.dh.X25519.Curve.@"field.zig"	loc	crypto/25519/field.zig:1
-std.crypto.dh.X25519.Curve.@"field.zig".std	loc	crypto/25519/field.zig:1
-std.crypto.dh.X25519.Curve.@"field.zig".builtin	loc	crypto/25519/field.zig:2
-std.crypto.dh.X25519.Curve.@"field.zig".crypto	loc	crypto/25519/field.zig:3
-std.crypto.dh.X25519.Curve.@"field.zig".NonCanonicalError	loc	crypto/25519/field.zig:5
-std.crypto.dh.X25519.Curve.@"field.zig".NotSquareError	loc	crypto/25519/field.zig:6
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline	type	std.builtin.CallingConvention
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline	loc	crypto/25519/field.zig:9
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline	value	switch (builtin.mode) { .ReleaseSafe, .ReleaseFast => .@"inline", .Debug, .ReleaseSmall => .auto, }
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline.[ReleaseSafe,ReleaseFast]	when	.ReleaseSafe, .ReleaseFast
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline.[ReleaseSafe,ReleaseFast]	loc	crypto/25519/field.zig:10
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline.[ReleaseSafe,ReleaseFast]	value	.@"inline"
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline.[Debug,ReleaseSmall]	when	.Debug, .ReleaseSmall
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline.[Debug,ReleaseSmall]	loc	crypto/25519/field.zig:11
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline.[Debug,ReleaseSmall]	value	.auto
 std.crypto.kem.@"ml_kem.zig"	loc	crypto/ml_kem.zig:1
 std.crypto.kem.@"ml_kem.zig"	doc	Implementation of the IND-CCA2 post-quantum secure key encapsulation mechanism (KEM) ML-KEM (NIST FIPS-203 publication) and CRYSTALS-Kyber (v3.02/"draft00" CFRG draft). The namespace `d00` refers to the version currently implemented, in accordance with the CFRG draft. The `nist` namespace refers to the FIPS-203 publication. Quoting from the CFRG I-D: Kyber is not a Diffie-Hellman (DH) style non-interactive key agreement, but instead, Kyber is a Key Encapsulation Method (KEM). In essence, a KEM is a Public-Key Encryption (PKE) scheme where the plaintext cannot be specified, but is generated as a random key as part of the encryption. A KEM can be transformed into an unrestricted PKE using HPKE (RFC9180). On its own, a KEM can be used as a key agreement method in TLS. Kyber is an IND-CCA2 secure KEM. It is constructed by applying a Fujisaki--Okamato style transformation on InnerPKE, which is the underlying IND-CPA secure Public Key Encryption scheme. We cannot use InnerPKE directly, as its ciphertexts are malleable. ``` F.O. transform InnerPKE ----------------------> Kyber IND-CPA IND-CCA2 ``` Kyber is a lattice-based scheme. More precisely, its security is based on the learning-with-errors-and-rounding problem in module lattices (MLWER). The underlying polynomial ring R (defined in Section 5) is chosen such that multiplication is very fast using the number theoretic transform (NTT, see Section 5.1.3). An InnerPKE private key is a vector _s_ over R of length k which is _small_ in a particular way. Here k is a security parameter akin to the size of a prime modulus. For Kyber512, which targets AES-128's security level, the value of k is 2. The public key consists of two values: * _A_ a uniformly sampled k by k matrix over R _and_ * _t = A s + e_, where e is a suitably small masking vector. Distinguishing between such A s + e and a uniformly sampled t is the module learning-with-errors (MLWE) problem. If that is hard, then it is also hard to recover the private key from the public key as that would allow you to distinguish between those two. To save space in the public key, A is recomputed deterministically from a seed _rho_. A ciphertext for a message m under this public key is a pair (c_1, c_2) computed roughly as follows: c_1 = Compress(A^T r + e_1, d_u) c_2 = Compress(t^T r + e_2 + Decompress(m, 1), d_v) where * e_1, e_2 and r are small blinds; * Compress(-, d) removes some information, leaving d bits per coefficient and Decompress is such that Compress after Decompress does nothing and * d_u, d_v are scheme parameters. Distinguishing such a ciphertext and uniformly sampled (c_1, c_2) is an example of the full MLWER problem, see section 4.4 of [KyberV302]. To decrypt the ciphertext, one computes m = Compress(Decompress(c_2, d_v) - s^T Decompress(c_1, d_u), 1). It it not straight-forward to see that this formula is correct. In fact, there is negligible but non-zero probability that a ciphertext does not decrypt correctly given by the DFP column in Table 4. This failure probability can be computed by a careful automated analysis of the probabilities involved, see kyber_failure.py of [SecEst]. [KyberV302](https://pq-crystals.org/kyber/data/kyber-specification-round3-20210804.pdf) [I-D](https://github.com/bwesterb/draft-schwabe-cfrg-kyber) [SecEst](https://github.com/pq-crystals/security-estimates)
 std.crypto.kem.@"ml_kem.zig".std	loc	crypto/ml_kem.zig:99
@@ -174262,6 +174239,31 @@ std.crypto.kem.@"ml_kem.zig".montgomeryReduce	sig	fn montgomeryReduce( comptime 
 std.crypto.kem.@"ml_kem.zig".sampleUniformRejection	loc	crypto/ml_kem.zig:1937
 std.crypto.kem.@"ml_kem.zig".sampleUniformRejection	doc	Uniform sampling using SHAKE-128 with rejection sampling. Samples polynomial coefficients uniformly from [0, q) using rejection sampling. Parameters: - PolyType: The polynomial type to return - q: Modulus - bits_per_coef: Number of bits per coefficient (12 or 23) - n: Number of coefficients - seed: Random seed - domain_sep: Domain separation bytes (appended to seed)
 std.crypto.kem.@"ml_kem.zig".sampleUniformRejection	sig	fn sampleUniformRejection( comptime PolyType: type, comptime q: comptime_int, comptime bits_per_coef: comptime_int, comptime n: comptime_int, seed: []const u8, domain_sep: []const u8, ) PolyType
+std.crypto.ecc.@"curve25519.zig"	loc	crypto/25519/curve25519.zig:1
+std.crypto.ecc.@"curve25519.zig".std	loc	crypto/25519/curve25519.zig:1
+std.crypto.ecc.@"curve25519.zig".crypto	loc	crypto/25519/curve25519.zig:2
+std.crypto.ecc.@"curve25519.zig".IdentityElementError	loc	crypto/25519/curve25519.zig:4
+std.crypto.ecc.@"curve25519.zig".NonCanonicalError	loc	crypto/25519/curve25519.zig:5
+std.crypto.ecc.@"curve25519.zig".WeakPublicKeyError	loc	crypto/25519/curve25519.zig:6
+std.crypto.ecc.@"curve25519.zig"	example	test "curve25519" {\n    var s = [32]u8{ 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8 };\n    const p = try Curve25519.basePoint.clampedMul(s);\n    try p.rejectIdentity();\n    var buf: [128]u8 = undefined;\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&p.toBytes()}), "E6F2A4D1C28EE5C7AD0329268255A468AD407D2672824C0C0EB30EA6EF450145");\n    const q = try p.clampedMul(s);\n    try std.testing.expectEqualStrings(try std.fmt.bufPrint(&buf, "{X}", .{&q.toBytes()}), "3614E119FFE55EC55B87D6B19971A9F4CBC78EFE80BEC55B96392BABCC712537");\n\n    try Curve25519.rejectNonCanonical(s);\n    s[31] |= 0x80;\n    try std.testing.expectError(error.NonCanonical, Curve25519.rejectNonCanonical(s));\n}
+std.crypto.ecc.@"curve25519.zig"	example	test "non-affine edwards25519 to curve25519 projection" {\n    const skh = "90e7595fc89e52fdfddce9c6a43d74dbf6047025ee0462d2d172e8b6a2841d6e";\n    var sk: [32]u8 = undefined;\n    _ = std.fmt.hexToBytes(&sk, skh) catch unreachable;\n    const edp = try crypto.ecc.Edwards25519.basePoint.mul(sk);\n    const xp = try Curve25519.fromEdwards25519(edp);\n    const expected_hex = "cc4f2cdb695dd766f34118eb67b98652fed1d8bc49c330b119bbfa8a64989378";\n    var expected: [32]u8 = undefined;\n    _ = std.fmt.hexToBytes(&expected, expected_hex) catch unreachable;\n    try std.testing.expectEqualSlices(u8, &xp.toBytes(), &expected);\n}
+std.crypto.ecc.@"curve25519.zig"	example	test "elligator2" {\n    const Fe = Curve25519.Fe;\n\n    // RFC 9380 Appendix J.4.2 test vector (curve25519_XMD:SHA-512_ELL2_NU_)\n    // u = 0x608d892b641f0328523802a6603427c26e55e6f27e71a91a478148d45b5093cd\n    // Q.x = 0x51125222da5e763d97f3c10fcc92ea6860b9ccbbd2eb1285728f566721c1e65b\n    const u = Fe.fromBytes(.{\n        0xcd, 0x93, 0x50, 0x5b, 0xd4, 0x48, 0x81, 0x47, 0x1a, 0xa9, 0x71, 0x7e, 0xf2, 0xe6, 0x55, 0x6e,\n        0xc2, 0x27, 0x34, 0x60, 0xa6, 0x02, 0x38, 0x52, 0x28, 0x03, 0x1f, 0x64, 0x2b, 0x89, 0x8d, 0x60,\n    });\n    const p = Curve25519.elligator2(u);\n    try std.testing.expectEqual([32]u8{\n        0x5b, 0xe6, 0xc1, 0x21, 0x67, 0x56, 0x8f, 0x72, 0x85, 0x12, 0xeb, 0xd2, 0xbb, 0xcc, 0xb9, 0x60,\n        0x68, 0xea, 0x92, 0xcc, 0x0f, 0xc1, 0xf3, 0x97, 0x3d, 0x76, 0x5e, 0xda, 0x22, 0x52, 0x12, 0x51,\n    }, p.toBytes());\n}
+std.crypto.ecc.@"curve25519.zig"	example	test "small order check" {\n    var s: [32]u8 = [_]u8{1} ++ [_]u8{0} ** 31;\n    const small_order_ss: [7][32]u8 = .{\n        .{\n            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0 (order 4)\n        },\n        .{\n            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 1 (order 1)\n        },\n        .{\n            0xe0, 0xeb, 0x7a, 0x7c, 0x3b, 0x41, 0xb8, 0xae, 0x16, 0x56, 0xe3, 0xfa, 0xf1, 0x9f, 0xc4, 0x6a, 0xda, 0x09, 0x8d, 0xeb, 0x9c, 0x32, 0xb1, 0xfd, 0x86, 0x62, 0x05, 0x16, 0x5f, 0x49, 0xb8, 0x00, // 325606250916557431795983626356110631294008115727848805560023387167927233504 (order 8) */\n        },\n        .{\n            0x5f, 0x9c, 0x95, 0xbc, 0xa3, 0x50, 0x8c, 0x24, 0xb1, 0xd0, 0xb1, 0x55, 0x9c, 0x83, 0xef, 0x5b, 0x04, 0x44, 0x5c, 0xc4, 0x58, 0x1c, 0x8e, 0x86, 0xd8, 0x22, 0x4e, 0xdd, 0xd0, 0x9f, 0x11, 0x57, // 39382357235489614581723060781553021112529911719440698176882885853963445705823 (order 8)\n        },\n        .{\n            0xec, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, // p-1 (order 2)\n        },\n        .{\n            0xed, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, // p (=0, order 4)\n        },\n        .{\n            0xee, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, // p+1 (=1, order 1)\n        },\n    };\n    for (small_order_ss) |small_order_s| {\n        try std.testing.expectError(error.WeakPublicKey, Curve25519.fromBytes(small_order_s).clearCofactor());\n        try std.testing.expectError(error.WeakPublicKey, Curve25519.fromBytes(small_order_s).mul(s));\n        var extra = small_order_s;\n        extra[31] ^= 0x80;\n        try std.testing.expectError(error.WeakPublicKey, Curve25519.fromBytes(extra).mul(s));\n        var valid = small_order_s;\n        valid[31] = 0x40;\n        s[0] = 0;\n        try std.testing.expectError(error.IdentityElement, Curve25519.fromBytes(valid).mul(s));\n    }\n}
+std.crypto.ecc.Curve25519.@"field.zig"	loc	crypto/25519/field.zig:1
+std.crypto.ecc.Curve25519.@"field.zig".std	loc	crypto/25519/field.zig:1
+std.crypto.ecc.Curve25519.@"field.zig".builtin	loc	crypto/25519/field.zig:2
+std.crypto.ecc.Curve25519.@"field.zig".crypto	loc	crypto/25519/field.zig:3
+std.crypto.ecc.Curve25519.@"field.zig".NonCanonicalError	loc	crypto/25519/field.zig:5
+std.crypto.ecc.Curve25519.@"field.zig".NotSquareError	loc	crypto/25519/field.zig:6
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline	type	std.builtin.CallingConvention
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline	loc	crypto/25519/field.zig:9
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline	value	switch (builtin.mode) { .ReleaseSafe, .ReleaseFast => .@"inline", .Debug, .ReleaseSmall => .auto, }
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline.[ReleaseSafe,ReleaseFast]	when	.ReleaseSafe, .ReleaseFast
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline.[ReleaseSafe,ReleaseFast]	loc	crypto/25519/field.zig:10
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline.[ReleaseSafe,ReleaseFast]	value	.@"inline"
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline.[Debug,ReleaseSmall]	when	.Debug, .ReleaseSmall
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline.[Debug,ReleaseSmall]	loc	crypto/25519/field.zig:11
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline.[Debug,ReleaseSmall]	value	.auto
 std.crypto.ecc.@"edwards25519.zig"	loc	crypto/25519/edwards25519.zig:1
 std.crypto.ecc.@"edwards25519.zig".std	loc	crypto/25519/edwards25519.zig:1
 std.crypto.ecc.@"edwards25519.zig".crypto	loc	crypto/25519/edwards25519.zig:2
@@ -175278,7 +175280,7 @@ std.math.@"ldexp.zig".math	loc	math/ldexp.zig:2
 std.math.@"ldexp.zig".Log2Int	loc	math/ldexp.zig:3
 std.math.@"ldexp.zig".assert	loc	math/ldexp.zig:4
 std.math.@"ldexp.zig".expect	loc	math/ldexp.zig:5
-std.math.scalbn	example	test ldexp {\n    // subnormals\n    try expect(ldexp(@as(f16, 0x1.1FFp14), -14 - 9 - 15) == math.floatTrueMin(f16));\n    try expect(ldexp(@as(f32, 0x1.3FFFFFp-1), -126 - 22) == math.floatTrueMin(f32));\n    try expect(ldexp(@as(f64, 0x1.7FFFFFFFFFFFFp-1), -1022 - 51) == math.floatTrueMin(f64));\n    try expect(ldexp(@as(f80, 0x1.7FFFFFFFFFFFFFFEp-1), -16382 - 62) == math.floatTrueMin(f80));\n    try expect(ldexp(@as(f128, 0x1.7FFFFFFFFFFFFFFFFFFFFFFFFFFFp-1), -16382 - 111) == math.floatTrueMin(f128));\n\n    try expect(ldexp(math.floatMax(f32), -128 - 149) > 0.0);\n    try expect(ldexp(math.floatMax(f32), -128 - 149 - 1) == 0.0);\n\n    @setEvalBranchQuota(10_000);\n\n    inline for ([_]type{ f16, f32, f64, f80, f128 }) |T| {\n        const fractional_bits = math.floatFractionalBits(T);\n\n        const min_exponent = math.floatExponentMin(T);\n        const max_exponent = math.floatExponentMax(T);\n        const exponent_bias = max_exponent;\n\n        // basic usage\n        try expect(ldexp(@as(T, 1.5), 4) == 24.0);\n\n        // normals -> subnormals\n        try expect(math.isNormal(ldexp(@as(T, 1.0), min_exponent)));\n        try expect(!math.isNormal(ldexp(@as(T, 1.0), min_exponent - 1)));\n\n        // normals -> zero\n        try expect(ldexp(@as(T, 1.0), min_exponent - fractional_bits) > 0.0);\n        try expect(ldexp(@as(T, 1.0), min_exponent - fractional_bits - 1) == 0.0);\n\n        // subnormals -> zero\n        try expect(ldexp(math.floatTrueMin(T), 0) > 0.0);\n        try expect(ldexp(math.floatTrueMin(T), -1) == 0.0);\n\n        // Multiplications might flush the denormals to zero, esp. at\n        // runtime, so we manually construct the constants here instead.\n        const Z = std.meta.Int(.unsigned, @bitSizeOf(T));\n        const EightTimesTrueMin = @as(T, @bitCast(@as(Z, 8)));\n        const TwoTimesTrueMin = @as(T, @bitCast(@as(Z, 2)));\n\n        // subnormals -> subnormals\n        try expect(ldexp(math.floatTrueMin(T), 3) == EightTimesTrueMin);\n        try expect(ldexp(EightTimesTrueMin, -2) == TwoTimesTrueMin);\n        try expect(ldexp(EightTimesTrueMin, -3) == math.floatTrueMin(T));\n\n        // subnormals -> normals (+)\n        try expect(ldexp(math.floatTrueMin(T), fractional_bits) == math.floatMin(T));\n        try expect(ldexp(math.floatTrueMin(T), fractional_bits - 1) == math.floatMin(T) * 0.5);\n\n        // subnormals -> normals (-)\n        try expect(ldexp(-math.floatTrueMin(T), fractional_bits) == -math.floatMin(T));\n        try expect(ldexp(-math.floatTrueMin(T), fractional_bits - 1) == -math.floatMin(T) * 0.5);\n\n        // subnormals -> float limits (+inf)\n        try expect(math.isFinite(ldexp(math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits - 1)));\n        try expect(ldexp(math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits) == math.inf(T));\n\n        // subnormals -> float limits (-inf)\n        try expect(math.isFinite(ldexp(-math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits - 1)));\n        try expect(ldexp(-math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits) == -math.inf(T));\n\n        // infinity -> infinity\n        try expect(ldexp(math.inf(T), math.maxInt(i32)) == math.inf(T));\n        try expect(ldexp(math.inf(T), math.minInt(i32)) == math.inf(T));\n        try expect(ldexp(math.inf(T), max_exponent) == math.inf(T));\n        try expect(ldexp(math.inf(T), min_exponent) == math.inf(T));\n        try expect(ldexp(-math.inf(T), math.maxInt(i32)) == -math.inf(T));\n        try expect(ldexp(-math.inf(T), math.minInt(i32)) == -math.inf(T));\n\n        // extremely large n\n        try expect(ldexp(math.floatMax(T), math.maxInt(i32)) == math.inf(T));\n        try expect(ldexp(math.floatMax(T), -math.maxInt(i32)) == 0.0);\n        try expect(ldexp(math.floatMax(T), math.minInt(i32)) == 0.0);\n        try expect(ldexp(math.floatTrueMin(T), math.maxInt(i32)) == math.inf(T));\n        try expect(ldexp(math.floatTrueMin(T), -math.maxInt(i32)) == 0.0);\n        try expect(ldexp(math.floatTrueMin(T), math.minInt(i32)) == 0.0);\n    }\n}
+std.math.ldexp	example	test ldexp {\n    // subnormals\n    try expect(ldexp(@as(f16, 0x1.1FFp14), -14 - 9 - 15) == math.floatTrueMin(f16));\n    try expect(ldexp(@as(f32, 0x1.3FFFFFp-1), -126 - 22) == math.floatTrueMin(f32));\n    try expect(ldexp(@as(f64, 0x1.7FFFFFFFFFFFFp-1), -1022 - 51) == math.floatTrueMin(f64));\n    try expect(ldexp(@as(f80, 0x1.7FFFFFFFFFFFFFFEp-1), -16382 - 62) == math.floatTrueMin(f80));\n    try expect(ldexp(@as(f128, 0x1.7FFFFFFFFFFFFFFFFFFFFFFFFFFFp-1), -16382 - 111) == math.floatTrueMin(f128));\n\n    try expect(ldexp(math.floatMax(f32), -128 - 149) > 0.0);\n    try expect(ldexp(math.floatMax(f32), -128 - 149 - 1) == 0.0);\n\n    @setEvalBranchQuota(10_000);\n\n    inline for ([_]type{ f16, f32, f64, f80, f128 }) |T| {\n        const fractional_bits = math.floatFractionalBits(T);\n\n        const min_exponent = math.floatExponentMin(T);\n        const max_exponent = math.floatExponentMax(T);\n        const exponent_bias = max_exponent;\n\n        // basic usage\n        try expect(ldexp(@as(T, 1.5), 4) == 24.0);\n\n        // normals -> subnormals\n        try expect(math.isNormal(ldexp(@as(T, 1.0), min_exponent)));\n        try expect(!math.isNormal(ldexp(@as(T, 1.0), min_exponent - 1)));\n\n        // normals -> zero\n        try expect(ldexp(@as(T, 1.0), min_exponent - fractional_bits) > 0.0);\n        try expect(ldexp(@as(T, 1.0), min_exponent - fractional_bits - 1) == 0.0);\n\n        // subnormals -> zero\n        try expect(ldexp(math.floatTrueMin(T), 0) > 0.0);\n        try expect(ldexp(math.floatTrueMin(T), -1) == 0.0);\n\n        // Multiplications might flush the denormals to zero, esp. at\n        // runtime, so we manually construct the constants here instead.\n        const Z = std.meta.Int(.unsigned, @bitSizeOf(T));\n        const EightTimesTrueMin = @as(T, @bitCast(@as(Z, 8)));\n        const TwoTimesTrueMin = @as(T, @bitCast(@as(Z, 2)));\n\n        // subnormals -> subnormals\n        try expect(ldexp(math.floatTrueMin(T), 3) == EightTimesTrueMin);\n        try expect(ldexp(EightTimesTrueMin, -2) == TwoTimesTrueMin);\n        try expect(ldexp(EightTimesTrueMin, -3) == math.floatTrueMin(T));\n\n        // subnormals -> normals (+)\n        try expect(ldexp(math.floatTrueMin(T), fractional_bits) == math.floatMin(T));\n        try expect(ldexp(math.floatTrueMin(T), fractional_bits - 1) == math.floatMin(T) * 0.5);\n\n        // subnormals -> normals (-)\n        try expect(ldexp(-math.floatTrueMin(T), fractional_bits) == -math.floatMin(T));\n        try expect(ldexp(-math.floatTrueMin(T), fractional_bits - 1) == -math.floatMin(T) * 0.5);\n\n        // subnormals -> float limits (+inf)\n        try expect(math.isFinite(ldexp(math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits - 1)));\n        try expect(ldexp(math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits) == math.inf(T));\n\n        // subnormals -> float limits (-inf)\n        try expect(math.isFinite(ldexp(-math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits - 1)));\n        try expect(ldexp(-math.floatTrueMin(T), max_exponent + exponent_bias + fractional_bits) == -math.inf(T));\n\n        // infinity -> infinity\n        try expect(ldexp(math.inf(T), math.maxInt(i32)) == math.inf(T));\n        try expect(ldexp(math.inf(T), math.minInt(i32)) == math.inf(T));\n        try expect(ldexp(math.inf(T), max_exponent) == math.inf(T));\n        try expect(ldexp(math.inf(T), min_exponent) == math.inf(T));\n        try expect(ldexp(-math.inf(T), math.maxInt(i32)) == -math.inf(T));\n        try expect(ldexp(-math.inf(T), math.minInt(i32)) == -math.inf(T));\n\n        // extremely large n\n        try expect(ldexp(math.floatMax(T), math.maxInt(i32)) == math.inf(T));\n        try expect(ldexp(math.floatMax(T), -math.maxInt(i32)) == 0.0);\n        try expect(ldexp(math.floatMax(T), math.minInt(i32)) == 0.0);\n        try expect(ldexp(math.floatTrueMin(T), math.maxInt(i32)) == math.inf(T));\n        try expect(ldexp(math.floatTrueMin(T), -math.maxInt(i32)) == 0.0);\n        try expect(ldexp(math.floatTrueMin(T), math.minInt(i32)) == 0.0);\n    }\n}
 std.math.@"pow.zig"	loc	math/pow.zig:1
 std.math.@"pow.zig".std	loc	math/pow.zig:6
 std.math.@"pow.zig".math	loc	math/pow.zig:7

@@ -42,7 +42,7 @@ never folded into the base.
 5. **the shape model** (2026-07) — the parser was rebuilt around the insight that every node has
    exactly three kinds of fact: the **Tree** (where it sits), its **Attributes** (facts it carries),
    and its **Edges** (typed references it makes). The old side-files (`sigs`/`docs`/`fields`/
-   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (190,332 facts) and
+   `delegates`/`examples`) collapsed into two streams — `attrs.tsv` (190,334 facts) and
    `edges.tsv` (74,833 resolved references) — keyed to `nodes.tsv` by `path`. The parser now
    **follows `@import`** (one organism), **includes private decls** (`vis`), and **resolves each
    edge's reach** in a second pass. The `n_children` conservation law is retired; integrity is now
@@ -92,7 +92,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | piece | built by | status |
 |---|---|---|
 | **the Tree** — `nodes.tsv` | `parse/walk.zig` | ✅ the spine: full std, 88,381 nodes (79,332 pub / 9,049 priv) / 533 files, depth 9; connectivity-checked |
-| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 190,332 facts keyed by `path`: 12,820 sigs · 15,895 `///` docs · 44,705 field/const values · 88,380 locations · 1,932 test bodies · 1,385 modifiers · 490 error members; each keys onto a real node |
+| **Attributes** — `attrs.tsv` | `parse/walk.zig` | ✅ 190,334 facts keyed by `path`: 12,820 sigs · 15,897 `///` docs · 44,705 field/const values · 88,380 locations · 1,932 test bodies · 1,385 modifiers · 490 error members; each keys onto a real node |
 | **Edges** — `edges.tsv` | `parse/walk.zig` | ✅ 74,833 typed refs (63,221 has_type · 5,634 alias · 4,056 error_set · 1,149 imports · 31 delegates), resolved to a scope; 98% of resolvable ones land on a node/primitive; local/cross verified to resolve |
 | **factory descent** — `nodes.tsv` | `parse/walk.zig` | ✅ single-return `fn(…) type` factories descended (members under `<fn>()`, e.g. `std.hash_map.HashMap().get`); delegators record their target as a `delegates` edge |
 | **examples** — `attrs.tsv` (`example`) | `parse/walk.zig` | ✅ 1,932 `test {}` bodies, escaped to one row, anchored to the enclosing node |
@@ -100,7 +100,7 @@ Everything below is self-verifying and byte-identical on rerun.
 | **L5 resolved depth** — `resolved.tsv` | `reflect/resolve.zig` | ✅ 3,157 resolved + 18 partial / 15 poison containers + 893 failing decls / 913 private, zero dups |
 | **consensus census** — `consensus.tsv` | `zephem overlays` | ✅ compares the two readers; every path tagged read+run 16,413 / run-only 4,924 / read-only 20,583; 0 blanks |
 | **canon dedup/dealias** — `canon.tsv` | `zephem overlays` | ✅ 674 paths in 265 alias/dup families (shared resolved `@typeName`); self-checked |
-| **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 18% of nodes documented (15,895 carry `///` docs); per-kind, self-checked vs map + docs overlay |
+| **doc coverage** — `doccov.tsv` | `zephem overlays` | ✅ 18% of nodes documented (15,897 carry `///` docs); per-kind, self-checked vs map + docs overlay |
 | **signature shapes** — `sigshape.tsv` | `zephem overlays` | ✅ 12,820 signatures classed by first-param / Io / generic; self-checked vs the `sig` attrs |
 | **call-card** — `callcard.tsv` | `zephem overlays` | ✅ sigs ⋈ resolved merge, 15,207 callables: 5,443 both / 2,387 reflect-only / 7,377 parser-only |
 | **doc regeneration** | `zephem docs` | ✅ every markdown doc regenerated from `templates/` with live numbers from `data/std/`; byte-identical on `--check` |

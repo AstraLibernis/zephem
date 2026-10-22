@@ -60,7 +60,14 @@ comptime. Sees all of std; dies on nothing.
 once, so the whole reachable namespace is one tree. It **descends type factories** — a `fn(…) type`
 with one top-level `return struct {…}` gets its produced type's members mapped under `<fn>()` (so
 `std.hash_map.HashMap().get` exists) — and places each **selective re-export** (`pub const X = @import("f").Sel`)
-at a single canonical home under the alias, so a member is never duplicated.
+at a single canonical home under the alias, so a member is never duplicated. When one declaration
+is placed in several places (`std.crypto.ecc.Curve25519` and `std.crypto.dh.X25519.Curve` both
+select `curve25519.zig`'s `Curve25519`), its home is the best of them, the others aliases of it: a
+public path before one under a private node, the declaration's own name before a rename, the shorter
+path, and only then the first met. Neither autodoc nor the compiler ranks re-exports (both name a
+declaration after the file defining it); this picks the writable name closest to that. The best
+placement is known only once the whole tree is walked, so phase 1 runs again with the chosen homes
+until they settle (two or three walks), and fails rather than emit a map that did not.
 
 **③ Two-phase edge resolution.** Phase 1 walks the whole tree, emitting nodes and recording every
 raw edge. Phase 2 resolves each edge's target against the completed node set — chasing alias chains,

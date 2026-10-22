@@ -17,6 +17,16 @@ const root_zig =
     \\pub const DynLib = @import("dl.zig").DynLib;
     \\pub const Plat = @import("plat.zig");
     \\pub const AgainDyn = @import("dl.zig").DynLib;
+    \\pub const Renamed = @import("home.zig").Curve;
+    \\pub const Curve = @import("home.zig").Curve;
+    \\const hidden = struct {
+    \\    pub const Thing = @import("home.zig").Thing;
+    \\};
+    \\pub const Shown = @import("home.zig").Thing;
+    \\pub const Deep = struct {
+    \\    pub const Lib = @import("home.zig").Lib;
+    \\};
+    \\pub const Lib = @import("home.zig").Lib;
     \\pub const is_debug = @import("builtin").mode == .Debug;
     \\pub const os_tag = builtin.os.tag;
     \\
@@ -160,10 +170,20 @@ const arch_other_zig = "pub fn syscall0() void {}\n";
 const impl_a_zig = "pub const Block = u8;\n";
 const impl_b_zig = "pub const Block = u16;\n";
 const fiat_zig = "pub fn mul() void {}\n";
-const Out = struct { nodes: []const u8, edges: []const u8, attrs: []const u8 };
+// Each selected twice from std.zig, the worse placement first (renamed · under a private
+// parent · deeper): the home is the better one, not the first.
+const home_zig =
+    \\pub const Curve = struct {
+    \\    pub fn add() void {}
+    \\};
+    \\pub const Thing = struct {};
+    \\pub const Lib = struct {};
+    \\
+;
+const Out = struct { nodes: []const u8, edges: []const u8, attrs: []const u8, passes: usize };
 
 fn extract(a: std.mem.Allocator, io: std.Io, tmp: std.testing.TmpDir) !Out {
-    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig }, .{ "plat.zig", plat_zig }, .{ "arch_x86_64.zig", arch_x86_64_zig }, .{ "arch_other.zig", arch_other_zig }, .{ "impl_a.zig", impl_a_zig }, .{ "impl_b.zig", impl_b_zig }, .{ "fiat.zig", fiat_zig } };
+    const files = [_][2][]const u8{ .{ "std.zig", root_zig }, .{ "mem.zig", mem_zig }, .{ "other.zig", other_zig }, .{ "tbl.zig", tbl_zig }, .{ "dl.zig", dl_zig }, .{ "plat.zig", plat_zig }, .{ "arch_x86_64.zig", arch_x86_64_zig }, .{ "arch_other.zig", arch_other_zig }, .{ "impl_a.zig", impl_a_zig }, .{ "impl_b.zig", impl_b_zig }, .{ "fiat.zig", fiat_zig }, .{ "home.zig", home_zig } };
     for (files) |f| try tmp.dir.writeFile(io, .{ .sub_path = f[0], .data = f[1] });
     const base = try tmp.dir.realPathFileAlloc(io, ".", a);
     const p = struct {
@@ -171,11 +191,12 @@ fn extract(a: std.mem.Allocator, io: std.Io, tmp: std.testing.TmpDir) !Out {
             return std.fs.path.join(al, &.{ dir, name });
         }
     }.at;
-    _ = try parse.runNamed(a, io, try p(a, base, "std.zig"), "std", try p(a, base, "nodes.tsv"), try p(a, base, "edges.tsv"), try p(a, base, "attrs.tsv"), false);
+    const stats = try parse.runNamed(a, io, try p(a, base, "std.zig"), "std", try p(a, base, "nodes.tsv"), try p(a, base, "edges.tsv"), try p(a, base, "attrs.tsv"), false);
     return .{
         .nodes = try tmp.dir.readFileAlloc(io, "nodes.tsv", a, .unlimited),
         .edges = try tmp.dir.readFileAlloc(io, "edges.tsv", a, .unlimited),
         .attrs = try tmp.dir.readFileAlloc(io, "attrs.tsv", a, .unlimited),
+        .passes = stats.passes,
     };
 }
 
@@ -280,6 +301,17 @@ test "extractor: every fixed case produces its row" {
     // A declaration selected twice has one home; the second selection is an alias of it.
     try expectRow(o.edges, "std.AgainDyn\talias\tstd.DynLib\tlocal");
     try expectNoRow(o.nodes, "std.AgainDyn\tstruct\tAgainDyn\tpub");
+    // ... and the home is the best placement, met first or not: a public path over one under a
+    // private node (even one keeping the name), the declaration's own name over a rename, the
+    // shorter path over a deeper one. One pass places them first-met, the next settles: a home
+    // seeded from the first pass must not be dropped as "selected elsewhere" (a third pass).
+    try std.testing.expectEqual(@as(usize, 2), o.passes);
+    try expectRow(o.nodes, "std.Curve.add\tfn\tadd\tpub");
+    try expectRow(o.edges, "std.Renamed\talias\tstd.Curve\tlocal");
+    try expectRow(o.nodes, "std.Shown\tstruct\tShown\tpub");
+    try expectRow(o.edges, "std.hidden.Thing\talias\tstd.Shown\tcross");
+    try expectRow(o.nodes, "std.Lib\tstruct\tLib\tpub");
+    try expectRow(o.edges, "std.Deep.Lib\talias\tstd.Lib\tcross");
     // A decl literal calls a member of the declared type.
     try expectRow(o.edges, "std.Plat.made\tinstantiates\tstd.Plat.Alloc.init\tlocal");
 }

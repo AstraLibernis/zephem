@@ -2466,12 +2466,7 @@ std.crypto.core.Ascon	resolved	1
 std.crypto.core.Ascon()	skipped	0
 std.crypto.core.modes	resolved	2
 std.crypto.dh	resolved	1
-std.crypto.dh.X25519	resolved	9
-std.crypto.dh.X25519.Curve	resolved	12
-std.crypto.dh.X25519.Curve.Fe	resolved	34
-std.crypto.dh.X25519.Curve.scalar	resolved	15
-std.crypto.dh.X25519.Curve.scalar.Scalar	resolved	9
-std.crypto.dh.X25519.Curve.scalar.ScalarDouble	private	0
+std.crypto.dh.X25519	resolved	21
 std.crypto.dh.X25519.KeyPair	resolved	3
 std.crypto.kem	resolved	3
 std.crypto.kem.hybrid	resolved	20
@@ -2487,7 +2482,12 @@ std.crypto.kem.hybrid.NistCurveGroup()	skipped	0
 std.crypto.kem.hybrid.X25519Group	private	0
 std.crypto.kem.kyber_d00	resolved	30
 std.crypto.kem.ml_kem	resolved	30
-std.crypto.ecc	resolved	18
+std.crypto.ecc	resolved	6
+std.crypto.ecc.Curve25519	resolved	12
+std.crypto.ecc.Curve25519.Fe	resolved	34
+std.crypto.ecc.Curve25519.scalar	resolved	15
+std.crypto.ecc.Curve25519.scalar.Scalar	resolved	9
+std.crypto.ecc.Curve25519.scalar.ScalarDouble	private	0
 std.crypto.ecc.Edwards25519	resolved	74
 std.crypto.ecc.P256	resolved	51
 std.crypto.ecc.P256.scalar	resolved	13
@@ -6194,9 +6194,6 @@ std.crypto.aead.chacha_poly.@"chacha20.zig".ChaChaPoly1305()	skipped	0
 std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaPoly1305	skipped	0
 std.crypto.aead.chacha_poly.@"chacha20.zig".XChaChaPoly1305()	skipped	0
 std.crypto.dh.@"x25519.zig"	skipped	0
-std.crypto.dh.X25519.@"curve25519.zig"	skipped	0
-std.crypto.dh.X25519.Curve.@"field.zig"	skipped	0
-std.crypto.dh.X25519.Curve.@"field.zig".bloaty_inline	skipped	0
 std.crypto.kem.@"ml_kem.zig"	skipped	0
 std.crypto.kem.@"ml_kem.zig".Params	skipped	0
 std.crypto.kem.@"ml_kem.zig".Kyber	skipped	0
@@ -6213,6 +6210,9 @@ std.crypto.kem.@"ml_kem.zig".PolyVec()	skipped	0
 std.crypto.kem.@"ml_kem.zig".Mat	skipped	0
 std.crypto.kem.@"ml_kem.zig".Mat()	skipped	0
 std.crypto.kem.@"ml_kem.zig".NistDRBG	skipped	0
+std.crypto.ecc.@"curve25519.zig"	skipped	0
+std.crypto.ecc.Curve25519.@"field.zig"	skipped	0
+std.crypto.ecc.Curve25519.@"field.zig".bloaty_inline	skipped	0
 std.crypto.ecc.@"edwards25519.zig"	skipped	0
 std.crypto.ecc.@"p256.zig"	skipped	0
 std.crypto.ecc.@"p256.zig".AffineCoordinates	skipped	0

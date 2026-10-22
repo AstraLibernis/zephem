@@ -46,7 +46,7 @@ collide on it. This surfaces exactly those collisions — **674 paths in
 ### `doccov.tsv` — documentation coverage
 `path · kind · documented`, from `zephem overlays` over `nodes.tsv` (every node) joined
 against the `doc` attributes (`attrs.tsv` where `attr == doc` — which paths carry a `///`
-doc). 1:1 with the whole map. On zig 0.17.0: **18% documented** (15,895
+doc). 1:1 with the whole map. On zig 0.17.0: **18% documented** (15,897
 nodes). Verified by `zephem overlays --check`.
 
 ### `sigshape.tsv` — signature shapes

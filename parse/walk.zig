@@ -67,11 +67,14 @@ const W = struct {
     lexical: std.StringHashMap([]const u8), // node path → the scope its names resolve in, when that is not its parent
     lexical_names: std.StringHashMap([]const u8), // `<file node>.Sel` → Sel's re-export path (where its tests belong)
     nsrefs: std.ArrayList([2][]const u8), // (nsref path, abs file): linked to the file's home after the walk
-    selected: std.StringHashMap([]const u8), // "rel\x00Name" → where that file's top-level Name was placed first
+    selected: std.StringHashMap([]const u8), // "rel\x00Name" → that file's top-level Name's one home (see `homeOf`)
+    best: std.StringHashMap(Home), // "rel\x00Name" → the best placement this pass met (see `homeOf`)
+    private_nodes: std.StringHashMap(void), // every path emitted with vis `priv` (see `Home.private`)
 
     fn node(w: *W, path: []const u8, kind: []const u8, name: []const u8, vis: []const u8) !void {
         try w.nodes.print("{s}\t{s}\t{s}\t{s}\n", .{ path, kind, name, vis });
         try w.node_set.put(path, {});
+        if (std.mem.eql(u8, vis, "priv")) try w.private_nodes.put(path, {});
     }
     fn edge(w: *W, src: []const u8, etype: []const u8, target: []const u8) !void {
         try w.edges.append(w.arena, .{ .src = src, .etype = etype, .target = target });
@@ -85,6 +88,52 @@ const W = struct {
 const Factory = union(enum) { none, descend: Ast.Node.Index, delegate: []const u8 };
 
 const Deferred = struct { sel_path: []const u8, abs: []const u8, sel: []const u8, owner: []const u8, depth: u32 };
+
+/// A place the walk put a file's top-level declaration: whole-file (`x.Name`) or selected
+/// (`X = @import("f.zig").Name`; `renamed` when X is not Name). `private` when the placement or
+/// any node above it is private (`const variants = @import("ascon.zig")`, a `@"f.zig"` file node):
+/// no code outside can write that name.
+const Home = struct { path: []const u8, private: bool, renamed: bool, segments: usize };
+
+/// The order of homes: a public path before a private one; the declaration's own name before a
+/// rename (`std.crypto.ecc.Curve25519` over `std.crypto.dh.X25519.Curve`, both
+/// `@import("curve25519.zig").Curve25519`); then the shorter path. Neither autodoc nor the
+/// compiler ranks re-exports; both name a declaration after where it is defined, and of the
+/// writable names this is the closest to that.
+fn betterHome(a: Home, b: Home) bool {
+    if (a.private != b.private) return !a.private;
+    if (a.renamed != b.renamed) return !a.renamed;
+    return a.segments < b.segments;
+}
+
+/// Is any node above `path` private? Parents are emitted before the walk descends into them.
+fn underPrivate(w: *const W, path: []const u8) bool {
+    var p = parent(path);
+    while (p.len > 0) : (p = parent(p)) if (w.private_nodes.contains(p)) return true;
+    return false;
+}
+
+fn segmentsOf(path: []const u8) usize {
+    var n: usize = 0;
+    var p = path;
+    while (p.len > 0) : (n += 1) p = parent(p);
+    return n;
+}
+
+/// One home per declaration: the walk meets `key` (`rel\x00Name`) at `cp`. Returns the home `cp`
+/// is an alias of, or null when `cp` is the home. The best placement is not known until the whole
+/// tree is walked, so `runNamed` walks again with the previous pass's best homes in `selected`,
+/// until each home is the best placement and was reached; on the first pass the first placement
+/// met is the home. Of equal placements the first met wins, in the final tree's walk order (not
+/// whatever an earlier pass chose, which would carry over placements that no longer exist).
+fn homeOf(w: *W, key: []const u8, cp: []const u8, is_pub: bool, renamed: bool) !?[]const u8 {
+    const here: Home = .{ .path = cp, .private = !is_pub or underPrivate(w, cp), .renamed = renamed, .segments = segmentsOf(cp) };
+    const gop = try w.best.getOrPut(key);
+    if (!gop.found_existing or betterHome(here, gop.value_ptr.*)) gop.value_ptr.* = here;
+    if (w.selected.get(key)) |home| return if (std.mem.eql(u8, home, cp)) null else home;
+    try w.selected.put(key, cp);
+    return null;
+}
 
 /// The parent path in the tree. A `<fn>()` factory container's parent is the fn it descends from
 /// (drop the trailing `()`); otherwise drop the last dotted segment, treating a `.` inside a `@"…"`
@@ -727,15 +776,13 @@ fn walk(w: *W, ast: *const Ast, members: []const Ast.Node.Index, path: []const u
         if (at_file_root) if (declName(ast, m)) |dn| {
             const key = try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ rel, dn });
             const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ path, dn });
-            if (w.selected.get(key)) |home| {
-                if (!std.mem.eql(u8, home, cp)) {
-                    try declFacts(w, cp, try locOf(w, ast, m, rel), try docComment(w, ast, m));
-                    try w.node(cp, "alias", dn, if (isPubDecl(ast, m)) "pub" else "priv");
-                    try w.edge(cp, "alias", home);
-                    try w.aliases.put(cp, home);
-                    continue;
-                }
-            } else try w.selected.put(key, cp);
+            if (try homeOf(w, key, cp, isPubDecl(ast, m), false)) |home| {
+                try declFacts(w, cp, try locOf(w, ast, m, rel), try docComment(w, ast, m));
+                try w.node(cp, "alias", dn, if (isPubDecl(ast, m)) "pub" else "priv");
+                try w.edge(cp, "alias", home);
+                try w.aliases.put(cp, home);
+                continue;
+            }
         };
         // test / doctest → an `example` fact on the decl it documents (`test <ident>`) or on the
         // enclosing namespace (`test "…"`). Attached by owner path, in the shape's attrs stream.
@@ -1162,10 +1209,12 @@ fn scopeFiles(w: *W) !void {
         var rest: std.ArrayList(Ast.Node.Index) = .empty;
         for (ast.rootDecls()) |m| {
             const dn = declName(ast, m) orelse "";
-            if (w.selected.get(try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, d.abs), dn }))) |home| {
-                try w.lexical_names.put(try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ fp, dn }), home);
+            // (a home seeded from an earlier pass may be right here, under `fp`: that one is walked)
+            const here = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ fp, dn });
+            if (w.selected.get(try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, d.abs), dn }))) |home| if (!std.mem.eql(u8, home, here)) {
+                try w.lexical_names.put(here, home);
                 continue;
-            }
+            };
             try rest.append(w.arena, m);
         }
         try walk(w, ast, rest.items, fp, "struct", std.fs.path.dirname(d.abs) orelse ".", d.depth + 1, rel);
@@ -1268,10 +1317,9 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     // `Sel` is defined in this file (not re-imported from another): its names are this file's
     // names, and the rest of the file has no other home yet. Settled after the walk (`scopeFiles`).
     // One home per declaration: selected again (`Ristretto255.Curve` and `Edwards25519` are the
-    // same `Edwards25519` of edwards25519.zig), it is an alias of where it was placed first.
+    // same `Edwards25519` of edwards25519.zig), it is an alias of its home (`homeOf`).
     const key = try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, abs), sel });
-    if (w.selected.get(key)) |home| if (!std.mem.eql(u8, home, cp)) return leaf(w, cp, name, vis, home, decl_loc, decl_doc);
-    try w.selected.put(key, cp);
+    if (try homeOf(w, key, cp, std.mem.eql(u8, vis, "pub"), !std.mem.eql(u8, name, sel))) |home| return leaf(w, cp, name, vis, home, decl_loc, decl_doc);
     const via_import = if (ast.fullVarDecl(found)) |fvd| if (fvd.ast.init_node.unwrap()) |ini| importTarget(ast.getNodeSource(ini)) != null else false else false;
     if (!via_import) try w.deferred.append(w.arena, .{ .sel_path = cp, .abs = abs, .sel = sel, .owner = parent(cp), .depth = depth });
 
@@ -1331,6 +1379,7 @@ pub const Stats = struct {
     nodes: usize,
     edges: usize,
     scope: std.EnumArray(Scope, usize),
+    passes: usize = 1, // phase-1 walks it took to settle the homes (`runNamed`)
 };
 
 /// Walk `root` (a std.zig path) and write the three TSV streams. `arena` must outlive nothing past
@@ -1347,7 +1396,45 @@ pub fn run(arena: std.mem.Allocator, io: std.Io, root: []const u8, nodes_out: []
 pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_name: []const u8, nodes_out: []const u8, edges_out: []const u8, attrs_out: []const u8, report: bool) !Stats {
     const src = try std.Io.Dir.cwd().readFileAllocOptions(io, root, arena, .unlimited, .of(u8), 0);
     var ast = try compat.parseZig(arena, src);
+    var ast_cache = std.StringHashMap(*Ast).init(arena); // parsed once, carried from pass to pass (`walkPass` takes it by value)
+    var line_cache = std.StringHashMap([]usize).init(arena);
 
+    // Phase 1, repeated until every declaration's home is its best placement and was reached
+    // (`homeOf`). Moving a home moves the paths inside it, so a pass can change the next one's
+    // best; std settles in a few passes, and a walk that does not settle fails loudly.
+    var prefer = std.StringHashMap([]const u8).init(arena);
+    var pass: usize = 0;
+    var w = while (true) : (pass += 1) {
+        if (pass == MAX_HOME_PASSES) return error.HomesDidNotSettle;
+        var pw = try walkPass(arena, io, &ast, root, root_name, nodes_out, attrs_out, &prefer, ast_cache, line_cache);
+        ast_cache = pw.ast_cache; // the copies this pass grew; the ones passed in are stale
+        line_cache = pw.line_cache;
+        // `best` keys ⊆ `selected` keys (homeOf puts both; `prefer` seeds only `selected`), so equal
+        // counts mean no seeded home went unmet this pass.
+        var settled = pw.selected.count() == pw.best.count();
+        var it = pw.best.iterator();
+        while (it.next()) |e| {
+            const home = pw.selected.get(e.key_ptr.*) orelse unreachable; // homeOf sets both
+            if (!std.mem.eql(u8, home, e.value_ptr.path)) settled = false;
+        }
+        if (settled) break pw;
+        prefer = std.StringHashMap([]const u8).init(arena);
+        it = pw.best.iterator();
+        while (it.next()) |e| try prefer.put(e.key_ptr.*, e.value_ptr.path);
+    };
+
+    // Phase 2 — resolve every edge target against the node set, emit with scope.
+    var stats = try resolveEdges(&w, root, edges_out, report);
+    stats.passes = pass + 1;
+    return stats;
+}
+
+/// The most phase-1 passes `runNamed` takes to settle the homes before giving up.
+const MAX_HOME_PASSES = 8;
+
+/// One phase-1 walk of the whole organism, `prefer` (key → home) seeding `selected`. Writes the
+/// nodes and attrs files; the returned W's writers are retired (`failing`), its maps stay valid.
+fn walkPass(arena: std.mem.Allocator, io: std.Io, ast: *Ast, root: []const u8, root_name: []const u8, nodes_out: []const u8, attrs_out: []const u8, prefer: *const std.StringHashMap([]const u8), ast_cache: std.StringHashMap(*Ast), line_cache: std.StringHashMap([]usize)) !W {
     const nf = try std.Io.Dir.cwd().createFile(io, nodes_out, .{});
     defer nf.close(io);
     var nbuf: [1 << 16]u8 = undefined;
@@ -1371,33 +1458,43 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         .edges = .empty,
         .root_dir = std.fs.path.dirname(root) orelse ".",
         .root_name = root_name,
-        .ast_cache = std.StringHashMap(*Ast).init(arena),
-        .line_cache = std.StringHashMap([]usize).init(arena),
+        .ast_cache = ast_cache,
+        .line_cache = line_cache,
         .deferred = .empty,
         .file_home = std.StringHashMap([]const u8).init(arena),
         .lexical = std.StringHashMap([]const u8).init(arena),
         .lexical_names = std.StringHashMap([]const u8).init(arena),
         .nsrefs = .empty,
-        .selected = std.StringHashMap([]const u8).init(arena),
+        .selected = try prefer.clone(),
+        .best = std.StringHashMap(Home).init(arena),
+        .private_nodes = std.StringHashMap(void).init(arena),
     };
     try w.nodes.print("path\tkind\tname\tvis\n", .{});
     try w.attrs.print("path\tattr\tvalue\n", .{});
     try w.node(root_name, "ns", root_name, "pub");
-    try w.attr(root_name, "doc", try fileDoc(&w, &ast));
+    try w.attr(root_name, "doc", try fileDoc(&w, ast));
     const root_abs = std.fs.path.resolve(arena, &.{root}) catch root;
     try w.visited.put(root_abs, {});
 
-    // Phase 1 — walk the whole organism: follow every @import, building the complete node set.
+    // walk the whole organism: follow every @import, building the complete node set.
     const root_dir = std.fs.path.dirname(root) orelse ".";
-    try walk(&w, &ast, ast.rootDecls(), root_name, "root", root_dir, 0, std.fs.path.basename(root));
+    try walk(&w, ast, ast.rootDecls(), root_name, "root", root_dir, 0, std.fs.path.basename(root));
     try w.file_home.put(try std.fs.path.resolve(arena, &.{root}), root_name);
     try scopeFiles(&w);
     try sweepImports(&w);
     try linkNsrefs(&w);
     try w.nodes.flush();
     try w.attrs.flush();
+    w.nodes = &failing_writer;
+    w.attrs = &failing_writer;
+    return w;
+}
 
-    // Phase 2 — resolve every edge target against the node set, emit with scope.
+/// Where a retired W's writers point: the files are closed, a write is a bug.
+var failing_writer: std.Io.Writer = .failing;
+
+fn resolveEdges(w: *W, root: []const u8, edges_out: []const u8, report: bool) !Stats {
+    const io = w.io;
     const ef = try std.Io.Dir.cwd().createFile(io, edges_out, .{});
     defer ef.close(io);
     var ebuf: [1 << 16]u8 = undefined;
@@ -1411,7 +1508,7 @@ pub fn runNamed(arena: std.mem.Allocator, io: std.Io, root: []const u8, root_nam
         const r = if (std.mem.eql(u8, e.etype, "imports"))
             Res{ .scope = Scope.module, .target = e.target }
         else
-            resolve(&w, e.src, e.target, resolve_fuel);
+            resolve(w, e.src, e.target, resolve_fuel);
         counts.getPtr(r.scope).* += 1;
         try ew.print("{s}\t{s}\t{s}\t{s}\n", .{ e.src, e.etype, r.target, @tagName(r.scope) });
     }
