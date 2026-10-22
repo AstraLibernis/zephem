@@ -27466,6 +27466,8 @@ std.crypto.aead.aes_ccm.assert	alias	no
 std.crypto.aead.aes_ccm.cbc_mac	ns	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac	fn	yes
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac()	struct	no
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Block	const	no
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().BlockCipherCtx	const	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Self	alias	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().block_length	alias	no
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().buf	field	no
@@ -27749,6 +27751,8 @@ std.crypto.auth.cbc_mac	nsref	no
 std.crypto.auth.cmac	ns	no
 std.crypto.auth.cmac.Cmac	fn	yes
 std.crypto.auth.cmac.Cmac()	struct	no
+std.crypto.auth.cmac.Cmac().Block	const	no
+std.crypto.auth.cmac.Cmac().BlockCipherCtx	const	no
 std.crypto.auth.cmac.Cmac().Self	alias	no
 std.crypto.auth.cmac.Cmac().block_length	alias	no
 std.crypto.auth.cmac.Cmac().buf	field	no
@@ -27965,6 +27969,12 @@ std.crypto.codecs.asn1.der.Decoder.Oid.InitError	const	no
 std.crypto.codecs.asn1.der.Decoder.Oid.Oid	alias	no
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	fn	yes
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap()	struct	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().EnumToOid	const	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType	struct	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enumToOid	fn	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enum_to_oid	field	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oidToEnum	fn	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oid_to_enum	field	no
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	fn	no
 std.crypto.codecs.asn1.der.Decoder.Oid.TestCase	struct	no
 std.crypto.codecs.asn1.der.Decoder.Oid.TestCase.dot_notation	field	no
@@ -28465,6 +28475,7 @@ std.crypto.core.aes.testing	alias	no
 std.crypto.core.keccak	ns	no
 std.crypto.core.keccak.KeccakF	fn	yes
 std.crypto.core.keccak.KeccakF()	struct	no
+std.crypto.core.keccak.KeccakF().Block	const	no
 std.crypto.core.keccak.KeccakF().RC	const	no
 std.crypto.core.keccak.KeccakF().Self	alias	no
 std.crypto.core.keccak.KeccakF().addByte	fn	yes
@@ -28485,8 +28496,20 @@ std.crypto.core.keccak.KeccakF().st	field	no
 std.crypto.core.keccak.KeccakF().xorBytes	fn	yes
 std.crypto.core.keccak.State	fn	yes
 std.crypto.core.keccak.State()	struct	no
+std.crypto.core.keccak.State().Op	enum	no
+std.crypto.core.keccak.State().Op.absorb	tag	no
+std.crypto.core.keccak.State().Op.initialized	tag	no
+std.crypto.core.keccak.State().Op.squeeze	tag	no
+std.crypto.core.keccak.State().Op.uninitialized	tag	no
+std.crypto.core.keccak.State().Op.updated	tag	no
 std.crypto.core.keccak.State().Options	struct	yes
 std.crypto.core.keccak.State().Self	alias	no
+std.crypto.core.keccak.State().TransitionTracker	const	no
+std.crypto.core.keccak.State().TransitionTracker.[else]	struct	no
+std.crypto.core.keccak.State().TransitionTracker.[else].to	fn	no
+std.crypto.core.keccak.State().TransitionTracker.[then]	struct	no
+std.crypto.core.keccak.State().TransitionTracker.[then].op	field	no
+std.crypto.core.keccak.State().TransitionTracker.[then].to	fn	no
 std.crypto.core.keccak.State().absorb	fn	yes
 std.crypto.core.keccak.State().buf	field	no
 std.crypto.core.keccak.State().delim	field	yes
@@ -28878,11 +28901,13 @@ std.crypto.ecc.P256.scalar.common.Field	fn	yes
 std.crypto.ecc.P256.scalar.common.Field()	struct	no
 std.crypto.ecc.P256.scalar.common.Field().Fe	alias	no
 std.crypto.ecc.P256.scalar.common.Field().IntRepr	const	yes
+std.crypto.ecc.P256.scalar.common.Field().MontgomeryDomainFieldElement	alias	no
 std.crypto.ecc.P256.scalar.common.Field().add	fn	yes
 std.crypto.ecc.P256.scalar.common.Field().cMov	fn	yes
 std.crypto.ecc.P256.scalar.common.Field().dbl	fn	yes
 std.crypto.ecc.P256.scalar.common.Field().encoded_length	alias	yes
 std.crypto.ecc.P256.scalar.common.Field().equivalent	fn	yes
+std.crypto.ecc.P256.scalar.common.Field().fiat	alias	no
 std.crypto.ecc.P256.scalar.common.Field().field_bits	alias	yes
 std.crypto.ecc.P256.scalar.common.Field().field_order	alias	yes
 std.crypto.ecc.P256.scalar.common.Field().fromBytes	fn	yes
@@ -29840,6 +29865,7 @@ std.crypto.hash.sha3.KMac128	const	no
 std.crypto.hash.sha3.KMac256	const	no
 std.crypto.hash.sha3.KMacLike	fn	no
 std.crypto.hash.sha3.KMacLike()	struct	no
+std.crypto.hash.sha3.KMacLike().CShaker	const	no
 std.crypto.hash.sha3.KMacLike().Options	struct	yes
 std.crypto.hash.sha3.KMacLike().Options.context	field	no
 std.crypto.hash.sha3.KMacLike().Self	alias	no
@@ -29864,6 +29890,7 @@ std.crypto.hash.sha3.Keccak()	struct	no
 std.crypto.hash.sha3.Keccak().Options	struct	yes
 std.crypto.hash.sha3.Keccak().Options.delim	field	no
 std.crypto.hash.sha3.Keccak().Self	alias	no
+std.crypto.hash.sha3.Keccak().State	const	no
 std.crypto.hash.sha3.Keccak().block_length	alias	yes
 std.crypto.hash.sha3.Keccak().digest_length	const	yes
 std.crypto.hash.sha3.Keccak().final	fn	yes
@@ -29895,6 +29922,7 @@ std.crypto.hash.sha3.ShakeLike()	struct	no
 std.crypto.hash.sha3.ShakeLike().Options	struct	yes
 std.crypto.hash.sha3.ShakeLike().Options.delim	field	no
 std.crypto.hash.sha3.ShakeLike().Self	alias	no
+std.crypto.hash.sha3.ShakeLike().State	const	no
 std.crypto.hash.sha3.ShakeLike().block_length	alias	yes
 std.crypto.hash.sha3.ShakeLike().buf	field	no
 std.crypto.hash.sha3.ShakeLike().digest_length	const	yes
@@ -29912,6 +29940,7 @@ std.crypto.hash.sha3.TupleHash128	const	no
 std.crypto.hash.sha3.TupleHash256	const	no
 std.crypto.hash.sha3.TupleHashLike	fn	no
 std.crypto.hash.sha3.TupleHashLike()	struct	no
+std.crypto.hash.sha3.TupleHashLike().CShaker	const	no
 std.crypto.hash.sha3.TupleHashLike().Options	struct	yes
 std.crypto.hash.sha3.TupleHashLike().Options.context	field	no
 std.crypto.hash.sha3.TupleHashLike().Self	alias	no
@@ -32263,6 +32292,11 @@ std.debug.Dwarf.deinit	fn	no
 std.debug.Dwarf.expression	ns	no
 std.debug.Dwarf.expression.Builder	fn	no
 std.debug.Dwarf.expression.Builder()	struct	no
+std.debug.Dwarf.expression.Builder().addr_type	const	no
+std.debug.Dwarf.expression.Builder().addr_type.[arm0]	alias	no
+std.debug.Dwarf.expression.Builder().addr_type.[arm1]	alias	no
+std.debug.Dwarf.expression.Builder().addr_type.[arm2]	alias	no
+std.debug.Dwarf.expression.Builder().addr_type.[else]	const	no
 std.debug.Dwarf.expression.Builder().writeAddr	fn	no
 std.debug.Dwarf.expression.Builder().writeAddrx	fn	no
 std.debug.Dwarf.expression.Builder().writeBra	fn	no
@@ -36406,6 +36440,7 @@ std.enums.EnumIndexer().[return3].count	alias	no
 std.enums.EnumIndexer().[return3].indexOf	fn	no
 std.enums.EnumIndexer().[return3].keyForIndex	fn	no
 std.enums.EnumIndexer().count	alias	no
+std.enums.EnumIndexer().fields_len	const	no
 std.enums.EnumIndexer().indexOf	fn	no
 std.enums.EnumIndexer().keyForIndex	fn	no
 std.enums.EnumMap	fn	yes
@@ -36551,6 +36586,7 @@ std.fmt.@"parse_float.zig".@"convert_slow.zig".@"decimal.zig".std	modref	no
 std.fmt.@"parse_float.zig".@"convert_slow.zig".BiasedFp	alias	no
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal	fn	no
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal()	struct	no
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().MantissaT	const	no
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().Self	alias	no
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().decimal_point	field	yes
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().decimal_point_range	const	no
@@ -36633,6 +36669,7 @@ std.fmt.@"parse_float.zig".parse.ParseInfo.max_mantissa_digits	field	no
 std.fmt.@"parse_float.zig".parse.common	ns	no
 std.fmt.@"parse_float.zig".parse.common.BiasedFp	fn	yes
 std.fmt.@"parse_float.zig".parse.common.BiasedFp()	struct	no
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().MantissaT	const	no
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().Self	alias	no
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().e	field	yes
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().eql	fn	no
@@ -44996,6 +45033,9 @@ std.mem.Endian	alias	no
 std.mem.PrintError	const	no
 std.mem.ReverseIterator	fn	yes
 std.mem.ReverseIterator()	struct	no
+std.mem.ReverseIterator().Element	const	no
+std.mem.ReverseIterator().ElementPointer	const	no
+std.mem.ReverseIterator().Pointer	const	no
 std.mem.ReverseIterator().index	field	no
 std.mem.ReverseIterator().next	fn	no
 std.mem.ReverseIterator().nextPtr	fn	no

@@ -30620,6 +30620,8 @@ std.crypto.aead.aes_ccm.cbc_mac.CbcMac().init	fn	init	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().update	fn	update	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().final	fn	final	pub
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().finalResult	fn	finalResult	pub
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().BlockCipherCtx	const	BlockCipherCtx	priv
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Block	const	Block	priv
 std.crypto.aead.aes_ccm.cbc_mac.testing	alias	testing	priv
 std.crypto.aead.aes_ccm.Aes128Ccm0	const	Aes128Ccm0	pub
 std.crypto.aead.aes_ccm.Aes128Ccm8	const	Aes128Ccm8	pub
@@ -30800,6 +30802,8 @@ std.crypto.auth.cmac.Cmac().update	fn	update	pub
 std.crypto.auth.cmac.Cmac().final	fn	final	pub
 std.crypto.auth.cmac.Cmac().finalResult	fn	finalResult	pub
 std.crypto.auth.cmac.Cmac().double	fn	double	priv
+std.crypto.auth.cmac.Cmac().BlockCipherCtx	const	BlockCipherCtx	priv
+std.crypto.auth.cmac.Cmac().Block	const	Block	priv
 std.crypto.auth.cmac.testing	alias	testing	priv
 std.crypto.auth.cbc_mac	nsref	cbc_mac	pub
 std.crypto.core	struct	core	pub
@@ -31190,6 +31194,7 @@ std.crypto.core.keccak.KeccakF().secureZero	fn	secureZero	pub
 std.crypto.core.keccak.KeccakF().round	fn	round	priv
 std.crypto.core.keccak.KeccakF().permuteR	fn	permuteR	pub
 std.crypto.core.keccak.KeccakF().permute	fn	permute	pub
+std.crypto.core.keccak.KeccakF().Block	const	Block	priv
 std.crypto.core.keccak.State	fn	State	pub
 std.crypto.core.keccak.State()	struct	State	pub
 std.crypto.core.keccak.State().Self	alias	Self	priv
@@ -31206,6 +31211,18 @@ std.crypto.core.keccak.State().permute	fn	permute	pub
 std.crypto.core.keccak.State().fillBlock	fn	fillBlock	pub
 std.crypto.core.keccak.State().pad	fn	pad	pub
 std.crypto.core.keccak.State().squeeze	fn	squeeze	pub
+std.crypto.core.keccak.State().TransitionTracker	const	TransitionTracker	priv
+std.crypto.core.keccak.State().TransitionTracker.[then]	struct	[then]	pub
+std.crypto.core.keccak.State().TransitionTracker.[then].op	field	op	pub
+std.crypto.core.keccak.State().TransitionTracker.[then].to	fn	to	priv
+std.crypto.core.keccak.State().TransitionTracker.[else]	struct	[else]	pub
+std.crypto.core.keccak.State().TransitionTracker.[else].to	fn	to	priv
+std.crypto.core.keccak.State().Op	enum	Op	priv
+std.crypto.core.keccak.State().Op.uninitialized	tag	uninitialized	pub
+std.crypto.core.keccak.State().Op.initialized	tag	initialized	pub
+std.crypto.core.keccak.State().Op.updated	tag	updated	pub
+std.crypto.core.keccak.State().Op.absorb	tag	absorb	pub
+std.crypto.core.keccak.State().Op.squeeze	tag	squeeze	pub
 std.crypto.core.Ascon	fn	Ascon	pub
 std.crypto.core.Ascon()	struct	Ascon	pub
 std.crypto.core.Ascon().Self	alias	Self	priv
@@ -31524,6 +31541,8 @@ std.crypto.ecc.P256.scalar.common.Field().invert	fn	invert	pub
 std.crypto.ecc.P256.scalar.common.Field().isSquare	fn	isSquare	pub
 std.crypto.ecc.P256.scalar.common.Field().uncheckedSqrt	fn	uncheckedSqrt	priv
 std.crypto.ecc.P256.scalar.common.Field().sqrt	fn	sqrt	pub
+std.crypto.ecc.P256.scalar.common.Field().MontgomeryDomainFieldElement	alias	MontgomeryDomainFieldElement	priv
+std.crypto.ecc.P256.scalar.common.Field().fiat	alias	fiat	priv
 std.crypto.ecc.P256.scalar.crypto	alias	crypto	priv
 std.crypto.ecc.P256.scalar.debug	alias	debug	priv
 std.crypto.ecc.P256.scalar.math	alias	math	priv
@@ -32227,6 +32246,7 @@ std.crypto.hash.sha3.Keccak().hash	fn	hash	pub
 std.crypto.hash.sha3.Keccak().update	fn	update	pub
 std.crypto.hash.sha3.Keccak().final	fn	final	pub
 std.crypto.hash.sha3.Keccak().finalResult	fn	finalResult	pub
+std.crypto.hash.sha3.Keccak().State	const	State	priv
 std.crypto.hash.sha3.Shake	fn	Shake	pub
 std.crypto.hash.sha3.TurboShake	fn	TurboShake	pub
 std.crypto.hash.sha3.ShakeLike	fn	ShakeLike	priv
@@ -32246,6 +32266,7 @@ std.crypto.hash.sha3.ShakeLike().update	fn	update	pub
 std.crypto.hash.sha3.ShakeLike().squeeze	fn	squeeze	pub
 std.crypto.hash.sha3.ShakeLike().final	fn	final	pub
 std.crypto.hash.sha3.ShakeLike().fillBlock	fn	fillBlock	pub
+std.crypto.hash.sha3.ShakeLike().State	const	State	priv
 std.crypto.hash.sha3.CShake	fn	CShake	pub
 std.crypto.hash.sha3.CShakeLike	fn	CShakeLike	priv
 std.crypto.hash.sha3.CShakeLike()	struct	CShakeLike	priv
@@ -32282,6 +32303,7 @@ std.crypto.hash.sha3.KMacLike().final	fn	final	pub
 std.crypto.hash.sha3.KMacLike().squeeze	fn	squeeze	pub
 std.crypto.hash.sha3.KMacLike().createWithOptions	fn	createWithOptions	pub
 std.crypto.hash.sha3.KMacLike().create	fn	create	pub
+std.crypto.hash.sha3.KMacLike().CShaker	const	CShaker	priv
 std.crypto.hash.sha3.TupleHash	fn	TupleHash	pub
 std.crypto.hash.sha3.TupleHashLike	fn	TupleHashLike	priv
 std.crypto.hash.sha3.TupleHashLike()	struct	TupleHashLike	priv
@@ -32298,6 +32320,7 @@ std.crypto.hash.sha3.TupleHashLike().update	fn	update	pub
 std.crypto.hash.sha3.TupleHashLike().final	fn	final	pub
 std.crypto.hash.sha3.TupleHashLike().fillBlock	fn	fillBlock	pub
 std.crypto.hash.sha3.TupleHashLike().squeeze	fn	squeeze	pub
+std.crypto.hash.sha3.TupleHashLike().CShaker	const	CShaker	priv
 std.crypto.hash.sha3.NistLengthEncoding	enum	NistLengthEncoding	pub
 std.crypto.hash.sha3.NistLengthEncoding.left	tag	left	pub
 std.crypto.hash.sha3.NistLengthEncoding.right	tag	right	pub
@@ -33343,6 +33366,12 @@ std.crypto.codecs.asn1.der.Decoder.Oid.fromDotComptime	fn	fromDotComptime	pub
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	fn	StaticMap	pub
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap()	struct	StaticMap	pub
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	fn	initComptime	pub
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType	struct	ReturnType	priv
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oid_to_enum	field	oid_to_enum	pub
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enum_to_oid	field	enum_to_oid	pub
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oidToEnum	fn	oidToEnum	pub
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enumToOid	fn	enumToOid	pub
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().EnumToOid	const	EnumToOid	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.hexToBytes	fn	hexToBytes	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.std	modref	std	priv
 std.crypto.codecs.asn1.der.Decoder.Oid.Oid	alias	Oid	priv
@@ -34370,6 +34399,11 @@ std.debug.Dwarf.expression.Builder().writeEntryValue	fn	writeEntryValue	pub
 std.debug.Dwarf.expression.Builder().writeReg	fn	writeReg	pub
 std.debug.Dwarf.expression.Builder().writeRegx	fn	writeRegx	pub
 std.debug.Dwarf.expression.Builder().writeImplicitValue	fn	writeImplicitValue	pub
+std.debug.Dwarf.expression.Builder().addr_type	const	addr_type	priv
+std.debug.Dwarf.expression.Builder().addr_type.[arm0]	alias	[arm0]	pub
+std.debug.Dwarf.expression.Builder().addr_type.[arm1]	alias	[arm1]	pub
+std.debug.Dwarf.expression.Builder().addr_type.[arm2]	alias	[arm2]	pub
+std.debug.Dwarf.expression.Builder().addr_type.[else]	const	[else]	pub
 std.debug.Dwarf.expression.isOpcodeValidInCFA	fn	isOpcodeValidInCFA	priv
 std.debug.Dwarf.expression.isOpcodeRegisterLocation	fn	isOpcodeRegisterLocation	priv
 std.debug.Dwarf.Unwind	ns	Unwind	pub
@@ -38928,6 +38962,7 @@ std.enums.EnumIndexer().[return3].Key	alias	Key	pub
 std.enums.EnumIndexer().[return3].count	alias	count	pub
 std.enums.EnumIndexer().[return3].indexOf	fn	indexOf	pub
 std.enums.EnumIndexer().[return3].keyForIndex	fn	keyForIndex	pub
+std.enums.EnumIndexer().fields_len	const	fields_len	priv
 std.fmt	ns	fmt	pub
 std.fmt.builtin	modref	builtin	priv
 std.fmt.std	nsref	std	priv
@@ -43421,6 +43456,9 @@ std.mem.ReverseIterator().ptr	field	ptr	pub
 std.mem.ReverseIterator().index	field	index	pub
 std.mem.ReverseIterator().next	fn	next	pub
 std.mem.ReverseIterator().nextPtr	fn	nextPtr	pub
+std.mem.ReverseIterator().Element	const	Element	priv
+std.mem.ReverseIterator().Pointer	const	Pointer	priv
+std.mem.ReverseIterator().ElementPointer	const	ElementPointer	priv
 std.mem.reverseIterator	fn	reverseIterator	pub
 std.mem.rotate	fn	rotate	pub
 std.mem.replace	fn	replace	pub
@@ -87014,6 +87052,7 @@ std.fmt.@"parse_float.zig".parse.common.BiasedFp().zeroPow2	fn	zeroPow2	pub
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().inf	fn	inf	pub
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().eql	fn	eql	pub
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().toFloat	fn	toFloat	pub
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().MantissaT	const	MantissaT	priv
 std.fmt.@"parse_float.zig".parse.common.floatFromUnsigned	fn	floatFromUnsigned	pub
 std.fmt.@"parse_float.zig".parse.common.Number	fn	Number	pub
 std.fmt.@"parse_float.zig".parse.common.Number()	struct	Number	pub
@@ -87967,6 +88006,7 @@ std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().leftShift	fn	leftShift	
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().rightShift	fn	rightShift	pub
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().parse	fn	parse	pub
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().numberOfDigitsLeftShift	fn	numberOfDigitsLeftShift	pub
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().MantissaT	const	MantissaT	priv
 std.fmt.@"parse_float.zig".@"convert_slow.zig".mantissaType	alias	mantissaType	priv
 std.fmt.@"parse_float.zig".@"convert_slow.zig".max_shift	const	max_shift	priv
 std.fmt.@"parse_float.zig".@"convert_slow.zig".num_powers	const	num_powers	priv

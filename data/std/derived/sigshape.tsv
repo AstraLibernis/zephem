@@ -4817,6 +4817,8 @@ std.crypto.codecs.asn1.Tag.init	other	no	no
 std.crypto.codecs.asn1.Tag.toExpected	self	no	no
 std.crypto.codecs.asn1.Tag.universal	other	no	no
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	other	no	yes
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enumToOid	self	no	no
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oidToEnum	self	no	no
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	other	no	yes
 std.crypto.codecs.asn1.der.Decoder.Oid.TestCase.init	other	no	yes
 std.crypto.codecs.asn1.der.Decoder.Oid.decodeDer	other	no	no
@@ -5089,6 +5091,8 @@ std.crypto.core.keccak.KeccakF().secureZero	self	no	no
 std.crypto.core.keccak.KeccakF().setBytes	self	no	no
 std.crypto.core.keccak.KeccakF().xorBytes	self	no	no
 std.crypto.core.keccak.State	other	no	yes
+std.crypto.core.keccak.State().TransitionTracker.[else].to	other	no	no
+std.crypto.core.keccak.State().TransitionTracker.[then].to	other	no	no
 std.crypto.core.keccak.State().absorb	self	no	no
 std.crypto.core.keccak.State().fillBlock	self	no	no
 std.crypto.core.keccak.State().init	other	no	no

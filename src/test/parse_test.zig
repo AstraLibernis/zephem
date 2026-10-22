@@ -17,6 +17,7 @@ const root_zig =
     \\pub const DynLib = @import("dl.zig").DynLib;
     \\pub const Plat = @import("plat.zig");
     \\pub const AgainDyn = @import("dl.zig").DynLib;
+    \\pub const DlOpt = @import("dl.zig").Opt;
     \\pub const Renamed = @import("home.zig").Curve;
     \\pub const Curve = @import("home.zig").Curve;
     \\const hidden = struct {
@@ -112,7 +113,11 @@ const tbl_zig =
 // other home, and `ElfErr` inside DynLib is this file's name.
 const dl_zig =
     \\const ElfErr = error{Elf};
+    \\pub const Opt = struct {};
     \\pub const DynLib = struct {
+    \\    pub fn open(o: Opt) void {
+    \\        _ = o;
+    \\    }
     \\    pub const Error = ElfErr || error{Other};
     \\};
     \\test DynLib {}
@@ -201,6 +206,21 @@ const gen_zig =
     \\    pub const Curve = Ew;
     \\};
     \\pub const Comp = Ed.Curve.scalar.Compressed;
+    \\pub fn Mac(comptime C: type) type {
+    \\    const Block = [4]u8;
+    \\    const Hidden = u16;
+    \\    const Ret = struct {
+    \\        pub fn get() Inner {}
+    \\    };
+    \\    const Inner = struct {};
+    \\    const unused = 3;
+    \\    _ = C;
+    \\    return struct {
+    \\        k1: Block,
+    \\        fn helper() Hidden {}
+    \\        pub fn make() Ret {}
+    \\    };
+    \\}
     \\
 ;
 const Out = struct { nodes: []const u8, edges: []const u8, attrs: []const u8, passes: usize };
@@ -336,6 +356,17 @@ test "extractor: every fixed case produces its row" {
     try expectRow(o.edges, "std.Gen.Box().n\talias\tCurve.len\tgeneric");
     // An alias part-way along a path is followed: Ed.Curve → Ew, Ew.scalar → Cs.
     try expectRow(o.edges, "std.Gen.Comp\talias\tstd.Gen.Cs.Compressed\tlocal");
+    // A factory's body consts are machinery, unmapped — except one a public member of the product
+    // names (and, in turn, one such a local's public members name): code using the product
+    // reaches those, so they are mapped, private, under `<fn>()`.
+    try expectRow(o.nodes, "std.Gen.Mac().Block\tconst\tBlock\tpriv");
+    try expectRow(o.edges, "std.Gen.Mac().k1\thas_type\tstd.Gen.Mac().Block\tlocal");
+    try expectRow(o.nodes, "std.Gen.Mac().Ret.get\tfn\tget\tpub");
+    try expectRow(o.edges, "std.Gen.Mac().Ret.get\thas_type\tstd.Gen.Mac().Inner\tcross");
+    try expectNoPath(o.nodes, "std.Gen.Mac().Hidden"); // only a private fn names it
+    try expectNoPath(o.nodes, "std.Gen.Mac().unused");
+    // A name of a re-exported file whose home is elsewhere resolves to that home.
+    try expectRow(o.edges, "std.DynLib.open\thas_type\tstd.DlOpt\tcross");
     try expectRow(o.nodes, "std.Curve.add\tfn\tadd\tpub");
     try expectRow(o.edges, "std.Renamed\talias\tstd.Curve\tlocal");
     try expectRow(o.nodes, "std.Shown\tstruct\tShown\tpub");
@@ -344,4 +375,12 @@ test "extractor: every fixed case produces its row" {
     try expectRow(o.edges, "std.Deep.Lib\talias\tstd.Lib\tcross");
     // A decl literal calls a member of the declared type.
     try expectRow(o.edges, "std.Plat.made\tinstantiates\tstd.Plat.Alloc.init\tlocal");
+}
+
+fn expectNoPath(table: []const u8, path: []const u8) !void {
+    var lines = std.mem.splitScalar(u8, table, '\n');
+    while (lines.next()) |ln| if (std.mem.startsWith(u8, ln, path) and ln.len > path.len and ln[path.len] == '\t') {
+        std.debug.print("unexpected node: {s}\n", .{ln});
+        return error.TestUnexpectedRow;
+    };
 }

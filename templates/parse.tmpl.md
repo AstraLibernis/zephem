@@ -59,7 +59,9 @@ comptime. Sees all of std; dies on nothing.
 **② One organism walk.** `walk.zig` follows `@import` edges from the root, expanding each file
 once, so the whole reachable namespace is one tree. It **descends type factories** — a `fn(…) type`
 with one top-level `return struct {…}` gets its produced type's members mapped under `<fn>()` (so
-`std.hash_map.HashMap().get` exists) — and places each **selective re-export** (`pub const X = @import("f").Sel`)
+`std.hash_map.HashMap().get` exists); the consts in the factory's body are its machinery and
+are left out, except one a public member of the product names (`k1: Block`, `fn initComptime(…)
+ReturnType`), mapped private under `<fn>()` since code using the product reaches it — and places each **selective re-export** (`pub const X = @import("f").Sel`)
 at a single canonical home under the alias, so a member is never duplicated. When one declaration
 is placed in several places (`std.crypto.ecc.Curve25519` and `std.crypto.dh.X25519.Curve` both
 select `curve25519.zig`'s `Curve25519`), its home is the best of them, the others aliases of it: a

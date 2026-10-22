@@ -2462,6 +2462,10 @@ std.crypto.core.keccak.KeccakF	resolved	1
 std.crypto.core.keccak.KeccakF()	skipped	0
 std.crypto.core.keccak.State	resolved	1
 std.crypto.core.keccak.State()	skipped	0
+std.crypto.core.keccak.State().TransitionTracker	skipped	0
+std.crypto.core.keccak.State().TransitionTracker.[then]	skipped	0
+std.crypto.core.keccak.State().TransitionTracker.[else]	skipped	0
+std.crypto.core.keccak.State().Op	skipped	0
 std.crypto.core.Ascon	resolved	1
 std.crypto.core.Ascon()	skipped	0
 std.crypto.core.modes	resolved	2
@@ -2692,6 +2696,7 @@ std.crypto.codecs.asn1.der.Decoder.Oid	private	0
 std.crypto.codecs.asn1.der.Decoder.Oid.TestCase	private	0
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	private	0
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap()	skipped	0
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType	skipped	0
 std.crypto.codecs.asn1.der.Encoder	resolved	7
 std.crypto.codecs.asn1.der.Encoder.ArrayListReverse	private	0
 std.crypto.codecs.asn1.Tag	resolved	10
@@ -2797,6 +2802,7 @@ std.debug.Dwarf.expression.StackMachine().Value.regval_type	skipped	0
 std.debug.Dwarf.expression.StackMachine().Value.const_type	skipped	0
 std.debug.Dwarf.expression.Builder	resolved	1
 std.debug.Dwarf.expression.Builder()	skipped	0
+std.debug.Dwarf.expression.Builder().addr_type	skipped	0
 std.debug.Dwarf.Unwind	resolved	11
 std.debug.Dwarf.Unwind.VirtualMachine	resolved	10
 std.debug.Dwarf.Unwind.VirtualMachine.RegisterRule	resolved	0

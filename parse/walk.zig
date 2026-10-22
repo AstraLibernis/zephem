@@ -532,6 +532,9 @@ fn resolveBare(w: *W, container: []const u8, name: []const u8) ?[]const u8 {
     while (true) {
         const cand = if (scope.len == 0) name else std.fmt.allocPrint(w.arena, "{s}.{s}", .{ scope, name }) catch return null;
         if (w.node_set.contains(cand)) return cand;
+        // a name of a re-exported file whose home is elsewhere (`Config` in debug_allocator.zig
+        // is `std.heap.DebugAllocatorConfig`): it resolves there
+        if (w.lexical_names.get(cand)) |home| return home;
         if (scope.len == 0) return null;
         scope = w.lexical.get(scope) orelse parent(scope); // a re-exported Sel continues in its own file
     }
@@ -787,6 +790,7 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
             try w.attr(child, "loc", try locOf(w, ast, d, rel)); // the produced type's own location
             // the factory's type params are in scope for every member of `<fn>()`
             try registerTypeParams(w, ast, proto, child);
+            const first_edge = w.edges.items.len;
             try walk(w, ast, cd.ast.members, child, ck, dir, depth + 1, rel);
             // A factory that returns a different type under some condition (`if (non-exhaustive)
             // return struct {…};` before the final `return struct {…}`): each earlier one is a
@@ -810,6 +814,8 @@ fn emitFn(w: *W, ast: *const Ast, cp: []const u8, name: []const u8, vis: []const
                 try registerTypeParams(w, ast, proto, vp);
                 try walk(w, ast, rd.ast.members, vp, rk, dir, depth + 1, rel);
             }
+            // after the product and its variants, whose public members say which locals they name
+            try factoryLocals(w, ast, node, child, first_edge, dir, depth, rel);
         },
         else => {},
     }
@@ -1123,6 +1129,55 @@ fn emitArm(w: *W, ast: *const Ast, expr: Ast.Node.Index, cp: []const u8, label: 
     try w.node(vp, "const", name, "pub");
     try w.attr(vp, "value", try collapse(w.arena, src));
     try emitVariants(w, ast, value, vp, base_dir, depth + 1, rel);
+}
+
+/// The consts a factory's body declares around its `return struct {…}` (`const Block =
+/// [BlockCipher.block.block_length]u8;`) are the factory's machinery and are not mapped — except
+/// one a public member of the product names (`k1: Block`, `fn initComptime(…) ReturnType`): code
+/// using the product reaches it, so it is mapped, private (no code outside the fn can write its
+/// name), under `<fn>()` where the product's names resolve. A local mapped so is surface in turn:
+/// one its public members name is mapped too (`ReturnType.enum_to_oid: EnumToOid`), until no more.
+/// `first_edge` is where the product's own edges start.
+fn factoryLocals(w: *W, ast: *const Ast, fn_node: Ast.Node.Index, child: []const u8, first_edge: usize, dir: []const u8, depth: u32, rel: []const u8) !void {
+    var buf: [2]Ast.Node.Index = undefined;
+    const stmts = ast.blockStatements(&buf, ast.nodeData(fn_node).node_and_node[1]) orelse return;
+    var mapped = std.StringHashMap(void).init(w.arena);
+    var added = true;
+    while (added) {
+        added = false;
+        for (stmts) |s| {
+            const vd = ast.fullVarDecl(s) orelse continue;
+            if (ast.tokenTag(vd.ast.mut_token) != .keyword_const) continue;
+            const init = vd.ast.init_node.unwrap() orelse continue;
+            const name = ast.tokenSlice(vd.ast.mut_token + 1);
+            const cp = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ child, name });
+            if (mapped.contains(cp)) continue;
+            if (w.node_set.contains(cp)) continue; // a member of the product really named so
+            if (!namedByPublicMember(w, child, first_edge, name, &mapped)) continue;
+            try declFacts(w, cp, try locOf(w, ast, s, rel), try docComment(w, ast, s));
+            try emitInit(w, ast, init, cp, name, "priv", false, vd.ast.type_node.unwrap(), child, dir, depth + 1, rel);
+            try mapped.put(cp, {});
+            added = true;
+        }
+    }
+}
+
+/// Does an edge of a public member of `child` (from `first_edge` on) name `name` — as the type,
+/// alias target or error set it refers to, or the head of a path through it (`State.rate`)? A
+/// local already `mapped` counts as public here: code using the product reaches it.
+fn namedByPublicMember(w: *W, child: []const u8, first_edge: usize, name: []const u8, mapped: *const std.StringHashMap(void)) bool {
+    for (w.edges.items[first_edge..]) |e| {
+        if (!(e.src.len > child.len and std.mem.startsWith(u8, e.src, child) and e.src[child.len] == '.')) continue;
+        var p = e.src;
+        const public = while (p.len > child.len) : (p = parent(p)) {
+            if (w.private_nodes.contains(p) and !mapped.contains(p)) break false;
+        } else true;
+        if (!public) continue;
+        const base = extractBase(e.target);
+        const head = base[0 .. std.mem.findScalar(u8, base, '.') orelse base.len];
+        if (std.mem.eql(u8, head, name)) return true;
+    }
+    return false;
 }
 
 /// Every `return <container literal>` in a fn body, through blocks and `if`/`else` (not into

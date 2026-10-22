@@ -16,8 +16,8 @@ Built by `derive/index.zig` from `extracted/nodes.tsv`. One row per container, r
 where its block lives in the map. Columns: `path · line · span · depth · kind · n_children`.
 Because `nodes.tsv` is pre-order DFS, every subtree is a *contiguous* run of rows — so
 `line` (1-based, header-aware) + `span` (subtree size) pin the exact block, letting a
-consumer read one module in a single ranged read instead of scanning 88381 rows.
-**6,428 containers.**
+consumer read one module in a single ranged read instead of scanning 88421 rows.
+**6,434 containers.**
 
 ```sh
 zephem map show std.crypto.aead   # exactly that subtree, via the table of contents
@@ -53,15 +53,15 @@ nodes). Verified by `zephem overlays --check`.
 `path · first_param · io · generic`, from `zephem overlays` over the `sig` attributes
 (`attrs.tsv` where `attr == sig`). Classes each signature by first-param kind
 (`self`/`none`/`allocator`/`other`), whether it threads `Io`, and whether it's generic
-(`comptime`/`anytype`). **12,820 fns**, every field a closed set. Verified by
+(`comptime`/`anytype`). **12,824 fns**, every field a closed set. Verified by
 `zephem overlays --check`.
 
 ### `callcard.tsv` — as-written ⋈ resolved
 `path · witness · sig · resolved`, from `zephem overlays` — the merge of the `sig`
 attributes (as-written) and `resolved.tsv` (typed) on a normalized path. One row per
-callable (15,207): `both` (5,443 — the resolved column fills in real types
+callable (15,211): `both` (5,443 — the resolved column fills in real types
 where the source said `@This()`/`Self`), `reflect-only` (2,387), `parser-only`
-(7,377 — a private or uninstantiated-factory fn the compiler couldn't build here,
+(7,381 — a private or uninstantiated-factory fn the compiler couldn't build here,
 no resolved type). Verified by `zephem overlays --check`.
 
 ---

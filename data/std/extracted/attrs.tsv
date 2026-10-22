@@ -67020,6 +67020,10 @@ std.crypto.aead.aes_ccm.cbc_mac.CbcMac().final	loc	crypto/cbc_mac.zig:66
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().final	sig	fn final(self: *Self, out: *[mac_length]u8) void
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().finalResult	loc	crypto/cbc_mac.zig:72
 std.crypto.aead.aes_ccm.cbc_mac.CbcMac().finalResult	sig	fn finalResult(d: *Self) [mac_length]u8
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().BlockCipherCtx	loc	crypto/cbc_mac.zig:14
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().BlockCipherCtx	value	@typeInfo(@TypeOf(BlockCipher.initEnc)).@"fn".return_type.?
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Block	loc	crypto/cbc_mac.zig:15
+std.crypto.aead.aes_ccm.cbc_mac.CbcMac().Block	value	[BlockCipher.block.block_length]u8
 std.crypto.aead.aes_ccm.cbc_mac.testing	loc	crypto/cbc_mac.zig:80
 std.crypto.aead.aes_ccm.cbc_mac	example	test "CbcMacAes128 - Empty message" {\n    const key = [_]u8{ 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };\n    var msg: [0]u8 = undefined;\n\n    // CBC-MAC of empty message = Encrypt(0)\n    const expected = [_]u8{ 0x7d, 0xf7, 0x6b, 0x0c, 0x1a, 0xb8, 0x99, 0xb3, 0x3e, 0x42, 0xf0, 0x47, 0xb9, 0x1b, 0x54, 0x6f };\n\n    var out: [CbcMacAes128.mac_length]u8 = undefined;\n    CbcMacAes128.create(&out, &msg, &key);\n    try testing.expectEqualSlices(u8, &out, &expected);\n}
 std.crypto.aead.aes_ccm.cbc_mac	example	test "CbcMacAes128 - Single block (16 bytes)" {\n    const key = [_]u8{ 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };\n    const msg = [_]u8{ 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };\n\n    // CBC-MAC = Encrypt(msg XOR 0)\n    const expected = [_]u8{ 0x3a, 0xd7, 0x7b, 0xb4, 0x0d, 0x7a, 0x36, 0x60, 0xa8, 0x9e, 0xca, 0xf3, 0x24, 0x66, 0xef, 0x97 };\n\n    var out: [CbcMacAes128.mac_length]u8 = undefined;\n    CbcMacAes128.create(&out, &msg, &key);\n    try testing.expectEqualSlices(u8, &out, &expected);\n}
@@ -67395,6 +67399,10 @@ std.crypto.auth.cmac.Cmac().finalResult	loc	crypto/cmac.zig:76
 std.crypto.auth.cmac.Cmac().finalResult	sig	fn finalResult(d: *Self) [mac_length]u8
 std.crypto.auth.cmac.Cmac().double	loc	crypto/cmac.zig:82
 std.crypto.auth.cmac.Cmac().double	sig	fn double(l: Block) Block
+std.crypto.auth.cmac.Cmac().BlockCipherCtx	loc	crypto/cmac.zig:11
+std.crypto.auth.cmac.Cmac().BlockCipherCtx	value	@typeInfo(@TypeOf(BlockCipher.initEnc)).@"fn".return_type.?
+std.crypto.auth.cmac.Cmac().Block	loc	crypto/cmac.zig:12
+std.crypto.auth.cmac.Cmac().Block	value	[BlockCipher.block.block_length]u8
 std.crypto.auth.cmac.testing	loc	crypto/cmac.zig:99
 std.crypto.auth.cmac	example	test "CmacAes128 - Example 1: len = 0" {\n    const key = [_]u8{\n        0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c,\n    };\n    var msg: [0]u8 = undefined;\n    const exp = [_]u8{\n        0xbb, 0x1d, 0x69, 0x29, 0xe9, 0x59, 0x37, 0x28, 0x7f, 0xa3, 0x7d, 0x12, 0x9b, 0x75, 0x67, 0x46,\n    };\n    var out: [CmacAes128.mac_length]u8 = undefined;\n    CmacAes128.create(&out, &msg, &key);\n    try testing.expectEqualSlices(u8, &out, &exp);\n}
 std.crypto.auth.cmac	example	test "CmacAes128 - Example 2: len = 16" {\n    const key = [_]u8{\n        0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c,\n    };\n    const msg = [_]u8{\n        0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,\n    };\n    const exp = [_]u8{\n        0x07, 0x0a, 0x16, 0xb4, 0x6b, 0x4d, 0x41, 0x44, 0xf7, 0x9b, 0xdd, 0x9d, 0xd0, 0x4a, 0x28, 0x7c,\n    };\n    var out: [CmacAes128.mac_length]u8 = undefined;\n    CmacAes128.create(&out, &msg, &key);\n    try testing.expectEqualSlices(u8, &out, &exp);\n}
@@ -68323,6 +68331,8 @@ std.crypto.core.keccak.KeccakF().permuteR	sig	fn permuteR(self: *Self, comptime 
 std.crypto.core.keccak.KeccakF().permute	loc	crypto/keccak_p.zig:192
 std.crypto.core.keccak.KeccakF().permute	doc	Apply a full-round permutation to the state.
 std.crypto.core.keccak.KeccakF().permute	sig	fn permute(self: *Self) void
+std.crypto.core.keccak.KeccakF().Block	loc	crypto/keccak_p.zig:13
+std.crypto.core.keccak.KeccakF().Block	value	[25]T
 std.crypto.core.keccak.State	loc	crypto/keccak_p.zig:199
 std.crypto.core.keccak.State	doc	A generic Keccak-P state.
 std.crypto.core.keccak.State	sig	fn State(comptime f: u11, comptime capacity: u11, comptime rounds: u5) type
@@ -68366,6 +68376,26 @@ std.crypto.core.keccak.State().pad	sig	fn pad(self: *Self) void
 std.crypto.core.keccak.State().squeeze	loc	crypto/keccak_p.zig:333
 std.crypto.core.keccak.State().squeeze	doc	Squeeze a slice of bytes from the sponge. The function can be called multiple times.
 std.crypto.core.keccak.State().squeeze	sig	fn squeeze(self: *Self, out: []u8) void
+std.crypto.core.keccak.State().TransitionTracker	loc	crypto/keccak_p.zig:205
+std.crypto.core.keccak.State().TransitionTracker	value	if (mode == .debug) struct { op: Op = .uninitialized, fn to(tracker: *@This(), next_op: Op) void { switch (next_op) { .updated => { switch (tracker.op) { .uninitialized => @panic("cannot permute before initializing"), else => {}, } }, .absorb => { switch (tracker.op) { .squeeze => @panic("cannot absorb right after squeezing"), else => {}, } }, .squeeze => { switch (tracker.op) { .uninitialized => @panic("cannot squeeze before initializing"), .initialized => @panic("cannot squeeze right after initializing"), .absorb => @panic("cannot squeeze right after absorbing"), else => {}, } }, .uninitialized => @panic("cannot transition to uninitialized"), .initialized => {}, } tracker.op = next_op; } } else struct { // No-op in non-debug modes. inline fn to(tracker: *@This(), next_op: Op) void { _ = tracker; // no-op _ = next_op; // no-op } }
+std.crypto.core.keccak.State().TransitionTracker.[then]	when	mode == .debug
+std.crypto.core.keccak.State().TransitionTracker.[then]	loc	crypto/keccak_p.zig:205
+std.crypto.core.keccak.State().TransitionTracker.[then].op	loc	crypto/keccak_p.zig:206
+std.crypto.core.keccak.State().TransitionTracker.[then].op	type	Op
+std.crypto.core.keccak.State().TransitionTracker.[then].op	value	.uninitialized
+std.crypto.core.keccak.State().TransitionTracker.[then].to	loc	crypto/keccak_p.zig:208
+std.crypto.core.keccak.State().TransitionTracker.[then].to	sig	fn to(tracker: *@This(), next_op: Op) void
+std.crypto.core.keccak.State().TransitionTracker.[else]	when	else
+std.crypto.core.keccak.State().TransitionTracker.[else]	loc	crypto/keccak_p.zig:235
+std.crypto.core.keccak.State().TransitionTracker.[else].to	loc	crypto/keccak_p.zig:237
+std.crypto.core.keccak.State().TransitionTracker.[else].to	sig	fn to(tracker: *@This(), next_op: Op) void
+std.crypto.core.keccak.State().TransitionTracker.[else].to	mod	inline
+std.crypto.core.keccak.State().Op	loc	crypto/keccak_p.zig:204
+std.crypto.core.keccak.State().Op.uninitialized	loc	crypto/keccak_p.zig:204
+std.crypto.core.keccak.State().Op.initialized	loc	crypto/keccak_p.zig:204
+std.crypto.core.keccak.State().Op.updated	loc	crypto/keccak_p.zig:204
+std.crypto.core.keccak.State().Op.absorb	loc	crypto/keccak_p.zig:204
+std.crypto.core.keccak.State().Op.squeeze	loc	crypto/keccak_p.zig:204
 std.crypto.core.keccak	example	test "Keccak-f800" {\n    var st: KeccakF(800) = .{\n        .st = .{\n            0xE531D45D, 0xF404C6FB, 0x23A0BF99, 0xF1F8452F, 0x51FFD042, 0xE539F578, 0xF00B80A7,\n            0xAF973664, 0xBF5AF34C, 0x227A2424, 0x88172715, 0x9F685884, 0xB15CD054, 0x1BF4FC0E,\n            0x6166FA91, 0x1A9E599A, 0xA3970A1F, 0xAB659687, 0xAFAB8D68, 0xE74B1015, 0x34001A98,\n            0x4119EFF3, 0x930A0E76, 0x87B28070, 0x11EFE996,\n        },\n    };\n    st.permute();\n    const expected: [25]u32 = .{\n        0x75BF2D0D, 0x9B610E89, 0xC826AF40, 0x64CD84AB, 0xF905BDD6, 0xBC832835, 0x5F8001B9,\n        0x15662CCE, 0x8E38C95E, 0x701FE543, 0x1B544380, 0x89ACDEFF, 0x51EDB5DE, 0x0E9702D9,\n        0x6C19AA16, 0xA2913EEE, 0x60754E9A, 0x9819063C, 0xF4709254, 0xD09F9084, 0x772DA259,\n        0x1DB35DF7, 0x5AA60162, 0x358825D5, 0xB3783BAB,\n    };\n    try std.testing.expectEqualSlices(u32, &st.st, &expected);\n}
 std.crypto.core.keccak	example	test "squeeze" {\n    var st: State(800, 256, 22) = .init(@splat(0x80), 0x01);\n\n    var out0: [15]u8 = undefined;\n    var out1: [out0.len]u8 = undefined;\n    st.permute();\n    var st0 = st;\n    st0.squeeze(out0[0..]);\n    var st1 = st;\n    st1.squeeze(out1[0 .. out1.len / 2]);\n    st1.squeeze(out1[out1.len / 2 ..]);\n    try std.testing.expectEqualSlices(u8, &out0, &out1);\n\n    var out2: [100]u8 = undefined;\n    var out3: [out2.len]u8 = undefined;\n    var st2 = st;\n    st2.squeeze(out2[0..]);\n    var st3 = st;\n    st3.squeeze(out3[0 .. out2.len / 2]);\n    st3.squeeze(out3[out2.len / 2 ..]);\n    try std.testing.expectEqualSlices(u8, &out2, &out3);\n}
 std.crypto.core.Ascon	loc	crypto/ascon.zig:26
@@ -69197,6 +69227,8 @@ std.crypto.ecc.P256.scalar.common.Field().uncheckedSqrt	sig	fn uncheckedSqrt(x2:
 std.crypto.ecc.P256.scalar.common.Field().sqrt	loc	crypto/pcurves/common.zig:314
 std.crypto.ecc.P256.scalar.common.Field().sqrt	doc	Compute the square root of `x2`, returning `error.NotSquare` if `x2` was not a square.
 std.crypto.ecc.P256.scalar.common.Field().sqrt	sig	fn sqrt(x2: Fe) NotSquareError!Fe
+std.crypto.ecc.P256.scalar.common.Field().MontgomeryDomainFieldElement	loc	crypto/pcurves/common.zig:21
+std.crypto.ecc.P256.scalar.common.Field().fiat	loc	crypto/pcurves/common.zig:20
 std.crypto.ecc.P256.scalar.crypto	loc	crypto/pcurves/p256/scalar.zig:3
 std.crypto.ecc.P256.scalar.debug	loc	crypto/pcurves/p256/scalar.zig:4
 std.crypto.ecc.P256.scalar.math	loc	crypto/pcurves/p256/scalar.zig:5
@@ -70863,6 +70895,8 @@ std.crypto.hash.sha3.Keccak().final	doc	Return the hash of the absorbed bytes.
 std.crypto.hash.sha3.Keccak().final	sig	fn final(self: *Self, out: *[digest_length]u8) void
 std.crypto.hash.sha3.Keccak().finalResult	loc	crypto/sha3.zig:90
 std.crypto.hash.sha3.Keccak().finalResult	sig	fn finalResult(d: *Self) [digest_length]u8
+std.crypto.hash.sha3.Keccak().State	loc	crypto/sha3.zig:53
+std.crypto.hash.sha3.Keccak().State	value	KeccakState(f, output_bits * 2, rounds)
 std.crypto.hash.sha3.Shake	loc	crypto/sha3.zig:99
 std.crypto.hash.sha3.Shake	doc	The SHAKE extendable output hash function.
 std.crypto.hash.sha3.Shake	sig	fn Shake(comptime security_level: u11) type
@@ -70912,6 +70946,8 @@ std.crypto.hash.sha3.ShakeLike().final	sig	fn final(self: *Self, out: []u8) void
 std.crypto.hash.sha3.ShakeLike().fillBlock	loc	crypto/sha3.zig:191
 std.crypto.hash.sha3.ShakeLike().fillBlock	doc	Align the input to a block boundary.
 std.crypto.hash.sha3.ShakeLike().fillBlock	sig	fn fillBlock(self: *Self) void
+std.crypto.hash.sha3.ShakeLike().State	loc	crypto/sha3.zig:116
+std.crypto.hash.sha3.ShakeLike().State	value	KeccakState(f, security_level * 2, rounds)
 std.crypto.hash.sha3.CShake	loc	crypto/sha3.zig:199
 std.crypto.hash.sha3.CShake	doc	The cSHAKE extendable output hash function. cSHAKE is similar to SHAKE, but in addition to the input message, it also takes an optional context (aka customization string).
 std.crypto.hash.sha3.CShake	sig	fn CShake(comptime security_level: u11, comptime fname: ?[]const u8) type
@@ -71001,6 +71037,8 @@ std.crypto.hash.sha3.KMacLike().createWithOptions	sig	fn createWithOptions(out: 
 std.crypto.hash.sha3.KMacLike().create	loc	crypto/sha3.zig:364
 std.crypto.hash.sha3.KMacLike().create	doc	Return an authentication tag for a message and a key.
 std.crypto.hash.sha3.KMacLike().create	sig	fn create(out: []u8, msg: []const u8, key: []const u8) void
+std.crypto.hash.sha3.KMacLike().CShaker	loc	crypto/sha3.zig:286
+std.crypto.hash.sha3.KMacLike().CShaker	value	CShakeLike(security_level, default_delim, rounds, "KMAC")
 std.crypto.hash.sha3.TupleHash	loc	crypto/sha3.zig:380
 std.crypto.hash.sha3.TupleHash	doc	The TupleHash extendable output hash function, with domain-separated inputs. TupleHash is a secure hash function with a variable output length, based on the cSHAKE function. It is designed for unambiguously hashing tuples of data. With most hash functions, calling `update("A")` followed by `update("B")`is identical to `update("AB")`. With TupleHash, this is not the case: `update("A"); update("B")` is different from `update("AB")`. Any number of inputs can be hashed, and the output depends on individual inputs and their order.
 std.crypto.hash.sha3.TupleHash	sig	fn TupleHash(comptime security_level: u11) type
@@ -71040,6 +71078,8 @@ std.crypto.hash.sha3.TupleHashLike().fillBlock	sig	fn fillBlock(self: *Self) voi
 std.crypto.hash.sha3.TupleHashLike().squeeze	loc	crypto/sha3.zig:441
 std.crypto.hash.sha3.TupleHashLike().squeeze	doc	Squeeze a slice of bytes from the state. `out` can be any length, and the function can be called multiple times.
 std.crypto.hash.sha3.TupleHashLike().squeeze	sig	fn squeeze(self: *Self, out: []u8) void
+std.crypto.hash.sha3.TupleHashLike().CShaker	loc	crypto/sha3.zig:385
+std.crypto.hash.sha3.TupleHashLike().CShaker	value	CShakeLike(security_level, default_delim, rounds, "TupleHash")
 std.crypto.hash.sha3.NistLengthEncoding	loc	crypto/sha3.zig:453
 std.crypto.hash.sha3.NistLengthEncoding	doc	The NIST SP 800-185 encoded length format.
 std.crypto.hash.sha3.NistLengthEncoding.left	loc	crypto/sha3.zig:454
@@ -73503,6 +73543,17 @@ std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	sig	fn StaticMap(comptime Enum:
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap()	loc	crypto/codecs/asn1/Oid.zig:176
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	loc	crypto/codecs/asn1/Oid.zig:177
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	sig	fn initComptime(comptime key_pairs: anytype) ReturnType
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType	loc	crypto/codecs/asn1/Oid.zig:162
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oid_to_enum	loc	crypto/codecs/asn1/Oid.zig:163
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oid_to_enum	type	std.StaticStringMap(Enum)
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enum_to_oid	loc	crypto/codecs/asn1/Oid.zig:164
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enum_to_oid	type	EnumToOid
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oidToEnum	loc	crypto/codecs/asn1/Oid.zig:166
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oidToEnum	sig	fn oidToEnum(self: @This(), encoded: []const u8) ?Enum
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enumToOid	loc	crypto/codecs/asn1/Oid.zig:170
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enumToOid	sig	fn enumToOid(self: @This(), value: Enum) Oid
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().EnumToOid	loc	crypto/codecs/asn1/Oid.zig:161
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().EnumToOid	value	std.EnumArray(Enum, []const u8)
 std.crypto.codecs.asn1.der.Decoder.Oid.hexToBytes	loc	crypto/codecs/asn1/Oid.zig:208
 std.crypto.codecs.asn1.der.Decoder.Oid.hexToBytes	doc	Strictly for testing.
 std.crypto.codecs.asn1.der.Decoder.Oid.hexToBytes	sig	fn hexToBytes(comptime hex: []const u8) [hex.len / 2]u8
@@ -75557,6 +75608,17 @@ std.debug.Dwarf.expression.Builder().writeRegx	loc	debug/Dwarf/expression.zig:99
 std.debug.Dwarf.expression.Builder().writeRegx	sig	fn writeRegx(writer: *Writer, register: anytype) !void
 std.debug.Dwarf.expression.Builder().writeImplicitValue	loc	debug/Dwarf/expression.zig:1001
 std.debug.Dwarf.expression.Builder().writeImplicitValue	sig	fn writeImplicitValue(writer: *Writer, value_bytes: []const u8) !void
+std.debug.Dwarf.expression.Builder().addr_type	loc	debug/Dwarf/expression.zig:767
+std.debug.Dwarf.expression.Builder().addr_type	value	switch (options.addr_size) { 2 => u16, 4 => u32, 8 => u64, else => @compileError("Unsupported address size of " ++ options.addr_size), }
+std.debug.Dwarf.expression.Builder().addr_type.[arm0]	when	2
+std.debug.Dwarf.expression.Builder().addr_type.[arm0]	loc	debug/Dwarf/expression.zig:768
+std.debug.Dwarf.expression.Builder().addr_type.[arm1]	when	4
+std.debug.Dwarf.expression.Builder().addr_type.[arm1]	loc	debug/Dwarf/expression.zig:769
+std.debug.Dwarf.expression.Builder().addr_type.[arm2]	when	8
+std.debug.Dwarf.expression.Builder().addr_type.[arm2]	loc	debug/Dwarf/expression.zig:770
+std.debug.Dwarf.expression.Builder().addr_type.[else]	when	else
+std.debug.Dwarf.expression.Builder().addr_type.[else]	loc	debug/Dwarf/expression.zig:771
+std.debug.Dwarf.expression.Builder().addr_type.[else]	value	@compileError("Unsupported address size of " ++ options.addr_size)
 std.debug.Dwarf.expression.isOpcodeValidInCFA	loc	debug/Dwarf/expression.zig:1010
 std.debug.Dwarf.expression.isOpcodeValidInCFA	sig	fn isOpcodeValidInCFA(opcode: u8) bool
 std.debug.Dwarf.expression.isOpcodeRegisterLocation	loc	debug/Dwarf/expression.zig:1029
@@ -85481,6 +85543,8 @@ std.enums.EnumIndexer().[return3].indexOf	loc	enums.zig:1344
 std.enums.EnumIndexer().[return3].indexOf	sig	fn indexOf(e: E) usize
 std.enums.EnumIndexer().[return3].keyForIndex	loc	enums.zig:1347
 std.enums.EnumIndexer().[return3].keyForIndex	sig	fn keyForIndex(i: usize) E
+std.enums.EnumIndexer().fields_len	loc	enums.zig:1279
+std.enums.EnumIndexer().fields_len	value	@typeInfo(E).@"enum".field_names.len
 std.enums	example	test "EnumIndexer non-exhaustive" {\n    const backing_ints = [_]type{\n        i1,\n        i2,\n        i3,\n        i4,\n        i8,\n        i16,\n        @Int(.signed, @bitSizeOf(isize) - 1),\n        isize,\n        u1,\n        u2,\n        u3,\n        u4,\n        u16,\n        @Int(.unsigned, @bitSizeOf(usize) - 1),\n        usize,\n    };\n    inline for (backing_ints) |BackingInt| {\n        const E = enum(BackingInt) {\n            number_zero_tag = 0,\n            _,\n        };\n        const Indexer = EnumIndexer(E);\n\n        const min_tag: E = @fromBackingInt(@intCast(std.math.minInt(BackingInt)));\n        const max_tag: E = @fromBackingInt(@intCast(std.math.maxInt(BackingInt)));\n\n        const RangedType = @Int(.unsigned, @bitSizeOf(BackingInt));\n        const max_index: comptime_int = std.math.maxInt(RangedType);\n        const number_zero_tag_index: usize = switch (@typeInfo(BackingInt).int.signedness) {\n            .unsigned => 0,\n            .signed => @divCeil(max_index, 2),\n        };\n\n        try testing.expectEqual(E, Indexer.Key);\n        try testing.expectEqual(max_index + 1, Indexer.count);\n\n        try testing.expectEqual(@as(usize, 0), Indexer.indexOf(min_tag));\n        try testing.expectEqual(number_zero_tag_index, Indexer.indexOf(E.number_zero_tag));\n        try testing.expectEqual(@as(usize, max_index), Indexer.indexOf(max_tag));\n\n        try testing.expectEqual(min_tag, Indexer.keyForIndex(0));\n        try testing.expectEqual(E.number_zero_tag, Indexer.keyForIndex(number_zero_tag_index));\n        try testing.expectEqual(max_tag, Indexer.keyForIndex(max_index));\n    }\n}
 std.enums	example	test "EnumIndexer dense zeroed" {\n    const E = enum(u2) { b = 1, a = 0, c = 2 };\n    const Indexer = EnumIndexer(E);\n    try testing.expectEqual(E, Indexer.Key);\n    try testing.expectEqual(3, Indexer.count);\n\n    try testing.expectEqual(@as(usize, 0), Indexer.indexOf(.a));\n    try testing.expectEqual(@as(usize, 1), Indexer.indexOf(.b));\n    try testing.expectEqual(@as(usize, 2), Indexer.indexOf(.c));\n\n    try testing.expectEqual(E.a, Indexer.keyForIndex(0));\n    try testing.expectEqual(E.b, Indexer.keyForIndex(1));\n    try testing.expectEqual(E.c, Indexer.keyForIndex(2));\n}
 std.enums	example	test "EnumIndexer dense positive" {\n    const E = enum(u4) { c = 6, a = 4, b = 5 };\n    const Indexer = EnumIndexer(E);\n    try testing.expectEqual(E, Indexer.Key);\n    try testing.expectEqual(3, Indexer.count);\n\n    try testing.expectEqual(@as(usize, 0), Indexer.indexOf(.a));\n    try testing.expectEqual(@as(usize, 1), Indexer.indexOf(.b));\n    try testing.expectEqual(@as(usize, 2), Indexer.indexOf(.c));\n\n    try testing.expectEqual(E.a, Indexer.keyForIndex(0));\n    try testing.expectEqual(E.b, Indexer.keyForIndex(1));\n    try testing.expectEqual(E.c, Indexer.keyForIndex(2));\n}
@@ -96301,6 +96365,12 @@ std.mem.ReverseIterator().next	loc	mem.zig:4054
 std.mem.ReverseIterator().next	sig	fn next(self: *@This()) ?Element
 std.mem.ReverseIterator().nextPtr	loc	mem.zig:4059
 std.mem.ReverseIterator().nextPtr	sig	fn nextPtr(self: *@This()) ?ElementPointer
+std.mem.ReverseIterator().Element	loc	mem.zig:4048
+std.mem.ReverseIterator().Element	value	std.meta.Elem(T)
+std.mem.ReverseIterator().Pointer	loc	mem.zig:4049
+std.mem.ReverseIterator().Pointer	value	@Pointer(.many, ptr.attrs, Element, std.meta.sentinel(T))
+std.mem.ReverseIterator().ElementPointer	loc	mem.zig:4050
+std.mem.ReverseIterator().ElementPointer	value	@Pointer(.one, ptr.attrs, Element, null)
 std.mem.reverseIterator	loc	mem.zig:4068
 std.mem.reverseIterator	doc	Iterates over a slice in reverse.
 std.mem.reverseIterator	sig	fn reverseIterator(slice: anytype) ReverseIterator(@TypeOf(slice))
@@ -187910,6 +187980,8 @@ std.fmt.@"parse_float.zig".parse.common.BiasedFp().eql	loc	fmt/parse_float/commo
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().eql	sig	fn eql(self: Self, other: Self) bool
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().toFloat	loc	fmt/parse_float/common.zig:37
 std.fmt.@"parse_float.zig".parse.common.BiasedFp().toFloat	sig	fn toFloat(self: Self, comptime FloatT: type, negative: bool) FloatT
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().MantissaT	loc	fmt/parse_float/common.zig:7
+std.fmt.@"parse_float.zig".parse.common.BiasedFp().MantissaT	value	mantissaType(T)
 std.fmt.@"parse_float.zig".parse.common.floatFromUnsigned	loc	fmt/parse_float/common.zig:47
 std.fmt.@"parse_float.zig".parse.common.floatFromUnsigned	sig	fn floatFromUnsigned(comptime T: type, comptime MantissaT: type, v: MantissaT) T
 std.fmt.@"parse_float.zig".parse.common.Number	loc	fmt/parse_float/common.zig:59
@@ -189458,6 +189530,8 @@ std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().parse	doc	Parse a bit i
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().parse	sig	fn parse(s: []const u8) Self
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().numberOfDigitsLeftShift	loc	fmt/parse_float/decimal.zig:327
 std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().numberOfDigitsLeftShift	sig	fn numberOfDigitsLeftShift(self: *Self, shift: usize) usize
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().MantissaT	loc	fmt/parse_float/decimal.zig:26
+std.fmt.@"parse_float.zig".@"convert_slow.zig".Decimal().MantissaT	value	mantissaType(T)
 std.fmt.@"parse_float.zig".@"convert_slow.zig".mantissaType	loc	fmt/parse_float/convert_slow.zig:6
 std.fmt.@"parse_float.zig".@"convert_slow.zig".max_shift	loc	fmt/parse_float/convert_slow.zig:8
 std.fmt.@"parse_float.zig".@"convert_slow.zig".max_shift	value	60

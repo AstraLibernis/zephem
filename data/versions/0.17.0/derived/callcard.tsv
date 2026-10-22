@@ -5618,6 +5618,8 @@ std.crypto.codecs.asn1.Tag.init	both	fn init(number: Tag.Number, constructed: bo
 std.crypto.codecs.asn1.Tag.toExpected	both	fn toExpected(self: Tag) ExpectedTag	fn (crypto.codecs.asn1.Tag) crypto.codecs.asn1.ExpectedTag
 std.crypto.codecs.asn1.Tag.universal	both	fn universal(number: Tag.Number, constructed: bool) Tag	fn (crypto.codecs.asn1.Tag.Number, bool) crypto.codecs.asn1.Tag
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap	parser-only	fn StaticMap(comptime Enum: type) type	
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.enumToOid	parser-only	fn enumToOid(self: @This(), value: Enum) Oid	
+std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().ReturnType.oidToEnum	parser-only	fn oidToEnum(self: @This(), encoded: []const u8) ?Enum	
 std.crypto.codecs.asn1.der.Decoder.Oid.StaticMap().initComptime	parser-only	fn initComptime(comptime key_pairs: anytype) ReturnType	
 std.crypto.codecs.asn1.der.Decoder.Oid.TestCase.init	parser-only	fn init(comptime hex: []const u8, dot_notation: []const u8) TestCase	
 std.crypto.codecs.asn1.der.Decoder.Oid.decodeDer	parser-only	fn decodeDer(decoder: *der.Decoder) !Oid	
@@ -5908,6 +5910,8 @@ std.crypto.core.keccak.KeccakF().secureZero	parser-only	fn secureZero(self: *Sel
 std.crypto.core.keccak.KeccakF().setBytes	parser-only	fn setBytes(self: *Self, bytes: []const u8) void	
 std.crypto.core.keccak.KeccakF().xorBytes	parser-only	fn xorBytes(self: *Self, out: []u8, in: []const u8) void	
 std.crypto.core.keccak.State	both	fn State(comptime f: u11, comptime capacity: u11, comptime rounds: u5) type	fn (comptime u11, comptime u11, comptime u5) type
+std.crypto.core.keccak.State().TransitionTracker.[else].to	parser-only	fn to(tracker: *@This(), next_op: Op) void	
+std.crypto.core.keccak.State().TransitionTracker.[then].to	parser-only	fn to(tracker: *@This(), next_op: Op) void	
 std.crypto.core.keccak.State().absorb	parser-only	fn absorb(self: *Self, bytes: []const u8) void	
 std.crypto.core.keccak.State().fillBlock	parser-only	fn fillBlock(self: *Self) void	
 std.crypto.core.keccak.State().init	parser-only	fn init(bytes: [f / 8]u8, delim: u8) Self	
