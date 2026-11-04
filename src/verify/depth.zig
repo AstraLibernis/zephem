@@ -151,7 +151,7 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
         var conflicts: usize = 0;
         for (resolved.rows) |r| {
             try distinct.put(r[rp], {});
-            const fact = try std.fmt.allocPrint(a, "{s}\t{s}", .{ r[rk], r[rd] });
+            const fact = try a.print("{s}\t{s}", .{ r[rk], r[rd] });
             const gop = try facts.getOrPut(r[rp]);
             if (gop.found_existing) {
                 if (!std.mem.eql(u8, gop.value_ptr.*, fact)) conflicts += 1;

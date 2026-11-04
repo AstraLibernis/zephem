@@ -77,7 +77,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         const dir = if (p.dep.hash) |h|
             try std.fs.path.join(a, &.{ project, "zig-pkg", h })
         else
-            try std.fs.path.resolve(a, &.{ p.manifest_dir, p.dep.path.? });
+            try std.fs.path.resolveAlloc(a, &.{ p.manifest_dir, p.dep.path.? });
         if ((try seen.getOrPut(dir)).found_existing) continue;
 
         if (!exists(c, dir)) {
@@ -101,7 +101,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
             try w.print("  {s}: its build.zig exports no module with a literal name and root (b.addModule(\"name\", .{{ .root_source_file = b.path(\"…\") }}))\n", .{p.dep.name});
             continue;
         }
-        const key = p.dep.hash orelse try std.fmt.allocPrint(a, "local-{s}", .{p.dep.name});
+        const key = p.dep.hash orelse try a.print("local-{s}", .{p.dep.name});
         // One version per package: a map of the same package under another hash (an older
         // fetch) would answer for the same paths (`clap.parse`) and `map doc` would pick one
         // silently. It is replaced.
@@ -113,7 +113,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
             const out = try std.fs.path.join(a, &.{ out_root, key, m.name });
             const root = try std.fs.path.join(a, &.{ dir, m.root });
             if (try mapModule(c, m.name, root, out)) |n| {
-                try util.writeFile(c.io, try std.fs.path.join(a, &.{ out, "SOURCE" }), try std.fmt.allocPrint(a,
+                try util.writeFile(c.io, try std.fs.path.join(a, &.{ out, "SOURCE" }), try a.print(
                     \\package {s}
                     \\{s} {s}
                     \\module {s}
@@ -162,7 +162,7 @@ fn mapModule(c: Ctx, name: []const u8, root: []const u8, out: []const u8) !?usiz
 fn otherVersions(c: Ctx, root: []const u8, name: []const u8, keep: []const u8) ![]const []const u8 {
     const a = c.a;
     var out: std.ArrayList([]const u8) = .empty;
-    const want = try std.fmt.allocPrint(a, "package {s}\n", .{name});
+    const want = try a.print("package {s}\n", .{name});
     var top = std.Io.Dir.cwd().openDir(c.io, root, .{ .iterate = true }) catch return out.items;
     defer top.close(c.io);
     var it = top.iterate();

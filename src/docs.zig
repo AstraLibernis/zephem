@@ -52,7 +52,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         const tmpl = try std.Io.Dir.cwd().readFileAlloc(c.io, try vars.repoFile(c, p.tmpl), a, .unlimited);
         var md: []const u8 = tmpl;
         for (subs) |s| md = try replaceAll(a, md, s.key, s.val);
-        const banner = try std.fmt.allocPrint(a, "<!-- GENERATED from {s} by `zephem docs` — edit the template, not this file. -->\n", .{p.tmpl});
+        const banner = try a.print("<!-- GENERATED from {s} by `zephem docs` — edit the template, not this file. -->\n", .{p.tmpl});
         const content = try std.mem.concat(a, u8, &.{ banner, md });
 
         if (std.mem.find(u8, content, "@@") != null) {
@@ -287,7 +287,7 @@ fn pct(num: usize, den: usize) usize {
 /// 12345 → "12,345".
 fn commafy(a: std.mem.Allocator, n: usize) ![]const u8 {
     var tmp: [32]u8 = undefined;
-    const digits = try std.fmt.bufPrint(&tmp, "{d}", .{n});
+    const digits = try std.mem.print(&tmp, "{d}", .{n});
     const ncommas = (digits.len - 1) / 3;
     const out = try a.alloc(u8, digits.len + ncommas);
     var oi: usize = 0;
@@ -304,7 +304,7 @@ fn commafy(a: std.mem.Allocator, n: usize) ![]const u8 {
 }
 
 fn intStr(a: std.mem.Allocator, n: usize) ![]const u8 {
-    return std.fmt.allocPrint(a, "{d}", .{n});
+    return a.print("{d}", .{n});
 }
 
 const replaceAll = util.replaceAll;

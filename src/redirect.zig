@@ -136,7 +136,7 @@ pub fn resolve(a: std.mem.Allocator, src: anytype, path: []const u8) !?Resolved 
         cur = h.target;
     }
     if (hops.items.len == 0) return null;
-    const call = try std.fmt.allocPrint(a, "{s}()", .{cur});
+    const call = try a.print("{s}()", .{cur});
     const members = if (src.exists(call)) call else cur;
     return .{ .members = members, .hops = hops.items };
 }
@@ -152,7 +152,7 @@ pub fn rewrite(a: std.mem.Allocator, src: anytype, path: []const u8) !?[]const u
         var head = path[0..end];
         if (std.mem.endsWith(u8, head, "()")) head = head[0 .. head.len - 2];
         const res = (try resolve(a, src, head)) orelse continue;
-        const candidate = try std.fmt.allocPrint(a, "{s}{s}", .{ res.members, path[dot..] });
+        const candidate = try a.print("{s}{s}", .{ res.members, path[dot..] });
         if (src.exists(candidate)) return candidate;
     }
     return null;

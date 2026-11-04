@@ -33,7 +33,7 @@ const Map = struct {
 
     /// The row whose path is exactly `path`, or null.
     fn line(m: *const Map, path: []const u8) ?[]const u8 {
-        const needle = std.fmt.allocPrint(m.a, "\n{s}\t", .{path}) catch return null;
+        const needle = m.a.print("\n{s}\t", .{path}) catch return null;
         const i = std.mem.find(u8, m.bytes, needle) orelse return null;
         const start = i + 1;
         const end = std.mem.findScalarPos(u8, m.bytes, start, '\n') orelse m.bytes.len;
@@ -235,8 +235,8 @@ fn cmdFind(c: Ctx, out: *std.Io.Writer, map: *const Map, terms_raw: []const []co
     const q = try std.mem.join(a, " ", terms_raw);
     try out.print("# map find: {s}  (top {d} of {d} hits{s}{s})\n\n", .{
         q, shown, hits.items.len,
-        if (npriv > 0) try std.fmt.allocPrint(a, " · {d} private, tagged [priv]", .{npriv}) else "",
-        if (nplat > 0) try std.fmt.allocPrint(a, " · {d} in std.c/std.os, ranked after the portable API", .{nplat}) else "",
+        if (npriv > 0) try a.print(" · {d} private, tagged [priv]", .{npriv}) else "",
+        if (nplat > 0) try a.print(" · {d} in std.c/std.os, ranked after the portable API", .{nplat}) else "",
     });
     for (hits.items[0..shown]) |h| {
         const tag: []const u8 = if (h.priv) "  [priv]" else "";
@@ -398,7 +398,7 @@ fn suggest(c: Ctx, map: *const Map, path: []const u8) !void {
     const shown = @min(picks.len, 5);
     try argv.diag(c, "  did you mean: {s}{s}\n", .{
         try std.mem.join(a, ", ", picks[0..shown]),
-        if (picks.len > shown) try std.fmt.allocPrint(a, " (+{d} more — `zephem map find {s}`)", .{ picks.len - shown, last }) else "",
+        if (picks.len > shown) try a.print(" (+{d} more — `zephem map find {s}`)", .{ picks.len - shown, last }) else "",
     });
 }
 
@@ -491,13 +491,13 @@ fn exampleFor(a: std.mem.Allocator, examples: Examples, n: Node) !?Example {
         const best = shortest(own.items);
         const more = own.items.len - 1;
         const label = if (more > 0)
-            try std.fmt.allocPrint(a, "example (a {s}test of this declaration; {d} more in the map)", .{ whose(n.path), more })
+            try a.print("example (a {s}test of this declaration; {d} more in the map)", .{ whose(n.path), more })
         else
-            try std.fmt.allocPrint(a, "example (a {s}test of this declaration)", .{whose(n.path)});
+            try a.print("example (a {s}test of this declaration)", .{whose(n.path)});
         return .{ .label = label, .body = best };
     }
     if (!std.mem.eql(u8, n.kind, "fn")) return null;
-    const call = try std.fmt.allocPrint(a, "{s}(", .{n.name});
+    const call = try a.print("{s}(", .{n.name});
     // A same-named call is only this function if its argument count fits the signature: all the
     // parameters, or all but `self` for a method call. `Managed(u32).append(2)` is a different
     // `append` from `Aligned(T).append(gpa, item)` and must not be shown as its usage.
@@ -518,8 +518,8 @@ fn exampleFor(a: std.mem.Allocator, examples: Examples, n: Node) !?Example {
         }
         if (hits.items.len == 0) continue;
         const more = hits.items.len - 1;
-        const label = try std.fmt.allocPrint(a, "usage (a {s}test in {s} that calls {s}{s})", .{
-            whose(n.path), anc, call, if (more > 0) try std.fmt.allocPrint(a, "; {d} more", .{more}) else "",
+        const label = try a.print("usage (a {s}test in {s} that calls {s}{s})", .{
+            whose(n.path), anc, call, if (more > 0) try a.print("; {d} more", .{more}) else "",
         });
         return .{ .label = label, .body = shortest(if (clean.items.len > 0) clean.items else hits.items) };
     }
@@ -612,7 +612,7 @@ fn clipLines(a: std.mem.Allocator, s: []const u8, max: usize) ![]const u8 {
         n += 1;
         if (n == max) {
             const rest = std.mem.count(u8, s[i + 1 ..], "\n") + 1;
-            return std.fmt.allocPrint(a, "{s}\n    … ({d} more lines)", .{ s[0..i], rest });
+            return a.print("{s}\n    … ({d} more lines)", .{ s[0..i], rest });
         }
     }
     return s;
@@ -651,5 +651,5 @@ fn trunc(a: std.mem.Allocator, s: []const u8, max: usize) []const u8 {
     if (s.len <= max) return s;
     var end = max;
     while (end > 0 and (s[end] & 0xC0) == 0x80) end -= 1;
-    return std.fmt.allocPrint(a, "{s}…", .{s[0..end]}) catch s[0..end];
+    return a.print("{s}…", .{s[0..end]}) catch s[0..end];
 }

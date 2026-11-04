@@ -51,7 +51,7 @@ pub fn version(c: Ctx) ![]const u8 {
 pub fn staleness(c: Ctx, data_dir: []const u8) !?[]const u8 {
     const pinned_path = try std.fs.path.join(c.a, &.{ data_dir, "PINNED" });
     const raw = std.Io.Dir.cwd().readFileAlloc(c.io, pinned_path, c.a, .unlimited) catch {
-        return try std.fmt.allocPrint(c.a, "⚠ zephem map at {s} has no PINNED stamp — regenerate with `zephem std`.", .{data_dir});
+        return try c.a.print("⚠ zephem map at {s} has no PINNED stamp — regenerate with `zephem std`.", .{data_dir});
     };
     // PINNED holds two lines: `zig <ver>` then `target <triple>` (older stamps have only the first).
     var lines = std.mem.splitScalar(u8, std.mem.trim(u8, raw, "\n"), '\n');
@@ -61,10 +61,10 @@ pub fn staleness(c: Ctx, data_dir: []const u8) !?[]const u8 {
     const pinned_target = if (std.mem.startsWith(u8, l1, "target ")) l1[7..] else "";
     const live = probe(c) catch return null; // can't probe → stay silent
     if (!std.mem.eql(u8, pinned_ver, live.version)) {
-        return try std.fmt.allocPrint(c.a, "⚠ zephem map is pinned to zig {s} but you're on {s} — regenerate: `zephem std && zephem lookup`.", .{ pinned_ver, live.version });
+        return try c.a.print("⚠ zephem map is pinned to zig {s} but you're on {s} — regenerate: `zephem std && zephem lookup`.", .{ pinned_ver, live.version });
     }
     if (pinned_target.len != 0 and !std.mem.eql(u8, pinned_target, live.target)) {
-        return try std.fmt.allocPrint(c.a, "⚠ zephem map was reflected for target {s} but you're on {s} — resolved/poison rows are target-scoped; regenerate: `zephem std && zephem depth --commit`.", .{ pinned_target, live.target });
+        return try c.a.print("⚠ zephem map was reflected for target {s} but you're on {s} — resolved/poison rows are target-scoped; regenerate: `zephem std && zephem depth --commit`.", .{ pinned_target, live.target });
     }
     return null;
 }
@@ -72,7 +72,7 @@ pub fn staleness(c: Ctx, data_dir: []const u8) !?[]const u8 {
 /// Read the value of a `.<key> = "<value>"` field out of ZON text; null if absent.
 fn scanField(text: []const u8, key: []const u8) ?[]const u8 {
     var needle_buf: [64]u8 = undefined;
-    const needle = std.fmt.bufPrint(&needle_buf, ".{s} = \"", .{key}) catch return null;
+    const needle = std.mem.print(&needle_buf, ".{s} = \"", .{key}) catch return null;
     const at = std.mem.find(u8, text, needle) orelse return null;
     const start = at + needle.len;
     const end = std.mem.findScalarPos(u8, text, start, '"') orelse return null;

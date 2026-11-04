@@ -65,7 +65,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         if (only) |o| if (!std.mem.eql(u8, o, ov.name)) continue;
         const table = try ov.derive(c, dir);
         const tsv = try serialize(a, table);
-        const man_path = try std.fmt.allocPrint(a, "{s}/SHA256SUMS.{s}", .{ dir, ov.name });
+        const man_path = try a.print("{s}/SHA256SUMS.{s}", .{ dir, ov.name });
 
         if (check) {
             const got = manifest.sha256Hex(tsv);
@@ -81,7 +81,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
                 ok = false;
             }
         } else {
-            const out_path = try std.fmt.allocPrint(a, "{s}/derived/{s}.tsv", .{ dir, ov.name });
+            const out_path = try a.print("{s}/derived/{s}.tsv", .{ dir, ov.name });
             try writeBytes(c, out_path, tsv);
             // The overlay's own file first (`--check` reads that line), then the manifests of the
             // stages it was derived from: if the core or the depth sweep is regenerated with a

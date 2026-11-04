@@ -80,7 +80,7 @@ pub fn sections(a: std.mem.Allocator, html: []const u8) !std.array_hash_map.Stri
         var prose = body;
         if (std.mem.find(u8, prose, "</pre>")) |e| {
             if (std.mem.find(u8, prose, "<pre>")) |s| {
-                if (s < e) prose = try std.fmt.allocPrint(a, "{s}{s}", .{ prose[0..s], prose[e + "</pre>".len ..] });
+                if (s < e) prose = try a.print("{s}{s}", .{ prose[0..s], prose[e + "</pre>".len ..] });
             }
         }
         prose = try dropBlocks(a, prose, "<figure>", "</figure>");
@@ -155,7 +155,7 @@ pub fn run(a: std.mem.Allocator, io: std.Io, builtin_fn_path: []const u8, langre
             }
         }
         if (d.example.len > 0) stats.examples += 1;
-        const params = if (e.params) |p| try std.fmt.allocPrint(a, "{d}", .{p}) else "var";
+        const params = if (e.params) |p| try a.print("{d}", .{p}) else "var";
         try buf.print(a, "{s}\t{s}\t{s}\t{s}\t{s}\n", .{ e.name, params, d.sig, d.doc, d.example });
     }
     try std.Io.Dir.cwd().writeFile(io, .{ .sub_path = out_path, .data = buf.items });

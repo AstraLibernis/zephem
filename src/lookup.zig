@@ -235,7 +235,7 @@ fn mapRows(c: Ctx, dir: []const u8, rows: *std.ArrayList(rel.Row), examples: *st
         for (attrs.rows) |r| {
             if (std.mem.eql(u8, r[aa], "errmember")) {
                 const g = try errm.getOrPut(r[ap]);
-                g.value_ptr.* = if (!g.found_existing) r[av] else try std.fmt.allocPrint(a, "{s}, {s}", .{ g.value_ptr.*, r[av] });
+                g.value_ptr.* = if (!g.found_existing) r[av] else try a.print("{s}, {s}", .{ g.value_ptr.*, r[av] });
             } else if (std.mem.eql(u8, r[aa], "example")) {
                 try examples.print(a, "{s}\t{s}\n", .{ r[ap], r[av] });
             }
@@ -291,7 +291,7 @@ fn mapRows(c: Ctx, dir: []const u8, rows: *std.ArrayList(rel.Row), examples: *st
         row[14] = r[nv];
         row[15] = modm.get(path) orelse ""; // extern/export/inline/threadlocal/comptime/var
         row[16] = try aka.of(path);
-        row[17] = if (redirects.hop_of.get(path)) |h| try std.fmt.allocPrint(a, "{s}:{s}", .{ h.kind, h.target }) else "";
+        row[17] = if (redirects.hop_of.get(path)) |h| try a.print("{s}:{s}", .{ h.kind, h.target }) else "";
         row[18] = errm.get(path) orelse "";
         row[19] = "";
         try rows.append(a, row);
@@ -341,7 +341,7 @@ fn depthStr(a: std.mem.Allocator, p: []const u8) ![]const u8 {
         if (ch == '.') dots += 1;
     }
     const calls = std.mem.count(u8, p, "()");
-    return std.fmt.allocPrint(a, "{d}", .{dots + calls});
+    return a.print("{d}", .{dots + calls});
 }
 
 /// A `path → value` map from a table's two columns (first occurrence wins).

@@ -89,7 +89,7 @@ fn truncField(a: std.mem.Allocator, s: []const u8, max: usize) []const u8 {
     if (s.len <= max) return s;
     var end = max;
     while (end > 0 and (s[end] & 0xC0) == 0x80) end -= 1; // back off continuation bytes
-    return std.fmt.allocPrint(a, "{s}…", .{s[0..end]}) catch s[0..end];
+    return a.print("{s}…", .{s[0..end]}) catch s[0..end];
 }
 
 /// The first BALANCED brace group in `s`, or null. Returns the span including the braces.
@@ -157,7 +157,7 @@ fn renderResolved(a: std.mem.Allocator, s: []const u8) []const u8 {
     // not a set of "members" and must not be annotated as one.
     const is_error_set = g.start >= 5 and std.mem.eql(u8, s[g.start - 5 .. g.start], "error");
     if (!is_error_set) return truncField(a, s, 140);
-    const folded = std.fmt.allocPrint(a, "{s}{{…{d} members}}{s}", .{ s[0..g.start], countMembers(s[g.start..g.end]), s[g.end..] }) catch return s;
+    const folded = a.print("{s}{{…{d} members}}{s}", .{ s[0..g.start], countMembers(s[g.start..g.end]), s[g.end..] }) catch return s;
     return truncField(a, folded, 160);
 }
 
@@ -284,8 +284,8 @@ pub fn run(c: Ctx, args: []const []const u8, out: *Io.Writer) !Outcome {
     // and counted here, never hidden.
     try out.print("# zlook: {s}  ({d} shown of {d} hits{s}{s})\n\n", .{
         q, shown, total,
-        if (npriv > 0) try std.fmt.allocPrint(a, " · {d} private, tagged [priv]", .{npriv}) else "",
-        if (nplat > 0) try std.fmt.allocPrint(a, " · {d} in std.c/std.os, ranked after the portable API", .{nplat}) else "",
+        if (npriv > 0) try a.print(" · {d} private, tagged [priv]", .{npriv}) else "",
+        if (nplat > 0) try a.print(" · {d} in std.c/std.os, ranked after the portable API", .{nplat}) else "",
     });
     for (hits.items[0..shown]) |h| {
         const vis_tag: []const u8 = if (h.priv) "  [priv]" else "";
