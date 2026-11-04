@@ -1,363 +1,363 @@
 path	reason
-std.Build.package_map	std/Build.zig:1984:33: error: root source file struct 'x-2-6-7' has no member named 'dependencies'
+std.Build.package_map	std/Build.zig:1996:33: error: root source file struct 'x-2-6-7' has no member named 'dependencies'
 std.Build.abi.fuzz	error: undefined symbol: fuzzer_init
 std.Io.Dispatch	std/debug.zig:442:14: error: reached unreachable code
 std.Io.Dispatch.InitOptions	std/debug.zig:442:14: error: reached unreachable code
-std.Io.Kqueue.kevent	std/posix.zig:96:26: error: root source file struct 'os.linux' has no member named 'Kevent'
+std.Io.Kqueue.kevent	std/posix.zig:100:26: error: root source file struct 'os.linux' has no member named 'Kevent'
 std.Uri.getHost	std/Uri.zig:20:21: error: This function has been moved to std.Io.net.HostName.fromUri
 std.Uri.getHostAlloc	std/Uri.zig:21:26: error: This function has been deleted. See std.Io.net.HostName.fromUri instead
 std.lang.CallingConvention.kernel	std/lang.zig:181:17: error: reached unreachable code
 std.c._mh_execute_header	std/debug.zig:442:14: error: reached unreachable code
 std.c.SC	std/os/linux.zig:107:25: error: root source file struct 'os.linux.x86_64' has no member named 'SC'
 std.c.user_desc	std/os/linux.zig:109:32: error: root source file struct 'os.linux.x86_64' has no member named 'user_desc'
-std.c._errno	std/c.zig:12089:12: error: dependency on libc must be explicitly specified in the build command
-std.c.opendir	std/c.zig:10568:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fdopendir	std/c.zig:10569:12: error: dependency on libc must be explicitly specified in the build command
-std.c.rewinddir	std/c.zig:10570:12: error: dependency on libc must be explicitly specified in the build command
-std.c.closedir	std/c.zig:10571:12: error: dependency on libc must be explicitly specified in the build command
-std.c.telldir	std/c.zig:10572:12: error: dependency on libc must be explicitly specified in the build command
-std.c.seekdir	std/c.zig:10573:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigwait	std/c.zig:10575:12: error: dependency on libc must be explicitly specified in the build command
-std.c.alarm	std/c.zig:10577:12: error: dependency on libc must be explicitly specified in the build command
-std.c.close	std/c.zig:11984:12: error: dependency on libc must be explicitly specified in the build command
-std.c.clock_getres	std/c.zig:11985:12: error: dependency on libc must be explicitly specified in the build command
-std.c.clock_gettime	std/c.zig:11986:12: error: dependency on libc must be explicitly specified in the build command
-std.c.statx	std/c.zig:10613:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpwent	std/c.zig:10615:12: error: dependency on libc must be explicitly specified in the build command
-std.c.endpwent	std/c.zig:10616:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setpwent	std/c.zig:10617:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpwnam	std/c.zig:10618:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpwnam_r	std/c.zig:10619:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpwuid	std/c.zig:10620:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpwuid_r	std/c.zig:10621:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getgrent	std/c.zig:10622:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setgrent	std/c.zig:10623:12: error: dependency on libc must be explicitly specified in the build command
-std.c.endgrent	std/c.zig:10624:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getgrnam	std/c.zig:10625:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getgrnam_r	std/c.zig:10626:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getgrgid	std/c.zig:10627:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getgrgid_r	std/c.zig:10628:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getrlimit64	std/c.zig:10629:12: error: dependency on libc must be explicitly specified in the build command
-std.c.lseek64	std/c.zig:10630:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mmap64	std/c.zig:10631:12: error: dependency on libc must be explicitly specified in the build command
-std.c.open64	std/c.zig:10632:12: error: dependency on libc must be explicitly specified in the build command
-std.c.openat64	std/c.zig:10633:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pread64	std/c.zig:10634:12: error: dependency on libc must be explicitly specified in the build command
-std.c.preadv64	std/c.zig:10635:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pwrite64	std/c.zig:10636:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pwritev64	std/c.zig:10637:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sendfile64	std/c.zig:10638:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setrlimit64	std/c.zig:10639:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sched_getaffinity	std/c.zig:10664:12: error: dependency on libc must be explicitly specified in the build command
-std.c.eventfd	std/c.zig:10665:12: error: dependency on libc must be explicitly specified in the build command
-std.c.epoll_ctl	std/c.zig:10667:12: error: dependency on libc must be explicitly specified in the build command
-std.c.epoll_create1	std/c.zig:10668:12: error: dependency on libc must be explicitly specified in the build command
-std.c.epoll_wait	std/c.zig:10669:12: error: dependency on libc must be explicitly specified in the build command
-std.c.epoll_pwait	std/c.zig:10670:12: error: dependency on libc must be explicitly specified in the build command
-std.c.timerfd_create	std/c.zig:10678:12: error: dependency on libc must be explicitly specified in the build command
-std.c.timerfd_settime	std/c.zig:10679:12: error: dependency on libc must be explicitly specified in the build command
-std.c.timerfd_gettime	std/c.zig:10685:12: error: dependency on libc must be explicitly specified in the build command
-std.c.inotify_init1	std/c.zig:10687:12: error: dependency on libc must be explicitly specified in the build command
-std.c.inotify_add_watch	std/c.zig:10688:12: error: dependency on libc must be explicitly specified in the build command
-std.c.inotify_rm_watch	std/c.zig:10689:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fallocate64	std/c.zig:10691:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fopen64	std/c.zig:10692:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ftruncate64	std/c.zig:10693:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fallocate	std/c.zig:10694:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sendfile	std/c.zig:12009:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getauxval	std/c.zig:10702:12: error: dependency on libc must be explicitly specified in the build command
-std.c.elf_aux_info	std/c.zig:10703:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dl_iterate_phdr	std/c.zig:10830:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigaltstack	std/c.zig:12019:12: error: dependency on libc must be explicitly specified in the build command
-std.c.memfd_create	std/c.zig:10837:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pipe2	std/c.zig:12004:12: error: dependency on libc must be explicitly specified in the build command
-std.c.copy_file_range	std/c.zig:11987:12: error: dependency on libc must be explicitly specified in the build command
-std.c.signalfd	std/c.zig:10848:12: error: dependency on libc must be explicitly specified in the build command
-std.c.prlimit	std/c.zig:10850:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mincore	std/c.zig:10851:12: error: dependency on libc must be explicitly specified in the build command
-std.c.madvise	std/c.zig:10857:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getdirentries	std/c.zig:11992:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getdents	std/c.zig:11993:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getrusage	std/c.zig:11998:12: error: dependency on libc must be explicitly specified in the build command
-std.c.gettimeofday	std/c.zig:11999:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mlock	std/c.zig:12035:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mlock2	std/c.zig:12036:12: error: dependency on libc must be explicitly specified in the build command
-std.c.munlock	std/c.zig:12037:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mlockall	std/c.zig:12038:12: error: dependency on libc must be explicitly specified in the build command
-std.c.munlockall	std/c.zig:12039:12: error: dependency on libc must be explicitly specified in the build command
-std.c.msync	std/c.zig:12001:12: error: dependency on libc must be explicitly specified in the build command
-std.c.nanosleep	std/c.zig:12002:12: error: dependency on libc must be explicitly specified in the build command
-std.c.readdir	std/c.zig:12005:12: error: dependency on libc must be explicitly specified in the build command
-std.c.realpath	std/c.zig:12006:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sched_yield	std/c.zig:12008:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigaction	std/c.zig:12010:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigfillset	std/c.zig:12013:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigaddset	std/c.zig:12012:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigemptyset	std/c.zig:12014:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigdelset	std/c.zig:12011:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigismember	std/c.zig:12015:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sigprocmask	std/c.zig:12016:12: error: dependency on libc must be explicitly specified in the build command
-std.c.socket	std/c.zig:12017:12: error: dependency on libc must be explicitly specified in the build command
-std.c.socketpair	std/c.zig:12018:12: error: dependency on libc must be explicitly specified in the build command
-std.c.stat	std/c.zig:12051:12: error: dependency on libc must be explicitly specified in the build command
-std.c.malloc_usable_size	std/c.zig:12032:12: error: dependency on libc must be explicitly specified in the build command
-std.c.posix_memalign	std/c.zig:12033:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sysconf	std/c.zig:12020:12: error: dependency on libc must be explicitly specified in the build command
-std.c.flock	std/c.zig:11988:12: error: dependency on libc must be explicitly specified in the build command
+std.c._errno	std/c.zig:12107:12: error: dependency on libc must be explicitly specified in the build command
+std.c.opendir	std/c.zig:10586:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fdopendir	std/c.zig:10587:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rewinddir	std/c.zig:10588:12: error: dependency on libc must be explicitly specified in the build command
+std.c.closedir	std/c.zig:10589:12: error: dependency on libc must be explicitly specified in the build command
+std.c.telldir	std/c.zig:10590:12: error: dependency on libc must be explicitly specified in the build command
+std.c.seekdir	std/c.zig:10591:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigwait	std/c.zig:10593:12: error: dependency on libc must be explicitly specified in the build command
+std.c.alarm	std/c.zig:10595:12: error: dependency on libc must be explicitly specified in the build command
+std.c.close	std/c.zig:12002:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_getres	std/c.zig:12003:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_gettime	std/c.zig:12004:12: error: dependency on libc must be explicitly specified in the build command
+std.c.statx	std/c.zig:10631:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwent	std/c.zig:10633:12: error: dependency on libc must be explicitly specified in the build command
+std.c.endpwent	std/c.zig:10634:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setpwent	std/c.zig:10635:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwnam	std/c.zig:10636:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwnam_r	std/c.zig:10637:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwuid	std/c.zig:10638:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpwuid_r	std/c.zig:10639:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrent	std/c.zig:10640:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setgrent	std/c.zig:10641:12: error: dependency on libc must be explicitly specified in the build command
+std.c.endgrent	std/c.zig:10642:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrnam	std/c.zig:10643:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrnam_r	std/c.zig:10644:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrgid	std/c.zig:10645:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgrgid_r	std/c.zig:10646:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getrlimit64	std/c.zig:10647:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lseek64	std/c.zig:10648:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mmap64	std/c.zig:10649:12: error: dependency on libc must be explicitly specified in the build command
+std.c.open64	std/c.zig:10650:12: error: dependency on libc must be explicitly specified in the build command
+std.c.openat64	std/c.zig:10651:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pread64	std/c.zig:10652:12: error: dependency on libc must be explicitly specified in the build command
+std.c.preadv64	std/c.zig:10653:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwrite64	std/c.zig:10654:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwritev64	std/c.zig:10655:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendfile64	std/c.zig:10656:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setrlimit64	std/c.zig:10657:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sched_getaffinity	std/c.zig:10682:12: error: dependency on libc must be explicitly specified in the build command
+std.c.eventfd	std/c.zig:10683:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_ctl	std/c.zig:10685:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_create1	std/c.zig:10686:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_wait	std/c.zig:10687:12: error: dependency on libc must be explicitly specified in the build command
+std.c.epoll_pwait	std/c.zig:10688:12: error: dependency on libc must be explicitly specified in the build command
+std.c.timerfd_create	std/c.zig:10696:12: error: dependency on libc must be explicitly specified in the build command
+std.c.timerfd_settime	std/c.zig:10697:12: error: dependency on libc must be explicitly specified in the build command
+std.c.timerfd_gettime	std/c.zig:10703:12: error: dependency on libc must be explicitly specified in the build command
+std.c.inotify_init1	std/c.zig:10705:12: error: dependency on libc must be explicitly specified in the build command
+std.c.inotify_add_watch	std/c.zig:10706:12: error: dependency on libc must be explicitly specified in the build command
+std.c.inotify_rm_watch	std/c.zig:10707:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fallocate64	std/c.zig:10709:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fopen64	std/c.zig:10710:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ftruncate64	std/c.zig:10711:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fallocate	std/c.zig:10712:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendfile	std/c.zig:12027:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getauxval	std/c.zig:10720:12: error: dependency on libc must be explicitly specified in the build command
+std.c.elf_aux_info	std/c.zig:10721:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dl_iterate_phdr	std/c.zig:10848:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigaltstack	std/c.zig:12037:12: error: dependency on libc must be explicitly specified in the build command
+std.c.memfd_create	std/c.zig:10855:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pipe2	std/c.zig:12022:12: error: dependency on libc must be explicitly specified in the build command
+std.c.copy_file_range	std/c.zig:12005:12: error: dependency on libc must be explicitly specified in the build command
+std.c.signalfd	std/c.zig:10866:12: error: dependency on libc must be explicitly specified in the build command
+std.c.prlimit	std/c.zig:10868:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mincore	std/c.zig:10869:12: error: dependency on libc must be explicitly specified in the build command
+std.c.madvise	std/c.zig:10875:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getdirentries	std/c.zig:12010:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getdents	std/c.zig:12011:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getrusage	std/c.zig:12016:12: error: dependency on libc must be explicitly specified in the build command
+std.c.gettimeofday	std/c.zig:12017:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mlock	std/c.zig:12053:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mlock2	std/c.zig:12054:12: error: dependency on libc must be explicitly specified in the build command
+std.c.munlock	std/c.zig:12055:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mlockall	std/c.zig:12056:12: error: dependency on libc must be explicitly specified in the build command
+std.c.munlockall	std/c.zig:12057:12: error: dependency on libc must be explicitly specified in the build command
+std.c.msync	std/c.zig:12019:12: error: dependency on libc must be explicitly specified in the build command
+std.c.nanosleep	std/c.zig:12020:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readdir	std/c.zig:12023:12: error: dependency on libc must be explicitly specified in the build command
+std.c.realpath	std/c.zig:12024:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sched_yield	std/c.zig:12026:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigaction	std/c.zig:12028:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigfillset	std/c.zig:12031:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigaddset	std/c.zig:12030:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigemptyset	std/c.zig:12032:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigdelset	std/c.zig:12029:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigismember	std/c.zig:12033:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sigprocmask	std/c.zig:12034:12: error: dependency on libc must be explicitly specified in the build command
+std.c.socket	std/c.zig:12035:12: error: dependency on libc must be explicitly specified in the build command
+std.c.socketpair	std/c.zig:12036:12: error: dependency on libc must be explicitly specified in the build command
+std.c.stat	std/c.zig:12069:12: error: dependency on libc must be explicitly specified in the build command
+std.c.malloc_usable_size	std/c.zig:12050:12: error: dependency on libc must be explicitly specified in the build command
+std.c.posix_memalign	std/c.zig:12051:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysconf	std/c.zig:12038:12: error: dependency on libc must be explicitly specified in the build command
+std.c.flock	std/c.zig:12006:12: error: dependency on libc must be explicitly specified in the build command
 std.c.environ	std/c.zig:1:1: error: dependency on libc must be explicitly specified in the build command
-std.c.fopen	std/c.zig:11057:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fclose	std/c.zig:11058:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fwrite	std/c.zig:11059:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fread	std/c.zig:11060:12: error: dependency on libc must be explicitly specified in the build command
-std.c.printf	std/c.zig:11062:12: error: dependency on libc must be explicitly specified in the build command
-std.c.abort	std/c.zig:11063:12: error: dependency on libc must be explicitly specified in the build command
-std.c.exit	std/c.zig:11064:12: error: dependency on libc must be explicitly specified in the build command
-std.c._Exit	std/c.zig:11065:12: error: dependency on libc must be explicitly specified in the build command
-std.c._exit	std/c.zig:11066:12: error: dependency on libc must be explicitly specified in the build command
-std.c.isatty	std/c.zig:11067:12: error: dependency on libc must be explicitly specified in the build command
-std.c.lseek	std/c.zig:11068:12: error: dependency on libc must be explicitly specified in the build command
-std.c.open	std/c.zig:11069:12: error: dependency on libc must be explicitly specified in the build command
-std.c.openat	std/c.zig:11070:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ftruncate	std/c.zig:11071:12: error: dependency on libc must be explicitly specified in the build command
-std.c.raise	std/c.zig:11072:12: error: dependency on libc must be explicitly specified in the build command
-std.c.read	std/c.zig:11073:12: error: dependency on libc must be explicitly specified in the build command
-std.c.readv	std/c.zig:11074:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pread	std/c.zig:11075:12: error: dependency on libc must be explicitly specified in the build command
-std.c.preadv	std/c.zig:11076:12: error: dependency on libc must be explicitly specified in the build command
-std.c.writev	std/c.zig:11077:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pwritev	std/c.zig:11078:12: error: dependency on libc must be explicitly specified in the build command
-std.c.write	std/c.zig:11079:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pwrite	std/c.zig:11080:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mmap	std/c.zig:11081:12: error: dependency on libc must be explicitly specified in the build command
-std.c.munmap	std/c.zig:11082:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mremap	std/c.zig:11083:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mprotect	std/c.zig:11084:12: error: dependency on libc must be explicitly specified in the build command
-std.c.link	std/c.zig:11085:12: error: dependency on libc must be explicitly specified in the build command
-std.c.linkat	std/c.zig:11086:12: error: dependency on libc must be explicitly specified in the build command
-std.c.unlink	std/c.zig:11087:12: error: dependency on libc must be explicitly specified in the build command
-std.c.unlinkat	std/c.zig:11088:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getcwd	std/c.zig:11089:12: error: dependency on libc must be explicitly specified in the build command
-std.c.waitpid	std/c.zig:11090:12: error: dependency on libc must be explicitly specified in the build command
-std.c.wait4	std/c.zig:12022:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fork	std/c.zig:11989:12: error: dependency on libc must be explicitly specified in the build command
-std.c.access	std/c.zig:11116:12: error: dependency on libc must be explicitly specified in the build command
-std.c.faccessat	std/c.zig:11117:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pipe	std/c.zig:11118:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mkdir	std/c.zig:11119:12: error: dependency on libc must be explicitly specified in the build command
-std.c.mkdirat	std/c.zig:11120:12: error: dependency on libc must be explicitly specified in the build command
-std.c.symlink	std/c.zig:11121:12: error: dependency on libc must be explicitly specified in the build command
-std.c.symlinkat	std/c.zig:11122:12: error: dependency on libc must be explicitly specified in the build command
-std.c.rename	std/c.zig:11123:12: error: dependency on libc must be explicitly specified in the build command
-std.c.renameat	std/c.zig:11124:12: error: dependency on libc must be explicitly specified in the build command
-std.c.chdir	std/c.zig:11125:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fchdir	std/c.zig:11126:12: error: dependency on libc must be explicitly specified in the build command
-std.c.execve	std/c.zig:11127:12: error: dependency on libc must be explicitly specified in the build command
-std.c.execveat	std/c.zig:11128:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dup	std/c.zig:11129:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dup2	std/c.zig:11130:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dup3	std/c.zig:11131:12: error: dependency on libc must be explicitly specified in the build command
-std.c.readlink	std/c.zig:11132:12: error: dependency on libc must be explicitly specified in the build command
-std.c.readlinkat	std/c.zig:11133:12: error: dependency on libc must be explicitly specified in the build command
-std.c.chmod	std/c.zig:11134:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fchmod	std/c.zig:11135:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fchmodat	std/c.zig:11136:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fchown	std/c.zig:11137:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fchownat	std/c.zig:11138:12: error: dependency on libc must be explicitly specified in the build command
-std.c.umask	std/c.zig:11139:12: error: dependency on libc must be explicitly specified in the build command
-std.c.rmdir	std/c.zig:11141:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getenv	std/c.zig:11142:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sysctl	std/c.zig:11143:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sysctlbyname	std/c.zig:11144:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sysctlnametomib	std/c.zig:11145:12: error: dependency on libc must be explicitly specified in the build command
-std.c.tcgetattr	std/c.zig:11146:12: error: dependency on libc must be explicitly specified in the build command
-std.c.tcsetattr	std/c.zig:11147:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fcntl	std/c.zig:11148:12: error: dependency on libc must be explicitly specified in the build command
-std.c.uname	std/c.zig:11149:12: error: dependency on libc must be explicitly specified in the build command
-std.c.gethostname	std/c.zig:11151:12: error: dependency on libc must be explicitly specified in the build command
-std.c.shutdown	std/c.zig:11152:12: error: dependency on libc must be explicitly specified in the build command
-std.c.bind	std/c.zig:11153:12: error: dependency on libc must be explicitly specified in the build command
-std.c.listen	std/c.zig:11154:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getsockname	std/c.zig:11155:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpeername	std/c.zig:11156:12: error: dependency on libc must be explicitly specified in the build command
-std.c.connect	std/c.zig:11157:12: error: dependency on libc must be explicitly specified in the build command
-std.c.accept	std/c.zig:11158:12: error: dependency on libc must be explicitly specified in the build command
-std.c.accept4	std/c.zig:11159:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getsockopt	std/c.zig:11160:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setsockopt	std/c.zig:11161:12: error: dependency on libc must be explicitly specified in the build command
-std.c.send	std/c.zig:11162:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sendto	std/c.zig:11163:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sendmsg	std/c.zig:11171:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sendmmsg	std/c.zig:11172:12: error: dependency on libc must be explicitly specified in the build command
-std.c.recv	std/c.zig:11174:12: error: dependency on libc must be explicitly specified in the build command
-std.c.recvfrom	std/c.zig:11180:12: error: dependency on libc must be explicitly specified in the build command
-std.c.recvmsg	std/c.zig:12007:12: error: dependency on libc must be explicitly specified in the build command
-std.c.kill	std/c.zig:11194:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setuid	std/c.zig:11196:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setgid	std/c.zig:11197:12: error: dependency on libc must be explicitly specified in the build command
-std.c.seteuid	std/c.zig:11198:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setegid	std/c.zig:11199:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setreuid	std/c.zig:11200:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setregid	std/c.zig:11201:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setresuid	std/c.zig:11202:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setresgid	std/c.zig:11203:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setpgid	std/c.zig:11204:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getuid	std/c.zig:11205:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getgid	std/c.zig:11206:12: error: dependency on libc must be explicitly specified in the build command
-std.c.geteuid	std/c.zig:11207:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getegid	std/c.zig:11208:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getresuid	std/c.zig:11209:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getresgid	std/c.zig:11210:12: error: dependency on libc must be explicitly specified in the build command
-std.c.malloc	std/c.zig:11212:12: error: dependency on libc must be explicitly specified in the build command
-std.c.calloc	std/c.zig:11213:12: error: dependency on libc must be explicitly specified in the build command
-std.c.realloc	std/c.zig:11214:12: error: dependency on libc must be explicitly specified in the build command
-std.c.free	std/c.zig:11215:12: error: dependency on libc must be explicitly specified in the build command
-std.c.futimes	std/c.zig:11217:12: error: dependency on libc must be explicitly specified in the build command
-std.c.utimes	std/c.zig:11218:12: error: dependency on libc must be explicitly specified in the build command
-std.c.utimensat	std/c.zig:11220:12: error: dependency on libc must be explicitly specified in the build command
-std.c.futimens	std/c.zig:11221:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_create	std/c.zig:11223:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_setcancelstate	std/c.zig:11244:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_cancel	std/c.zig:11245:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_attr_init	std/c.zig:11246:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_attr_setstack	std/c.zig:11247:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_attr_setstacksize	std/c.zig:11248:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_attr_setguardsize	std/c.zig:11249:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_attr_destroy	std/c.zig:11250:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_self	std/c.zig:11251:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_join	std/c.zig:11252:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_detach	std/c.zig:11253:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_atfork	std/c.zig:11254:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_key_create	std/c.zig:11259:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_key_delete	std/c.zig:11263:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_getspecific	std/c.zig:11264:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_setspecific	std/c.zig:11265:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_sigmask	std/c.zig:11266:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_setname_np	std/c.zig:12024:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_getname_np	std/c.zig:11274:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_kill	std/c.zig:11275:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_exit	std/c.zig:11276:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ptrace	std/c.zig:12042:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_init	std/c.zig:11295:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_destroy	std/c.zig:11296:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_open	std/c.zig:11297:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_close	std/c.zig:11298:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_post	std/c.zig:11299:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_wait	std/c.zig:11300:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_trywait	std/c.zig:11301:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_timedwait	std/c.zig:11302:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sem_getvalue	std/c.zig:11303:12: error: dependency on libc must be explicitly specified in the build command
-std.c.shm_open	std/c.zig:12021:12: error: dependency on libc must be explicitly specified in the build command
-std.c.shm_unlink	std/c.zig:11309:12: error: dependency on libc must be explicitly specified in the build command
-std.c.kqueue	std/c.zig:11311:12: error: dependency on libc must be explicitly specified in the build command
-std.c.kevent	std/c.zig:11312:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_create	std/c.zig:11321:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_associate	std/c.zig:11322:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_dissociate	std/c.zig:11329:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_send	std/c.zig:11330:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_sendn	std/c.zig:11331:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_get	std/c.zig:11338:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_getn	std/c.zig:11339:12: error: dependency on libc must be explicitly specified in the build command
-std.c.port_alert	std/c.zig:11346:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getaddrinfo	std/c.zig:11348:12: error: dependency on libc must be explicitly specified in the build command
-std.c.freeaddrinfo	std/c.zig:11357:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getnameinfo	std/c.zig:11359:12: error: dependency on libc must be explicitly specified in the build command
-std.c.gai_strerror	std/c.zig:11369:12: error: dependency on libc must be explicitly specified in the build command
-std.c.poll	std/c.zig:11371:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ppoll	std/c.zig:11372:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dn_expand	std/c.zig:11374:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_spin_init	std/c.zig:11389:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_spin_lock	std/c.zig:11390:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_spin_unlock	std/c.zig:11391:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_spin_trylock	std/c.zig:11392:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_spin_destroy	std/c.zig:11393:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_mutex_lock	std/c.zig:11396:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_mutex_unlock	std/c.zig:11397:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_mutex_trylock	std/c.zig:11398:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_mutex_destroy	std/c.zig:11399:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_cond_wait	std/c.zig:11402:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_cond_timedwait	std/c.zig:11403:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_cond_signal	std/c.zig:11404:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_cond_broadcast	std/c.zig:11405:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_cond_destroy	std/c.zig:11406:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_rwlock_destroy	std/c.zig:11408:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_rwlock_rdlock	std/c.zig:11409:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_rwlock_wrlock	std/c.zig:11410:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_rwlock_tryrdlock	std/c.zig:11411:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_rwlock_trywrlock	std/c.zig:11412:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_rwlock_unlock	std/c.zig:11413:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dlopen	std/c.zig:11422:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dlclose	std/c.zig:11423:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dlsym	std/c.zig:11424:12: error: dependency on libc must be explicitly specified in the build command
-std.c.dlerror	std/c.zig:11425:12: error: dependency on libc must be explicitly specified in the build command
-std.c.sync	std/c.zig:11430:12: error: dependency on libc must be explicitly specified in the build command
-std.c.syncfs	std/c.zig:11431:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fsync	std/c.zig:11432:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fdatasync	std/c.zig:11433:12: error: dependency on libc must be explicitly specified in the build command
-std.c.prctl	std/c.zig:11435:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getrlimit	std/c.zig:11437:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setrlimit	std/c.zig:11438:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fmemopen	std/c.zig:11440:12: error: dependency on libc must be explicitly specified in the build command
-std.c.syslog	std/c.zig:11442:12: error: dependency on libc must be explicitly specified in the build command
-std.c.openlog	std/c.zig:11443:12: error: dependency on libc must be explicitly specified in the build command
-std.c.closelog	std/c.zig:11444:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setlogmask	std/c.zig:11445:12: error: dependency on libc must be explicitly specified in the build command
-std.c.if_nametoindex	std/c.zig:11447:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getpid	std/c.zig:11449:12: error: dependency on libc must be explicitly specified in the build command
-std.c.getppid	std/c.zig:11450:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setsid	std/c.zig:11451:12: error: dependency on libc must be explicitly specified in the build command
-std.c.setlocale	std/c.zig:11473:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_getthreadid_np	std/c.zig:11518:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_set_name_np	std/c.zig:11519:12: error: dependency on libc must be explicitly specified in the build command
-std.c.pthread_get_name_np	std/c.zig:11520:12: error: dependency on libc must be explicitly specified in the build command
-std.c.clock_nanosleep	std/c.zig:12003:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ioctl	std/c.zig:12000:12: error: dependency on libc must be explicitly specified in the build command
-std.c.bzero	std/c.zig:11541:12: error: dependency on libc must be explicitly specified in the build command
-std.c.swab	std/c.zig:11981:16: error: dependency on libc must be explicitly specified in the build command
-std.c.strncmp	std/c.zig:11548:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strcasecmp	std/c.zig:11549:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strncasecmp	std/c.zig:11550:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strdup	std/c.zig:11976:16: error: dependency on libc must be explicitly specified in the build command
-std.c.strnlen	std/c.zig:11555:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strndup	std/c.zig:11556:12: error: dependency on libc must be explicitly specified in the build command
-std.c.wcsnlen	std/c.zig:11557:12: error: dependency on libc must be explicitly specified in the build command
-std.c.wcsdup	std/c.zig:11978:16: error: dependency on libc must be explicitly specified in the build command
-std.c.ffs	std/c.zig:11563:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ffsl	std/c.zig:11564:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ffsll	std/c.zig:11565:12: error: dependency on libc must be explicitly specified in the build command
-std.c.erand48	std/c.zig:11567:12: error: dependency on libc must be explicitly specified in the build command
-std.c.jrand48	std/c.zig:11568:12: error: dependency on libc must be explicitly specified in the build command
-std.c.nrand48	std/c.zig:11569:12: error: dependency on libc must be explicitly specified in the build command
-std.c.insque	std/c.zig:11571:12: error: dependency on libc must be explicitly specified in the build command
-std.c.remque	std/c.zig:11572:12: error: dependency on libc must be explicitly specified in the build command
-std.c.imaxabs	std/c.zig:11574:12: error: dependency on libc must be explicitly specified in the build command
-std.c.imaxdiv	std/c.zig:11575:12: error: dependency on libc must be explicitly specified in the build command
-std.c.abs	std/c.zig:11577:12: error: dependency on libc must be explicitly specified in the build command
-std.c.labs	std/c.zig:11578:12: error: dependency on libc must be explicitly specified in the build command
-std.c.llabs	std/c.zig:11579:12: error: dependency on libc must be explicitly specified in the build command
-std.c.div	std/c.zig:11581:12: error: dependency on libc must be explicitly specified in the build command
-std.c.ldiv	std/c.zig:11582:12: error: dependency on libc must be explicitly specified in the build command
-std.c.lldiv	std/c.zig:11583:12: error: dependency on libc must be explicitly specified in the build command
-std.c.atoi	std/c.zig:11585:12: error: dependency on libc must be explicitly specified in the build command
-std.c.atol	std/c.zig:11586:12: error: dependency on libc must be explicitly specified in the build command
-std.c.atoll	std/c.zig:11587:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strtol	std/c.zig:11589:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strtoll	std/c.zig:11590:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strtoul	std/c.zig:11591:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strtoull	std/c.zig:11592:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strtoimax	std/c.zig:11593:12: error: dependency on libc must be explicitly specified in the build command
-std.c.strtoumax	std/c.zig:11594:12: error: dependency on libc must be explicitly specified in the build command
-std.c.bsearch	std/c.zig:11596:12: error: dependency on libc must be explicitly specified in the build command
-std.c.atan	std/c.zig:11605:12: error: dependency on libc must be explicitly specified in the build command
-std.c.copysign	std/c.zig:11606:12: error: dependency on libc must be explicitly specified in the build command
-std.c.fdim	std/c.zig:11607:12: error: dependency on libc must be explicitly specified in the build command
-std.c.frexp	std/c.zig:11608:12: error: dependency on libc must be explicitly specified in the build command
-std.c.hypot	std/c.zig:11609:12: error: dependency on libc must be explicitly specified in the build command
-std.c.modff	std/c.zig:11610:12: error: dependency on libc must be explicitly specified in the build command
-std.c.modf	std/c.zig:11611:12: error: dependency on libc must be explicitly specified in the build command
-std.c.modfl	std/c.zig:11612:12: error: dependency on libc must be explicitly specified in the build command
-std.c.rintf	std/c.zig:11613:12: error: dependency on libc must be explicitly specified in the build command
-std.c.rint	std/c.zig:11614:12: error: dependency on libc must be explicitly specified in the build command
-std.c.rintl	std/c.zig:11615:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fopen	std/c.zig:11075:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fclose	std/c.zig:11076:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fwrite	std/c.zig:11077:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fread	std/c.zig:11078:12: error: dependency on libc must be explicitly specified in the build command
+std.c.printf	std/c.zig:11080:12: error: dependency on libc must be explicitly specified in the build command
+std.c.abort	std/c.zig:11081:12: error: dependency on libc must be explicitly specified in the build command
+std.c.exit	std/c.zig:11082:12: error: dependency on libc must be explicitly specified in the build command
+std.c._Exit	std/c.zig:11083:12: error: dependency on libc must be explicitly specified in the build command
+std.c._exit	std/c.zig:11084:12: error: dependency on libc must be explicitly specified in the build command
+std.c.isatty	std/c.zig:11085:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lseek	std/c.zig:11086:12: error: dependency on libc must be explicitly specified in the build command
+std.c.open	std/c.zig:11087:12: error: dependency on libc must be explicitly specified in the build command
+std.c.openat	std/c.zig:11088:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ftruncate	std/c.zig:11089:12: error: dependency on libc must be explicitly specified in the build command
+std.c.raise	std/c.zig:11090:12: error: dependency on libc must be explicitly specified in the build command
+std.c.read	std/c.zig:11091:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readv	std/c.zig:11092:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pread	std/c.zig:11093:12: error: dependency on libc must be explicitly specified in the build command
+std.c.preadv	std/c.zig:11094:12: error: dependency on libc must be explicitly specified in the build command
+std.c.writev	std/c.zig:11095:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwritev	std/c.zig:11096:12: error: dependency on libc must be explicitly specified in the build command
+std.c.write	std/c.zig:11097:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pwrite	std/c.zig:11098:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mmap	std/c.zig:11099:12: error: dependency on libc must be explicitly specified in the build command
+std.c.munmap	std/c.zig:11100:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mremap	std/c.zig:11101:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mprotect	std/c.zig:11102:12: error: dependency on libc must be explicitly specified in the build command
+std.c.link	std/c.zig:11103:12: error: dependency on libc must be explicitly specified in the build command
+std.c.linkat	std/c.zig:11104:12: error: dependency on libc must be explicitly specified in the build command
+std.c.unlink	std/c.zig:11105:12: error: dependency on libc must be explicitly specified in the build command
+std.c.unlinkat	std/c.zig:11106:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getcwd	std/c.zig:11107:12: error: dependency on libc must be explicitly specified in the build command
+std.c.waitpid	std/c.zig:11108:12: error: dependency on libc must be explicitly specified in the build command
+std.c.wait4	std/c.zig:12040:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fork	std/c.zig:12007:12: error: dependency on libc must be explicitly specified in the build command
+std.c.access	std/c.zig:11134:12: error: dependency on libc must be explicitly specified in the build command
+std.c.faccessat	std/c.zig:11135:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pipe	std/c.zig:11136:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mkdir	std/c.zig:11137:12: error: dependency on libc must be explicitly specified in the build command
+std.c.mkdirat	std/c.zig:11138:12: error: dependency on libc must be explicitly specified in the build command
+std.c.symlink	std/c.zig:11139:12: error: dependency on libc must be explicitly specified in the build command
+std.c.symlinkat	std/c.zig:11140:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rename	std/c.zig:11141:12: error: dependency on libc must be explicitly specified in the build command
+std.c.renameat	std/c.zig:11142:12: error: dependency on libc must be explicitly specified in the build command
+std.c.chdir	std/c.zig:11143:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchdir	std/c.zig:11144:12: error: dependency on libc must be explicitly specified in the build command
+std.c.execve	std/c.zig:11145:12: error: dependency on libc must be explicitly specified in the build command
+std.c.execveat	std/c.zig:11146:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dup	std/c.zig:11147:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dup2	std/c.zig:11148:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dup3	std/c.zig:11149:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readlink	std/c.zig:11150:12: error: dependency on libc must be explicitly specified in the build command
+std.c.readlinkat	std/c.zig:11151:12: error: dependency on libc must be explicitly specified in the build command
+std.c.chmod	std/c.zig:11152:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchmod	std/c.zig:11153:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchmodat	std/c.zig:11154:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchown	std/c.zig:11155:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fchownat	std/c.zig:11156:12: error: dependency on libc must be explicitly specified in the build command
+std.c.umask	std/c.zig:11157:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rmdir	std/c.zig:11159:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getenv	std/c.zig:11160:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysctl	std/c.zig:11161:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysctlbyname	std/c.zig:11162:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sysctlnametomib	std/c.zig:11163:12: error: dependency on libc must be explicitly specified in the build command
+std.c.tcgetattr	std/c.zig:11164:12: error: dependency on libc must be explicitly specified in the build command
+std.c.tcsetattr	std/c.zig:11165:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fcntl	std/c.zig:11166:12: error: dependency on libc must be explicitly specified in the build command
+std.c.uname	std/c.zig:11167:12: error: dependency on libc must be explicitly specified in the build command
+std.c.gethostname	std/c.zig:11169:12: error: dependency on libc must be explicitly specified in the build command
+std.c.shutdown	std/c.zig:11170:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bind	std/c.zig:11171:12: error: dependency on libc must be explicitly specified in the build command
+std.c.listen	std/c.zig:11172:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getsockname	std/c.zig:11173:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpeername	std/c.zig:11174:12: error: dependency on libc must be explicitly specified in the build command
+std.c.connect	std/c.zig:11175:12: error: dependency on libc must be explicitly specified in the build command
+std.c.accept	std/c.zig:11176:12: error: dependency on libc must be explicitly specified in the build command
+std.c.accept4	std/c.zig:11177:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getsockopt	std/c.zig:11178:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setsockopt	std/c.zig:11179:12: error: dependency on libc must be explicitly specified in the build command
+std.c.send	std/c.zig:11180:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendto	std/c.zig:11181:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendmsg	std/c.zig:11189:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sendmmsg	std/c.zig:11190:12: error: dependency on libc must be explicitly specified in the build command
+std.c.recv	std/c.zig:11192:12: error: dependency on libc must be explicitly specified in the build command
+std.c.recvfrom	std/c.zig:11198:12: error: dependency on libc must be explicitly specified in the build command
+std.c.recvmsg	std/c.zig:12025:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kill	std/c.zig:11212:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setuid	std/c.zig:11214:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setgid	std/c.zig:11215:12: error: dependency on libc must be explicitly specified in the build command
+std.c.seteuid	std/c.zig:11216:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setegid	std/c.zig:11217:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setreuid	std/c.zig:11218:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setregid	std/c.zig:11219:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setresuid	std/c.zig:11220:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setresgid	std/c.zig:11221:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setpgid	std/c.zig:11222:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getuid	std/c.zig:11223:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getgid	std/c.zig:11224:12: error: dependency on libc must be explicitly specified in the build command
+std.c.geteuid	std/c.zig:11225:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getegid	std/c.zig:11226:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getresuid	std/c.zig:11227:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getresgid	std/c.zig:11228:12: error: dependency on libc must be explicitly specified in the build command
+std.c.malloc	std/c.zig:11230:12: error: dependency on libc must be explicitly specified in the build command
+std.c.calloc	std/c.zig:11231:12: error: dependency on libc must be explicitly specified in the build command
+std.c.realloc	std/c.zig:11232:12: error: dependency on libc must be explicitly specified in the build command
+std.c.free	std/c.zig:11233:12: error: dependency on libc must be explicitly specified in the build command
+std.c.futimes	std/c.zig:11235:12: error: dependency on libc must be explicitly specified in the build command
+std.c.utimes	std/c.zig:11236:12: error: dependency on libc must be explicitly specified in the build command
+std.c.utimensat	std/c.zig:11238:12: error: dependency on libc must be explicitly specified in the build command
+std.c.futimens	std/c.zig:11239:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_create	std/c.zig:11241:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_setcancelstate	std/c.zig:11262:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cancel	std/c.zig:11263:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_init	std/c.zig:11264:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_setstack	std/c.zig:11265:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_setstacksize	std/c.zig:11266:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_setguardsize	std/c.zig:11267:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_attr_destroy	std/c.zig:11268:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_self	std/c.zig:11269:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_join	std/c.zig:11270:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_detach	std/c.zig:11271:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_atfork	std/c.zig:11272:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_key_create	std/c.zig:11277:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_key_delete	std/c.zig:11281:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_getspecific	std/c.zig:11282:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_setspecific	std/c.zig:11283:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_sigmask	std/c.zig:11284:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_setname_np	std/c.zig:12042:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_getname_np	std/c.zig:11292:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_kill	std/c.zig:11293:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_exit	std/c.zig:11294:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ptrace	std/c.zig:12060:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_init	std/c.zig:11313:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_destroy	std/c.zig:11314:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_open	std/c.zig:11315:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_close	std/c.zig:11316:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_post	std/c.zig:11317:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_wait	std/c.zig:11318:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_trywait	std/c.zig:11319:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_timedwait	std/c.zig:11320:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sem_getvalue	std/c.zig:11321:12: error: dependency on libc must be explicitly specified in the build command
+std.c.shm_open	std/c.zig:12039:12: error: dependency on libc must be explicitly specified in the build command
+std.c.shm_unlink	std/c.zig:11327:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kqueue	std/c.zig:11329:12: error: dependency on libc must be explicitly specified in the build command
+std.c.kevent	std/c.zig:11330:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_create	std/c.zig:11339:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_associate	std/c.zig:11340:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_dissociate	std/c.zig:11347:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_send	std/c.zig:11348:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_sendn	std/c.zig:11349:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_get	std/c.zig:11356:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_getn	std/c.zig:11357:12: error: dependency on libc must be explicitly specified in the build command
+std.c.port_alert	std/c.zig:11364:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getaddrinfo	std/c.zig:11366:12: error: dependency on libc must be explicitly specified in the build command
+std.c.freeaddrinfo	std/c.zig:11375:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getnameinfo	std/c.zig:11377:12: error: dependency on libc must be explicitly specified in the build command
+std.c.gai_strerror	std/c.zig:11387:12: error: dependency on libc must be explicitly specified in the build command
+std.c.poll	std/c.zig:11389:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ppoll	std/c.zig:11390:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dn_expand	std/c.zig:11392:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_init	std/c.zig:11407:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_lock	std/c.zig:11408:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_unlock	std/c.zig:11409:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_trylock	std/c.zig:11410:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_spin_destroy	std/c.zig:11411:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_lock	std/c.zig:11414:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_unlock	std/c.zig:11415:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_trylock	std/c.zig:11416:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_mutex_destroy	std/c.zig:11417:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_wait	std/c.zig:11420:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_timedwait	std/c.zig:11421:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_signal	std/c.zig:11422:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_broadcast	std/c.zig:11423:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_cond_destroy	std/c.zig:11424:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_destroy	std/c.zig:11426:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_rdlock	std/c.zig:11427:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_wrlock	std/c.zig:11428:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_tryrdlock	std/c.zig:11429:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_trywrlock	std/c.zig:11430:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_rwlock_unlock	std/c.zig:11431:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlopen	std/c.zig:11440:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlclose	std/c.zig:11441:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlsym	std/c.zig:11442:12: error: dependency on libc must be explicitly specified in the build command
+std.c.dlerror	std/c.zig:11443:12: error: dependency on libc must be explicitly specified in the build command
+std.c.sync	std/c.zig:11448:12: error: dependency on libc must be explicitly specified in the build command
+std.c.syncfs	std/c.zig:11449:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fsync	std/c.zig:11450:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fdatasync	std/c.zig:11451:12: error: dependency on libc must be explicitly specified in the build command
+std.c.prctl	std/c.zig:11453:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getrlimit	std/c.zig:11455:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setrlimit	std/c.zig:11456:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fmemopen	std/c.zig:11458:12: error: dependency on libc must be explicitly specified in the build command
+std.c.syslog	std/c.zig:11460:12: error: dependency on libc must be explicitly specified in the build command
+std.c.openlog	std/c.zig:11461:12: error: dependency on libc must be explicitly specified in the build command
+std.c.closelog	std/c.zig:11462:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setlogmask	std/c.zig:11463:12: error: dependency on libc must be explicitly specified in the build command
+std.c.if_nametoindex	std/c.zig:11465:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getpid	std/c.zig:11467:12: error: dependency on libc must be explicitly specified in the build command
+std.c.getppid	std/c.zig:11468:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setsid	std/c.zig:11469:12: error: dependency on libc must be explicitly specified in the build command
+std.c.setlocale	std/c.zig:11491:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_getthreadid_np	std/c.zig:11536:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_set_name_np	std/c.zig:11537:12: error: dependency on libc must be explicitly specified in the build command
+std.c.pthread_get_name_np	std/c.zig:11538:12: error: dependency on libc must be explicitly specified in the build command
+std.c.clock_nanosleep	std/c.zig:12021:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ioctl	std/c.zig:12018:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bzero	std/c.zig:11559:12: error: dependency on libc must be explicitly specified in the build command
+std.c.swab	std/c.zig:11999:16: error: dependency on libc must be explicitly specified in the build command
+std.c.strncmp	std/c.zig:11566:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strcasecmp	std/c.zig:11567:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strncasecmp	std/c.zig:11568:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strdup	std/c.zig:11994:16: error: dependency on libc must be explicitly specified in the build command
+std.c.strnlen	std/c.zig:11573:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strndup	std/c.zig:11574:12: error: dependency on libc must be explicitly specified in the build command
+std.c.wcsnlen	std/c.zig:11575:12: error: dependency on libc must be explicitly specified in the build command
+std.c.wcsdup	std/c.zig:11996:16: error: dependency on libc must be explicitly specified in the build command
+std.c.ffs	std/c.zig:11581:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ffsl	std/c.zig:11582:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ffsll	std/c.zig:11583:12: error: dependency on libc must be explicitly specified in the build command
+std.c.erand48	std/c.zig:11585:12: error: dependency on libc must be explicitly specified in the build command
+std.c.jrand48	std/c.zig:11586:12: error: dependency on libc must be explicitly specified in the build command
+std.c.nrand48	std/c.zig:11587:12: error: dependency on libc must be explicitly specified in the build command
+std.c.insque	std/c.zig:11589:12: error: dependency on libc must be explicitly specified in the build command
+std.c.remque	std/c.zig:11590:12: error: dependency on libc must be explicitly specified in the build command
+std.c.imaxabs	std/c.zig:11592:12: error: dependency on libc must be explicitly specified in the build command
+std.c.imaxdiv	std/c.zig:11593:12: error: dependency on libc must be explicitly specified in the build command
+std.c.abs	std/c.zig:11595:12: error: dependency on libc must be explicitly specified in the build command
+std.c.labs	std/c.zig:11596:12: error: dependency on libc must be explicitly specified in the build command
+std.c.llabs	std/c.zig:11597:12: error: dependency on libc must be explicitly specified in the build command
+std.c.div	std/c.zig:11599:12: error: dependency on libc must be explicitly specified in the build command
+std.c.ldiv	std/c.zig:11600:12: error: dependency on libc must be explicitly specified in the build command
+std.c.lldiv	std/c.zig:11601:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atoi	std/c.zig:11603:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atol	std/c.zig:11604:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atoll	std/c.zig:11605:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtol	std/c.zig:11607:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoll	std/c.zig:11608:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoul	std/c.zig:11609:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoull	std/c.zig:11610:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoimax	std/c.zig:11611:12: error: dependency on libc must be explicitly specified in the build command
+std.c.strtoumax	std/c.zig:11612:12: error: dependency on libc must be explicitly specified in the build command
+std.c.bsearch	std/c.zig:11614:12: error: dependency on libc must be explicitly specified in the build command
+std.c.atan	std/c.zig:11623:12: error: dependency on libc must be explicitly specified in the build command
+std.c.copysign	std/c.zig:11624:12: error: dependency on libc must be explicitly specified in the build command
+std.c.fdim	std/c.zig:11625:12: error: dependency on libc must be explicitly specified in the build command
+std.c.frexp	std/c.zig:11626:12: error: dependency on libc must be explicitly specified in the build command
+std.c.hypot	std/c.zig:11627:12: error: dependency on libc must be explicitly specified in the build command
+std.c.modff	std/c.zig:11628:12: error: dependency on libc must be explicitly specified in the build command
+std.c.modf	std/c.zig:11629:12: error: dependency on libc must be explicitly specified in the build command
+std.c.modfl	std/c.zig:11630:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rintf	std/c.zig:11631:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rint	std/c.zig:11632:12: error: dependency on libc must be explicitly specified in the build command
+std.c.rintl	std/c.zig:11633:12: error: dependency on libc must be explicitly specified in the build command
 std.c.AF_SUN	std/debug.zig:442:14: error: reached unreachable code
 std.c.AT_SUN	std/debug.zig:442:14: error: reached unreachable code
 std.c.FILE_EVENT	std/debug.zig:442:14: error: reached unreachable code
@@ -720,12 +720,12 @@ std.spirv.global_invocation_id	std/spirv.zig:20:67: error: constant values with 
 std.spirv.vertex_index	std/spirv.zig:21:47: error: constant values with address space 'input' are not supported on x86
 std.spirv.instance_index	std/spirv.zig:22:49: error: constant values with address space 'input' are not supported on x86
 std.heap.WasmAllocator	std/heap.zig:18:74: error: unimplemented
-std.heap.c_allocator	std/c.zig:11212:12: error: dependency on libc must be explicitly specified in the build command
+std.heap.c_allocator	std/c.zig:11230:12: error: dependency on libc must be explicitly specified in the build command
 std.heap.wasm_allocator	std/heap.zig:18:74: error: unimplemented
 std.heap.brk_allocator	std/heap/BrkAllocator.zig:15:35: error: unsupported
 std.heap.BrkAllocator	std/heap/BrkAllocator.zig:15:35: error: unsupported
-std.http.Client.ConnectUnixError	std/http/Client.zig:1485:58: error: root source file struct 'posix' has no member named 'SocketError'
-std.http.Client.connectUnix	std/http/Client.zig:1485:58: error: root source file struct 'posix' has no member named 'SocketError'
+std.http.Client.ConnectUnixError	std/http/Client.zig:1492:58: error: root source file struct 'posix' has no member named 'SocketError'
+std.http.Client.connectUnix	std/http/Client.zig:1492:58: error: root source file struct 'posix' has no member named 'SocketError'
 std.macho.PROT	std/macho.zig:702:33: error: expected type 'macho.vm_prot_t', found 'comptime_int'
 std.meta.declarationInfo	std/meta.zig:246:29: error: deprecated in favor of @hasDecl
 std.meta.fields	std/meta.zig:248:20: error: deprecated in favor of @typeInfo
@@ -866,13 +866,13 @@ std.os.emscripten.emscripten_promise_destroy	std/os/emscripten.zig:946:12: error
 std.os.emscripten.emscripten_promise_resolve	std/os/emscripten.zig:947:12: error: dependency on libc must be explicitly specified in the build command
 std.os.emscripten.emscripten_promise_then	std/os/emscripten.zig:948:12: error: dependency on libc must be explicitly specified in the build command
 std.os.emscripten.emscripten_promise_all	std/os/emscripten.zig:949:12: error: dependency on libc must be explicitly specified in the build command
-std.os.windows.TCHAR	std/os/windows.zig:4082:19: error: Deprecated: choose between `CHAR` or `WCHAR` directly instead.
-std.os.windows.LPTSTR	std/os/windows.zig:4083:20: error: Deprecated: choose between `LPSTR` or `LPWSTR` directly instead.
-std.os.windows.LPCTSTR	std/os/windows.zig:4084:21: error: Deprecated: choose between `LPCSTR` or `LPCWSTR` directly instead.
-std.os.windows.PTSTR	std/os/windows.zig:4085:19: error: Deprecated: choose between `PSTR` or `PWSTR` directly instead.
-std.os.windows.PCTSTR	std/os/windows.zig:4086:20: error: Deprecated: choose between `PCSTR` or `PCWSTR` directly instead.
-std.os.windows.FLOATING_SAVE_AREA	std/os/windows.zig:4614:13: error: FLOATING_SAVE_AREA only defined on x86
-std.os.windows.NEON128	std/os/windows.zig:4662:13: error: NEON128 only defined on aarch64
+std.os.windows.TCHAR	std/os/windows.zig:4081:19: error: Deprecated: choose between `CHAR` or `WCHAR` directly instead.
+std.os.windows.LPTSTR	std/os/windows.zig:4082:20: error: Deprecated: choose between `LPSTR` or `LPWSTR` directly instead.
+std.os.windows.LPCTSTR	std/os/windows.zig:4083:21: error: Deprecated: choose between `LPCSTR` or `LPCWSTR` directly instead.
+std.os.windows.PTSTR	std/os/windows.zig:4084:19: error: Deprecated: choose between `PSTR` or `PWSTR` directly instead.
+std.os.windows.PCTSTR	std/os/windows.zig:4085:20: error: Deprecated: choose between `PCSTR` or `PCWSTR` directly instead.
+std.os.windows.FLOATING_SAVE_AREA	std/os/windows.zig:4613:13: error: FLOATING_SAVE_AREA only defined on x86
+std.os.windows.NEON128	std/os/windows.zig:4661:13: error: NEON128 only defined on aarch64
 std.os.windows.kernel32	std/os/windows/kernel32.zig:16:12: error: dependency on dynamic library 'kernel32' requires enabling Position Independent Code; fixed by '-lkernel32' or '-fPIC'
 std.os.windows.ntdll	std/os/windows/ntdll.zig:66:12: error: dependency on dynamic library 'ntdll' requires enabling Position Independent Code; fixed by '-lntdll' or '-fPIC'
 std.os.windows.crypt32.CertOpenStore	std/os/windows/crypt32.zig:112:12: error: dependency on dynamic library 'crypt32' requires enabling Position Independent Code; fixed by '-lcrypt32' or '-fPIC'
@@ -888,21 +888,21 @@ std.os.windows.OBJECT.ATTRIBUTES.Flags	std/os/windows.zig:124:18: error: no fiel
 std.os.windows.AFD.TRANSMIT_FILE_INFO	std/os/windows.zig:1271:34: error: backing integer bit width does not match total bit width of fields
 std.os.windows.AFD.TRANSMIT_FILE_INFO.FLAGS	std/os/windows.zig:1271:34: error: backing integer bit width does not match total bit width of fields
 std.os.windows.TDI.ADDRESS.TYPE	std/os/windows.zig:1362:19: error: enum tag value '6' for field 'IPX' already taken
-std.os.windows.LDR.LOAD	std/os/windows.zig:5366:29: error: backing integer bit width does not match total bit width of fields
+std.os.windows.LDR.LOAD	std/os/windows.zig:5365:29: error: backing integer bit width does not match total bit width of fields
 std.posix.system	std/os/linux.zig:77:34: error: root source file struct 'os.linux.x86_64' has no member named 'syscall7'
-std.posix.AF_SUN	std/posix.zig:73:26: error: root source file struct 'os.linux' has no member named 'AF_SUN'
-std.posix.AT_SUN	std/posix.zig:77:26: error: root source file struct 'os.linux' has no member named 'AT_SUN'
-std.posix.CTL	std/posix.zig:80:23: error: root source file struct 'os.linux' has no member named 'CTL'
-std.posix.HW	std/posix.zig:88:22: error: root source file struct 'os.linux' has no member named 'HW'
-std.posix.KERN	std/posix.zig:95:24: error: root source file struct 'os.linux' has no member named 'KERN'
-std.posix.Kevent	std/posix.zig:96:26: error: root source file struct 'os.linux' has no member named 'Kevent'
+std.posix.AF_SUN	std/posix.zig:77:26: error: root source file struct 'os.linux' has no member named 'AF_SUN'
+std.posix.AT_SUN	std/posix.zig:81:26: error: root source file struct 'os.linux' has no member named 'AT_SUN'
+std.posix.CTL	std/posix.zig:84:23: error: root source file struct 'os.linux' has no member named 'CTL'
+std.posix.HW	std/posix.zig:92:22: error: root source file struct 'os.linux' has no member named 'HW'
+std.posix.KERN	std/posix.zig:99:24: error: root source file struct 'os.linux' has no member named 'KERN'
+std.posix.Kevent	std/posix.zig:100:26: error: root source file struct 'os.linux' has no member named 'Kevent'
 std.posix.SC	std/os/linux.zig:107:25: error: root source file struct 'os.linux.x86_64' has no member named 'SC'
-std.posix._SC	std/posix.zig:147:23: error: root source file struct 'os.linux' has no member named '_SC'
-std.posix.file_obj	std/posix.zig:160:28: error: root source file struct 'os.linux' has no member named 'file_obj'
-std.posix.port_event	std/posix.zig:175:30: error: root source file struct 'os.linux' has no member named 'port_event'
-std.posix.port_notify	std/posix.zig:176:31: error: root source file struct 'os.linux' has no member named 'port_notify'
-std.posix.port_t	std/posix.zig:177:26: error: root source file struct 'os.linux' has no member named 'port_t'
-std.posix.timestamp_t	std/posix.zig:192:31: error: root source file struct 'os.linux' has no member named 'timestamp_t'
+std.posix._SC	std/posix.zig:151:23: error: root source file struct 'os.linux' has no member named '_SC'
+std.posix.file_obj	std/posix.zig:164:28: error: root source file struct 'os.linux' has no member named 'file_obj'
+std.posix.port_event	std/posix.zig:179:30: error: root source file struct 'os.linux' has no member named 'port_event'
+std.posix.port_notify	std/posix.zig:180:31: error: root source file struct 'os.linux' has no member named 'port_notify'
+std.posix.port_t	std/posix.zig:181:26: error: root source file struct 'os.linux' has no member named 'port_t'
+std.posix.timestamp_t	std/posix.zig:196:31: error: root source file struct 'os.linux' has no member named 'timestamp_t'
 std.posix.user_desc	std/os/linux.zig:109:32: error: root source file struct 'os.linux.x86_64' has no member named 'user_desc'
 std.testing.allocator	std/testing.zig:21:80: error: not testing
 std.testing.io	std/testing.zig:24:59: error: not testing

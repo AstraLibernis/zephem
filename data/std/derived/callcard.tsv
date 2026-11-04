@@ -1431,7 +1431,6 @@ std.Io.Event.waitUncancelable	both	fn waitUncancelable(event: *Event, io: Io) vo
 std.Io.Evented.allocator	reflect-only		fn (*Io.Uring) mem.Allocator
 std.Io.Evented.deinit	reflect-only		fn (*Io.Uring) void
 std.Io.Evented.dup2	reflect-only		fn (*Io.Uring.CancelRegion.Sync, i32, i32) error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}!void
-std.Io.Evented.execvPath	reflect-only		fn (*Io.Uring.CancelRegion.Sync, [*:0]const u8, [*:null]const ?[*:0]const u8, process.Environ.PosixBlock) error{AccessDenied,BadPathName,Canceled,FileBusy,FileNotFound,FileSystem,InvalidExe,IsDir,NameTooLong,NotDir,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Evented.init	reflect-only		fn (*Io.Uring, mem.Allocator, Io.Uring.InitOptions) @typeInfo(@typeInfo(@TypeOf(Io.Uring.init)).@"fn".return_type.?).error_union.error_set!void
 std.Io.Evented.io	reflect-only		fn (*Io.Uring) Io
 std.Io.Evented.pipe2	reflect-only		fn (os.linux.O__struct) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
@@ -1810,7 +1809,7 @@ std.Io.Threaded.Group.waitForCancelWithSignaling	parser-only	fn waitForCancelWit
 std.Io.Threaded.LookupDnsWindows.completed	parser-only	fn completed( pQueryContext: ?*anyopaque, pQueryResults: *windows.DNS.QUERY.RESULT, ) callconv(.winapi) void	
 std.Io.Threaded.LookupDnsWindows.completedFallible	parser-only	fn completedFallible(lookup_dns: *LookupDnsWindows) (Io.QueueClosedError || Io.Cancelable)!void	
 std.Io.Threaded.NullFile.[else].deinit	parser-only	fn deinit(this: *@This()) void	
-std.Io.Threaded.NullFile.[wasi,ios,tvos,visionos,watchos].deinit	parser-only	fn deinit(this: @This()) void	
+std.Io.Threaded.NullFile.[wasi,tvos,watchos].deinit	parser-only	fn deinit(this: @This()) void	
 std.Io.Threaded.NullFile.[windows].deinit	parser-only	fn deinit(this: *@This()) void	
 std.Io.Threaded.OpenFile	parser-only	fn OpenFile(sub_path_w: []const u16, options: OpenFileOptions) OpenError!windows.HANDLE	
 std.Io.Threaded.ParkingMutex.State.fromWaiter	parser-only	fn fromWaiter(w: ?*Waiter) State	
@@ -2193,6 +2192,7 @@ std.Io.Threaded.windowsCreatePipe	both	fn windowsCreatePipe(t: *Threaded, option
 std.Io.Threaded.windowsCreateProcess	parser-only	fn windowsCreateProcess( app_name: [*:0]u16, cmd_line: [*:0]u16, env_block: ?process.Environ.WindowsBlock, cwd_ptr: ?[*:0]u16, flags: windows.CreateProcessFlags, lpStartupInfo: *windows.STARTUPINFOW, lpProcessInformation: *windows.PROCESS.INFORMATION, ) !void	
 std.Io.Threaded.windowsCreateProcessPathExt	parser-only	fn windowsCreateProcessPathExt( arena: Allocator, dir_buf: *std.ArrayList(u16), app_buf: *std.ArrayList(u16), pathext: [:0]const u16, cmd_line_cache: *WindowsCommandLineCache, env_block: ?process.Environ.WindowsBlock, cwd_ptr: ?[*:0]u16, flags: windows.CreateProcessFlags, lpStartupInfo: *windows.STARTUPINFOW, lpProcessInformation: *windows.PROCESS.INFORMATION, ) !void	
 std.Io.Threaded.windowsCreateProcessSupportsExtension	parser-only	fn windowsCreateProcessSupportsExtension(ext: []const u16) ?process.WindowsExtension	
+std.Io.Threaded.windowsGetFileDevice	parser-only	fn windowsGetFileDevice(file: File) error{ Canceled, AccessDenied, Unexpected }!windows.CTL_CODE.FILE_DEVICE	
 std.Io.Threaded.windowsWriteBuffer	parser-only	fn windowsWriteBuffer(header: []const u8, data: []const []const u8, splat: usize) []const u8	
 std.Io.Threaded.worker	parser-only	fn worker(t: *Threaded) void	
 std.Io.Threaded.writeFilePositionalWindows	parser-only	fn writeFilePositionalWindows(file: File, buffer: []const u8, offset: u64) File.WritePositionalError!usize	
@@ -2340,8 +2340,6 @@ std.Io.Uring.dirStat	parser-only	fn dirStat(userdata: ?*anyopaque, dir: Dir) Dir
 std.Io.Uring.dirStatFile	parser-only	fn dirStatFile( userdata: ?*anyopaque, dir: Dir, sub_path: []const u8, options: Dir.StatFileOptions, ) Dir.StatFileError!File.Stat	
 std.Io.Uring.dirSymLink	parser-only	fn dirSymLink( userdata: ?*anyopaque, dir: Dir, target_path: []const u8, sym_link_path: []const u8, flags: Dir.SymLinkFlags, ) Dir.SymLinkError!void	
 std.Io.Uring.dup2	both	fn dup2(sync: *CancelRegion.Sync, old_fd: fd_t, new_fd: fd_t) DupError!void	fn (*Io.Uring.CancelRegion.Sync, i32, i32) error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}!void
-std.Io.Uring.execv	parser-only	fn execv( sync: *CancelRegion.Sync, arg0_expand: process.ArgExpansion, file: [*:0]const u8, child_argv: [*:null]?[*:0]const u8, env_block: process.Environ.PosixBlock, PATH: []const u8, ) process.ReplaceError	
-std.Io.Uring.execvPath	both	fn execvPath( sync: *CancelRegion.Sync, path: [*:0]const u8, child_argv: [*:null]const ?[*:0]const u8, env_block: process.Environ.PosixBlock, ) process.ReplaceError	fn (*Io.Uring.CancelRegion.Sync, [*:0]const u8, [*:null]const ?[*:0]const u8, process.Environ.PosixBlock) error{AccessDenied,BadPathName,Canceled,FileBusy,FileNotFound,FileSystem,InvalidExe,IsDir,NameTooLong,NotDir,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Uring.fchdir	parser-only	fn fchdir(sync: *CancelRegion.Sync, dir: fd_t) process.SetCurrentDirError!void	
 std.Io.Uring.fchmodat	parser-only	fn fchmodat( ev: *Evented, sync: *CancelRegion.Sync, dir: fd_t, path: [*:0]const u8, mode: linux.mode_t, flags: u32, ) Dir.SetFilePermissionsError!void	
 std.Io.Uring.fchownat	parser-only	fn fchownat( ev: *Evented, sync: *CancelRegion.Sync, dir: fd_t, path: [*:0]const u8, owner: linux.uid_t, group: linux.gid_t, flags: u32, ) File.SetOwnerError!void	
@@ -2387,6 +2385,9 @@ std.Io.Uring.groupAwait	parser-only	fn groupAwait( userdata: ?*anyopaque, type_e
 std.Io.Uring.groupCancel	parser-only	fn groupCancel(userdata: ?*anyopaque, type_erased: *Io.Group, initial_token: *anyopaque) void	
 std.Io.Uring.groupConcurrent	parser-only	fn groupConcurrent( userdata: ?*anyopaque, type_erased: *Io.Group, context: []const u8, context_alignment: Alignment, start: *const fn (context: *const anyopaque) void, ) Io.ConcurrentError!void	
 std.Io.Uring.idle	parser-only	fn idle(ev: *Evented, thread: *Thread) void	
+std.Io.Uring.inheritParentDir	parser-only	fn inheritParentDir(userdata: ?*anyopaque, handle: Dir.Handle) Io.InheritParentHandleError!Dir	
+std.Io.Uring.inheritParentFile	parser-only	fn inheritParentFile( userdata: ?*anyopaque, handle: File.Handle, flags: File.Flags, ) Io.InheritParentHandleError!File	
+std.Io.Uring.inheritParentHandle	parser-only	fn inheritParentHandle(ev: *Evented, handle: fd_t) Io.InheritParentHandleError!void	
 std.Io.Uring.init	both	fn init(ev: *Evented, backing_allocator: Allocator, options: InitOptions) !void	fn (*Io.Uring, mem.Allocator, Io.Uring.InitOptions) @typeInfo(@typeInfo(@TypeOf(Io.Uring.init)).@"fn".return_type.?).error_union.error_set!void
 std.Io.Uring.initLockedStderr	parser-only	fn initLockedStderr(ev: *Evented, terminal_mode: ?Io.Terminal.Mode) Io.Cancelable!Io.LockedStderr	
 std.Io.Uring.io	both	fn io(ev: *Evented) Io	fn (*Io.Uring) Io
@@ -2415,14 +2416,14 @@ std.Io.Uring.operate	parser-only	fn operate(userdata: ?*anyopaque, operation: Io
 std.Io.Uring.pipe2	both	fn pipe2(flags: linux.O) PipeError![2]fd_t	fn (os.linux.O__struct) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
 std.Io.Uring.preadv	parser-only	fn preadv( ev: *Evented, cancel_region: *CancelRegion, fd: fd_t, iov: []const iovec, offset: ?u64, ) File.Reader.Error!usize	
 std.Io.Uring.processCurrentPath	parser-only	fn processCurrentPath(userdata: ?*anyopaque, buffer: []u8) process.CurrentPathError!usize	
+std.Io.Uring.processExec	parser-only	fn processExec( sync: *CancelRegion.Sync, exe: process.ReplaceOptions.Exe, argv: [*:null]?[*:0]const u8, expand_arg0: process.ArgExpansion, env_block: process.Environ.PosixBlock, PATH: []const u8, ) process.ReplaceError	
 std.Io.Uring.processExecutableOpen	parser-only	fn processExecutableOpen( userdata: ?*anyopaque, flags: Dir.OpenFileOptions, ) process.OpenExecutableError!File	
 std.Io.Uring.processExecutablePath	parser-only	fn processExecutablePath(userdata: ?*anyopaque, out_buffer: []u8) process.ExecutablePathError!usize	
+std.Io.Uring.processExecveat	parser-only	fn processExecveat( sync: *CancelRegion.Sync, dir: fd_t, path: ?[*:0]const u8, argv: [*:null]const ?[*:0]const u8, env_block: process.Environ.PosixBlock, ) process.ReplaceError	
 std.Io.Uring.processReplace	parser-only	fn processReplace(userdata: ?*anyopaque, options: process.ReplaceOptions) process.ReplaceError	
-std.Io.Uring.processReplacePath	parser-only	fn processReplacePath( userdata: ?*anyopaque, dir: Dir, options: process.ReplaceOptions, ) process.ReplaceError	
 std.Io.Uring.processSetCurrentDir	parser-only	fn processSetCurrentDir(userdata: ?*anyopaque, dir: Dir) process.SetCurrentDirError!void	
 std.Io.Uring.processSetCurrentPath	parser-only	fn processSetCurrentPath(userdata: ?*anyopaque, dir_path: []const u8) process.SetCurrentPathError!void	
 std.Io.Uring.processSpawn	parser-only	fn processSpawn(userdata: ?*anyopaque, options: process.SpawnOptions) process.SpawnError!process.Child	
-std.Io.Uring.processSpawnPath	parser-only	fn processSpawnPath( userdata: ?*anyopaque, dir: Dir, options: process.SpawnOptions, ) process.SpawnError!process.Child	
 std.Io.Uring.progressParentFile	parser-only	fn progressParentFile(userdata: ?*anyopaque) std.Progress.ParentFileError!File	
 std.Io.Uring.pwritev	parser-only	fn pwritev( ev: *Evented, cancel_region: *CancelRegion, fd: fd_t, iov: []const iovec_const, offset: ?u64, ) File.Writer.Error!usize	
 std.Io.Uring.random	parser-only	fn random(userdata: ?*anyopaque, buffer: []u8) void	
@@ -2435,6 +2436,7 @@ std.Io.Uring.renameat	parser-only	fn renameat( ev: *Evented, cancel_region: *Can
 std.Io.Uring.resize	parser-only	fn resize( userdata: *anyopaque, memory: []u8, alignment: std.mem.Alignment, new_len: usize, ret_addr: usize, ) bool	
 std.Io.Uring.scanEnviron	parser-only	fn scanEnviron(ev: *Evented) Io.Cancelable!void	
 std.Io.Uring.schedule	parser-only	fn schedule(ev: *Evented, thread: *Thread, ready_queue: Fiber.Queue) bool	
+std.Io.Uring.setFdFlags	parser-only	fn setFdFlags(sync: *CancelRegion.Sync, fd: fd_t, flags: usize) (Io.Cancelable || Io.UnexpectedError)!void	
 std.Io.Uring.setUpChild	parser-only	fn setUpChild(sync: *CancelRegion.Sync, options: struct { stdin_pipe: fd_t, stdout_pipe: fd_t, stderr_pipe: fd_t, dev_null_fd: fd_t, prog_pipe: fd_t, argv_buf: [:null]?[*:0]const u8, env_block: process.Environ.Block, PATH: []const u8, spawn: process.SpawnOptions, }) ForkBailError	
 std.Io.Uring.setUpChildIo	parser-only	fn setUpChildIo( sync: *CancelRegion.Sync, stdio: process.SpawnOptions.StdIo, pipe_fd: fd_t, std_fileno: i32, dev_null_fd: fd_t, ) !void	
 std.Io.Uring.setsockopt	parser-only	fn setsockopt( ev: *Evented, cancel_region: *CancelRegion, fd: fd_t, level: i32, opt_name: u32, option: u32, ) !void	
@@ -2674,13 +2676,13 @@ std.Io.net.Interface.isNone	both	fn isNone(i: Interface) bool	fn (Io.net.Interfa
 std.Io.net.Interface.name	both	fn name(i: Interface, io: Io) NameError!Name	fn (Io.net.Interface, Io) error{Canceled,InterfaceNotFound,NameTooLong,Unexpected}!Io.net.Interface.Name
 std.Io.net.Ip4Address.eql	both	fn eql(a: Ip4Address, b: Ip4Address) bool	fn (Io.net.Ip4Address, Io.net.Ip4Address) bool
 std.Io.net.Ip4Address.format	both	fn format(a: Ip4Address, w: *Io.Writer) Io.Writer.Error!void	fn (Io.net.Ip4Address, *Io.Writer) error{WriteFailed}!void
-std.Io.net.Ip4Address.fromAny	both	fn fromAny(addr: IpAddress) ?Ip6Address	fn (Io.net.IpAddress) ?Io.net.Ip6Address
+std.Io.net.Ip4Address.fromAny	both	fn fromAny(addr: IpAddress) ?Ip4Address	fn (Io.net.IpAddress) ?Io.net.Ip4Address
 std.Io.net.Ip4Address.fromIp6	both	fn fromIp6(ip6: Ip6Address) ?Ip4Address	fn (Io.net.Ip6Address) ?Io.net.Ip4Address
 std.Io.net.Ip4Address.loopback	both	fn loopback(port: u16) Ip4Address	fn (u16) Io.net.Ip4Address
 std.Io.net.Ip4Address.parse	both	fn parse(buffer: []const u8, port: u16) ParseError!Ip4Address	fn ([]const u8, u16) error{Incomplete,InvalidCharacter,InvalidEnd,NonCanonical,Overflow}!Io.net.Ip4Address
 std.Io.net.Ip4Address.unspecified	both	fn unspecified(port: u16) Ip4Address	fn (u16) Io.net.Ip4Address
 std.Io.net.Ip6Address.Unresolved.format	both	fn format(u: *const Unresolved, w: *Io.Writer) Io.Writer.Error!void	fn (*const Io.net.Ip6Address.Unresolved, *Io.Writer) error{WriteFailed}!void
-std.Io.net.Ip6Address.Unresolved.parse	both	fn parse(text: []const u8) Parsed	fn ([]const u8) Io.net.Ip6Address.Unresolved.Parsed
+std.Io.net.Ip6Address.Unresolved.parse	both	fn parse(text_in: []const u8) Parsed	fn ([]const u8) Io.net.Ip6Address.Unresolved.Parsed
 std.Io.net.Ip6Address.eql	both	fn eql(a: Ip6Address, b: Ip6Address) bool	fn (Io.net.Ip6Address, Io.net.Ip6Address) bool
 std.Io.net.Ip6Address.format	both	fn format(a: *const Ip6Address, w: *Io.Writer) Io.Writer.Error!void	fn (*const Io.net.Ip6Address, *Io.Writer) error{WriteFailed}!void
 std.Io.net.Ip6Address.formatResolved	both	fn formatResolved(a: *const Ip6Address, io: Io, w: *Io.Writer) FormatError!void	fn (*const Io.net.Ip6Address, Io, *Io.Writer) error{Canceled,InterfaceNotFound,NameTooLong,Unexpected,WriteFailed}!void
@@ -4424,8 +4426,8 @@ std.c.fdatasync	parser-only	fn fdatasync(fd: c_int) c_int
 std.c.fdim	parser-only	fn fdim(x: f64, y: f64) f64	
 std.c.fdopendir	parser-only	fn fdopendir(fd: c_int) ?*DIR	
 std.c.ffs	parser-only	fn ffs(i: c_int) c_int	
-std.c.ffsl	parser-only	fn ffsl(i: c_long) c_long	
-std.c.ffsll	parser-only	fn ffsll(i: c_longlong) c_longlong	
+std.c.ffsl	parser-only	fn ffsl(i: c_long) c_int	
+std.c.ffsll	parser-only	fn ffsll(i: c_longlong) c_int	
 std.c.fmemopen	parser-only	fn fmemopen(noalias buf: ?*anyopaque, size: usize, noalias mode: [*:0]const u8) ?*FILE	
 std.c.fopen	parser-only	fn fopen(noalias filename: [*:0]const u8, noalias modes: [*:0]const u8) ?*FILE	
 std.c.fopen64	parser-only	fn fopen64(noalias filename: [*:0]const u8, noalias modes: [*:0]const u8) ?*FILE	
@@ -9271,7 +9273,7 @@ std.hash_map.Custom().rehash	parser-only	fn rehash(self: *Self, ctx: anytype) vo
 std.hash_map.Custom().remove	parser-only	fn remove(self: *Self, key: K) bool	
 std.hash_map.Custom().removeAdapted	parser-only	fn removeAdapted(self: *Self, key: anytype, ctx: anytype) bool	
 std.hash_map.Custom().removeByIndex	parser-only	fn removeByIndex(self: *Self, idx: usize) void	
-std.hash_map.Custom().removeByPtr	parser-only	fn removeByPtr(self: *Self, key_ptr: *K) void	
+std.hash_map.Custom().removeByPtr	parser-only	fn removeByPtr(self: *Self, key_ptr: *const K) void	
 std.hash_map.Custom().removeContext	parser-only	fn removeContext(self: *Self, key: K, ctx: Context) bool	
 std.hash_map.Custom().unlockPointers	parser-only	fn unlockPointers(self: *Self) void	
 std.hash_map.Custom().valueIterator	parser-only	fn valueIterator(self: Self) ValueIterator	
@@ -9322,7 +9324,7 @@ std.hash_map.HashMap().putNoClobber	parser-only	fn putNoClobber(self: *Self, key
 std.hash_map.HashMap().rehash	parser-only	fn rehash(self: *Self) void	
 std.hash_map.HashMap().remove	parser-only	fn remove(self: *Self, key: K) bool	
 std.hash_map.HashMap().removeAdapted	parser-only	fn removeAdapted(self: *Self, key: anytype, ctx: anytype) bool	
-std.hash_map.HashMap().removeByPtr	parser-only	fn removeByPtr(self: *Self, key_ptr: *K) void	
+std.hash_map.HashMap().removeByPtr	parser-only	fn removeByPtr(self: *Self, key_ptr: *const K) void	
 std.hash_map.HashMap().unlockPointers	parser-only	fn unlockPointers(self: *Self) void	
 std.hash_map.HashMap().valueIterator	parser-only	fn valueIterator(self: Self) ValueIterator	
 std.hash_map.HashMapUnmanaged	reflect-only		fn (comptime type, comptime type, comptime type, comptime u64) type
@@ -12183,7 +12185,7 @@ std.os.windows.ntdll.NtQueryDirectoryFile	parser-only	fn NtQueryDirectoryFile( F
 std.os.windows.ntdll.NtQueryInformationFile	parser-only	fn NtQueryInformationFile( FileHandle: HANDLE, IoStatusBlock: *IO_STATUS_BLOCK, FileInformation: *anyopaque, Length: ULONG, FileInformationClass: FILE.INFORMATION_CLASS, ) callconv(.winapi) NTSTATUS	
 std.os.windows.ntdll.NtQueryInformationProcess	parser-only	fn NtQueryInformationProcess( ProcessHandle: HANDLE, ProcessInformationClass: PROCESS.INFOCLASS, ProcessInformation: *anyopaque, ProcessInformationLength: ULONG, ReturnLength: ?*ULONG, ) callconv(.winapi) NTSTATUS	
 std.os.windows.ntdll.NtQueryInformationThread	parser-only	fn NtQueryInformationThread( ThreadHandle: HANDLE, ThreadInformationClass: THREAD.INFOCLASS, ThreadInformation: *anyopaque, ThreadInformationLength: ULONG, ReturnLength: ?*ULONG, ) callconv(.winapi) NTSTATUS	
-std.os.windows.ntdll.NtQueryObject	parser-only	fn NtQueryObject( Handle: HANDLE, ObjectInformationClass: OBJECT.INFORMATION_CLASS, ObjectInformation: ?PVOID, ObjectInformationLength: ULONG, ReturnLength: ?*ULONG, ) callconv(.winapi) NTSTATUS	
+std.os.windows.ntdll.NtQueryObject	parser-only	fn NtQueryObject( Handle: ?HANDLE, ObjectInformationClass: OBJECT.INFORMATION_CLASS, ObjectInformation: ?PVOID, ObjectInformationLength: ULONG, ReturnLength: ?*ULONG, ) callconv(.winapi) NTSTATUS	
 std.os.windows.ntdll.NtQuerySystemInformation	parser-only	fn NtQuerySystemInformation( SystemInformationClass: SYSTEM.INFORMATION_CLASS, SystemInformation: PVOID, SystemInformationLength: ULONG, ReturnLength: ?*ULONG, ) callconv(.winapi) NTSTATUS	
 std.os.windows.ntdll.NtQueryValueKey	parser-only	fn NtQueryValueKey( KeyHandle: HANDLE, ValueName: *const UNICODE_STRING, KeyValueInformationClass: KEY.VALUE.INFORMATION_CLASS, KeyValueInformation: *anyopaque, Length: ULONG, ResultLength: *ULONG, ) callconv(.winapi) NTSTATUS	
 std.os.windows.ntdll.NtQueryVolumeInformationFile	parser-only	fn NtQueryVolumeInformationFile( FileHandle: HANDLE, IoStatusBlock: *IO_STATUS_BLOCK, FsInformation: *anyopaque, Length: ULONG, FsInformationClass: FS_INFORMATION_CLASS, ) callconv(.winapi) NTSTATUS	
@@ -13126,6 +13128,7 @@ std.zig.Ast.Render.renderBlock	parser-only	fn renderBlock( r: *Render, block_nod
 std.zig.Ast.Render.renderBuiltinCall	parser-only	fn renderBuiltinCall( r: *Render, builtin_token: Ast.TokenIndex, params: []const Ast.Node.Index, space: Space, ) Error!void	
 std.zig.Ast.Render.renderCall	parser-only	fn renderCall( r: *Render, call: Ast.full.Call, space: Space, ) Error!void	
 std.zig.Ast.Render.renderComments	parser-only	fn renderComments(r: *Render, start: usize, end: usize) Error!bool	
+std.zig.Ast.Render.renderCommentsBetweenTokens	parser-only	fn renderCommentsBetweenTokens(r: *Render, start: Ast.TokenIndex, end: Ast.TokenIndex) Error!void	
 std.zig.Ast.Render.renderContainerDecl	parser-only	fn renderContainerDecl( r: *Render, container_decl_node: Ast.Node.Index, container_decl: Ast.full.ContainerDecl, space: Space, ) Error!void	
 std.zig.Ast.Render.renderContainerDocComments	parser-only	fn renderContainerDocComments(r: *Render, start_token: Ast.TokenIndex) Error!void	
 std.zig.Ast.Render.renderContainerField	parser-only	fn renderContainerField( r: *Render, container: Container, field_param: Ast.full.ContainerField, space: Space, ) Error!void	
@@ -13476,7 +13479,7 @@ std.zig.AstGen.fieldAccess	parser-only	fn fieldAccess( gz: *GenZir, scope: *Scop
 std.zig.AstGen.floatRoundOp	parser-only	fn floatRoundOp( gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, operand_node: Ast.Node.Index, float_tag: Zir.Inst.Tag, ) InnerError!Zir.Inst.Ref	
 std.zig.AstGen.floatUnOp	parser-only	fn floatUnOp( gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, operand_node: Ast.Node.Index, tag: Zir.Inst.Tag, ) InnerError!Zir.Inst.Ref	
 std.zig.AstGen.fnDecl	parser-only	fn fnDecl( astgen: *AstGen, gz: *GenZir, scope: *Scope, wip_decls: *WipDecls, decl_node: Ast.Node.Index, body_node: Ast.Node.OptionalIndex, fn_proto: Ast.full.FnProto, ) InnerError!void	
-std.zig.AstGen.fnDeclInner	parser-only	fn fnDeclInner( astgen: *AstGen, decl_gz: *GenZir, scope: *Scope, saved_cursor: SourceCursor, decl_inst: Zir.Inst.Index, decl_node: Ast.Node.Index, body_node: Ast.Node.Index, fn_proto: Ast.full.FnProto, ) InnerError!void	
+std.zig.AstGen.fnDeclInner	parser-only	fn fnDeclInner( astgen: *AstGen, decl_gz: *GenZir, scope: *Scope, decl_inst: Zir.Inst.Index, decl_node: Ast.Node.Index, body_node: Ast.Node.Index, fn_proto: Ast.full.FnProto, ) InnerError!void	
 std.zig.AstGen.fnProtoExpr	parser-only	fn fnProtoExpr( gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, fn_proto: Ast.full.FnProto, ) InnerError!Zir.Inst.Ref	
 std.zig.AstGen.fnProtoExprInner	parser-only	fn fnProtoExprInner( gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, fn_proto: Ast.full.FnProto, implicit_ccc: bool, ) InnerError!Zir.Inst.Ref	
 std.zig.AstGen.forExpr	parser-only	fn forExpr( parent_gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, for_full: Ast.full.For, is_statement: bool, ) InnerError!Zir.Inst.Ref	
@@ -13525,7 +13528,7 @@ std.zig.AstGen.rvalueNoCoercePreRef	parser-only	fn rvalueNoCoercePreRef( gz: *Ge
 std.zig.AstGen.saveSourceCursor	parser-only	fn saveSourceCursor(astgen: *const AstGen) SourceCursor	
 std.zig.AstGen.scanContainer	parser-only	fn scanContainer( astgen: *AstGen, namespace: *Scope.Namespace, members: []const Ast.Node.Index, container_kind: enum { @"struct", @"union", @"enum", @"opaque" }, ) !ScanContainerResult	
 std.zig.AstGen.setCondBrPayload	parser-only	fn setCondBrPayload( condbr: Zir.Inst.Index, cond: Zir.Inst.Ref, then_scope: *GenZir, else_scope: *GenZir, ) !void	
-std.zig.AstGen.setDeclaration	parser-only	fn setDeclaration( decl_inst: Zir.Inst.Index, args: struct { src_hash: std.zig.SrcHash, src_line: u32, src_column: u32, kind: Zir.Inst.Declaration.Unwrapped.Kind, name: Zir.NullTerminatedString, is_pub: bool, is_threadlocal: bool, linkage: Zir.Inst.Declaration.Unwrapped.Linkage, lib_name: Zir.NullTerminatedString = .empty, type_gz: *GenZir, align_gz: *GenZir, linksection_gz: *GenZir, addrspace_gz: *GenZir, value_gz: *GenZir, }, ) !void	
+std.zig.AstGen.setDeclaration	parser-only	fn setDeclaration( decl_inst: Zir.Inst.Index, args: struct { src_hash: std.zig.SrcHash, src_line: u32, src_column: u32, kind: Zir.Inst.Declaration.Unwrapped.Kind, name: Zir.NullTerminatedString, is_pub: bool, is_threadlocal: bool, linkage: Zir.Inst.Declaration.Unwrapped.Linkage, lib_name: Zir.NullTerminatedString = .empty, type_gz: *GenZir, align_gz: *GenZir, addrspace_gz: *GenZir, linksection_gz: *GenZir, value_gz: *GenZir, }, ) !void	
 std.zig.AstGen.setExtra	parser-only	fn setExtra(astgen: *AstGen, index: usize, extra: anytype) void	
 std.zig.AstGen.shiftOp	parser-only	fn shiftOp( gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, lhs_node: Ast.Node.Index, rhs_node: Ast.Node.Index, tag: Zir.Inst.Tag, ) InnerError!Zir.Inst.Ref	
 std.zig.AstGen.simpleBinOp	parser-only	fn simpleBinOp( gz: *GenZir, scope: *Scope, ri: ResultInfo, node: Ast.Node.Index, op_inst_tag: Zir.Inst.Tag, ) InnerError!Zir.Inst.Ref	
@@ -13617,7 +13620,7 @@ std.zig.AstRlAnnotate.RlNeededSet.putNoClobberContext	reflect-only		fn (*hash_ma
 std.zig.AstRlAnnotate.RlNeededSet.rehash	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), anytype) void
 std.zig.AstRlAnnotate.RlNeededSet.remove	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), zig.Ast.Node.Index) bool
 std.zig.AstRlAnnotate.RlNeededSet.removeAdapted	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), anytype, anytype) bool
-std.zig.AstRlAnnotate.RlNeededSet.removeByPtr	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), *zig.Ast.Node.Index) void
+std.zig.AstRlAnnotate.RlNeededSet.removeByPtr	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), *const zig.Ast.Node.Index) void
 std.zig.AstRlAnnotate.RlNeededSet.removeContext	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), zig.Ast.Node.Index, hash_map.AutoContext(zig.Ast.Node.Index)) bool
 std.zig.AstRlAnnotate.RlNeededSet.unlockPointers	reflect-only		fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80)) void
 std.zig.AstRlAnnotate.RlNeededSet.valueIterator	reflect-only		fn (hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80)) hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80).FieldIterator(void)
@@ -14042,7 +14045,9 @@ std.zig.llvm.Builder.Alignment.Lazy.resolve	both	fn resolve(l: Lazy, b: *const B
 std.zig.llvm.Builder.Alignment.Lazy.toFwdRefIndex	parser-only	fn toFwdRefIndex(l: Lazy) usize	
 std.zig.llvm.Builder.Alignment.Lazy.wrap	both	fn wrap(a: Alignment) Lazy	fn (zig.llvm.Builder.Alignment) zig.llvm.Builder.Alignment.Lazy
 std.zig.llvm.Builder.Alignment.Prefixed.format	both	fn format(p: Prefixed, w: *Writer) Writer.Error!void	fn (zig.llvm.Builder.Alignment.Prefixed, *Io.Writer) error{WriteFailed}!void
+std.zig.llvm.Builder.Alignment.check	both	fn check(a: Alignment, addr: u64) bool	fn (zig.llvm.Builder.Alignment, u64) bool
 std.zig.llvm.Builder.Alignment.fmt	both	fn fmt(alignment: Alignment, prefix: []const u8) Prefixed	fn (zig.llvm.Builder.Alignment, []const u8) zig.llvm.Builder.Alignment.Prefixed
+std.zig.llvm.Builder.Alignment.forward	both	fn forward(a: Alignment, addr: u64) u64	fn (zig.llvm.Builder.Alignment, u64) u64
 std.zig.llvm.Builder.Alignment.fromByteUnits	both	fn fromByteUnits(bytes: u64) Alignment	fn (u64) zig.llvm.Builder.Alignment
 std.zig.llvm.Builder.Alignment.max	both	fn max(lhs: Alignment, rhs: Alignment) Alignment	fn (zig.llvm.Builder.Alignment, zig.llvm.Builder.Alignment) zig.llvm.Builder.Alignment
 std.zig.llvm.Builder.Alignment.order	both	fn order(lhs: Alignment, rhs: Alignment) std.math.Order	fn (zig.llvm.Builder.Alignment, zig.llvm.Builder.Alignment) math.Order
@@ -14082,10 +14087,10 @@ std.zig.llvm.Builder.ConstantExtraDataTrail.nextMut	parser-only	fn nextMut(self:
 std.zig.llvm.Builder.DataLayout.PrimitiveSpec.Context.eql	parser-only	fn eql(_: Context, lhs_spec: PrimitiveSpec, rhs_spec: PrimitiveSpec, _: usize) bool	
 std.zig.llvm.Builder.DataLayout.PrimitiveSpec.Context.hash	parser-only	fn hash(_: Context, spec: PrimitiveSpec) u32	
 std.zig.llvm.Builder.DataLayout.deinit	both	fn deinit(data_layout: *DataLayout, gpa: Allocator) void	fn (*zig.llvm.Builder.DataLayout, mem.Allocator) void
-std.zig.llvm.Builder.DataLayout.getFloatSpec	both	fn getFloatSpec(data_layout: *const DataLayout, bit_width: PrimitiveSpec.BitWidth) PrimitiveSpec	fn (*const zig.llvm.Builder.DataLayout, u20) zig.llvm.Builder.DataLayout.PrimitiveSpec
-std.zig.llvm.Builder.DataLayout.getIntegerSpec	both	fn getIntegerSpec(data_layout: *const DataLayout, bit_width: PrimitiveSpec.BitWidth) PrimitiveSpec	fn (*const zig.llvm.Builder.DataLayout, u20) zig.llvm.Builder.DataLayout.PrimitiveSpec
+std.zig.llvm.Builder.DataLayout.getFloatSpec	both	fn getFloatSpec(data_layout: *const DataLayout, bit_width: Type.Size) PrimitiveSpec	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
+std.zig.llvm.Builder.DataLayout.getIntegerSpec	both	fn getIntegerSpec(data_layout: *const DataLayout, bit_width: Type.Size) PrimitiveSpec	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
 std.zig.llvm.Builder.DataLayout.getPointerSpec	both	fn getPointerSpec(data_layout: *const DataLayout, addr_space: AddrSpace) PointerSpec	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.AddrSpace) zig.llvm.Builder.DataLayout.PointerSpec
-std.zig.llvm.Builder.DataLayout.getVectorSpec	both	fn getVectorSpec( data_layout: *const DataLayout, bit_width: PrimitiveSpec.BitWidth, store_size: Type.Size, ) PrimitiveSpec	fn (*const zig.llvm.Builder.DataLayout, u20, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
+std.zig.llvm.Builder.DataLayout.getVectorSpec	both	fn getVectorSpec(data_layout: *const DataLayout, bit_width: Type.Size) PrimitiveSpec	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
 std.zig.llvm.Builder.DataLayout.parseString	both	fn parseString(string_repr: String, builder: *Builder) Allocator.Error!DataLayout	fn (zig.llvm.Builder.String, *zig.llvm.Builder) error{OutOfMemory}!zig.llvm.Builder.DataLayout
 std.zig.llvm.Builder.DataLayout.stringForTarget	both	fn stringForTarget(target: *const std.Target) []const u8	fn (*const Target) []const u8
 std.zig.llvm.Builder.DebugLocation.toMetadata	both	fn toMetadata(self: DebugLocation, builder: *Builder) Allocator.Error!Metadata.Optional	fn (zig.llvm.Builder.DebugLocation, *zig.llvm.Builder) error{OutOfMemory}!zig.llvm.Builder.Metadata.Optional
@@ -14257,6 +14262,7 @@ std.zig.llvm.Builder.Type.Array.length	parser-only	fn length(self: Array) u64
 std.zig.llvm.Builder.Type.Vector.length	parser-only	fn length(self: Vector) u32	
 std.zig.llvm.Builder.Type.aggregateLen	both	fn aggregateLen(self: Type, builder: *const Builder) usize	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) usize
 std.zig.llvm.Builder.Type.alignment	both	fn alignment(ty: Type, kind: enum { abi, pref }, builder: *const Builder) Alignment	fn (zig.llvm.Builder.Type, zig.llvm.Builder.Type.alignment__enum, *const zig.llvm.Builder) zig.llvm.Builder.Alignment
+std.zig.llvm.Builder.Type.allocSize	both	fn allocSize(ty: Type, builder: *const Builder) Size	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Size
 std.zig.llvm.Builder.Type.bits	both	fn bits(ty: Type, builder: *const Builder) Size	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Size
 std.zig.llvm.Builder.Type.changeLength	both	fn changeLength(self: Type, len: u32, builder: *Builder) Allocator.Error!Type	fn (zig.llvm.Builder.Type, u32, *zig.llvm.Builder) error{OutOfMemory}!zig.llvm.Builder.Type
 std.zig.llvm.Builder.Type.changeLengthAssumeCapacity	both	fn changeLengthAssumeCapacity(self: Type, len: u32, builder: *Builder) Type	fn (zig.llvm.Builder.Type, u32, *zig.llvm.Builder) zig.llvm.Builder.Type
@@ -14282,6 +14288,7 @@ std.zig.llvm.Builder.Type.pointerAddrSpace	both	fn pointerAddrSpace(self: Type, 
 std.zig.llvm.Builder.Type.scalarBits	both	fn scalarBits(self: Type, builder: *const Builder) u24	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) u24
 std.zig.llvm.Builder.Type.scalarTag	both	fn scalarTag(self: Type, builder: *const Builder) Tag	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Tag
 std.zig.llvm.Builder.Type.scalarType	both	fn scalarType(self: Type, builder: *const Builder) Type	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type
+std.zig.llvm.Builder.Type.storeSize	both	fn storeSize(ty: Type, builder: *const Builder) Size	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Size
 std.zig.llvm.Builder.Type.structFields	both	fn structFields(self: Type, builder: *const Builder) []const Type	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) []const zig.llvm.Builder.Type
 std.zig.llvm.Builder.Type.structKind	both	fn structKind(self: Type, builder: *const Builder) Type.Structure.Kind	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Structure.Kind
 std.zig.llvm.Builder.Type.tag	both	fn tag(self: Type, builder: *const Builder) Tag	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Tag
@@ -14347,7 +14354,7 @@ std.zig.llvm.Builder.WipFunction.callMemSet	both	fn callMemSet( self: *WipFuncti
 std.zig.llvm.Builder.WipFunction.cast	both	fn cast( self: *WipFunction, tag: Instruction.Tag, val: Value, ty: Type, name: []const u8, ) Allocator.Error!Value	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Function.Instruction.Tag, zig.llvm.Builder.Value, zig.llvm.Builder.Type, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.cmpTag	parser-only	fn cmpTag( self: *WipFunction, tag: Instruction.Tag, lhs: Value, rhs: Value, name: []const u8, ) Allocator.Error!Value	
 std.zig.llvm.Builder.WipFunction.cmpxchg	both	fn cmpxchg( self: *WipFunction, kind: Instruction.CmpXchg.Kind, access_kind: MemoryAccessKind, ptr: Value, cmp: Value, new: Value, sync_scope: SyncScope, success_ordering: AtomicOrdering, failure_ordering: AtomicOrdering, alignment: Alignment, name: []const u8, ) Allocator.Error!Value	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Function.Instruction.CmpXchg.Kind, zig.llvm.Builder.MemoryAccessKind, zig.llvm.Builder.Value, zig.llvm.Builder.Value, zig.llvm.Builder.Value, zig.llvm.Builder.SyncScope, zig.llvm.Builder.AtomicOrdering, zig.llvm.Builder.AtomicOrdering, zig.llvm.Builder.Alignment, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
-std.zig.llvm.Builder.WipFunction.conv	both	fn conv( self: *WipFunction, signedness: Instruction.Cast.Signedness, val: Value, ty: Type, name: []const u8, ) Allocator.Error!Value	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Constant.Cast.Signedness, zig.llvm.Builder.Value, zig.llvm.Builder.Type, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
+std.zig.llvm.Builder.WipFunction.conv	both	fn conv( self: *WipFunction, val_signedness: Instruction.Cast.Signedness, val: Value, ty_signedness: Instruction.Cast.Signedness, ty: Type, name: []const u8, ) Allocator.Error!Value	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Constant.Cast.Signedness, zig.llvm.Builder.Value, zig.llvm.Builder.Constant.Cast.Signedness, zig.llvm.Builder.Type, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.debugValue	both	fn debugValue(self: *WipFunction, value: Value) Allocator.Error!Metadata.Optional	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Value) error{OutOfMemory}!zig.llvm.Builder.Metadata.Optional
 std.zig.llvm.Builder.WipFunction.deinit	both	fn deinit(self: *WipFunction) void	fn (*zig.llvm.Builder.WipFunction) void
 std.zig.llvm.Builder.WipFunction.ensureUnusedExtraCapacity	parser-only	fn ensureUnusedExtraCapacity( self: *WipFunction, count: usize, comptime Extra: type, trail_len: usize, ) Allocator.Error!void	
@@ -14428,7 +14435,7 @@ std.zig.llvm.Builder.constantExtraDataTrail	parser-only	fn constantExtraDataTrai
 std.zig.llvm.Builder.convConst	both	fn convConst( self: *Builder, val: Constant, ty: Type, ) Allocator.Error!Constant	fn (*zig.llvm.Builder, zig.llvm.Builder.Constant, zig.llvm.Builder.Type) error{OutOfMemory}!zig.llvm.Builder.Constant
 std.zig.llvm.Builder.convConstAssumeCapacity	parser-only	fn convConstAssumeCapacity( self: *Builder, val: Constant, ty: Type, ) Constant	
 std.zig.llvm.Builder.convConstTag	parser-only	fn convConstTag( self: *Builder, val_ty: Type, ty: Type, ) Constant.Tag	
-std.zig.llvm.Builder.convTag	parser-only	fn convTag( self: *Builder, signedness: Constant.Cast.Signedness, val_ty: Type, ty: Type, ) Function.Instruction.Tag	
+std.zig.llvm.Builder.convTag	parser-only	fn convTag( self: *Builder, val_signedness: Constant.Cast.Signedness, val_ty: Type, ty_signedness: Constant.Cast.Signedness, ty: Type, ) Function.Instruction.Tag	
 std.zig.llvm.Builder.convValue	both	fn convValue( self: *Builder, val: Constant, ty: Type, ) Allocator.Error!Value	fn (*zig.llvm.Builder, zig.llvm.Builder.Constant, zig.llvm.Builder.Type) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.debugArrayType	both	fn debugArrayType( self: *Builder, name: ?Metadata.String, file: ?Metadata, scope: ?Metadata, line: u32, underlying_type: ?Metadata, size_in_bits: u64, align_in_bits: u64, fields_tuple: ?Metadata, ) Allocator.Error!Metadata	fn (*zig.llvm.Builder, ?zig.llvm.Builder.Metadata.String, ?zig.llvm.Builder.Metadata, ?zig.llvm.Builder.Metadata, u32, ?zig.llvm.Builder.Metadata, u64, u64, ?zig.llvm.Builder.Metadata) error{OutOfMemory}!zig.llvm.Builder.Metadata
 std.zig.llvm.Builder.debugArrayTypeAssumeCapacity	parser-only	fn debugArrayTypeAssumeCapacity( self: *Builder, name: ?Metadata.String, file: ?Metadata, scope: ?Metadata, line: u32, underlying_type: ?Metadata, size_in_bits: u64, align_in_bits: u64, fields_tuple: ?Metadata, ) Metadata	

@@ -4,7 +4,7 @@
 **A complete, self-checking map of the Zig standard library you actually have installed**, for
 the AI (or person) writing Zig against it. Zig's std changes fast, so a model's memory of it is
 usually a release or two out of date: `std.io.getStdOut`, `GeneralPurposeAllocator` and
-`std.fs.File` are all gone in zig 0.17.0. zephem answers from the source of the toolchain on your
+`std.fs.File` are all gone in zig 0.17.1. zephem answers from the source of the toolchain on your
 `PATH`, never from memory. `zephem deps` does the same for your project's packages
 ([below](#your-projects-dependencies)).
 
@@ -38,7 +38,7 @@ std.io.Writer not in the map
 ## Why the answers can be trusted
 
 - **Generated, never written.** Every row comes from the toolchain's own files: std's source
-  (88,421 declarations across 533 files, public and private), the compiler's
+  (88,479 declarations across 533 files, public and private), the compiler's
   resolved types, and its builtin table plus language reference (128 builtins).
   Usage examples are std's own tests.
 - **It checks itself.** Each dataset is read back a second way and must reconcile: every node
@@ -140,7 +140,7 @@ zephem look StringHashMap get          # alias → delegates → std.hash_map.Ha
 Each hit that is reachable under other public names lists them on a `≡` line; the lookup table
 carries them in its `aka` column. Nothing is inferred: every hop is an edge from `edges.tsv`.
 
-Needs Zig **zig 0.17.0** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
+Needs Zig **zig 0.17.1** on `PATH` (the snapshot tracks whatever `zig` resolves to). The full
 command surface is `zephem <std|depth|overlays|deps|lookup|look|map|docs|snapshot|diff>` — details
 below and in each engine's README.
 
@@ -208,14 +208,14 @@ query rebakes the lookup table once (≈90 ms).
 ## The headline dataset: the full std map
 
 `zephem std` scans the active toolchain's `std` and writes the three streams to
-`data/std/extracted/`. On zig 0.17.0 that is **88,421 nodes across 533 files**
-(79,348 public, 9,073 private), max nesting depth 9 — carrying 190,408
-attributes and 74,861 typed edges.
+`data/std/extracted/`. On zig 0.17.1 that is **88,479 nodes across 533 files**
+(79,399 public, 9,080 private), max nesting depth 9 — carrying 190,549
+attributes and 74,917 typed edges.
 
 ```sh
 awk -F'\t' '$2=="ns"' data/std/extracted/nodes.tsv                        # every std source file
 grep -P '^std\.crypto\.' data/std/extracted/nodes.tsv                      # the crypto subtree
-awk -F'\t' '$2=="fn"' data/std/extracted/nodes.tsv | wc -l                # public+private fn count (12,824)
+awk -F'\t' '$2=="fn"' data/std/extracted/nodes.tsv | wc -l                # public+private fn count (12,832)
 awk -F'\t' '$2=="has_type" && $4=="cross"' data/std/extracted/edges.tsv   # cross-container type refs
 ```
 
@@ -236,11 +236,11 @@ disagree, `zephem std` exits non-zero and claims nothing.
 
 ```
 $ zig build std
-[forward]  scanning .../std.zig  (zig 0.17.0, depth 9)
-           rows: 88421   files: 533   private: 9073
-[index]    containers: 6434   root span: 88421   max depth: 9
-[attrs]    190408 rows — doc 15897 · sig 12824 · value 44725 · example 1932
-[edges]    74861 rows — resolved 71142 / unresolved 1488
+[forward]  scanning .../std.zig  (zig 0.17.1, depth 9)
+           rows: 88479   files: 533   private: 9080
+[index]    containers: 6444   root span: 88479   max depth: 9
+[attrs]    190549 rows — doc 15911 · sig 12832 · value 44745 · example 1938
+[edges]    74917 rows — resolved 71193 / unresolved 1490
 [backward] re-reading the datasets — must reconcile...
 VERDICT: ✓ all integrity checks pass
 build_std: ✓ true (forward == backward) and recorded.
@@ -262,12 +262,12 @@ regenerating for a new Zig.
 
 The whole tree is large — too big to read linearly to answer a narrow question. But because
 rows are emitted pre-order, **every subtree is a contiguous block**, so you never have to.
-`data/std/derived/index.tsv` is a tiny map (6,434 containers) of `path · line · span`:
+`data/std/derived/index.tsv` is a tiny map (6,444 containers) of `path · line · span`:
 look up a module, then read exactly its block.
 
 ```sh
 zephem map show std.crypto                          # just the crypto subtree, via the table of contents
-sed -n '30454,+3815p' data/std/extracted/nodes.tsv   # or read the raw block (line 30454, span 3815)
+sed -n '30480,+3816p' data/std/extracted/nodes.tsv   # or read the raw block (line 30480, span 3816)
 ```
 
 The index self-checks: the root's span equals the whole file, and the backward check in `zephem std` re-derives
@@ -290,8 +290,8 @@ ship today, all self-verifying and byte-identical on rerun:
   `reflect/resolve.zig`, driven by `zephem depth`: containers are probed in batches to find the
   ones that fail to compile, the rest reflected ~50 per binary, so a poison decl never kills the
   sweep; inside a container that fails, the decls that fail on their own are found and the rest
-  reflected. On zig 0.17.0: 6,434 containers swept → **3,157 resolved + 18
-  partial (21,429 rows) / 15 poison containers + 893 failing
+  reflected. On zig 0.17.1: 6,444 containers swept → **3,158 resolved + 18
+  partial (21,432 rows) / 15 poison containers + 893 failing
   decls / 913 private** (each failure recorded in `data/std/extracted/poison.tsv` with the
   compiler's exact reason); `data/std/extracted/status.tsv` is the per-container ledger. Verified by the backward check in `zephem depth`.
   Its reproducibility harness is `zephem depth --check`, separate from `zephem std --check`: an
@@ -302,11 +302,11 @@ ship today, all self-verifying and byte-identical on rerun:
 - **`data/std/derived/consensus.tsv`** (the consensus census) — `path · origin · owner` from
   `zephem overlays`. Rather than force the text view (`nodes.tsv`) and the reflected view
   (`resolved.tsv`) to match 1:1 and call every non-match a "miss", it **compares** them and tags
-  **every** path by which witness can see it: `read+run` (both independently agree — 16,413),
+  **every** path by which witness can see it: `read+run` (both independently agree — 16,417),
   `run-only` (only exists when reflected — a generic/alias member like `Sha256.digest_length` —
-  4,924), `read-only` (text read it but it can't run here: poison, private, or the `std`
-  root — 20,583). The two single-witness buckets **are** the differences; the agreement
-  is independent evidence. One row per path in `nodes ∪ resolved` (41,920), **zero blanks**,
+  4,923), `read-only` (text read it but it can't run here: poison, private, or the `std`
+  root — 20,607). The two single-witness buckets **are** the differences; the agreement
+  is independent evidence. One row per path in `nodes ∪ resolved` (41,947), **zero blanks**,
   enforced by `zephem overlays --check` and deterministic (`--check`).
 
 - **`data/std/derived/canon.tsv`** (dedup / dealias) — `path · canon` from `zephem overlays`. The
@@ -359,9 +359,9 @@ The extractor is **three engines**, split by *what each reads*:
 - **[`parse/`](parse/)** — the **read-it** engine (documented in full at
   [parse/README.md](parse/README.md)). `parse/walk.zig` follows `@import` from the root **once**
   and walks the whole organism in a single pass → the **shape model**: the Tree (`nodes.tsv`),
-  the Attributes (`attrs.tsv` — 12,824 signatures, 15,897 `///` docs, 44,725 field/const
-  values, 88,420 locations, 1,932 test bodies, 1,386 modifiers, 490 error
-  members), and the Edges (`edges.tsv` — 74,861
+  the Attributes (`attrs.tsv` — 12,832 signatures, 15,911 `///` docs, 44,745 field/const
+  values, 88,478 locations, 1,938 test bodies, 1,386 modifiers, 490 error
+  members), and the Edges (`edges.tsv` — 74,917
   typed references, resolved to a scope). It **descends type factories** (a `fn(…) type` with one
   `return struct {…}` gets its members under `<fn>()`, e.g. `std.hash_map.HashMap().get`) and gives each
   selective re-export a single canonical home. It reads source as text and never runs the compiler,

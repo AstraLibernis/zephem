@@ -4131,8 +4131,8 @@ std.Io.Threaded.Environ.scan	has_type	std.Io.Threaded.Allocator	cross
 std.Io.Threaded.NullFile.[windows].handle	has_type	std.os.windows.HANDLE	cross
 std.Io.Threaded.NullFile.[windows].deinit	has_type	void	primitive
 std.Io.Threaded.NullFile.[windows].deinit	has_type	std.Io.Threaded.NullFile.[windows]	local
-std.Io.Threaded.NullFile.[wasi,ios,tvos,visionos,watchos].deinit	has_type	void	primitive
-std.Io.Threaded.NullFile.[wasi,ios,tvos,visionos,watchos].deinit	has_type	std.Io.Threaded.NullFile.[wasi,ios,tvos,visionos,watchos]	local
+std.Io.Threaded.NullFile.[wasi,tvos,watchos].deinit	has_type	void	primitive
+std.Io.Threaded.NullFile.[wasi,tvos,watchos].deinit	has_type	std.Io.Threaded.NullFile.[wasi,tvos,watchos]	local
 std.Io.Threaded.NullFile.[else].fd	has_type	std.posix.fd_t	cross
 std.Io.Threaded.NullFile.[else].deinit	has_type	void	primitive
 std.Io.Threaded.NullFile.[else].deinit	has_type	std.Io.Threaded.NullFile.[else]	local
@@ -4607,6 +4607,9 @@ std.Io.Threaded.fileStatLinux	error_set	std.Io.File.StatError	cross
 std.Io.Threaded.fileStatLinux	has_type	std.Io.File.Stat	cross
 std.Io.Threaded.fileStatLinux	has_type	anyopaque	primitive
 std.Io.Threaded.fileStatLinux	has_type	std.Io.Threaded.File	local
+std.Io.Threaded.windowsGetFileDevice	error_set	error{ Canceled, AccessDenied, Unexpected }	inline
+std.Io.Threaded.windowsGetFileDevice	has_type	std.os.windows.CTL_CODE.FILE_DEVICE	cross
+std.Io.Threaded.windowsGetFileDevice	has_type	std.Io.Threaded.File	local
 std.Io.Threaded.fileStatWindows	error_set	std.Io.File.StatError	cross
 std.Io.Threaded.fileStatWindows	has_type	std.Io.File.Stat	cross
 std.Io.Threaded.fileStatWindows	has_type	anyopaque	primitive
@@ -5705,9 +5708,9 @@ std.Io.Threaded.scanEnviron	has_type	std.Io.Threaded.Threaded	local
 std.Io.Threaded.processReplace	has_type	std.process.ReplaceError	cross
 std.Io.Threaded.processReplace	has_type	anyopaque	primitive
 std.Io.Threaded.processReplace	has_type	std.process.ReplaceOptions	cross
-std.Io.Threaded.processSpawn.[wasi,emscripten,ios,tvos,visionos,watchos]	alias	std.Io.Threaded.processSpawnUnsupported	cross
+std.Io.Threaded.processSpawn.[wasi,emscripten,tvos,watchos]	alias	std.Io.Threaded.processSpawnUnsupported	cross
 std.Io.Threaded.processSpawn.[windows]	alias	std.Io.Threaded.processSpawnWindows	cross
-std.Io.Threaded.processSpawn.[driverkit,maccatalyst,macos]	alias	std.Io.Threaded.processSpawnDarwin	cross
+std.Io.Threaded.processSpawn.[driverkit,ios,maccatalyst,macos,visionos]	alias	std.Io.Threaded.processSpawnDarwin	cross
 std.Io.Threaded.processSpawn.[else]	alias	std.Io.Threaded.processSpawnPosix	cross
 std.Io.Threaded.processSpawnUnsupported	error_set	std.process.SpawnError	cross
 std.Io.Threaded.processSpawnUnsupported	has_type	std.process.Child	cross
@@ -8430,19 +8433,10 @@ std.Io.Uring.processSetCurrentPath	has_type	u8	primitive
 std.Io.Uring.processReplace	has_type	std.process.ReplaceError	cross
 std.Io.Uring.processReplace	has_type	anyopaque	primitive
 std.Io.Uring.processReplace	has_type	std.process.ReplaceOptions	cross
-std.Io.Uring.processReplacePath	has_type	std.process.ReplaceError	cross
-std.Io.Uring.processReplacePath	has_type	anyopaque	primitive
-std.Io.Uring.processReplacePath	has_type	std.Io.Uring.Dir	local
-std.Io.Uring.processReplacePath	has_type	std.process.ReplaceOptions	cross
 std.Io.Uring.processSpawn	error_set	std.process.SpawnError	cross
 std.Io.Uring.processSpawn	has_type	std.process.Child	cross
 std.Io.Uring.processSpawn	has_type	anyopaque	primitive
 std.Io.Uring.processSpawn	has_type	std.process.SpawnOptions	cross
-std.Io.Uring.processSpawnPath	error_set	std.process.SpawnError	cross
-std.Io.Uring.processSpawnPath	has_type	std.process.Child	cross
-std.Io.Uring.processSpawnPath	has_type	anyopaque	primitive
-std.Io.Uring.processSpawnPath	has_type	std.Io.Uring.Dir	local
-std.Io.Uring.processSpawnPath	has_type	std.process.SpawnOptions	cross
 std.Io.Uring.Spawned.pid	has_type	std.Io.Uring.pid_t	cross
 std.Io.Uring.Spawned.err_fd	has_type	std.Io.Uring.fd_t	cross
 std.Io.Uring.Spawned.stdin	has_type	std.Io.Uring.File	cross
@@ -8473,6 +8467,11 @@ std.Io.Uring.setUpChildIo	has_type	std.process.SpawnOptions.StdIo	cross
 std.Io.Uring.setUpChildIo	has_type	std.Io.Uring.fd_t	local
 std.Io.Uring.setUpChildIo	has_type	i32	primitive
 std.Io.Uring.setUpChildIo	has_type	std.Io.Uring.fd_t	local
+std.Io.Uring.setFdFlags	error_set	std.Io.Cancelable	cross
+std.Io.Uring.setFdFlags	has_type	void	primitive
+std.Io.Uring.setFdFlags	has_type	std.Io.Uring.CancelRegion.Sync	local
+std.Io.Uring.setFdFlags	has_type	std.Io.Uring.fd_t	local
+std.Io.Uring.setFdFlags	has_type	usize	primitive
 std.Io.Uring.DupError	error_set	error{ ProcessFdQuotaExceeded, SystemResources, }	inline
 std.Io.Uring.DupError	error_set	std.Io.UnexpectedError	cross
 std.Io.Uring.DupError	error_set	std.Io.Cancelable	cross
@@ -8481,18 +8480,19 @@ std.Io.Uring.dup2	has_type	void	primitive
 std.Io.Uring.dup2	has_type	std.Io.Uring.CancelRegion.Sync	local
 std.Io.Uring.dup2	has_type	std.Io.Uring.fd_t	local
 std.Io.Uring.dup2	has_type	std.Io.Uring.fd_t	local
-std.Io.Uring.execv	has_type	std.process.ReplaceError	cross
-std.Io.Uring.execv	has_type	std.Io.Uring.CancelRegion.Sync	local
-std.Io.Uring.execv	has_type	std.process.ArgExpansion	cross
-std.Io.Uring.execv	has_type	u8	primitive
-std.Io.Uring.execv	has_type	u8	primitive
-std.Io.Uring.execv	has_type	std.process.Environ.PosixBlock	cross
-std.Io.Uring.execv	has_type	u8	primitive
-std.Io.Uring.execvPath	has_type	std.process.ReplaceError	cross
-std.Io.Uring.execvPath	has_type	std.Io.Uring.CancelRegion.Sync	local
-std.Io.Uring.execvPath	has_type	u8	primitive
-std.Io.Uring.execvPath	has_type	u8	primitive
-std.Io.Uring.execvPath	has_type	std.process.Environ.PosixBlock	cross
+std.Io.Uring.processExec	has_type	std.process.ReplaceError	cross
+std.Io.Uring.processExec	has_type	std.Io.Uring.CancelRegion.Sync	local
+std.Io.Uring.processExec	has_type	std.process.ReplaceOptions.Exe	cross
+std.Io.Uring.processExec	has_type	u8	primitive
+std.Io.Uring.processExec	has_type	std.process.ArgExpansion	cross
+std.Io.Uring.processExec	has_type	std.process.Environ.PosixBlock	cross
+std.Io.Uring.processExec	has_type	u8	primitive
+std.Io.Uring.processExecveat	has_type	std.process.ReplaceError	cross
+std.Io.Uring.processExecveat	has_type	std.Io.Uring.CancelRegion.Sync	local
+std.Io.Uring.processExecveat	has_type	std.Io.Uring.fd_t	local
+std.Io.Uring.processExecveat	has_type	u8	primitive
+std.Io.Uring.processExecveat	has_type	u8	primitive
+std.Io.Uring.processExecveat	has_type	std.process.Environ.PosixBlock	cross
 std.Io.Uring.childWait	error_set	std.process.Child.WaitError	cross
 std.Io.Uring.childWait	has_type	std.process.Child.Term	cross
 std.Io.Uring.childWait	has_type	anyopaque	primitive
@@ -8506,6 +8506,19 @@ std.Io.Uring.childCleanup	has_type	std.process.Child	cross
 std.Io.Uring.progressParentFile	error_set	std.Progress.ParentFileError	cross
 std.Io.Uring.progressParentFile	has_type	std.Io.Uring.File	local
 std.Io.Uring.progressParentFile	has_type	anyopaque	primitive
+std.Io.Uring.inheritParentHandle	error_set	std.Io.InheritParentHandleError	cross
+std.Io.Uring.inheritParentHandle	has_type	void	primitive
+std.Io.Uring.inheritParentHandle	has_type	std.Io.Uring.Evented	local
+std.Io.Uring.inheritParentHandle	has_type	std.Io.Uring.fd_t	local
+std.Io.Uring.inheritParentDir	error_set	std.Io.InheritParentHandleError	cross
+std.Io.Uring.inheritParentDir	has_type	std.Io.Uring.Dir	local
+std.Io.Uring.inheritParentDir	has_type	anyopaque	primitive
+std.Io.Uring.inheritParentDir	has_type	std.Io.Dir.Handle	cross
+std.Io.Uring.inheritParentFile	error_set	std.Io.InheritParentHandleError	cross
+std.Io.Uring.inheritParentFile	has_type	std.Io.Uring.File	local
+std.Io.Uring.inheritParentFile	has_type	anyopaque	primitive
+std.Io.Uring.inheritParentFile	has_type	std.Io.File.Handle	cross
+std.Io.Uring.inheritParentFile	has_type	std.Io.File.Flags	cross
 std.Io.Uring.scanEnviron	error_set	std.Io.Cancelable	cross
 std.Io.Uring.scanEnviron	has_type	void	primitive
 std.Io.Uring.scanEnviron	has_type	std.Io.Uring.Evented	local
@@ -9902,7 +9915,7 @@ std.Io.net.Ip4Address.unspecified	has_type	std.Io.net.Ip4Address	local
 std.Io.net.Ip4Address.unspecified	has_type	u16	primitive
 std.Io.net.Ip4Address.fromIp6	has_type	std.Io.net.Ip4Address	local
 std.Io.net.Ip4Address.fromIp6	has_type	std.Io.net.Ip6Address	cross
-std.Io.net.Ip4Address.fromAny	has_type	std.Io.net.Ip6Address	cross
+std.Io.net.Ip4Address.fromAny	has_type	std.Io.net.Ip4Address	local
 std.Io.net.Ip4Address.fromAny	has_type	std.Io.net.IpAddress	cross
 std.Io.net.Ip4Address.parse	error_set	std.Io.net.Ip4Address.ParseError	local
 std.Io.net.Ip4Address.parse	has_type	std.Io.net.Ip4Address	local
@@ -10596,7 +10609,7 @@ std.Io.Dir.renameAbsolute	has_type	void	primitive
 std.Io.Dir.renameAbsolute	has_type	u8	primitive
 std.Io.Dir.renameAbsolute	has_type	u8	primitive
 std.Io.Dir.renameAbsolute	has_type	std.Io.Dir.Io	local
-std.Io.Dir.RenamePreserveError	error_set	error{ /// In WASI, this error may occur when the file descriptor does /// not hold the required rights to rename a resource by path relative to it. /// /// On Windows, this error may be returned instead of PathAlreadyExists when /// renaming a directory over an existing directory. /// /// On Darwin, this error may be returned when a component of either pathname /// refers to a "dataless" directory that requires materialization, and the I/O /// policy of the current thread or process disallows dataless directory materialization. AccessDenied, PathAlreadyExists, /// Operating system or file system does not support atomic nonreplacing /// rename. OperationUnsupported, }	inline
+std.Io.Dir.RenamePreserveError	error_set	error{ /// In WASI, this error may occur when the file descriptor does /// not hold the required rights to rename a resource by path relative to it. /// /// On Windows, this error may be returned instead of PathAlreadyExists when /// renaming a directory over an existing directory. /// /// On Darwin, this error may be returned when a component of either pathname /// refers to a "dataless" directory that requires materialization, and the I/O /// policy of the current thread or process disallows dataless directory materialization. AccessDenied, PathAlreadyExists, /// Operating system or file system does not support atomic nonreplacing rename. OperationUnsupported, }	inline
 std.Io.Dir.RenamePreserveError	error_set	std.Io.Dir.RenameError	local
 std.Io.Dir.renamePreserve	error_set	std.Io.Dir.RenamePreserveError	local
 std.Io.Dir.renamePreserve	has_type	void	primitive
@@ -23117,37 +23130,43 @@ std.c.common_linux_Sigaction.handler.sigaction	has_type	std.c.common_linux_Sigac
 std.c.common_linux_Sigaction.mask	has_type	std.c.sigset_t	cross
 std.c.common_linux_Sigaction.flags	has_type	c_uint	primitive
 std.c.common_linux_Sigaction.restorer	has_type	?*const fn () callconv(.c) void	unresolved
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[then]	alias	std.c.common_linux_Sigaction	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].flags	has_type	c_uint	primitive
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].handler.handler	has_type	std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].handler_fn	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].sigaction_fn	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].mask	has_type	std.c.sigset_t	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].flags	has_type	c_uint	primitive
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].handler.handler	has_type	std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].handler_fn	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].handler.sigaction	has_type	std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].sigaction_fn	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].mask	has_type	std.c.sigset_t	cross
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].restorer	has_type	?*const fn () callconv(.c) void	unresolved
-std.c.Sigaction.[linux].[mips,mipsel,mips64,mips64el].[else].[else].__resv	has_type	c_int	primitive
-std.c.Sigaction.[linux].[s390x].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
-std.c.Sigaction.[linux].[s390x].[then].handler.handler	has_type	std.c.Sigaction.[linux].[s390x].[then].handler_fn	cross
-std.c.Sigaction.[linux].[s390x].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[s390x].[then].sigaction_fn	cross
-std.c.Sigaction.[linux].[s390x].[then].__glibc_reserved0	has_type	c_int	primitive
-std.c.Sigaction.[linux].[s390x].[then].flags	has_type	c_uint	primitive
-std.c.Sigaction.[linux].[s390x].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
-std.c.Sigaction.[linux].[s390x].[then].mask	has_type	std.c.sigset_t	cross
-std.c.Sigaction.[linux].[s390x].[else]	alias	std.c.common_linux_Sigaction	cross
-std.c.Sigaction.[linux].[sparc64].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
-std.c.Sigaction.[linux].[sparc64].[then].handler.handler	has_type	std.c.Sigaction.[linux].[sparc64].[then].handler_fn	cross
-std.c.Sigaction.[linux].[sparc64].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[sparc64].[then].sigaction_fn	cross
-std.c.Sigaction.[linux].[sparc64].[then].mask	has_type	std.c.sigset_t	cross
-std.c.Sigaction.[linux].[sparc64].[then].__glibc_reserved0	has_type	c_int	primitive
-std.c.Sigaction.[linux].[sparc64].[then].flags	has_type	c_uint	primitive
-std.c.Sigaction.[linux].[sparc64].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
-std.c.Sigaction.[linux].[sparc64].[else]	alias	std.c.common_linux_Sigaction	cross
-std.c.Sigaction.[linux].[else]	alias	std.c.common_linux_Sigaction	cross
+std.c.Sigaction.[linux].[then].flags	has_type	c_uint	primitive
+std.c.Sigaction.[linux].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
+std.c.Sigaction.[linux].[then].handler.handler	has_type	std.c.Sigaction.[linux].[then].handler_fn	cross
+std.c.Sigaction.[linux].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[then].sigaction_fn	cross
+std.c.Sigaction.[linux].[then].mask	has_type	std.c.sigset_t	cross
+std.c.Sigaction.[linux].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[then]	alias	std.c.common_linux_Sigaction	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].flags	has_type	c_uint	primitive
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].handler.handler	has_type	std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].handler_fn	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].sigaction_fn	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].mask	has_type	std.c.sigset_t	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].flags	has_type	c_uint	primitive
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].handler.handler	has_type	std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].handler_fn	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].handler.sigaction	has_type	std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].sigaction_fn	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].mask	has_type	std.c.sigset_t	cross
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].restorer	has_type	?*const fn () callconv(.c) void	unresolved
+std.c.Sigaction.[linux].[else].[mips,mipsel,mips64,mips64el].[else].[else].__resv	has_type	c_int	primitive
+std.c.Sigaction.[linux].[else].[s390x].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
+std.c.Sigaction.[linux].[else].[s390x].[then].handler.handler	has_type	std.c.Sigaction.[linux].[else].[s390x].[then].handler_fn	cross
+std.c.Sigaction.[linux].[else].[s390x].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[else].[s390x].[then].sigaction_fn	cross
+std.c.Sigaction.[linux].[else].[s390x].[then].__glibc_reserved0	has_type	c_int	primitive
+std.c.Sigaction.[linux].[else].[s390x].[then].flags	has_type	c_uint	primitive
+std.c.Sigaction.[linux].[else].[s390x].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
+std.c.Sigaction.[linux].[else].[s390x].[then].mask	has_type	std.c.sigset_t	cross
+std.c.Sigaction.[linux].[else].[s390x].[else]	alias	std.c.common_linux_Sigaction	cross
+std.c.Sigaction.[linux].[else].[sparc64].[then].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
+std.c.Sigaction.[linux].[else].[sparc64].[then].handler.handler	has_type	std.c.Sigaction.[linux].[else].[sparc64].[then].handler_fn	cross
+std.c.Sigaction.[linux].[else].[sparc64].[then].handler.sigaction	has_type	std.c.Sigaction.[linux].[else].[sparc64].[then].sigaction_fn	cross
+std.c.Sigaction.[linux].[else].[sparc64].[then].mask	has_type	std.c.sigset_t	cross
+std.c.Sigaction.[linux].[else].[sparc64].[then].__glibc_reserved0	has_type	c_int	primitive
+std.c.Sigaction.[linux].[else].[sparc64].[then].flags	has_type	c_uint	primitive
+std.c.Sigaction.[linux].[else].[sparc64].[then].restorer	has_type	?*const fn () callconv(.c) void	unresolved
+std.c.Sigaction.[linux].[else].[sparc64].[else]	alias	std.c.common_linux_Sigaction	cross
+std.c.Sigaction.[linux].[else].[else]	alias	std.c.common_linux_Sigaction	cross
 std.c.Sigaction.[emscripten]	alias	std.os.emscripten.Sigaction	cross
 std.c.Sigaction.[netbsd,driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].handler	has_type	extern union { handler: ?handler_fn, sigaction: ?sigaction_fn, }	inline
 std.c.Sigaction.[netbsd,driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].handler.handler	has_type	std.c.Sigaction.[netbsd,driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].handler_fn	cross
@@ -23727,6 +23746,7 @@ std.c.siginfo_t.[serenity].status	has_type	c_int	primitive
 std.c.siginfo_t.[serenity].band	has_type	c_int	primitive
 std.c.siginfo_t.[serenity].value	has_type	std.c.sigval	cross
 std.c.siginfo_t.[else]	alias	void	primitive
+std.c.sigset_t.[linux].[then]	alias	c_ulong	primitive
 std.c.sigset_t.[emscripten]	alias	std.os.emscripten.sigset_t	cross
 std.c.sigset_t.[openbsd,serenity]	alias	u32	primitive
 std.c.sigset_t.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos]	alias	std.c.darwin.sigset_t	cross
@@ -25322,7 +25342,7 @@ std.c.MAP_FAILED	has_type	anyopaque	primitive
 std.c.cc_t	alias	u8	primitive
 std.c.V.[linux]	alias	std.os.linux.V	cross
 std.c.V.[else]	alias	void	primitive
-std.c.NCCS.[linux]	alias	std.os.linux.NCCS	cross
+std.c.NCCS.[linux].[else].[else]	alias	std.os.linux.NCCS	cross
 std.c.NCCS.[else]	alias	void	primitive
 std.c.termios.[linux]	alias	std.os.linux.termios	cross
 std.c.termios.[driverkit,ios,maccatalyst,macos,tvos,visionos,watchos].iflag	has_type	std.c.tc_iflag_t	cross
@@ -26822,9 +26842,9 @@ std.c.wcsdup.[msvc]	alias	std.c.private._wcsdup	cross
 std.c.wcsdup.[else]	alias	std.c.private.wcsdup	cross
 std.c.ffs	has_type	c_int	primitive
 std.c.ffs	has_type	c_int	primitive
+std.c.ffsl	has_type	c_int	primitive
 std.c.ffsl	has_type	c_long	primitive
-std.c.ffsl	has_type	c_long	primitive
-std.c.ffsll	has_type	c_longlong	primitive
+std.c.ffsll	has_type	c_int	primitive
 std.c.ffsll	has_type	c_longlong	primitive
 std.c.erand48	has_type	f64	primitive
 std.c.erand48	has_type	c_ushort	primitive
@@ -37141,6 +37161,14 @@ std.debug.cpu_context.signal_ucontext_t.[openbsd].[riscv64].mcontext.s0_1	has_ty
 std.debug.cpu_context.signal_ucontext_t.[openbsd].[riscv64].mcontext.s2_11	has_type	u64	primitive
 std.debug.cpu_context.signal_ucontext_t.[openbsd].[riscv64].mcontext.a	has_type	u64	primitive
 std.debug.cpu_context.signal_ucontext_t.[openbsd].[riscv64].mcontext.pc	has_type	u64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64]._cookie	has_type	i64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext	has_type	extern struct { sp: u64, pc: u64, _npc: i64, _tstate: i64, g1: u64, o0: u64, }	inline
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext.sp	has_type	u64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext.pc	has_type	u64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext._npc	has_type	i64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext._tstate	has_type	i64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext.g1	has_type	u64	primitive
+std.debug.cpu_context.signal_ucontext_t.[openbsd].[sparc64].mcontext.o0	has_type	u64	primitive
 std.debug.cpu_context.signal_ucontext_t.[openbsd].[sh].pc	has_type	u32	primitive
 std.debug.cpu_context.signal_ucontext_t.[openbsd].[sh]._sr	has_type	i32	primitive
 std.debug.cpu_context.signal_ucontext_t.[openbsd].[sh]._gbr	has_type	i32	primitive
@@ -37196,7 +37224,7 @@ std.debug.cpu_context.signal_ucontext_t.[netbsd]._flags	has_type	u32	primitive
 std.debug.cpu_context.signal_ucontext_t.[netbsd]._link	has_type	std.debug.cpu_context.signal_ucontext_t	cross
 std.debug.cpu_context.signal_ucontext_t.[netbsd]._sigmask	has_type	std.c.sigset_t	cross
 std.debug.cpu_context.signal_ucontext_t.[netbsd]._stack	has_type	std.c.stack_t	cross
-std.debug.cpu_context.signal_ucontext_t.[netbsd].mcontext	has_type	switch (native_arch) { // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/arm/include/mcontext.h .aarch64, .aarch64_be => extern struct { x: [30]u64 align(16), lr: u64, sp: u64, pc: u64, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/alpha/include/mcontext.h .alpha => extern struct { r: [32]u64, pc: u64, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/arm/include/mcontext.h .arm, .armeb => extern struct { r: [15]u32 align(8), pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/hppa/include/mcontext.h .hppa => extern struct { r1_19: [19]u32 align(8), r20: u32, r21: u32, r22: u32, r23_29: [7]u32, r30: u32, r31: u32, _sar: u32, _pcsqh: u32, _pcsqt: u32, iaoq: [2]u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/m68k/include/mcontext.h .m68k => extern struct { d: [8]u32, a: [8]u32, pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/mips/include/mcontext.h .mips, .mipsel => extern struct { r: [32]u32 align(8), _lo: i32, _hi: i32, _cause: i32, pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/mips/include/mcontext.h .mips64, .mips64el => @compileError("https://github.com/ziglang/zig/issues/23765#issuecomment-2880386178"), // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/powerpc/include/mcontext.h .powerpc => extern struct { r: [32]u32 align(16), _cr: i32, lr: u32, pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/riscv/include/mcontext.h .riscv32, .riscv64 => extern struct { ra_sp_gp_tp: [4]usize align(8), t0_2: [3]usize, s0_1: [2]usize, a: [8]usize, s2_11: [10]usize, t3_6: [4]usize, pc: usize, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/sparc/include/mcontext.h .sparc => @compileError("sparc-netbsd mcontext_t missing"), .sparc64 => @compileError("sparc64-netbsd mcontext_t missing"), // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/sh3/include/mcontext.h .sh, .sheb => extern struct { _gbr: i32, pc: u32, _sr: i32, _macl: i32, _mach: i32, pr: u32, r14: u32, r13_0: [14]u32, r15: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/i386/include/mcontext.h .x86 => extern struct { _gs: i32, _fs: i32, _es: i32, _ds: i32, edi: u32, esi: u32, ebp: u32, esp: u32, ebx: u32, edx: u32, ecx: u32, eax: u32, _trapno: i32, _err: i32, eip: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/amd64/include/mcontext.h .x86_64 => extern struct { rdi: u64, rsi: u64, rdx: u64, rcx: u64, r8: u64, r9: u64, r10: u64, r11: u64, r12: u64, r13: u64, r14: u64, r15: u64, rbp: u64, rbx: u64, rax: u64, _gs: i64, _fs: i64, _es: i64, _ds: i64, _trapno: i64, _err: i64, rip: u64, _cs: i64, _rflags: i64, rsp: u64, }, else => unreachable, }	unresolved
+std.debug.cpu_context.signal_ucontext_t.[netbsd].mcontext	has_type	switch (native_arch) { // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/arm/include/mcontext.h .aarch64, .aarch64_be => extern struct { x: [30]u64 align(16), lr: u64, sp: u64, pc: u64, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/alpha/include/mcontext.h .alpha => extern struct { r: [32]u64, pc: u64, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/arm/include/mcontext.h .arm, .armeb => extern struct { r: [15]u32 align(8), pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/hppa/include/mcontext.h .hppa => extern struct { r1_19: [19]u32 align(8), r20: u32, r21: u32, r22: u32, r23_29: [7]u32, r30: u32, r31: u32, _sar: u32, _pcsqh: u32, _pcsqt: u32, iaoq: [2]u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/m68k/include/mcontext.h .m68k => extern struct { d: [8]u32, a: [8]u32, pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/mips/include/mcontext.h .mips, .mipsel => extern struct { r: [32]u32 align(8), _lo: i32, _hi: i32, _cause: i32, pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/mips/include/mcontext.h .mips64, .mips64el => @compileError("https://github.com/ziglang/zig/issues/23765#issuecomment-2880386178"), // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/powerpc/include/mcontext.h .powerpc => extern struct { r: [32]u32 align(16), _cr: i32, lr: u32, pc: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/riscv/include/mcontext.h .riscv32, .riscv64 => extern struct { ra_sp_gp_tp: [4]usize align(8), t0_2: [3]usize, s0_1: [2]usize, a: [8]usize, s2_11: [10]usize, t3_6: [4]usize, pc: usize, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/sparc/include/mcontext.h .sparc => extern struct { _psr: i32 align(8), pc: u32, _npc: i32, _y: i32, g1_7: [7]u32, o: [8]u32, }, .sparc64 => extern struct { _ccr: i64 align(16), pc: u64, _npc: i64, _y: i64, g1_7: [7]u64, o: [8]u64, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/sh3/include/mcontext.h .sh, .sheb => extern struct { _gbr: i32, pc: u32, _sr: i32, _macl: i32, _mach: i32, pr: u32, r14: u32, r13_0: [14]u32, r15: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/i386/include/mcontext.h .x86 => extern struct { _gs: i32, _fs: i32, _es: i32, _ds: i32, edi: u32, esi: u32, ebp: u32, esp: u32, ebx: u32, edx: u32, ecx: u32, eax: u32, _trapno: i32, _err: i32, eip: u32, }, // https://github.com/NetBSD/src/blob/861008c62187bf7bc0aac4d81e52ed6eee4d0c74/sys/arch/amd64/include/mcontext.h .x86_64 => extern struct { rdi: u64, rsi: u64, rdx: u64, rcx: u64, r8: u64, r9: u64, r10: u64, r11: u64, r12: u64, r13: u64, r14: u64, r15: u64, rbp: u64, rbx: u64, rax: u64, _gs: i64, _fs: i64, _es: i64, _ds: i64, _trapno: i64, _err: i64, rip: u64, _cs: i64, _rflags: i64, rsp: u64, }, else => unreachable, }	unresolved
 std.debug.cpu_context.signal_ucontext_t.[dragonfly]._sigmask	has_type	std.c.sigset_t	cross
 std.debug.cpu_context.signal_ucontext_t.[dragonfly].mcontext	has_type	switch (native_arch) { // https://github.com/DragonFlyBSD/DragonFlyBSD/blob/3de1e9d36269616d22237f19d60a737a41271ab5/sys/cpu/x86_64/include/ucontext.h .x86_64 => extern struct { _onstack: i64 align(64), rdi: u64, rsi: u64, rdx: u64, rcx: u64, r8: u64, r9: u64, rax: u64, rbx: u64, rbp: u64, r10: u64, r11: u64, r12: u64, r13: u64, r14: u64, r15: u64, _xflags: i64, _trapno: i64, _addr: i64, _flags: i64, _err: i64, rip: u64, _cs: i64, _rflags: i64, rsp: u64, }, else => unreachable, }	unresolved
 std.debug.cpu_context.signal_ucontext_t.[serenity]._link	has_type	std.debug.cpu_context.signal_ucontext_t	cross
@@ -37983,7 +38011,7 @@ std.elf.Vernaux.next	has_type	std.elf.Word	cross
 std.elf.Elf32_auxv_t.a_type	has_type	u32	primitive
 std.elf.Elf32_auxv_t.a_un	has_type	extern union { a_val: u32, }	inline
 std.elf.Elf32_auxv_t.a_un.a_val	has_type	u32	primitive
-std.elf.Elf64_auxv_t.a_type	has_type	u64	primitive
+std.elf.Elf64_auxv_t.a_type	has_type	if (native_os == .netbsd or native_os == .openbsd) u32 else u64	unresolved
 std.elf.Elf64_auxv_t.a_un	has_type	extern union { a_val: u64, }	inline
 std.elf.Elf64_auxv_t.a_un.a_val	has_type	u64	primitive
 std.elf.Elf32_Nhdr.n_namesz	has_type	std.elf.Word	cross
@@ -41630,6 +41658,7 @@ std.http.Client.Request.handle_continue	has_type	bool	primitive
 std.http.Client.Request.headers	has_type	std.http.Client.Request.Headers	local
 std.http.Client.Request.response_content_length	has_type	u64	primitive
 std.http.Client.Request.response_transfer_encoding	has_type	std.http.TransferEncoding	cross
+std.http.Client.Request.payload_pending	has_type	bool	primitive
 std.http.Client.Request.extra_headers	has_type	std.http.Header	cross
 std.http.Client.Request.privileged_headers	has_type	std.http.Header	cross
 std.http.Client.Request.default_accept_encoding	has_type	bool	primitive
@@ -41989,6 +42018,7 @@ std.http.Reader.state	has_type	std.http.Reader.State	local
 std.http.Reader.trailers	has_type	u8	primitive
 std.http.Reader.body_err	has_type	std.http.Reader.BodyError	local
 std.http.Reader.max_head_len	has_type	usize	primitive
+std.http.Reader.side	has_type	std.http.Side	cross
 std.http.Reader.RemainingChunkLen.init	has_type	std.http.Reader.RemainingChunkLen	local
 std.http.Reader.RemainingChunkLen.init	has_type	u64	primitive
 std.http.Reader.RemainingChunkLen.int	has_type	u64	primitive
@@ -42055,6 +42085,7 @@ std.http.Decompress.init	has_type	std.http.ContentEncoding	cross
 std.http.BodyWriter.http_protocol_output	has_type	std.http.Writer	cross
 std.http.BodyWriter.state	has_type	std.http.BodyWriter.State	local
 std.http.BodyWriter.writer	has_type	std.http.Writer	cross
+std.http.BodyWriter.client_request	has_type	std.http.Client.Request	cross
 std.http.BodyWriter.Error	alias	std.Io.Writer.Error	cross
 std.http.BodyWriter.max_chunk_len	has_type	usize	primitive
 std.http.BodyWriter.State.content_length	has_type	u64	primitive
@@ -43069,7 +43100,7 @@ std.macho.UNWIND_ARM64_FRAME_D12_D13_PAIR	has_type	u32	primitive
 std.macho.UNWIND_ARM64_FRAME_D14_D15_PAIR	has_type	u32	primitive
 std.macho.UNWIND_ARM64_FRAMELESS_STACK_SIZE_MASK	has_type	u32	primitive
 std.macho.UNWIND_ARM64_DWARF_SECTION_OFFSET	has_type	u32	primitive
-std.macho.CompactUnwindEncoding.value	has_type	packed union { x86_64: packed union { frame: packed struct(u24) { reg4: u3, reg3: u3, reg2: u3, reg1: u3, reg0: u3, unused: u1 = 0, frame_offset: u8, }, frameless: packed struct(u24) { stack_reg_permutation: u10, stack_reg_count: u3, stack: packed union { direct: packed struct(u11) { _: u3, stack_size: u8, }, indirect: packed struct(u11) { stack_adjust: u3, sub_offset: u8, }, }, }, dwarf: u24, }, arm64: packed union { frame: packed struct(u24) { x_reg_pairs: packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }, d_reg_pairs: packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }, _: u15, }, frameless: packed struct(u24) { _: u12 = 0, stack_size: u12, }, dwarf: u24, }, }	inline
+std.macho.CompactUnwindEncoding.value	has_type	packed union { x86_64: packed union { frame: packed struct(u24) { reg4: u3, reg3: u3, reg2: u3, reg1: u3, reg0: u3, unused: u1 = 0, frame_offset: u8, }, frameless: packed struct(u24) { stack_reg_permutation: u10, stack_reg_count: u3, stack: packed union { direct: packed struct(u11) { _: u3, stack_size: u8, }, indirect: packed struct(u11) { stack_adjust: u3, sub_offset: u8, }, }, }, dwarf: u24, }, arm64: packed union { frame: packed struct(u24) { x_reg_pairs: packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }, unused: u3 = 0, d_reg_pairs: packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }, _: u12, }, frameless: packed struct(u24) { _: u12 = 0, stack_size: u12, }, dwarf: u24, }, }	inline
 std.macho.CompactUnwindEncoding.value.x86_64	has_type	packed union { frame: packed struct(u24) { reg4: u3, reg3: u3, reg2: u3, reg1: u3, reg0: u3, unused: u1 = 0, frame_offset: u8, }, frameless: packed struct(u24) { stack_reg_permutation: u10, stack_reg_count: u3, stack: packed union { direct: packed struct(u11) { _: u3, stack_size: u8, }, indirect: packed struct(u11) { stack_adjust: u3, sub_offset: u8, }, }, }, dwarf: u24, }	inline
 std.macho.CompactUnwindEncoding.value.x86_64.frame	has_type	packed struct(u24) { reg4: u3, reg3: u3, reg2: u3, reg1: u3, reg0: u3, unused: u1 = 0, frame_offset: u8, }	inline
 std.macho.CompactUnwindEncoding.value.x86_64.frame.reg4	has_type	u3	primitive
@@ -43090,20 +43121,21 @@ std.macho.CompactUnwindEncoding.value.x86_64.frameless.stack.indirect	has_type	p
 std.macho.CompactUnwindEncoding.value.x86_64.frameless.stack.indirect.stack_adjust	has_type	u3	primitive
 std.macho.CompactUnwindEncoding.value.x86_64.frameless.stack.indirect.sub_offset	has_type	u8	primitive
 std.macho.CompactUnwindEncoding.value.x86_64.dwarf	has_type	u24	primitive
-std.macho.CompactUnwindEncoding.value.arm64	has_type	packed union { frame: packed struct(u24) { x_reg_pairs: packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }, d_reg_pairs: packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }, _: u15, }, frameless: packed struct(u24) { _: u12 = 0, stack_size: u12, }, dwarf: u24, }	inline
-std.macho.CompactUnwindEncoding.value.arm64.frame	has_type	packed struct(u24) { x_reg_pairs: packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }, d_reg_pairs: packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }, _: u15, }	inline
+std.macho.CompactUnwindEncoding.value.arm64	has_type	packed union { frame: packed struct(u24) { x_reg_pairs: packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }, unused: u3 = 0, d_reg_pairs: packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }, _: u12, }, frameless: packed struct(u24) { _: u12 = 0, stack_size: u12, }, dwarf: u24, }	inline
+std.macho.CompactUnwindEncoding.value.arm64.frame	has_type	packed struct(u24) { x_reg_pairs: packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }, unused: u3 = 0, d_reg_pairs: packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }, _: u12, }	inline
 std.macho.CompactUnwindEncoding.value.arm64.frame.x_reg_pairs	has_type	packed struct(u5) { x19_x20: u1, x21_x22: u1, x23_x24: u1, x25_x26: u1, x27_x28: u1, }	inline
 std.macho.CompactUnwindEncoding.value.arm64.frame.x_reg_pairs.x19_x20	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.x_reg_pairs.x21_x22	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.x_reg_pairs.x23_x24	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.x_reg_pairs.x25_x26	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.x_reg_pairs.x27_x28	has_type	u1	primitive
+std.macho.CompactUnwindEncoding.value.arm64.frame.unused	has_type	u3	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.d_reg_pairs	has_type	packed struct(u4) { d8_d9: u1, d10_d11: u1, d12_d13: u1, d14_d15: u1, }	inline
 std.macho.CompactUnwindEncoding.value.arm64.frame.d_reg_pairs.d8_d9	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.d_reg_pairs.d10_d11	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.d_reg_pairs.d12_d13	has_type	u1	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frame.d_reg_pairs.d14_d15	has_type	u1	primitive
-std.macho.CompactUnwindEncoding.value.arm64.frame._	has_type	u15	primitive
+std.macho.CompactUnwindEncoding.value.arm64.frame._	has_type	u12	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frameless	has_type	packed struct(u24) { _: u12 = 0, stack_size: u12, }	inline
 std.macho.CompactUnwindEncoding.value.arm64.frameless._	has_type	u12	primitive
 std.macho.CompactUnwindEncoding.value.arm64.frameless.stack_size	has_type	u12	primitive
@@ -45471,6 +45503,7 @@ std.os.linux.arch_bits.[aarch64,aarch64_be].builtin	imports	builtin	module
 std.os.linux.arch_bits.[aarch64,aarch64_be].std	imports	../../std.zig	module
 std.os.linux.arch_bits.[aarch64,aarch64_be].SYS	alias	std.os.linux.SYS	cross
 std.os.linux.arch_bits.[aarch64,aarch64_be].syscall_arg_t	alias	u64	primitive
+std.os.linux.arch_bits.[aarch64,aarch64_be].clobbers	has_type	std.lang.assembly.Clobbers	cross
 std.os.linux.arch_bits.[aarch64,aarch64_be].syscall0	has_type	u64	primitive
 std.os.linux.arch_bits.[aarch64,aarch64_be].syscall0	has_type	std.os.linux.arch_bits.[aarch64,aarch64_be].SYS	local
 std.os.linux.arch_bits.[aarch64,aarch64_be].syscall1	has_type	u64	primitive
@@ -46736,9 +46769,9 @@ std.os.linux.tls.native_arch	alias	builtin.cpu.arch	module
 std.os.linux.tls.linux	alias	std.os.linux	cross
 std.os.linux.tls.page_size_min	alias	std.heap.page_size_min	cross
 std.os.linux.tls.current_variant	has_type	std.os.linux.tls.Variant	local
-std.os.linux.tls.AbiTcb.[I_original,I_modified].[aarch64,aarch64_be,alpha,arm,armeb,hppa,microblaze,microblazeel,sh,sheb,thumb,thumbeb,xtensa,xtensaeb].dtv	has_type	usize	primitive
-std.os.linux.tls.AbiTcb.[I_original,I_modified].[aarch64,aarch64_be,alpha,arm,armeb,hppa,microblaze,microblazeel,sh,sheb,thumb,thumbeb,xtensa,xtensaeb]._reserved	has_type	anyopaque	primitive
-std.os.linux.tls.AbiTcb.[I_original,I_modified].[else].dtv	has_type	usize	primitive
+std.os.linux.tls.AbiTcb.[I_original].dtv	has_type	usize	primitive
+std.os.linux.tls.AbiTcb.[I_original]._reserved	has_type	anyopaque	primitive
+std.os.linux.tls.AbiTcb.[I_modified].dtv	has_type	usize	primitive
 std.os.linux.tls.AbiTcb.[II].self	has_type	std.os.linux.tls.AbiTcb	cross
 std.os.linux.tls.ZigTcb.dummy	has_type	usize	primitive
 std.os.linux.tls.Dtv.len	has_type	usize	primitive
@@ -57634,6 +57667,7 @@ std.posix.system.[else].[psp].nlink_t	alias	u32	primitive
 std.posix.system.[else].[psp].blksize_t	alias	u32	primitive
 std.posix.system.[else].[psp].ino_t	alias	u64	primitive
 std.posix.system.[else].[psp].SIG	alias	void	primitive
+std.posix.system.[else].[psp].cmsghdr	alias	void	primitive
 std.posix.system.[else].[else].pid_t	alias	void	primitive
 std.posix.system.[else].[else].pollfd	alias	void	primitive
 std.posix.system.[else].[else].fd_t	alias	void	primitive
@@ -57644,6 +57678,7 @@ std.posix.system.[else].[else].nlink_t	alias	u0	primitive
 std.posix.system.[else].[else].blksize_t	alias	void	primitive
 std.posix.system.[else].[else].ino_t	alias	void	primitive
 std.posix.system.[else].[else].SIG	alias	void	primitive
+std.posix.system.[else].[else].cmsghdr	alias	void	primitive
 std.posix.AF	alias	system.AF	unresolved
 std.posix.AF_SUN	alias	system.AF_SUN	unresolved
 std.posix.AI	alias	system.AI	unresolved
@@ -61092,6 +61127,8 @@ std.zig.Ast.Render.gpa	has_type	std.zig.Ast.Render.Allocator	local
 std.zig.Ast.Render.ais	has_type	std.zig.Ast.Render.AutoIndentingStream	local
 std.zig.Ast.Render.tree	has_type	std.zig.Ast.Render.Ast	local
 std.zig.Ast.Render.fixups	has_type	std.zig.Ast.Render.Fixups	local
+std.zig.Ast.Render.checking_newlines	has_type	bool	primitive
+std.zig.Ast.Render.scratch_array_init	has_type	std.ArrayList	cross
 std.zig.Ast.Render.Fixups.unused_var_decls	has_type	std.AutoHashMapUnmanaged	cross
 std.zig.Ast.Render.Fixups.gut_functions	has_type	std.AutoHashMapUnmanaged	cross
 std.zig.Ast.Render.Fixups.omit_nodes	has_type	std.AutoHashMapUnmanaged	cross
@@ -61258,6 +61295,11 @@ std.zig.Ast.Render.renderStructInit	has_type	std.zig.Ast.Render.Render	local
 std.zig.Ast.Render.renderStructInit	has_type	std.zig.Ast.Node.Index	cross
 std.zig.Ast.Render.renderStructInit	has_type	std.zig.Ast.full.StructInit	cross
 std.zig.Ast.Render.renderStructInit	has_type	std.zig.Ast.Render.Space	local
+std.zig.Ast.Render.renderCommentsBetweenTokens	error_set	std.zig.Ast.Render.Error	local
+std.zig.Ast.Render.renderCommentsBetweenTokens	has_type	void	primitive
+std.zig.Ast.Render.renderCommentsBetweenTokens	has_type	std.zig.Ast.Render.Render	local
+std.zig.Ast.Render.renderCommentsBetweenTokens	has_type	std.zig.Ast.TokenIndex	cross
+std.zig.Ast.Render.renderCommentsBetweenTokens	has_type	std.zig.Ast.TokenIndex	cross
 std.zig.Ast.Render.renderArrayInit	error_set	std.zig.Ast.Render.Error	local
 std.zig.Ast.Render.renderArrayInit	has_type	void	primitive
 std.zig.Ast.Render.renderArrayInit	has_type	std.zig.Ast.Render.Render	local
@@ -62520,7 +62562,6 @@ std.zig.AstGen.fnDeclInner	has_type	void	primitive
 std.zig.AstGen.fnDeclInner	has_type	std.zig.AstGen.AstGen	local
 std.zig.AstGen.fnDeclInner	has_type	std.zig.AstGen.GenZir	local
 std.zig.AstGen.fnDeclInner	has_type	std.zig.AstGen.Scope	local
-std.zig.AstGen.fnDeclInner	has_type	std.zig.AstGen.SourceCursor	local
 std.zig.AstGen.fnDeclInner	has_type	std.zig.Zir.Inst.Index	cross
 std.zig.AstGen.fnDeclInner	has_type	std.zig.Ast.Node.Index	cross
 std.zig.AstGen.fnDeclInner	has_type	std.zig.Ast.Node.Index	cross
@@ -63480,7 +63521,7 @@ std.zig.AstGen.addFailedDeclaration	has_type	std.zig.Ast.Node.Index	cross
 std.zig.AstGen.addFailedDeclaration	has_type	bool	primitive
 std.zig.AstGen.setDeclaration	has_type	void	primitive
 std.zig.AstGen.setDeclaration	has_type	std.zig.Zir.Inst.Index	cross
-std.zig.AstGen.setDeclaration	has_type	struct { src_hash: std.zig.SrcHash, src_line: u32, src_column: u32, kind: Zir.Inst.Declaration.Unwrapped.Kind, name: Zir.NullTerminatedString, is_pub: bool, is_threadlocal: bool, linkage: Zir.Inst.Declaration.Unwrapped.Linkage, lib_name: Zir.NullTerminatedString = .empty, type_gz: *GenZir, /// Must be stacked on `type_gz`. align_gz: *GenZir, /// Must be stacked on `align_gz`. linksection_gz: *GenZir, /// Must be stacked on `linksection_gz`. addrspace_gz: *GenZir, /// Must be stacked on `addrspace_gz` and have nothing stacked on top of it. value_gz: *GenZir, }	inline
+std.zig.AstGen.setDeclaration	has_type	struct { src_hash: std.zig.SrcHash, src_line: u32, src_column: u32, kind: Zir.Inst.Declaration.Unwrapped.Kind, name: Zir.NullTerminatedString, is_pub: bool, is_threadlocal: bool, linkage: Zir.Inst.Declaration.Unwrapped.Linkage, lib_name: Zir.NullTerminatedString = .empty, type_gz: *GenZir, /// Must be stacked on `type_gz`. align_gz: *GenZir, /// Must be stacked on `align_gz`. addrspace_gz: *GenZir, /// Must be stacked on `addrspace_gz`. linksection_gz: *GenZir, /// Must be stacked on `linksection_gz` and have nothing stacked on top of it. value_gz: *GenZir, }	inline
 std.zig.AstGen.fetchRemoveRefEntries	has_type	std.zig.Zir.Inst.Index	cross
 std.zig.AstGen.fetchRemoveRefEntries	has_type	std.zig.AstGen.AstGen	local
 std.zig.AstGen.fetchRemoveRefEntries	has_type	std.zig.Zir.Inst.Index	cross
@@ -66031,6 +66072,8 @@ std.zig.llvm.Builder.DataLayout.int_specs	has_type	std.zig.llvm.Builder.DataLayo
 std.zig.llvm.Builder.DataLayout.float_specs	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec.Map	local
 std.zig.llvm.Builder.DataLayout.vector_specs	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec.Map	local
 std.zig.llvm.Builder.DataLayout.pointer_specs	has_type	std.zig.llvm.Builder.DataLayout.PointerSpec.Map	local
+std.zig.llvm.Builder.DataLayout.struct_abi_align	has_type	std.zig.llvm.Builder.Alignment	cross
+std.zig.llvm.Builder.DataLayout.struct_pref_align	has_type	std.zig.llvm.Builder.Alignment	cross
 std.zig.llvm.Builder.DataLayout.string_repr	has_type	std.zig.llvm.Builder.String	cross
 std.zig.llvm.Builder.DataLayout.PrimitiveSpec.bit_width	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec.BitWidth	local
 std.zig.llvm.Builder.DataLayout.PrimitiveSpec.abi_align	has_type	std.zig.llvm.Builder.Alignment	cross
@@ -66071,13 +66114,12 @@ std.zig.llvm.Builder.DataLayout.deinit	has_type	std.zig.llvm.Builder.DataLayout	
 std.zig.llvm.Builder.DataLayout.deinit	has_type	std.zig.llvm.Builder.Allocator	cross
 std.zig.llvm.Builder.DataLayout.getIntegerSpec	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec	local
 std.zig.llvm.Builder.DataLayout.getIntegerSpec	has_type	std.zig.llvm.Builder.DataLayout	local
-std.zig.llvm.Builder.DataLayout.getIntegerSpec	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec.BitWidth	local
+std.zig.llvm.Builder.DataLayout.getIntegerSpec	has_type	std.zig.llvm.Builder.Type.Size	cross
 std.zig.llvm.Builder.DataLayout.getFloatSpec	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec	local
 std.zig.llvm.Builder.DataLayout.getFloatSpec	has_type	std.zig.llvm.Builder.DataLayout	local
-std.zig.llvm.Builder.DataLayout.getFloatSpec	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec.BitWidth	local
+std.zig.llvm.Builder.DataLayout.getFloatSpec	has_type	std.zig.llvm.Builder.Type.Size	cross
 std.zig.llvm.Builder.DataLayout.getVectorSpec	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec	local
 std.zig.llvm.Builder.DataLayout.getVectorSpec	has_type	std.zig.llvm.Builder.DataLayout	local
-std.zig.llvm.Builder.DataLayout.getVectorSpec	has_type	std.zig.llvm.Builder.DataLayout.PrimitiveSpec.BitWidth	local
 std.zig.llvm.Builder.DataLayout.getVectorSpec	has_type	std.zig.llvm.Builder.Type.Size	cross
 std.zig.llvm.Builder.DataLayout.getPointerSpec	has_type	std.zig.llvm.Builder.DataLayout.PointerSpec	local
 std.zig.llvm.Builder.DataLayout.getPointerSpec	has_type	std.zig.llvm.Builder.DataLayout	local
@@ -66253,6 +66295,12 @@ std.zig.llvm.Builder.Type.Size.scalable	has_type	u64	primitive
 std.zig.llvm.Builder.Type.bits	has_type	std.zig.llvm.Builder.Type.Size	local
 std.zig.llvm.Builder.Type.bits	has_type	std.zig.llvm.Builder.Type	local
 std.zig.llvm.Builder.Type.bits	has_type	std.zig.llvm.Builder.Builder	cross
+std.zig.llvm.Builder.Type.storeSize	has_type	std.zig.llvm.Builder.Type.Size	local
+std.zig.llvm.Builder.Type.storeSize	has_type	std.zig.llvm.Builder.Type	local
+std.zig.llvm.Builder.Type.storeSize	has_type	std.zig.llvm.Builder.Builder	cross
+std.zig.llvm.Builder.Type.allocSize	has_type	std.zig.llvm.Builder.Type.Size	local
+std.zig.llvm.Builder.Type.allocSize	has_type	std.zig.llvm.Builder.Type	local
+std.zig.llvm.Builder.Type.allocSize	has_type	std.zig.llvm.Builder.Builder	cross
 std.zig.llvm.Builder.Type.alignment	has_type	std.zig.llvm.Builder.Alignment	cross
 std.zig.llvm.Builder.Type.alignment	has_type	std.zig.llvm.Builder.Type	local
 std.zig.llvm.Builder.Type.alignment	has_type	enum { abi, pref }	inline
@@ -66610,6 +66658,12 @@ std.zig.llvm.Builder.Alignment.fromByteUnits	has_type	std.zig.llvm.Builder.Align
 std.zig.llvm.Builder.Alignment.fromByteUnits	has_type	u64	primitive
 std.zig.llvm.Builder.Alignment.toByteUnits	has_type	u64	primitive
 std.zig.llvm.Builder.Alignment.toByteUnits	has_type	std.zig.llvm.Builder.Alignment	local
+std.zig.llvm.Builder.Alignment.forward	has_type	u64	primitive
+std.zig.llvm.Builder.Alignment.forward	has_type	std.zig.llvm.Builder.Alignment	local
+std.zig.llvm.Builder.Alignment.forward	has_type	u64	primitive
+std.zig.llvm.Builder.Alignment.check	has_type	bool	primitive
+std.zig.llvm.Builder.Alignment.check	has_type	std.zig.llvm.Builder.Alignment	local
+std.zig.llvm.Builder.Alignment.check	has_type	u64	primitive
 std.zig.llvm.Builder.Alignment.max	has_type	std.zig.llvm.Builder.Alignment	local
 std.zig.llvm.Builder.Alignment.max	has_type	std.zig.llvm.Builder.Alignment	local
 std.zig.llvm.Builder.Alignment.max	has_type	std.zig.llvm.Builder.Alignment	local
@@ -67366,6 +67420,7 @@ std.zig.llvm.Builder.WipFunction.conv	has_type	std.zig.llvm.Builder.Value	cross
 std.zig.llvm.Builder.WipFunction.conv	has_type	std.zig.llvm.Builder.WipFunction	local
 std.zig.llvm.Builder.WipFunction.conv	has_type	std.zig.llvm.Builder.Function.Instruction.Cast.Signedness	cross
 std.zig.llvm.Builder.WipFunction.conv	has_type	std.zig.llvm.Builder.Value	cross
+std.zig.llvm.Builder.WipFunction.conv	has_type	std.zig.llvm.Builder.Function.Instruction.Cast.Signedness	cross
 std.zig.llvm.Builder.WipFunction.conv	has_type	std.zig.llvm.Builder.Type	cross
 std.zig.llvm.Builder.WipFunction.conv	has_type	u8	primitive
 std.zig.llvm.Builder.WipFunction.cast	error_set	std.mem.Allocator.Error	cross
@@ -68539,6 +68594,7 @@ std.zig.llvm.Builder.convTag	has_type	std.zig.llvm.Builder.Function.Instruction.
 std.zig.llvm.Builder.convTag	has_type	std.zig.llvm.Builder.Builder	local
 std.zig.llvm.Builder.convTag	has_type	std.zig.llvm.Builder.Constant.Cast.Signedness	local
 std.zig.llvm.Builder.convTag	has_type	std.zig.llvm.Builder.Type	local
+std.zig.llvm.Builder.convTag	has_type	std.zig.llvm.Builder.Constant.Cast.Signedness	local
 std.zig.llvm.Builder.convTag	has_type	std.zig.llvm.Builder.Type	local
 std.zig.llvm.Builder.convConstTag	has_type	std.zig.llvm.Builder.Constant.Tag	local
 std.zig.llvm.Builder.convConstTag	has_type	std.zig.llvm.Builder.Builder	local

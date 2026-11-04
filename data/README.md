@@ -6,7 +6,7 @@ through the compiler); the `src/` layer does the glue and the querying (the `zep
 No Nushell, no Python, no duckdb — the TSV files are the source of truth, queried by
 `zephem look`/`map` (or any tool: they're plain TSV).
 
-The snapshot lives in `std/`, pinned to **zig 0.17.0** (`std/PINNED`), split into two groups
+The snapshot lives in `std/`, pinned to **zig 0.17.1** (`std/PINNED`), split into two groups
 by *where each fact comes from*:
 
 | folder | what it holds | producer | trust |
@@ -19,11 +19,11 @@ and the self-check that guards it). The clean line: **extracted/ is what Zig say
 derived/ is what zephem computes from it, and can be deleted and rebuilt from extracted/
 alone.**
 
-At a glance — the parser's shape model is **88,421 nodes across 533 files**
-(the tree), **190,408 attributes** (15,897 docs, 12,824 sigs, 44,725 values,
-88,420 locations, 1,932 test bodies, 1,386 modifiers, 490 error members),
-and **74,861 typed edges**; reflect adds
-3,157 containers resolved, and six derivatives key back to the tree at the same `path`.
+At a glance — the parser's shape model is **88,479 nodes across 533 files**
+(the tree), **190,549 attributes** (15,911 docs, 12,832 sigs, 44,745 values,
+88,478 locations, 1,938 test bodies, 1,386 modifiers, 490 error members),
+and **74,917 typed edges**; reflect adds
+3,158 containers resolved, and six derivatives key back to the tree at the same `path`.
 
 ## versions/ — one frozen folder per Zig version
 

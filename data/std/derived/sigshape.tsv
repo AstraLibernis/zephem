@@ -1458,7 +1458,7 @@ std.Io.Threaded.Group.waitForCancelWithSignaling	other	no	no
 std.Io.Threaded.LookupDnsWindows.completed	other	no	no
 std.Io.Threaded.LookupDnsWindows.completedFallible	other	yes	no
 std.Io.Threaded.NullFile.[else].deinit	self	no	no
-std.Io.Threaded.NullFile.[wasi,ios,tvos,visionos,watchos].deinit	self	no	no
+std.Io.Threaded.NullFile.[wasi,tvos,watchos].deinit	self	no	no
 std.Io.Threaded.NullFile.[windows].deinit	self	no	no
 std.Io.Threaded.OpenFile	other	no	no
 std.Io.Threaded.ParkingMutex.State.fromWaiter	other	no	no
@@ -1841,6 +1841,7 @@ std.Io.Threaded.windowsCreatePipe	other	no	no
 std.Io.Threaded.windowsCreateProcess	other	no	no
 std.Io.Threaded.windowsCreateProcessPathExt	allocator	no	no
 std.Io.Threaded.windowsCreateProcessSupportsExtension	other	no	no
+std.Io.Threaded.windowsGetFileDevice	other	no	no
 std.Io.Threaded.windowsWriteBuffer	other	no	no
 std.Io.Threaded.worker	other	no	no
 std.Io.Threaded.writeFilePositionalWindows	other	no	no
@@ -1988,8 +1989,6 @@ std.Io.Uring.dirStat	other	no	no
 std.Io.Uring.dirStatFile	other	no	no
 std.Io.Uring.dirSymLink	other	no	no
 std.Io.Uring.dup2	other	no	no
-std.Io.Uring.execv	other	no	no
-std.Io.Uring.execvPath	other	no	no
 std.Io.Uring.fchdir	other	no	no
 std.Io.Uring.fchmodat	other	no	no
 std.Io.Uring.fchownat	other	no	no
@@ -2035,6 +2034,9 @@ std.Io.Uring.groupAwait	other	yes	no
 std.Io.Uring.groupCancel	other	yes	no
 std.Io.Uring.groupConcurrent	other	yes	no
 std.Io.Uring.idle	other	no	no
+std.Io.Uring.inheritParentDir	other	yes	no
+std.Io.Uring.inheritParentFile	other	yes	no
+std.Io.Uring.inheritParentHandle	other	yes	no
 std.Io.Uring.init	other	no	no
 std.Io.Uring.initLockedStderr	other	yes	no
 std.Io.Uring.io	other	yes	no
@@ -2063,14 +2065,14 @@ std.Io.Uring.operate	other	yes	no
 std.Io.Uring.pipe2	other	no	no
 std.Io.Uring.preadv	other	no	no
 std.Io.Uring.processCurrentPath	other	no	no
+std.Io.Uring.processExec	other	no	no
 std.Io.Uring.processExecutableOpen	other	no	no
 std.Io.Uring.processExecutablePath	other	no	no
+std.Io.Uring.processExecveat	other	no	no
 std.Io.Uring.processReplace	other	no	no
-std.Io.Uring.processReplacePath	other	no	no
 std.Io.Uring.processSetCurrentDir	other	no	no
 std.Io.Uring.processSetCurrentPath	other	no	no
 std.Io.Uring.processSpawn	other	no	no
-std.Io.Uring.processSpawnPath	other	no	no
 std.Io.Uring.progressParentFile	other	no	no
 std.Io.Uring.pwritev	other	no	no
 std.Io.Uring.random	other	no	no
@@ -2083,6 +2085,7 @@ std.Io.Uring.renameat	other	no	no
 std.Io.Uring.resize	other	no	no
 std.Io.Uring.scanEnviron	other	yes	no
 std.Io.Uring.schedule	other	no	no
+std.Io.Uring.setFdFlags	other	yes	no
 std.Io.Uring.setUpChild	other	no	no
 std.Io.Uring.setUpChildIo	other	yes	no
 std.Io.Uring.setsockopt	other	no	no
@@ -10874,6 +10877,7 @@ std.zig.Ast.Render.renderBlock	other	no	no
 std.zig.Ast.Render.renderBuiltinCall	other	no	no
 std.zig.Ast.Render.renderCall	other	no	no
 std.zig.Ast.Render.renderComments	other	no	no
+std.zig.Ast.Render.renderCommentsBetweenTokens	other	no	no
 std.zig.Ast.Render.renderContainerDecl	other	no	no
 std.zig.Ast.Render.renderContainerDocComments	other	no	no
 std.zig.Ast.Render.renderContainerField	other	no	no
@@ -11675,7 +11679,9 @@ std.zig.llvm.Builder.Alignment.Lazy.resolve	other	no	no
 std.zig.llvm.Builder.Alignment.Lazy.toFwdRefIndex	other	no	no
 std.zig.llvm.Builder.Alignment.Lazy.wrap	other	no	no
 std.zig.llvm.Builder.Alignment.Prefixed.format	other	no	no
+std.zig.llvm.Builder.Alignment.check	other	no	no
 std.zig.llvm.Builder.Alignment.fmt	other	no	no
+std.zig.llvm.Builder.Alignment.forward	other	no	no
 std.zig.llvm.Builder.Alignment.fromByteUnits	other	no	no
 std.zig.llvm.Builder.Alignment.max	other	no	no
 std.zig.llvm.Builder.Alignment.order	other	no	no
@@ -11886,6 +11892,7 @@ std.zig.llvm.Builder.Type.Array.length	self	no	no
 std.zig.llvm.Builder.Type.Vector.length	self	no	no
 std.zig.llvm.Builder.Type.aggregateLen	self	no	no
 std.zig.llvm.Builder.Type.alignment	other	no	no
+std.zig.llvm.Builder.Type.allocSize	other	no	no
 std.zig.llvm.Builder.Type.bits	other	no	no
 std.zig.llvm.Builder.Type.changeLength	self	no	no
 std.zig.llvm.Builder.Type.changeLengthAssumeCapacity	self	no	no
@@ -11911,6 +11918,7 @@ std.zig.llvm.Builder.Type.pointerAddrSpace	self	no	no
 std.zig.llvm.Builder.Type.scalarBits	self	no	no
 std.zig.llvm.Builder.Type.scalarTag	self	no	no
 std.zig.llvm.Builder.Type.scalarType	self	no	no
+std.zig.llvm.Builder.Type.storeSize	other	no	no
 std.zig.llvm.Builder.Type.structFields	self	no	no
 std.zig.llvm.Builder.Type.structKind	self	no	no
 std.zig.llvm.Builder.Type.tag	self	no	no

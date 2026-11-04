@@ -1377,7 +1377,6 @@ std.Io.Evented.PipeError	type	error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded
 std.Io.Evented.pipe2	fn	fn (os.linux.O__struct) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
 std.Io.Evented.DupError	type	error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Evented.dup2	fn	fn (*Io.Uring.CancelRegion.Sync, i32, i32) error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}!void
-std.Io.Evented.execvPath	fn	fn (*Io.Uring.CancelRegion.Sync, [*:0]const u8, [*:null]const ?[*:0]const u8, process.Environ.PosixBlock) error{AccessDenied,BadPathName,Canceled,FileBusy,FileNotFound,FileSystem,InvalidExe,IsDir,NameTooLong,NotDir,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Kqueue	type	Io.Kqueue
 std.Io.Uring	type	Io.Uring
 std.Io.Reader	type	Io.Reader
@@ -1646,7 +1645,6 @@ std.Io.Uring.PipeError	type	error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,U
 std.Io.Uring.pipe2	fn	fn (os.linux.O__struct) error{ProcessFdQuotaExceeded,SystemFdQuotaExceeded,Unexpected}![2]i32
 std.Io.Uring.DupError	type	error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Uring.dup2	fn	fn (*Io.Uring.CancelRegion.Sync, i32, i32) error{Canceled,ProcessFdQuotaExceeded,SystemResources,Unexpected}!void
-std.Io.Uring.execvPath	fn	fn (*Io.Uring.CancelRegion.Sync, [*:0]const u8, [*:null]const ?[*:0]const u8, process.Environ.PosixBlock) error{AccessDenied,BadPathName,Canceled,FileBusy,FileNotFound,FileSystem,InvalidExe,IsDir,NameTooLong,NotDir,OperationUnsupported,OutOfMemory,PermissionDenied,ProcessFdQuotaExceeded,SystemFdQuotaExceeded,SystemResources,Unexpected}
 std.Io.Reader.Limited	type	Io.Reader.Limited
 std.Io.Reader.VTable	type	Io.Reader.VTable
 std.Io.Reader.StreamError	type	error{EndOfStream,ReadFailed,WriteFailed}
@@ -1928,7 +1926,7 @@ std.Io.net.IpAddress.connect	fn	fn (*const Io.net.IpAddress, Io, Io.net.IpAddres
 std.Io.net.Ip4Address.loopback	fn	fn (u16) Io.net.Ip4Address
 std.Io.net.Ip4Address.unspecified	fn	fn (u16) Io.net.Ip4Address
 std.Io.net.Ip4Address.fromIp6	fn	fn (Io.net.Ip6Address) ?Io.net.Ip4Address
-std.Io.net.Ip4Address.fromAny	fn	fn (Io.net.IpAddress) ?Io.net.Ip6Address
+std.Io.net.Ip4Address.fromAny	fn	fn (Io.net.IpAddress) ?Io.net.Ip4Address
 std.Io.net.Ip4Address.ParseError	type	error{Incomplete,InvalidCharacter,InvalidEnd,NonCanonical,Overflow}
 std.Io.net.Ip4Address.parse	fn	fn ([]const u8, u16) error{Incomplete,InvalidCharacter,InvalidEnd,NonCanonical,Overflow}!Io.net.Ip4Address
 std.Io.net.Ip4Address.format	fn	fn (Io.net.Ip4Address, *Io.Writer) error{WriteFailed}!void
@@ -5674,7 +5672,7 @@ std.c.MREMAP	type	os.linux.MREMAP
 std.c.MAP_FAILED	const_other	*anyopaque
 std.c.cc_t	type	u8
 std.c.V	type	os.linux.V__enum
-std.c.NCCS	const_int	19
+std.c.NCCS	const_int	32
 std.c.termios	type	os.linux.termios__struct
 std.c.tc_iflag_t	type	os.linux.tc_iflag_t__struct
 std.c.tc_oflag_t	type	os.linux.tc_oflag_t__struct
@@ -11055,6 +11053,7 @@ std.http.Status	type	http.Status
 std.http.TransferEncoding	type	http.TransferEncoding
 std.http.ContentEncoding	type	http.ContentEncoding
 std.http.Connection	type	http.Connection
+std.http.Side	type	http.Side
 std.http.Header	type	http.Header
 std.http.Reader	type	http.Reader
 std.http.Decompress	type	http.Decompress
@@ -20440,7 +20439,7 @@ std.zig.AstRlAnnotate.RlNeededSet.containsAdapted	fn	fn (hash_map.Custom(zig.Ast
 std.zig.AstRlAnnotate.RlNeededSet.remove	fn	fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), zig.Ast.Node.Index) bool
 std.zig.AstRlAnnotate.RlNeededSet.removeContext	fn	fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), zig.Ast.Node.Index, hash_map.AutoContext(zig.Ast.Node.Index)) bool
 std.zig.AstRlAnnotate.RlNeededSet.removeAdapted	fn	fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), anytype, anytype) bool
-std.zig.AstRlAnnotate.RlNeededSet.removeByPtr	fn	fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), *zig.Ast.Node.Index) void
+std.zig.AstRlAnnotate.RlNeededSet.removeByPtr	fn	fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), *const zig.Ast.Node.Index) void
 std.zig.AstRlAnnotate.RlNeededSet.clone	fn	fn (hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), mem.Allocator) error{OutOfMemory}!hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80)
 std.zig.AstRlAnnotate.RlNeededSet.cloneContext	fn	fn (hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80), mem.Allocator, anytype) anytype
 std.zig.AstRlAnnotate.RlNeededSet.move	fn	fn (*hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80)) hash_map.Custom(zig.Ast.Node.Index,void,hash_map.AutoContext(zig.Ast.Node.Index),80)
@@ -20704,9 +20703,9 @@ std.zig.llvm.Builder.toBitcode	fn	fn (*zig.llvm.Builder, mem.Allocator, zig.llvm
 std.zig.llvm.Builder.DataLayout.stringForTarget	fn	fn (*const Target) []const u8
 std.zig.llvm.Builder.DataLayout.parseString	fn	fn (zig.llvm.Builder.String, *zig.llvm.Builder) error{OutOfMemory}!zig.llvm.Builder.DataLayout
 std.zig.llvm.Builder.DataLayout.deinit	fn	fn (*zig.llvm.Builder.DataLayout, mem.Allocator) void
-std.zig.llvm.Builder.DataLayout.getIntegerSpec	fn	fn (*const zig.llvm.Builder.DataLayout, u20) zig.llvm.Builder.DataLayout.PrimitiveSpec
-std.zig.llvm.Builder.DataLayout.getFloatSpec	fn	fn (*const zig.llvm.Builder.DataLayout, u20) zig.llvm.Builder.DataLayout.PrimitiveSpec
-std.zig.llvm.Builder.DataLayout.getVectorSpec	fn	fn (*const zig.llvm.Builder.DataLayout, u20, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
+std.zig.llvm.Builder.DataLayout.getIntegerSpec	fn	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
+std.zig.llvm.Builder.DataLayout.getFloatSpec	fn	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
+std.zig.llvm.Builder.DataLayout.getVectorSpec	fn	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.Type.Size) zig.llvm.Builder.DataLayout.PrimitiveSpec
 std.zig.llvm.Builder.DataLayout.getPointerSpec	fn	fn (*const zig.llvm.Builder.DataLayout, zig.llvm.Builder.AddrSpace) zig.llvm.Builder.DataLayout.PointerSpec
 std.zig.llvm.Builder.String.isAnon	fn	fn (zig.llvm.Builder.String) bool
 std.zig.llvm.Builder.String.slice	fn	fn (zig.llvm.Builder.String, *const zig.llvm.Builder) ?[]const u8
@@ -20754,6 +20753,8 @@ std.zig.llvm.Builder.Type.targetLayoutType	fn	fn (zig.llvm.Builder.Type, *const 
 std.zig.llvm.Builder.Type.isSized	fn	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) error{OutOfMemory}!bool
 std.zig.llvm.Builder.Type.fmt	fn	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder, zig.llvm.Builder.Type.FormatData.Mode) fmt.Alt(zig.llvm.Builder.Type.FormatData,(function 'format'))
 std.zig.llvm.Builder.Type.bits	fn	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Size
+std.zig.llvm.Builder.Type.storeSize	fn	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Size
+std.zig.llvm.Builder.Type.allocSize	fn	fn (zig.llvm.Builder.Type, *const zig.llvm.Builder) zig.llvm.Builder.Type.Size
 std.zig.llvm.Builder.Type.alignment	fn	fn (zig.llvm.Builder.Type, zig.llvm.Builder.Type.alignment__enum, *const zig.llvm.Builder) zig.llvm.Builder.Alignment
 std.zig.llvm.Builder.Type.Function.Kind	type	zig.llvm.Builder.Type.Function.Kind
 std.zig.llvm.Builder.Type.Vector.Kind	type	zig.llvm.Builder.Type.Vector.Kind
@@ -20907,6 +20908,8 @@ std.zig.llvm.Builder.ExternallyInitialized.format	fn	fn (zig.llvm.Builder.Extern
 std.zig.llvm.Builder.Alignment.Lazy	type	zig.llvm.Builder.Alignment.Lazy
 std.zig.llvm.Builder.Alignment.fromByteUnits	fn	fn (u64) zig.llvm.Builder.Alignment
 std.zig.llvm.Builder.Alignment.toByteUnits	fn	fn (zig.llvm.Builder.Alignment) ?u64
+std.zig.llvm.Builder.Alignment.forward	fn	fn (zig.llvm.Builder.Alignment, u64) u64
+std.zig.llvm.Builder.Alignment.check	fn	fn (zig.llvm.Builder.Alignment, u64) bool
 std.zig.llvm.Builder.Alignment.max	fn	fn (zig.llvm.Builder.Alignment, zig.llvm.Builder.Alignment) zig.llvm.Builder.Alignment
 std.zig.llvm.Builder.Alignment.order	fn	fn (zig.llvm.Builder.Alignment, zig.llvm.Builder.Alignment) math.Order
 std.zig.llvm.Builder.Alignment.toLlvm	fn	fn (zig.llvm.Builder.Alignment) u6
@@ -21100,7 +21103,7 @@ std.zig.llvm.Builder.WipFunction.cmpxchg	fn	fn (*zig.llvm.Builder.WipFunction, z
 std.zig.llvm.Builder.WipFunction.atomicrmw	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.MemoryAccessKind, zig.llvm.Builder.Function.Instruction.AtomicRmw.Operation, zig.llvm.Builder.Value, zig.llvm.Builder.Value, zig.llvm.Builder.SyncScope, zig.llvm.Builder.AtomicOrdering, zig.llvm.Builder.Alignment, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.gep	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Constant.GetElementPtr.Kind, zig.llvm.Builder.Type, zig.llvm.Builder.Value, []const zig.llvm.Builder.Value, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.gepStruct	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Type, zig.llvm.Builder.Value, usize, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
-std.zig.llvm.Builder.WipFunction.conv	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Constant.Cast.Signedness, zig.llvm.Builder.Value, zig.llvm.Builder.Type, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
+std.zig.llvm.Builder.WipFunction.conv	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Constant.Cast.Signedness, zig.llvm.Builder.Value, zig.llvm.Builder.Constant.Cast.Signedness, zig.llvm.Builder.Type, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.cast	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.Function.Instruction.Tag, zig.llvm.Builder.Value, zig.llvm.Builder.Type, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.icmp	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.IntegerCondition, zig.llvm.Builder.Value, zig.llvm.Builder.Value, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
 std.zig.llvm.Builder.WipFunction.fcmp	fn	fn (*zig.llvm.Builder.WipFunction, zig.llvm.Builder.FastMathKind, zig.llvm.Builder.FloatCondition, zig.llvm.Builder.Value, zig.llvm.Builder.Value, []const u8) error{OutOfMemory}!zig.llvm.Builder.Value
