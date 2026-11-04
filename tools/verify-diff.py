@@ -367,9 +367,12 @@ def run_tool(zephem, old, new):
     return by, human
 
 
-def section_count(human, title_prefix):
-    m = re.search(r"^## " + re.escape(title_prefix) + r".*\((\d+)\)", human, re.M)
-    return int(m.group(1)) if m else None
+def section_count(human, title_prefix, pattern=r".*\((\d+)\)"):
+    # `zephem diff` omits a section that has nothing in it (a patch release often has no
+    # moves, deprecations or builtin changes), so an absent heading means 0. A section the
+    # tool wrongly drops still fails: the independent count is then non-zero.
+    m = re.search(r"^## " + re.escape(title_prefix) + pattern, human, re.M)
+    return int(m.group(1)) if m else 0
 
 
 # ------------------------------------------------------------------ main ------------
@@ -432,7 +435,7 @@ def main():
     mt = re.search(r"(\d+) of them enum tags", human)
     check("human header: enum tags", len(me["tags_r"]) + len(me["tags_a"]), int(mt.group(1)) if mt else 0)
     check("human: moved section", len(me["moves"]), section_count(human, "moved"))
-    check("human: enum tag sets", len(me["enums"]), int(re.search(r"^## enum tag sets \((\d+) enums\)", human, re.M).group(1)))
+    check("human: enum tag sets", len(me["enums"]), section_count(human, "enum tag sets", r" \((\d+) enums\)"))
     check("human: deprecations", len(me["newly"]) + len(me["lifted"]) + len(me["dep_removed"]), section_count(human, "deprecations"))
     check("human: builtins", len(me["b_added"]) + len(me["b_removed"]) + len(me["b_changed"]) + len(me["b_doc"]), section_count(human, "builtins"))
     check("human: resolved values", len(me["values"]), section_count(human, "resolved values"))
@@ -440,7 +443,7 @@ def main():
     check("human: doc changes", len(me["docs"]), int(md.group(1)) if md else 0)
     check("human: doc changes flagged", sum(me["docs"].values()), int(md.group(2)) if md else 0)
     check("human: aliases", len(me["a_retarget"]) + len(me["a_gained"]) + len(me["a_lost"]), section_count(human, "aliases and delegations changed"))
-    check("human: platform variants", len(me["v_consts"]), section_count(human, "platform variants") or 0)
+    check("human: platform variants", len(me["v_consts"]), section_count(human, "platform variants"))
     mv_from = {f for f, _, _ in me["moves"]}
     check("human: removed listed = removed − tags − moves", len(me["removed"]) - len(me["tags_r"]) - len(mv_from & me["removed"]), section_count(human, "removed"))
     mv_to = {t for _, t, _ in me["moves"]}
