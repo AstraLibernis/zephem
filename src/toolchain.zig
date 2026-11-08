@@ -28,10 +28,10 @@ pub fn probe(c: Ctx) !Env {
     const out = try proc.capture(c.a, c.io, &.{ zigExe(c), "env" });
     if (out.exit_code != 0) return Error.ZigEnvFailed;
     return .{
-        .zig_exe = scanField(out.stdout, "zig_exe") orelse zigExe(c),
-        .std_dir = scanField(out.stdout, "std_dir") orelse return Error.StdDirMissing,
-        .version = scanField(out.stdout, "version") orelse return Error.VersionMissing,
-        .target = scanField(out.stdout, "target") orelse "",
+        .zig_exe = try scanField(c.a, out.stdout, "zig_exe") orelse zigExe(c),
+        .std_dir = try scanField(c.a, out.stdout, "std_dir") orelse return Error.StdDirMissing,
+        .version = try scanField(c.a, out.stdout, "version") orelse return Error.VersionMissing,
+        .target = try scanField(c.a, out.stdout, "target") orelse "",
     };
 }
 
@@ -69,12 +69,20 @@ pub fn staleness(c: Ctx, data_dir: []const u8) !?[]const u8 {
     return null;
 }
 
-/// Read the value of a `.<key> = "<value>"` field out of ZON text; null if absent.
-fn scanField(text: []const u8, key: []const u8) ?[]const u8 {
+/// Read the value of a `.<key> = "<value>"` field out of ZON text, with its string escapes
+/// decoded (Windows paths arrive as `C:\\Users\\…`); null if absent. Caller frees (arena).
+pub fn scanField(a: std.mem.Allocator, text: []const u8, key: []const u8) error{ OutOfMemory, ZigEnvFailed }!?[]const u8 {
     var needle_buf: [64]u8 = undefined;
     const needle = std.mem.print(&needle_buf, ".{s} = \"", .{key}) catch return null;
     const at = std.mem.find(u8, text, needle) orelse return null;
-    const start = at + needle.len;
-    const end = std.mem.findScalarPos(u8, text, start, '"') orelse return null;
-    return text[start..end];
+    const start = at + needle.len - 1; // keep the opening quote: parseAlloc takes the literal
+    var i = start + 1;
+    while (i < text.len and text[i] != '"') : (i += 1) {
+        if (text[i] == '\\') i += 1; // skip the escaped char, so `\"` doesn't end the literal
+    }
+    if (i >= text.len) return null;
+    return std.zig.string_literal.parseAlloc(a, text[start .. i + 1]) catch |e| switch (e) {
+        error.OutOfMemory => error.OutOfMemory,
+        error.InvalidLiteral => error.ZigEnvFailed,
+    };
 }

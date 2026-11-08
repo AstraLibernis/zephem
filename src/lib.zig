@@ -20,3 +20,4 @@ pub const query = @import("query.zig");
 pub const pkg = @import("pkg.zig");
 pub const snapshot = @import("snapshot.zig");
 pub const diff = @import("diff.zig");
+pub const depth = @import("depth.zig");

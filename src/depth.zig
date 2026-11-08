@@ -511,10 +511,30 @@ fn firstErrorLine(stderr: []const u8) []const u8 {
 }
 
 /// Render a poison reason location-independent: the scratch file → `<gen>`, the std dir → `std/`.
-fn normReason(a: std.mem.Allocator, reason: []const u8, std_dir: []const u8, rfile: []const u8) []const u8 {
-    const std_prefix = a.print("{s}/", .{std_dir}) catch return reason;
-    const s1 = replaceAll(a, reason, rfile, "<gen>") catch reason;
+/// Separators are compared and written as `/`, so a Windows sweep (`C:\…\std\x.zig:1:2: error`)
+/// yields the same rows as a Linux one; only the leading location is touched, never the message.
+pub fn normReason(a: std.mem.Allocator, reason: []const u8, std_dir: []const u8, rfile: []const u8) []const u8 {
+    const r0 = slashLocation(a, reason);
+    const std_prefix = a.print("{s}/", .{slashed(a, std_dir)}) catch return r0;
+    const s1 = replaceAll(a, r0, slashed(a, rfile), "<gen>") catch r0;
     return dropGenLocation(a, replaceAll(a, s1, std_prefix, "std/") catch s1);
+}
+
+/// `s` with every `\` turned into `/`; `s` itself when it has none (or on OOM).
+fn slashed(a: std.mem.Allocator, s: []const u8) []const u8 {
+    if (std.mem.findScalar(u8, s, '\\') == null) return s;
+    const out = a.dupe(u8, s) catch return s;
+    std.mem.replaceScalar(u8, out, '\\', '/');
+    return out;
+}
+
+/// The leading `path:L:C` of a compiler error line (everything before the first `": "`) with its
+/// separators slashed; the message after it is left exactly as the compiler wrote it.
+fn slashLocation(a: std.mem.Allocator, reason: []const u8) []const u8 {
+    const end = std.mem.find(u8, reason, ": ") orelse return reason;
+    const loc = slashed(a, reason[0..end]);
+    if (loc.ptr == reason.ptr) return reason;
+    return a.print("{s}{s}", .{ loc, reason[end..] }) catch reason;
 }
 
 /// `<gen>:32:55: error: …` → `<gen>: error: …`. The line and column point into the generated

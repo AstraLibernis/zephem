@@ -983,7 +983,7 @@ fn emitImport(w: *W, ast: *const Ast, init: Ast.Node.Index, init_src: []const u8
         try w.file_home.put(abs, cp);
         try w.node(cp, "ns", name, vis); // read stays `nserr` and can be retried elsewhere
         const child_dir = std.fs.path.dirname(abs) orelse ".";
-        try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, relOf(w, abs));
+        try walk(w, child, child.rootDecls(), cp, "struct", child_dir, depth + 1, try relOf(w, abs));
     } else {
         try declFacts(w, cp, decl_loc, decl_doc);
         try w.node(cp, "nserr", name, vis);
@@ -1237,10 +1237,16 @@ fn locOf(w: *W, ast: *const Ast, node: Ast.Node.Index, rel: []const u8) ![]const
     const off = ast.tokens.items(.start)[ast.firstToken(node)];
     return std.fmt.allocPrint(w.arena, "{s}:{d}", .{ rel, try lineOf(w, ast.source, rel, off) });
 }
-fn relOf(w: *W, abs: []const u8) []const u8 {
+/// `abs` relative to the std root, always with `/` separators so the map is the same on every
+/// host OS (Windows joins paths with `\`). Outside the root: `abs` unchanged.
+fn relOf(w: *W, abs: []const u8) ![]const u8 {
     if (std.mem.startsWith(u8, abs, w.root_dir) and abs.len > w.root_dir.len) {
-        const r = abs[w.root_dir.len..];
-        return if (r.len > 0 and r[0] == '/') r[1..] else r;
+        var r = abs[w.root_dir.len..];
+        if (r.len > 0 and (r[0] == '/' or r[0] == '\\')) r = r[1..];
+        if (std.mem.findScalar(u8, r, '\\') == null) return r;
+        const out = try w.arena.dupe(u8, r);
+        std.mem.replaceScalar(u8, out, '\\', '/');
+        return out;
     }
     return abs;
 }
@@ -1302,7 +1308,7 @@ fn scopeFiles(w: *W) !void {
         if (w.node_set.contains(fp)) continue; // a declaration really named so: leave it
         try w.visited.put(d.abs, {});
         try w.file_home.put(d.abs, fp);
-        const rel = relOf(w, d.abs);
+        const rel = try relOf(w, d.abs);
         try w.attr(fp, "loc", try std.fmt.allocPrint(w.arena, "{s}:1", .{rel}));
         try w.attr(fp, "doc", try fileDoc(w, ast));
         try w.node(fp, "ns", fname, "priv");
@@ -1315,7 +1321,7 @@ fn scopeFiles(w: *W) !void {
             const dn = declName(ast, m) orelse "";
             // (a home seeded from an earlier pass may be right here, under `fp`: that one is walked)
             const here = try std.fmt.allocPrint(w.arena, "{s}.{s}", .{ fp, dn });
-            if (w.selected.get(try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, d.abs), dn }))) |home| if (!std.mem.eql(u8, home, here)) {
+            if (w.selected.get(try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ try relOf(w, d.abs), dn }))) |home| if (!std.mem.eql(u8, home, here)) {
                 try w.lexical_names.put(here, home);
                 continue;
             };
@@ -1373,7 +1379,7 @@ fn sweepImports(w: *W) !void {
             if (w.node_set.contains(fp)) continue;
             try w.visited.put(abs2, {});
             try w.file_home.put(abs2, fp);
-            const rel2 = relOf(w, abs2);
+            const rel2 = try relOf(w, abs2);
             try w.attr(fp, "loc", try std.fmt.allocPrint(w.arena, "{s}:1", .{rel2}));
             try w.attr(fp, "doc", try fileDoc(w, child));
             try w.node(fp, "ns", fname, "priv");
@@ -1417,12 +1423,12 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
     };
     const found = findDecl(ast, ast.rootDecls(), sel) orelse return leaf(w, cp, name, vis, sel, decl_loc, decl_doc);
     const dir = std.fs.path.dirname(abs) orelse ".";
-    const rel = relOf(w, abs);
+    const rel = try relOf(w, abs);
     // `Sel` is defined in this file (not re-imported from another): its names are this file's
     // names, and the rest of the file has no other home yet. Settled after the walk (`scopeFiles`).
     // One home per declaration: selected again (`Ristretto255.Curve` and `Edwards25519` are the
     // same `Edwards25519` of edwards25519.zig), it is an alias of its home (`homeOf`).
-    const key = try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ relOf(w, abs), sel });
+    const key = try std.fmt.allocPrint(w.arena, "{s}\x00{s}", .{ try relOf(w, abs), sel });
     if (try homeOf(w, key, cp, std.mem.eql(u8, vis, "pub"), !std.mem.eql(u8, name, sel))) |home| return leaf(w, cp, name, vis, home, decl_loc, decl_doc);
     const via_import = if (ast.fullVarDecl(found)) |fvd| if (fvd.ast.init_node.unwrap()) |ini| importTarget(ast.getNodeSource(ini)) != null else false else false;
     if (!via_import) try w.deferred.append(w.arena, .{ .sel_path = cp, .abs = abs, .sel = sel, .owner = parent(cp), .depth = depth });
@@ -1469,7 +1475,7 @@ fn emitReexport(w: *W, abs: []const u8, sel: []const u8, cp: []const u8, name: [
                 try w.visited.put(abs2, {}); // mark visited only on a successful parse
                 try w.file_home.put(abs2, cp);
                 try w.node(cp, "ns", name, vis);
-                try walk(w, c2, c2.rootDecls(), cp, "struct", std.fs.path.dirname(abs2) orelse ".", depth + 1, relOf(w, abs2));
+                try walk(w, c2, c2.rootDecls(), cp, "struct", std.fs.path.dirname(abs2) orelse ".", depth + 1, try relOf(w, abs2));
             } else try w.node(cp, "nserr", name, vis);
             return;
         }
