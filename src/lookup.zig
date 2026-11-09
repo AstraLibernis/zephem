@@ -131,8 +131,17 @@ pub fn bake(c: Ctx, dir: []const u8, out_path: []const u8) !usize {
     const b = try build(c, dir);
     const out_dir = std.fs.path.dirname(out_path) orelse ".";
     try std.Io.Dir.cwd().createDirPath(c.io, out_dir);
-    try rel.writeFile(b.table, c.io, out_path);
-    try util.writeFile(c.io, try std.fs.path.join(c.a, &.{ out_dir, "examples.tsv" }), b.examples);
+    // Written beside and renamed into place: zcanon memory-maps lookup.tsv on every hook run,
+    // and truncating a mapped file in place pulls it out from under the reader (SIGBUS on
+    // Linux); a reader of the old file keeps it until it closes.
+    const cwd = std.Io.Dir.cwd();
+    const table_tmp = try c.a.print("{s}.tmp", .{out_path});
+    try rel.writeFile(b.table, c.io, table_tmp);
+    try cwd.rename(table_tmp, cwd, out_path, c.io);
+    const ex_path = try std.fs.path.join(c.a, &.{ out_dir, "examples.tsv" });
+    const ex_tmp = try c.a.print("{s}.tmp", .{ex_path});
+    try util.writeFile(c.io, ex_tmp, b.examples);
+    try cwd.rename(ex_tmp, cwd, ex_path, c.io);
     // the stamp last: a bake interrupted before this point is not trusted next time
     try util.writeFile(c.io, try std.fs.path.join(c.a, &.{ out_dir, "lookup.stamp" }), try expectedStamp(c, dir));
     return b.table.rows.len;

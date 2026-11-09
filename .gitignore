@@ -6,5 +6,8 @@ zig-cache/
 data/lookup.tsv
 data/examples.tsv
 data/lookup.stamp
+data/*.tmp
+# `zig env`'s version + target, cached by `map` keyed on the zig binary and host
+data/toolchain.cache
 # `zephem deps` maps of third-party packages: derived from their source, never committed
 data/deps/

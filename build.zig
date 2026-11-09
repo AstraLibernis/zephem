@@ -113,6 +113,7 @@ pub fn build(b: *std.Build) void {
         "src/test/pkg_test.zig",
         "src/test/diff_test.zig",
         "src/test/portability_test.zig",
+        "src/test/toolchain_test.zig",
     }) |tf| {
         const t = b.addTest(.{ .root_module = b.createModule(.{
             .root_source_file = b.path(tf),
@@ -143,6 +144,7 @@ pub fn build(b: *std.Build) void {
         "src/test/pkg_test.zig",
         "src/test/diff_test.zig",
         "src/test/portability_test.zig",
+        "src/test/toolchain_test.zig",
     }) |tf| {
         const t = b.addTest(.{
             .root_module = b.createModule(.{
