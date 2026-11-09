@@ -7,7 +7,7 @@ const std = @import("std");
 
 /// Join a directory and a relative subpath (the one-line wrapper reimplemented ~7×).
 pub fn join(a: std.mem.Allocator, dir: []const u8, sub: []const u8) ![]const u8 {
-    return std.fs.path.join(a, &.{ dir, sub });
+    return std.Io.Dir.path.join(a, &.{ dir, sub });
 }
 
 /// Write raw bytes to `path`, creating/truncating it.

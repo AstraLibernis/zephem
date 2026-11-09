@@ -53,7 +53,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
-    const zon_path = try std.fs.path.join(a, &.{ project, "build.zig.zon" });
+    const zon_path = try std.Io.Dir.path.join(a, &.{ project, "build.zig.zon" });
     const zon = std.Io.Dir.cwd().readFileAllocOptions(c.io, zon_path, a, .unlimited, .of(u8), 0) catch |e| {
         try argv.diag(c, "zephem deps: cannot read {s} ({s}) — is {s} a Zig project?\n", .{ zon_path, @errorName(e), project });
         std.process.exit(2);
@@ -75,9 +75,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     while (head < queue.items.len) : (head += 1) {
         const p = queue.items[head];
         const dir = if (p.dep.hash) |h|
-            try std.fs.path.join(a, &.{ project, "zig-pkg", h })
+            try std.Io.Dir.path.join(a, &.{ project, "zig-pkg", h })
         else
-            try std.fs.path.resolveAlloc(a, &.{ p.manifest_dir, p.dep.path.? });
+            try std.Io.Dir.path.resolveAlloc(a, &.{ p.manifest_dir, p.dep.path.? });
         if ((try seen.getOrPut(dir)).found_existing) continue;
 
         if (!exists(c, dir)) {
@@ -86,12 +86,12 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
             continue;
         }
         // its own dependencies
-        const sub_zon = try std.fs.path.join(a, &.{ dir, "build.zig.zon" });
+        const sub_zon = try std.Io.Dir.path.join(a, &.{ dir, "build.zig.zon" });
         if (std.Io.Dir.cwd().readFileAllocOptions(c.io, sub_zon, a, .unlimited, .of(u8), 0)) |bytes| {
             for (pkg.depsOf(a, bytes) catch &.{}) |d| try queue.append(a, .{ .dep = d, .manifest_dir = dir });
         } else |_| {}
 
-        const build_zig = try std.fs.path.join(a, &.{ dir, "build.zig" });
+        const build_zig = try std.Io.Dir.path.join(a, &.{ dir, "build.zig" });
         const build_src = std.Io.Dir.cwd().readFileAllocOptions(c.io, build_zig, a, .unlimited, .of(u8), 0) catch {
             try w.print("  {s}: no build.zig — nothing exported to map\n", .{p.dep.name});
             continue;
@@ -106,14 +106,14 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         // fetch) would answer for the same paths (`clap.parse`) and `map doc` would pick one
         // silently. It is replaced.
         for (try otherVersions(c, out_root, p.dep.name, key)) |old| {
-            try std.Io.Dir.cwd().deleteTree(c.io, try std.fs.path.join(a, &.{ out_root, old }));
+            try std.Io.Dir.cwd().deleteTree(c.io, try std.Io.Dir.path.join(a, &.{ out_root, old }));
             try w.print("  {s}: replaced the map of an older version ({s})\n", .{ p.dep.name, old });
         }
         for (modules) |m| {
-            const out = try std.fs.path.join(a, &.{ out_root, key, m.name });
-            const root = try std.fs.path.join(a, &.{ dir, m.root });
+            const out = try std.Io.Dir.path.join(a, &.{ out_root, key, m.name });
+            const root = try std.Io.Dir.path.join(a, &.{ dir, m.root });
             if (try mapModule(c, m.name, root, out)) |n| {
-                try util.writeFile(c.io, try std.fs.path.join(a, &.{ out, "SOURCE" }), try a.print(
+                try util.writeFile(c.io, try std.Io.Dir.path.join(a, &.{ out, "SOURCE" }), try a.print(
                     \\package {s}
                     \\{s} {s}
                     \\module {s}
@@ -143,18 +143,18 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 fn mapModule(c: Ctx, name: []const u8, root: []const u8, out: []const u8) !?usize {
     const a = c.a;
     std.Io.Dir.cwd().deleteTree(c.io, out) catch {}; // zsnag:ok — a previous map of this module is replaced; if it is absent there is nothing to delete
-    try std.Io.Dir.cwd().createDirPath(c.io, try std.fs.path.join(a, &.{ out, "extracted" }));
-    try std.Io.Dir.cwd().createDirPath(c.io, try std.fs.path.join(a, &.{ out, "derived" }));
-    const nodes = try std.fs.path.join(a, &.{ out, "extracted/nodes.tsv" });
-    const stats = try parse.runNamed(a, c.io, root, name, nodes, try std.fs.path.join(a, &.{ out, "extracted/edges.tsv" }), try std.fs.path.join(a, &.{ out, "extracted/attrs.tsv" }), false);
-    _ = try derive_index.run(a, c.io, nodes, try std.fs.path.join(a, &.{ out, "derived/index.tsv" }));
+    try std.Io.Dir.cwd().createDirPath(c.io, try std.Io.Dir.path.join(a, &.{ out, "extracted" }));
+    try std.Io.Dir.cwd().createDirPath(c.io, try std.Io.Dir.path.join(a, &.{ out, "derived" }));
+    const nodes = try std.Io.Dir.path.join(a, &.{ out, "extracted/nodes.tsv" });
+    const stats = try parse.runNamed(a, c.io, root, name, nodes, try std.Io.Dir.path.join(a, &.{ out, "extracted/edges.tsv" }), try std.Io.Dir.path.join(a, &.{ out, "extracted/attrs.tsv" }), false);
+    _ = try derive_index.run(a, c.io, nodes, try std.Io.Dir.path.join(a, &.{ out, "derived/index.tsv" }));
     if (!try verify.runShape(c, out)) {
         std.Io.Dir.cwd().deleteTree(c.io, out) catch {}; // zsnag:ok — best effort; a leftover without SHA256SUMS is never queried
         return null;
     }
     var entries: [dataset_names.len]manifest.Entry = undefined;
-    for (dataset_names, 0..) |n, k| entries[k] = .{ .path = n, .hex = try manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ out, n })) };
-    try manifest.writeManifest(c.io, &entries, try std.fs.path.join(a, &.{ out, "SHA256SUMS" }));
+    for (dataset_names, 0..) |n, k| entries[k] = .{ .path = n, .hex = try manifest.sha256File(c.io, a, try std.Io.Dir.path.join(a, &.{ out, n })) };
+    try manifest.writeManifest(c.io, &entries, try std.Io.Dir.path.join(a, &.{ out, "SHA256SUMS" }));
     return stats.nodes;
 }
 
@@ -168,13 +168,13 @@ fn otherVersions(c: Ctx, root: []const u8, name: []const u8, keep: []const u8) !
     var it = top.iterate();
     while (try it.next(c.io)) |e| {
         if (e.kind != .directory or std.mem.eql(u8, e.name, keep)) continue;
-        const pkg_dir = try std.fs.path.join(a, &.{ root, e.name });
+        const pkg_dir = try std.Io.Dir.path.join(a, &.{ root, e.name });
         var pd = std.Io.Dir.cwd().openDir(c.io, pkg_dir, .{ .iterate = true }) catch continue;
         defer pd.close(c.io);
         var mit = pd.iterate();
         while (try mit.next(c.io)) |m| {
             if (m.kind != .directory) continue;
-            const source = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(a, &.{ pkg_dir, m.name, "SOURCE" }), a, .unlimited) catch continue;
+            const source = std.Io.Dir.cwd().readFileAlloc(c.io, try std.Io.Dir.path.join(a, &.{ pkg_dir, m.name, "SOURCE" }), a, .unlimited) catch continue;
             if (std.mem.startsWith(u8, source, want)) {
                 try out.append(a, try a.dupe(u8, e.name));
                 break;

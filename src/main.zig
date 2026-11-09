@@ -42,9 +42,8 @@ const usage =
 ;
 
 pub fn main(init: std.process.Init) !void {
-    var arena_state = std.heap.ArenaAllocator.init(std.heap.page_allocator); // zsnag:ok — R009: the arena's backing allocator, not a general one
-    defer arena_state.deinit();
-    const arena = arena_state.allocator();
+    // The process arena std sets up for `main`; it is freed at exit.
+    const arena = init.arena.allocator();
 
     const c = Ctx{ .a = arena, .io = init.io, .env = init.environ_map };
     const args = try init.minimal.args.toSlice(arena);

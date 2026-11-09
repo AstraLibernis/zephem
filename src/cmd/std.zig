@@ -70,11 +70,11 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     const data_dir = try vars.dataDir(c);
     const env = try toolchain.probe(c);
-    const root = try std.fs.path.join(c.a, &.{ env.std_dir, "std.zig" });
+    const root = try std.Io.Dir.path.join(c.a, &.{ env.std_dir, "std.zig" });
     const zver = env.version;
     const scratch = try scratchDir(c);
     defer std.Io.Dir.cwd().deleteTree(c.io, scratch) catch {}; // zsnag:ok — best-effort cleanup of this run's own dir; nothing reads it after
-    const src: Sources = .{ .root = root, .builtin_fn = try std.fs.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env), .zig_exe = env.zig_exe, .zig_version = zver, .scratch = scratch };
+    const src: Sources = .{ .root = root, .builtin_fn = try std.Io.Dir.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env), .zig_exe = env.zig_exe, .zig_version = zver, .scratch = scratch };
 
     var buf: [4096]u8 = undefined;
     var ow = std.Io.File.stdout().writerStreaming(c.io, &buf);
@@ -123,9 +123,9 @@ const Sources = struct { root: []const u8, builtin_fn: []const u8, langref: ?[]c
 /// `doc/langref.html` beside the toolchain's `lib/` (the layout of the official tarballs), or
 /// null when this install has no docs.
 fn langrefPath(c: Ctx, env: toolchain.Env) ?[]const u8 {
-    const lib = std.fs.path.dirname(env.std_dir) orelse return null;
-    const prefix = std.fs.path.dirname(lib) orelse return null;
-    const p = std.fs.path.join(c.a, &.{ prefix, "doc", "langref.html" }) catch return null;
+    const lib = std.Io.Dir.path.dirname(env.std_dir) orelse return null;
+    const prefix = std.Io.Dir.path.dirname(lib) orelse return null;
+    const p = std.Io.Dir.path.join(c.a, &.{ prefix, "doc", "langref.html" }) catch return null;
     std.Io.Dir.cwd().access(c.io, p, .{}) catch return null;
     return p;
 }
@@ -154,8 +154,8 @@ fn buildExtractor(c: Ctx, src: Sources) ![]const u8 {
     try std.Io.Dir.cwd().createDirPath(c.io, dir);
     const bin = try join(c.a, src.scratch, "walk"); // per run: a concurrent run must not replace the binary this one runs
     try runChecked(c, &.{
-        src.zig_exe,                                          "build-exe",
-        "-OReleaseSafe",                                      try vars.repoFile(c, "parse/main.zig"),
+        src.zig_exe,                             "build-exe",
+        "-OReleaseSafe",                         try vars.repoFile(c, "parse/main.zig"),
         try c.a.print("-femit-bin={s}", .{bin}), "--cache-dir",
         try join(c.a, dir, "cache"),
     }, "building the extractor");

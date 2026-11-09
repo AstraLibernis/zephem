@@ -1316,9 +1316,9 @@ fn tsv(w: *std.Io.Writer, r: Result, kept: []const Change, o: Options) !void {
     for (r.aliases) |al| {
         if (!inScope(al.path, o)) continue;
         try w.print("alias_{t}\textracted\t{s}\t{s}\t{s}\t{s}\t{s}\t{s}\n", .{
-            al.state,                                 al.path,
-            if (al.old) |x| x.edge else "",           if (al.new) |x| x.edge else "",
-            if (al.old) |x| x.target else "",         if (al.new) |x| x.target else "",
+            al.state,                                    al.path,
+            if (al.old) |x| x.edge else "",              if (al.new) |x| x.edge else "",
+            if (al.old) |x| x.target else "",            if (al.new) |x| x.target else "",
             if (al.target_moved) "target_moved" else "",
         });
     }

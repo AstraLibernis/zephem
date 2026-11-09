@@ -124,7 +124,6 @@ const dl_zig =
     \\
 ;
 
-
 // Imports where no declaration names a file, and other shapes of const.
 const plat_zig =
     \\const builtin = @import("builtin");
@@ -231,7 +230,7 @@ fn extract(a: std.mem.Allocator, io: std.Io, tmp: std.testing.TmpDir) !Out {
     const base = try tmp.dir.realPathFileAlloc(io, ".", a);
     const p = struct {
         fn at(al: std.mem.Allocator, dir: []const u8, name: []const u8) ![]const u8 {
-            return std.fs.path.join(al, &.{ dir, name });
+            return std.Io.Dir.path.join(al, &.{ dir, name });
         }
     }.at;
     const stats = try parse.runNamed(a, io, try p(a, base, "std.zig"), "std", try p(a, base, "nodes.tsv"), try p(a, base, "edges.tsv"), try p(a, base, "attrs.tsv"), false);

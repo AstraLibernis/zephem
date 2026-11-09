@@ -65,11 +65,11 @@ test "resolveZig follows PATH order, honours a $ZIG path, and refuses an ambiguo
     for ([_][]const u8{ "empty", "x", "y", "amb" }) |d| try tmp.dir.createDirPath(testing.io, d);
     try putExe(tmp.dir, "x/" ++ zig_name, "first");
     try putExe(tmp.dir, "y/" ++ zig_name, "second binary");
-    const base = try std.fs.path.join(a, &.{ ".zig-cache", "tmp", &tmp.sub_path });
-    const d: []const u8 = &.{std.fs.path.delimiter};
+    const base = try std.Io.Dir.path.join(a, &.{ ".zig-cache", "tmp", &tmp.sub_path });
+    const d: []const u8 = &.{std.Io.Dir.path.delimiter};
     const dir = struct {
         fn of(al: std.mem.Allocator, b: []const u8, n: []const u8) []const u8 {
-            return std.fs.path.join(al, &.{ b, n }) catch unreachable; // zsnag:ok — test arena
+            return std.Io.Dir.path.join(al, &.{ b, n }) catch unreachable; // zsnag:ok — test arena
         }
     }.of;
 
@@ -77,7 +77,7 @@ test "resolveZig follows PATH order, honours a $ZIG path, and refuses an ambiguo
     try env.put("PATH", try std.mem.concat(a, u8, &.{ dir(a, base, "empty"), d, dir(a, base, "x"), d, dir(a, base, "y") }));
     const c: Ctx = .{ .a = a, .io = testing.io, .env = &env };
     const e = tc.resolveZig(c) orelse return error.NotResolved;
-    try testing.expect(std.fs.path.isAbsolute(e.path));
+    try testing.expect(std.Io.Dir.path.isAbsolute(e.path));
     try testing.expectEqual(@as(u64, 5), e.size);
 
     // $ZIG as a path is used as given (resolved), PATH ignored

@@ -44,7 +44,7 @@ pub fn probeWith(c: Ctx, exe: []const u8) !Env {
 /// The active toolchain's std root file — `<std_dir>/std.zig`. Fails loudly (no fake default).
 pub fn stdRoot(c: Ctx) ![]const u8 {
     const env = try probe(c);
-    return std.fs.path.join(c.a, &.{ env.std_dir, "std.zig" });
+    return std.Io.Dir.path.join(c.a, &.{ env.std_dir, "std.zig" });
 }
 
 /// The installed Zig version string (e.g. "0.16.0").
@@ -69,7 +69,7 @@ pub fn stalenessCached(c: Ctx, data_dir: []const u8, cache_path: []const u8) !?[
 const LiveFrom = union(enum) { fresh, cached: []const u8 };
 
 fn pinnedWarning(c: Ctx, data_dir: []const u8, from: LiveFrom) !?[]const u8 {
-    const pinned_path = try std.fs.path.join(c.a, &.{ data_dir, "PINNED" });
+    const pinned_path = try std.Io.Dir.path.join(c.a, &.{ data_dir, "PINNED" });
     const raw = std.Io.Dir.cwd().readFileAlloc(c.io, pinned_path, c.a, .unlimited) catch {
         return try c.a.print("⚠ zephem map at {s} has no PINNED stamp — regenerate with `zephem std`.", .{data_dir});
     };
@@ -141,12 +141,12 @@ pub fn resolveZig(c: Ctx) ?Exe {
         if (inDir(c, ".")) |hit| return hit.exe;
     }
     const path_var = c.getEnv("PATH") orelse return null;
-    var it = std.mem.tokenizeScalar(u8, path_var, std.fs.path.delimiter);
+    var it = std.mem.tokenizeScalar(u8, path_var, std.Io.Dir.path.delimiter);
     while (it.next()) |dir| {
         if (builtin.os.tag == .windows) {
             if (inDir(c, dir)) |hit| return hit.exe;
         } else {
-            const p = std.fs.path.join(c.a, &.{ dir, name }) catch return null;
+            const p = std.Io.Dir.path.join(c.a, &.{ dir, name }) catch return null;
             std.Io.Dir.cwd().access(c.io, p, .{ .execute = true }) catch continue;
             return identify(c, p);
         }
@@ -162,14 +162,14 @@ fn inDir(c: Ctx, dir: []const u8) ?Hit {
     var found_exe = false;
     var found_other = false;
     for (names) |n| {
-        const p = std.fs.path.join(c.a, &.{ dir, n }) catch return .{ .exe = null };
+        const p = std.Io.Dir.path.join(c.a, &.{ dir, n }) catch return .{ .exe = null };
         const st = std.Io.Dir.cwd().statFile(c.io, p, .{}) catch continue;
         if (st.kind != .file) continue;
         if (std.mem.eql(u8, n, "zig.exe")) found_exe = true else found_other = true;
     }
     if (!found_exe and !found_other) return null;
     if (found_other) return .{ .exe = null };
-    return .{ .exe = identify(c, std.fs.path.join(c.a, &.{ dir, "zig.exe" }) catch return .{ .exe = null }) };
+    return .{ .exe = identify(c, std.Io.Dir.path.join(c.a, &.{ dir, "zig.exe" }) catch return .{ .exe = null }) };
 }
 
 fn identify(c: Ctx, p: []const u8) ?Exe {

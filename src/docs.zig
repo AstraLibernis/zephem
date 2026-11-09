@@ -281,7 +281,7 @@ fn lookupCell(a: std.mem.Allocator, t: rel.Table, key_col: []const u8, key: []co
 fn pct(num: usize, den: usize) usize {
     if (den == 0) return 0;
     const v = @as(f64, @floatFromInt(num)) * 100.0 / @as(f64, @floatFromInt(den));
-    return @intFromFloat(std.math.round(v));
+    return @round(v);
 }
 
 /// 12345 → "12,345".
@@ -310,10 +310,10 @@ fn intStr(a: std.mem.Allocator, n: usize) ![]const u8 {
 const replaceAll = util.replaceAll;
 
 fn load(c: Ctx, dir: []const u8, rel_path: []const u8) !rel.Table {
-    return rel.load(c.a, c.io, try std.fs.path.join(c.a, &.{ dir, rel_path }));
+    return rel.load(c.a, c.io, try std.Io.Dir.path.join(c.a, &.{ dir, rel_path }));
 }
 fn load_raw(c: Ctx, dir: []const u8, rel_path: []const u8) ![]u8 {
-    return std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ dir, rel_path }), c.a, .unlimited);
+    return std.Io.Dir.cwd().readFileAlloc(c.io, try std.Io.Dir.path.join(c.a, &.{ dir, rel_path }), c.a, .unlimited);
 }
 fn writeBytes(c: Ctx, path: []const u8, bytes: []const u8) !void {
     return util.writeFile(c.io, path, bytes);

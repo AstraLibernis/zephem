@@ -94,13 +94,13 @@ pub fn verifiedFiles(c: Ctx, dir: []const u8, report: *std.Io.Writer) ![]const F
 
 /// `<repo>/data/versions`.
 pub fn versionsDir(c: Ctx) ![]const u8 {
-    return std.fs.path.join(c.a, &.{ try vars.repoRoot(c), "data", "versions" });
+    return std.Io.Dir.path.join(c.a, &.{ try vars.repoRoot(c), "data", "versions" });
 }
 
 /// `<repo>/data/versions/<version>`; `live` names the live map instead.
 pub fn versionDir(c: Ctx, version: []const u8) ![]const u8 {
     if (std.mem.eql(u8, version, "live")) return vars.dataDir(c);
-    return std.fs.path.join(c.a, &.{ try versionsDir(c), version });
+    return std.Io.Dir.path.join(c.a, &.{ try versionsDir(c), version });
 }
 
 /// Copy the verified files of `src_dir` into `dst_dir`, creating folders as needed.
@@ -108,7 +108,7 @@ pub fn freeze(c: Ctx, src_dir: []const u8, dst_dir: []const u8, files: []const F
     for (files) |f| {
         const from = try util.join(c.a, src_dir, f.rel);
         const to = try util.join(c.a, dst_dir, f.rel);
-        if (std.fs.path.dirname(to)) |parent| try std.Io.Dir.cwd().createDirPath(c.io, parent);
+        if (std.Io.Dir.path.dirname(to)) |parent| try std.Io.Dir.cwd().createDirPath(c.io, parent);
         const bytes = try std.Io.Dir.cwd().readFileAlloc(c.io, from, c.a, .unlimited);
         try util.writeFile(c.io, to, bytes);
     }

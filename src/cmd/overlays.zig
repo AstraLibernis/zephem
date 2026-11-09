@@ -54,7 +54,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     const a = c.a;
     const dir = try vars.dataDir(c);
-    try std.Io.Dir.cwd().createDirPath(c.io, try std.fs.path.join(a, &.{ dir, "derived" }));
+    try std.Io.Dir.cwd().createDirPath(c.io, try std.Io.Dir.path.join(a, &.{ dir, "derived" }));
 
     var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
@@ -89,7 +89,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
             var entries: std.ArrayList(manifest.Entry) = .empty;
             try entries.append(a, .{ .path = try a.print("derived/{s}.tsv", .{ov.name}), .hex = manifest.sha256Hex(tsv) });
             for ([_][]const u8{ "SHA256SUMS", "SHA256SUMS.depth" }) |input| {
-                const hex = manifest.sha256File(c.io, a, try std.fs.path.join(a, &.{ dir, input })) catch |e| switch (e) {
+                const hex = manifest.sha256File(c.io, a, try std.Io.Dir.path.join(a, &.{ dir, input })) catch |e| switch (e) {
                     error.FileNotFound => continue, // a map without that stage
                     else => return e,
                 };

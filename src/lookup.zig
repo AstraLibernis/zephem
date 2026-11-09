@@ -114,12 +114,12 @@ fn expectedStamp(c: Ctx, dir: []const u8) ![]const u8 {
     try out.appendSlice(c.a, format ++ "\n");
     const manifests = [_][]const u8{ "SHA256SUMS", "SHA256SUMS.depth", "SHA256SUMS.canon", "SHA256SUMS.consensus", "SHA256SUMS.doccov", "SHA256SUMS.sigshape", "SHA256SUMS.callcard" };
     for (manifests) |m| {
-        const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ dir, m }), c.a, .unlimited) catch "";
+        const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.Io.Dir.path.join(c.a, &.{ dir, m }), c.a, .unlimited) catch "";
         try out.print(c.a, "## {s}\n{s}", .{ m, bytes });
     }
     // every dependency map, so mapping (or removing) one rebakes the table
     for (try vars.depMaps(c)) |d| {
-        const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.fs.path.join(c.a, &.{ d, "SHA256SUMS" }), c.a, .unlimited) catch "";
+        const bytes = std.Io.Dir.cwd().readFileAlloc(c.io, try std.Io.Dir.path.join(c.a, &.{ d, "SHA256SUMS" }), c.a, .unlimited) catch "";
         try out.print(c.a, "## dep {s}\n{s}", .{ d, bytes });
     }
     return out.items;
@@ -129,7 +129,7 @@ fn expectedStamp(c: Ctx, dir: []const u8) ![]const u8 {
 /// row count.
 pub fn bake(c: Ctx, dir: []const u8, out_path: []const u8) !usize {
     const b = try build(c, dir);
-    const out_dir = std.fs.path.dirname(out_path) orelse ".";
+    const out_dir = std.Io.Dir.path.dirname(out_path) orelse ".";
     try std.Io.Dir.cwd().createDirPath(c.io, out_dir);
     // Written beside and renamed into place: zcanon memory-maps lookup.tsv on every hook run,
     // and truncating a mapped file in place pulls it out from under the reader (SIGBUS on
@@ -138,12 +138,12 @@ pub fn bake(c: Ctx, dir: []const u8, out_path: []const u8) !usize {
     const table_tmp = try c.a.print("{s}.tmp", .{out_path});
     try rel.writeFile(b.table, c.io, table_tmp);
     try cwd.rename(table_tmp, cwd, out_path, c.io);
-    const ex_path = try std.fs.path.join(c.a, &.{ out_dir, "examples.tsv" });
+    const ex_path = try std.Io.Dir.path.join(c.a, &.{ out_dir, "examples.tsv" });
     const ex_tmp = try c.a.print("{s}.tmp", .{ex_path});
     try util.writeFile(c.io, ex_tmp, b.examples);
     try cwd.rename(ex_tmp, cwd, ex_path, c.io);
     // the stamp last: a bake interrupted before this point is not trusted next time
-    try util.writeFile(c.io, try std.fs.path.join(c.a, &.{ out_dir, "lookup.stamp" }), try expectedStamp(c, dir));
+    try util.writeFile(c.io, try std.Io.Dir.path.join(c.a, &.{ out_dir, "lookup.stamp" }), try expectedStamp(c, dir));
     return b.table.rows.len;
 }
 
@@ -156,7 +156,7 @@ pub const Ensured = enum { fresh, rebuilt, unverified };
 pub fn ensure(c: Ctx) !Ensured {
     const path = try vars.lookupPath(c);
     const dir = vars.dataDir(c) catch return if (exists(c, path)) .unverified else error.FileNotFound;
-    if (!exists(c, try std.fs.path.join(c.a, &.{ dir, "extracted/nodes.tsv" }))) {
+    if (!exists(c, try std.Io.Dir.path.join(c.a, &.{ dir, "extracted/nodes.tsv" }))) {
         return if (exists(c, path)) .unverified else error.FileNotFound;
     }
     const want = try expectedStamp(c, dir);
@@ -394,5 +394,5 @@ fn edgeCol(a: std.mem.Allocator, edges: rel.Table, etype: []const u8) !std.Strin
 }
 
 fn load(c: Ctx, dir: []const u8, rel_path: []const u8) !rel.Table {
-    return rel.load(c.a, c.io, try std.fs.path.join(c.a, &.{ dir, rel_path }));
+    return rel.load(c.a, c.io, try std.Io.Dir.path.join(c.a, &.{ dir, rel_path }));
 }

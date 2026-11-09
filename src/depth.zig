@@ -90,7 +90,7 @@ pub fn sweep(
     mode: Mode,
 ) !Counts {
     try std.Io.Dir.cwd().createDirPath(c.io, scratch_dir);
-    try std.Io.Dir.cwd().createDirPath(c.io, try std.fs.path.join(c.a, &.{ outdir, "extracted" }));
+    try std.Io.Dir.cwd().createDirPath(c.io, try std.Io.Dir.path.join(c.a, &.{ outdir, "extracted" }));
 
     const sctx = SweepCtx{
         .io = c.io,
@@ -156,9 +156,9 @@ pub fn sweep(
         }
     }
 
-    try writeFileStr(c, try std.fs.path.join(c.a, &.{ outdir, "extracted/status.tsv" }), status.writer.buffered());
-    try writeFileStr(c, try std.fs.path.join(c.a, &.{ outdir, "extracted/resolved.tsv" }), resolved.writer.buffered());
-    try writeFileStr(c, try std.fs.path.join(c.a, &.{ outdir, "extracted/poison.tsv" }), poison.writer.buffered());
+    try writeFileStr(c, try std.Io.Dir.path.join(c.a, &.{ outdir, "extracted/status.tsv" }), status.writer.buffered());
+    try writeFileStr(c, try std.Io.Dir.path.join(c.a, &.{ outdir, "extracted/resolved.tsv" }), resolved.writer.buffered());
+    try writeFileStr(c, try std.Io.Dir.path.join(c.a, &.{ outdir, "extracted/poison.tsv" }), poison.writer.buffered());
     return counts;
 }
 
@@ -415,7 +415,6 @@ const Rescue = struct {
         if (out.exit_code != 0) return null;
         return parseRows(r.a, out.stdout, false) catch null;
     }
-
 
     /// `zig run` / `zig build-obj -fno-emit-bin` on a scratch file holding `body`.
     fn compile(r: *Rescue, how: []const u8, body: []const u8) !proc.Output {
@@ -754,7 +753,7 @@ pub fn selfTest(c: Ctx, zig_exe: []const u8, template: []const u8, scratch_dir: 
         \\}
         \\
     );
-    const file = try std.fs.path.join(c.a, &.{ scratch_dir, "selftest.zig" });
+    const file = try std.Io.Dir.path.join(c.a, &.{ scratch_dir, "selftest.zig" });
     try util.writeFile(c.io, file, w.written());
     const res = try proc.runTimed(c.a, c.io, &.{ zig_exe, "run", file }, timeout_s);
     if (res.exit_code != 0) return if (res.stderr.len > 0) res.stderr else try c.a.print("exit {d}", .{res.exit_code});

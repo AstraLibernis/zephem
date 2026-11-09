@@ -27,7 +27,7 @@ pub fn repoRoot(c: Ctx) ![]const u8 {
     var level: usize = 0;
     while (level < 12) : (level += 1) {
         const prefix = try repeatDotDot(c.a, level);
-        const marker = try std.fs.path.join(c.a, &.{ prefix, "build.zig.zon" });
+        const marker = try std.Io.Dir.path.join(c.a, &.{ prefix, "build.zig.zon" });
         if (std.Io.Dir.cwd().access(c.io, marker, .{})) |_| {
             const root = if (level == 0) "." else prefix;
             if (isCheckout(c, root)) return root;
@@ -38,23 +38,23 @@ pub fn repoRoot(c: Ctx) ![]const u8 {
 }
 
 fn isCheckout(c: Ctx, root: []const u8) bool {
-    const pinned = std.fs.path.join(c.a, &.{ root, "data", "std", "PINNED" }) catch return false;
+    const pinned = std.Io.Dir.path.join(c.a, &.{ root, "data", "std", "PINNED" }) catch return false;
     std.Io.Dir.cwd().access(c.io, pinned, .{}) catch return false;
     return true;
 }
 
 fn exeRoot(c: Ctx) ?[]const u8 {
     const self = std.process.executablePathAlloc(c.io, c.a) catch return null;
-    const bin = std.fs.path.dirname(self) orelse return null;
-    const out = std.fs.path.dirname(bin) orelse return null;
-    const root = std.fs.path.dirname(out) orelse return null;
+    const bin = std.Io.Dir.path.dirname(self) orelse return null;
+    const out = std.Io.Dir.path.dirname(bin) orelse return null;
+    const root = std.Io.Dir.path.dirname(out) orelse return null;
     return if (isCheckout(c, root)) root else null;
 }
 
 /// The datasets directory. `$ZEPHEM_DATA` wins; else `<repo>/data/std`.
 pub fn dataDir(c: Ctx) ![]const u8 {
     if (c.getEnv("ZEPHEM_DATA")) |d| return d;
-    return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "std" });
+    return std.Io.Dir.path.join(c.a, &.{ try repoRoot(c), "data", "std" });
 }
 
 /// The baked lookup table zlook reads. `$ZEPHEM_LOOKUP` wins; else `<repo>/data/lookup.tsv`.
@@ -62,13 +62,13 @@ pub fn dataDir(c: Ctx) ![]const u8 {
 /// but it lives in the checkout: deleting zephem deletes it.
 pub fn lookupPath(c: Ctx) ![]const u8 {
     if (c.getEnv("ZEPHEM_LOOKUP")) |p| return p;
-    return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "lookup.tsv" });
+    return std.Io.Dir.path.join(c.a, &.{ try repoRoot(c), "data", "lookup.tsv" });
 }
 
 /// Where `zephem deps` writes dependency maps: `<repo>/data/deps/<package>/<module>/`, one
 /// map per module, each shaped like data/std (git-ignored: it is third-party code).
 pub fn depsDir(c: Ctx) ![]const u8 {
-    return std.fs.path.join(c.a, &.{ try repoRoot(c), "data", "deps" });
+    return std.Io.Dir.path.join(c.a, &.{ try repoRoot(c), "data", "deps" });
 }
 
 /// Every dependency map present (`data/deps/*/*/` holding a `SHA256SUMS`), sorted, so what the
@@ -81,14 +81,14 @@ pub fn depMaps(c: Ctx) ![]const []const u8 {
     var it = top.iterate();
     while (try it.next(c.io)) |pkg| {
         if (pkg.kind != .directory) continue;
-        const pkg_dir = try std.fs.path.join(c.a, &.{ root, pkg.name });
+        const pkg_dir = try std.Io.Dir.path.join(c.a, &.{ root, pkg.name });
         var pd = std.Io.Dir.cwd().openDir(c.io, pkg_dir, .{ .iterate = true }) catch continue;
         defer pd.close(c.io);
         var mit = pd.iterate();
         while (try mit.next(c.io)) |m| {
             if (m.kind != .directory) continue;
-            const dir = try std.fs.path.join(c.a, &.{ pkg_dir, m.name });
-            const sums = try std.fs.path.join(c.a, &.{ dir, "SHA256SUMS" });
+            const dir = try std.Io.Dir.path.join(c.a, &.{ pkg_dir, m.name });
+            const sums = try std.Io.Dir.path.join(c.a, &.{ dir, "SHA256SUMS" });
             std.Io.Dir.cwd().access(c.io, sums, .{}) catch continue;
             try out.append(c.a, dir);
         }
@@ -105,14 +105,14 @@ pub fn depMaps(c: Ctx) ![]const []const u8 {
 /// so a `$ZEPHEM_LOOKUP` override moves them together.
 pub fn besideLookup(c: Ctx, name: []const u8) ![]const u8 {
     const lp = try lookupPath(c);
-    return std.fs.path.join(c.a, &.{ std.fs.path.dirname(lp) orelse ".", name });
+    return std.Io.Dir.path.join(c.a, &.{ std.Io.Dir.path.dirname(lp) orelse ".", name });
 }
 
 /// Where the lookup table used to be baked (`~/.config/zephem/lookup.tsv`), before it moved
 /// into the repo. Only used to tell the user the old copy can be deleted.
 pub fn legacyLookupPath(c: Ctx) ?[]const u8 {
     const home = c.getEnv("HOME") orelse windowsHome(c) orelse return null;
-    return std.fs.path.join(c.a, &.{ home, ".config", "zephem", "lookup.tsv" }) catch null;
+    return std.Io.Dir.path.join(c.a, &.{ home, ".config", "zephem", "lookup.tsv" }) catch null;
 }
 
 fn windowsHome(c: Ctx) ?[]const u8 {
@@ -122,12 +122,12 @@ fn windowsHome(c: Ctx) ?[]const u8 {
 
 /// A file under the datasets dir (e.g. `dataFile(c, "extracted/nodes.tsv")`).
 pub fn dataFile(c: Ctx, rel: []const u8) ![]const u8 {
-    return std.fs.path.join(c.a, &.{ try dataDir(c), rel });
+    return std.Io.Dir.path.join(c.a, &.{ try dataDir(c), rel });
 }
 
 /// A file under the repo root (e.g. `repoFile(c, "reflect/resolve.zig")`).
 pub fn repoFile(c: Ctx, rel: []const u8) ![]const u8 {
-    return std.fs.path.join(c.a, &.{ try repoRoot(c), rel });
+    return std.Io.Dir.path.join(c.a, &.{ try repoRoot(c), rel });
 }
 
 fn repeatDotDot(a: std.mem.Allocator, level: usize) ![]const u8 {
