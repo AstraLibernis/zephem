@@ -173,7 +173,10 @@ per-platform const, whose arms the map lists as `[…]` variants), with `data/ex
 `data/lookup.stamp` beside it. All three are derived from the map and git-ignored. `look` and
 `map` rebuild them automatically (about 80 ms) when they are missing or older than the datasets,
 checked against the datasets' manifests, so a query never answers from a stale index; `zephem
-lookup` rebuilds them by hand. Scratch work goes to `.zig-cache/`. Deleting the zephem folder
+lookup` rebuilds them by hand. `map` also keeps `data/toolchain.cache`: the version and target
+`zig env` reported, keyed on the exact `zig` binary and the host, so its staleness warning does
+not start `zig` on every query (the regeneration commands always ask `zig` itself). Scratch work
+goes to `.zig-cache/`. Deleting the zephem folder
 removes all of it. (Before 2026-09-28 the index was written to `~/.config/zephem/lookup.tsv`;
 that old copy is no longer read and can be deleted.) zephem finds its checkout from the
 directory you run it in or, failing that, from where its binary lives, so it works from anywhere.
