@@ -89,6 +89,17 @@ never folded into the base.
    surface names, and resolves through aliases part-way along a path and through comptime
    params. Reflection no longer blanks a container one bad decl breaks (+4,500 resolved rows).
    `map doc` shows field types and const values; concurrent runs no longer collide.
+13. **Zig 0.17.1, the same map on every host** (2026-11-04 → 11-09, v0.8.0) — the map is
+   regenerated on Zig 0.17.1 and frozen as `data/versions/0.17.1/` (0.17.0 → 0.17.1: 1 removed,
+   14 changed, 20 added public decls). Windows now maps the same rows as Linux: three host-OS
+   leaks (ZON-escaped `zig env` paths, `\` in relative locs and in depth error reasons) are
+   normalised with no OS branches, Linux output byte-identical. `map` caches the `zig env`
+   answer behind its staleness warning in `data/toolchain.cache`, keyed on the zig binary and
+   host triple (Windows: 30.1–31.8 ms → 12.7–14.3 ms per query); regeneration still probes every
+   time. `lookup.tsv` is baked to a temp file and renamed into place, so a reader that maps it
+   is never truncated. `verify-diff` counts an omitted report section as 0 (a patch-release
+   diff has no moves or deprecations). zephem's own source uses the 0.17 successors of the
+   deprecated std APIs; the extractor still builds on 0.16.
 
 ---
 
