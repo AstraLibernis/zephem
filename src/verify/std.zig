@@ -15,6 +15,7 @@
 //!
 //! Membership is a hash-set lookup (not a per-row scan) — the same discipline the Nushell used.
 const std = @import("std");
+const stdio = @import("../stdio.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const rel = @import("../relation.zig");
 const parse = @import("parse");
@@ -42,7 +43,7 @@ pub fn runShape(c: Ctx, data_dir: []const u8) !bool {
 }
 
 fn runChecks(c: Ctx, data_dir: []const u8, with_builtins: bool, quiet: bool) !bool {
-    var er = std.Io.File.stderr().writerStreaming(c.io, try c.a.alloc(u8, 4096));
+    var er = stdio.stderr().writerStreaming(c.io, try c.a.alloc(u8, 4096));
     defer er.interface.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
     if (!quiet) return checks(c, data_dir, with_builtins, &er.interface);
     // quiet: collect the report, and show it only if something failed

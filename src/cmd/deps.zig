@@ -16,6 +16,7 @@
 //! std-only (it would need the build system to `@import` a package), so dependency rows carry
 //! the source-level facts: tree, signatures, docs, fields, references, test examples.
 const std = @import("std");
+const stdio = @import("../stdio.zig");
 const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
@@ -49,7 +50,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     }
 
     const a = c.a;
-    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
+    var ow = stdio.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

@@ -10,6 +10,7 @@
 //!   map show <path>       list a module/namespace subtree, public/private sectioned
 //!   map doc  <path>       signature + doc for one exact path
 const std = @import("std");
+const stdio = @import("stdio.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
 const argv = @import("args.zig");
@@ -170,7 +171,7 @@ fn loadMap(c: Ctx) !Map {
     // staleness warning → stderr (keeps the result writer clean)
     if (toolchain.stalenessCached(c, dir, try vars.besideLookup(c, "toolchain.cache")) catch null) |warn| {
         var eb: [512]u8 = undefined;
-        var ew = std.Io.File.stderr().writerStreaming(c.io, &eb);
+        var ew = stdio.stderr().writerStreaming(c.io, &eb);
         ew.interface.print("{s}\n", .{warn}) catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
         ew.interface.flush() catch {}; // zsnag:ok — advisory warning on stderr; failing to print it must not block the query
     }

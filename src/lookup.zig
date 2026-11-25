@@ -42,6 +42,7 @@
 //! directly with hash maps (build each right side once, probe per node) rather than chained table
 //! joins — one O(n) pass instead of ten table rebuilds.
 const std = @import("std");
+const stdio = @import("stdio.zig");
 const argv = @import("args.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
@@ -75,7 +76,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     const a = c.a;
     const dir = try vars.dataDir(c);
-    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 1024));
+    var ow = stdio.stdout().writerStreaming(c.io, try a.alloc(u8, 1024));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

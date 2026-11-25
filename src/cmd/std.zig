@@ -13,6 +13,7 @@
 //! same way the current one does. The builtins table and the index run in-process. The
 //! intermediate TSVs ARE the product, so they are written to disk.
 const std = @import("std");
+const stdio = @import("../stdio.zig");
 const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
@@ -77,7 +78,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const src: Sources = .{ .root = root, .builtin_fn = try std.Io.Dir.path.join(c.a, &.{ env.std_dir, "zig", "BuiltinFn.zig" }), .langref = langrefPath(c, env), .zig_exe = env.zig_exe, .zig_version = zver, .scratch = scratch };
 
     var buf: [4096]u8 = undefined;
-    var ow = std.Io.File.stdout().writerStreaming(c.io, &buf);
+    var ow = stdio.stdout().writerStreaming(c.io, &buf);
     const w = &ow.interface;
 
     if (check) {
@@ -165,7 +166,7 @@ fn buildExtractor(c: Ctx, src: Sources) ![]const u8 {
 /// Run `argv`, pass its stderr through, and stop zephem when it fails.
 fn runChecked(c: Ctx, argv_: []const []const u8, what: []const u8) !void {
     const out = try proc.capture(c.a, c.io, argv_);
-    var er = std.Io.File.stderr().writerStreaming(c.io, try c.a.alloc(u8, 4096));
+    var er = stdio.stderr().writerStreaming(c.io, try c.a.alloc(u8, 4096));
     try er.interface.writeAll(out.stderr);
     if (out.exit_code != 0) {
         try er.interface.print("zephem std: ✗ {s} failed (exit {d}): {s}\n", .{ what, out.exit_code, argv_[0] });

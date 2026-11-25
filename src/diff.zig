@@ -28,6 +28,7 @@
 //! for a reader porting code (removed first, then what moved where); `--tsv` is one row per
 //! change with a provenance column, for tools.
 const std = @import("std");
+const stdio = @import("stdio.zig");
 const argv = @import("args.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const rel = @import("relation.zig");
@@ -1379,7 +1380,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const old_name = names[0] orelse argv.reject(c, "<old>", usage);
     const new_name = names[1] orelse argv.reject(c, "<new>", usage);
 
-    var ow = std.Io.File.stdout().writerStreaming(c.io, try c.a.alloc(u8, 1 << 16));
+    var ow = stdio.stdout().writerStreaming(c.io, try c.a.alloc(u8, 1 << 16));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — report only; a defer cannot return the error
 

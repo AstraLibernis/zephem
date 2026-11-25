@@ -14,6 +14,7 @@
 //!   PRISTINE      no path resolves to two conflicting (kind, detail)
 //!   COVERAGE      (--full) every index container was attempted
 const std = @import("std");
+const stdio = @import("../stdio.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const rel = @import("../relation.zig");
 const util = @import("../util.zig");
@@ -21,7 +22,7 @@ const parse = @import("parse"); // `parent`: the quote-aware one the map is buil
 
 pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool {
     const a = c.a;
-    var er = std.Io.File.stderr().writerStreaming(c.io, try a.alloc(u8, 4096));
+    var er = stdio.stderr().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &er.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

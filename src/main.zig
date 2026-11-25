@@ -7,6 +7,7 @@
 //! exposes `zig build std/depth/overlays/docs/lookup/snapshot/diff/check/depth-check/test/smoke` over
 //! this binary.
 const std = @import("std");
+const stdio = @import("stdio.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const cmd_std = @import("cmd/std.zig");
 const cmd_depth = @import("cmd/depth.zig");
@@ -78,7 +79,7 @@ pub fn main(init: std.process.Init) !void {
 ///   0 hit · 1 miss · 2 usage · 3 map/table unavailable
 fn runWithStdout(c: Ctx, comptime f: fn (Ctx, []const []const u8, *std.Io.Writer) anyerror!Outcome, args: []const []const u8) !void {
     var buf: [1 << 16]u8 = undefined;
-    var ow = std.Io.File.stdout().writerStreaming(c.io, &buf);
+    var ow = stdio.stdout().writerStreaming(c.io, &buf);
     const outcome = try f(c, args, &ow.interface);
     try ow.interface.flush();
     if (outcome != .hit) std.process.exit(outcome.code());
@@ -88,14 +89,14 @@ fn runWithStdout(c: Ctx, comptime f: fn (Ctx, []const []const u8, *std.Io.Writer
 /// a usage error (stderr, exit 2).
 fn help(c: Ctx) !void {
     var buf: [1024]u8 = undefined;
-    var w = std.Io.File.stdout().writerStreaming(c.io, &buf);
+    var w = stdio.stdout().writerStreaming(c.io, &buf);
     try w.interface.writeAll(usage);
     try w.interface.flush();
 }
 
 fn fail(c: Ctx, msg: []const u8) !void {
     var buf: [1024]u8 = undefined;
-    var w = std.Io.File.stderr().writerStreaming(c.io, &buf);
+    var w = stdio.stderr().writerStreaming(c.io, &buf);
     try w.interface.writeAll(msg);
     try w.interface.flush();
     std.process.exit(2);

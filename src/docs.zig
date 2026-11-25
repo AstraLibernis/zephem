@@ -6,6 +6,7 @@
 //! number is an `@@TOKEN@@` injected from the datasets, and each output leads with a generated
 //! banner. `--check` proves each doc rebuilds byte-identical.
 const std = @import("std");
+const stdio = @import("stdio.zig");
 const argv = @import("args.zig");
 const Ctx = @import("ctx.zig").Ctx;
 const vars = @import("vars.zig");
@@ -41,7 +42,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         if (std.mem.eql(u8, arg, "--check")) check = true else argv.reject(c, arg, usage);
     }
     const a = c.a;
-    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
+    var ow = stdio.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

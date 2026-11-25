@@ -5,6 +5,7 @@
 //! through the two lookup subcommands: `look` (SIMD over the baked table) and `map` (reads the
 //! TSVs directly). Builds the lookup table first if it is missing.
 const std = @import("std");
+const stdio = @import("../stdio.zig");
 const argv = @import("../args.zig");
 const sigfmt = @import("../sig.zig");
 const Outcome = @import("../query.zig").Outcome;
@@ -28,7 +29,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     for (args) |a| argv.reject(c, a, usage);
 
     const a = c.a;
-    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
+    var ow = stdio.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 

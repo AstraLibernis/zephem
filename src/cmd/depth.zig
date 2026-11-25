@@ -5,6 +5,7 @@
 //! `scripts/build_depth.nu`). Deliberately separate from `zephem std --check` — an L5 rebuild is a
 //! full reflection sweep and is slow/machine-dependent, so its reproducibility lives here.
 const std = @import("std");
+const stdio = @import("../stdio.zig");
 const argv = @import("../args.zig");
 const Ctx = @import("../ctx.zig").Ctx;
 const vars = @import("../vars.zig");
@@ -75,7 +76,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const env = try toolchain.probe(c);
     const jcount = if (jobs > 0) jobs else @import("../proc.zig").ncpu();
 
-    var ow = std.Io.File.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
+    var ow = stdio.stdout().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &ow.interface;
     defer w.flush() catch {}; // zsnag:ok — progress report only (datasets are written with `try`); a defer cannot return the error
 
