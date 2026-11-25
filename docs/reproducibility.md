@@ -102,7 +102,7 @@ std grew to 68,845 nodes / 4,332 containers)*
 | `zephem std` (parse + index + verify + manifest) | 0.21 s | 1 run |
 | full L5 sweep, batched, `--jobs 12`, warm compiler cache | 17.8 s (2 m 39 s CPU) | 1 run: 341 probe compiles + 72 run compiles + 85 solo |
 | `zephem depth --check` (two batched sweeps) | 34.8 s | 1 run |
-| `zig build check` (std, overlays, docs, snapshot `--check`) | 0.54 s | 1 run |
+| `zig build verify` (std, overlays, docs, snapshot `--check`; called `check` until 2026-11-25) | 0.54 s | 1 run |
 | `tools/verify-diff.py 0.16.0 0.17.0` | 0.86 s | 1 run |
 
 Outcome on 0.17.0: 4,332 containers attempted = 3,158 resolved (16,997 rows) + 957 poison + 217

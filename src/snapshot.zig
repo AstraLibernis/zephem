@@ -14,8 +14,9 @@
 //! (SHA256SUMS for the core, SHA256SUMS.depth for the reflection sweep, SHA256SUMS.<overlay>
 //! for each overlay) must match the files on disk, otherwise the folder would mix a fresh core
 //! with stale derivatives. `--check` compares the frozen folder for the current version against
-//! the live map and fails on drift, so `zig build check` keeps the committed snapshot honest.
+//! the live map and fails on drift, so `zig build verify` keeps the committed snapshot honest.
 const std = @import("std");
+const builtin = @import("builtin");
 const stdio = @import("stdio.zig");
 const argv = @import("args.zig");
 const Ctx = @import("ctx.zig").Ctx;
@@ -93,9 +94,13 @@ pub fn verifiedFiles(c: Ctx, dir: []const u8, report: *std.Io.Writer) ![]const F
     return files.items;
 }
 
-/// `<repo>/data/versions`.
+/// The frozen versions' folder under `data/`: `versions-windows` beside the Windows map
+/// (`vars.map_name`).
+pub const versions_name = if (builtin.os.tag == .windows) "versions-windows" else "versions";
+
+/// `<repo>/data/<versions_name>`.
 pub fn versionsDir(c: Ctx) ![]const u8 {
-    return std.Io.Dir.path.join(c.a, &.{ try vars.repoRoot(c), "data", "versions" });
+    return std.Io.Dir.path.join(c.a, &.{ try vars.repoRoot(c), "data", versions_name });
 }
 
 /// `<repo>/data/versions/<version>`; `live` names the live map instead.
@@ -142,8 +147,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     const usage =
         \\usage: zephem snapshot [--check]
         \\
-        \\  freeze the live map (data/std/) into data/versions/<zig-version>/, after proving every
-        \\  manifest in it matches the files on disk. The version is read from data/std/PINNED.
+        \\  freeze the live map (data/std/, data/std-windows/ on Windows) into
+        \\  data/versions/<zig-version>/ (data/versions-windows/ on Windows), after proving every
+        \\  manifest in it matches the files on disk. The version is read from the live PINNED.
         \\  --check   compare the frozen folder for that version with the live map; exit 1 on drift
         \\
     ;
@@ -187,9 +193,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
         };
         const bad = try compare(c, live, frozen, files, w);
         if (bad == 0) {
-            try w.print("[snapshot check] ✓ data/versions/{s} matches the live map ({d} files)\n", .{ version, files.len });
+            try w.print("[snapshot check] ✓ data/{s}/{s} matches the live map ({d} files)\n", .{ versions_name, version, files.len });
         } else {
-            try w.print("[snapshot check] ✗ data/versions/{s}: {d} file(s) differ — run `zephem snapshot`\n", .{ version, bad });
+            try w.print("[snapshot check] ✗ data/{s}/{s}: {d} file(s) differ — run `zephem snapshot`\n", .{ versions_name, version, bad });
             try w.flush();
             std.process.exit(1);
         }
@@ -197,5 +203,5 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     }
 
     try freeze(c, live, frozen, files);
-    try w.print("[snapshot] zig {s}: {d} files → data/versions/{s}/  (all manifests verified)\n", .{ version, files.len, version });
+    try w.print("[snapshot] zig {s}: {d} files → data/{s}/{s}/  (all manifests verified)\n", .{ version, files.len, versions_name, version });
 }

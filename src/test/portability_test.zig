@@ -73,6 +73,22 @@ test "scanField decodes ZON escapes (Windows `zig env` paths)" {
     try std.testing.expectEqualStrings("say \"hi\"", (try tc.scanField(a, zon, "odd")).?);
 }
 
+test "each OS reads and freezes its own map: data/std + versions, or std-windows + versions-windows" {
+    var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer ar.deinit();
+    const a = ar.allocator();
+    var env: std.process.Environ.Map = .init(a);
+    try env.put("ZEPHEM_HOME", "root");
+    const c: @import("zephem").ctx.Ctx = .{ .a = a, .io = std.testing.io, .env = &env };
+    const windows = @import("builtin").os.tag == .windows;
+    const data = try @import("zephem").vars.dataDir(c);
+    const versions = try @import("zephem").snapshot.versionsDir(c);
+    try std.testing.expectEqualStrings(if (windows) "std-windows" else "std", std.Io.Dir.path.basename(data));
+    try std.testing.expectEqualStrings(if (windows) "versions-windows" else "versions", std.Io.Dir.path.basename(versions));
+    // The docs always describe the Linux map, whichever OS renders them.
+    try std.testing.expectEqualStrings("std", std.Io.Dir.path.basename(try @import("zephem").vars.docsDataDir(c)));
+}
+
 test "scanField: an unterminated value is absent, not a crash" {
     var ar = std.heap.ArenaAllocator.init(std.testing.allocator);
     defer ar.deinit();

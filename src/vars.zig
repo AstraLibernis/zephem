@@ -7,7 +7,7 @@
 //!
 //! Precedence everywhere: explicit env override → derived-from-repo-root default.
 //!   $ZEPHEM_HOME   → repo root                (else: walk up for build.zig.zon)
-//!   $ZEPHEM_DATA   → the datasets dir         (else: <repo>/data/std)
+//!   $ZEPHEM_DATA   → the datasets dir         (else: <repo>/data/std, data/std-windows on Windows)
 //!   $ZEPHEM_LOOKUP → the baked lookup table    (else: <repo>/data/lookup.tsv, git-ignored)
 //!
 //! Nothing zephem generates lives outside the repo: delete the checkout and it is all gone.
@@ -51,8 +51,19 @@ fn exeRoot(c: Ctx) ?[]const u8 {
     return if (isCheckout(c, root)) root else null;
 }
 
-/// The datasets directory. `$ZEPHEM_DATA` wins; else `<repo>/data/std`.
+/// The live map's folder under `data/`. The reflected layer is target-scoped (std.c, std.posix,
+/// std.os resolve differently per OS), so Windows keeps its own map beside Linux's.
+pub const map_name = if (builtin.os.tag == .windows) "std-windows" else "std";
+
+/// The datasets directory. `$ZEPHEM_DATA` wins; else `<repo>/data/<map_name>`.
 pub fn dataDir(c: Ctx) ![]const u8 {
+    if (c.getEnv("ZEPHEM_DATA")) |d| return d;
+    return std.Io.Dir.path.join(c.a, &.{ try repoRoot(c), "data", map_name });
+}
+
+/// The map the generated docs describe: always the Linux one (`data/std`), so the docs read
+/// the same whichever OS regenerates them. `$ZEPHEM_DATA` still wins.
+pub fn docsDataDir(c: Ctx) ![]const u8 {
     if (c.getEnv("ZEPHEM_DATA")) |d| return d;
     return std.Io.Dir.path.join(c.a, &.{ try repoRoot(c), "data", "std" });
 }

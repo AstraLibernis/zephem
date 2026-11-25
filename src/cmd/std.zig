@@ -36,7 +36,7 @@ const names = [_][]const u8{
 };
 
 /// This run's own working dir under .zig-cache — the staging dir, the --check rebuilds and the
-/// extractor binary — so concurrent runs (an editor's `zig build check --watch` beside a manual one)
+/// extractor binary — so concurrent runs (a `zig build verify --watch` beside a manual one)
 /// never share a path: a shared one let one run delete or replace what the other was using.
 fn scratchDir(c: Ctx) ![]const u8 {
     var id: [8]u8 = undefined;
@@ -110,6 +110,9 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
     // ── install and record the manifest ──────────────────────────────────────
     const cwd = std.Io.Dir.cwd();
+    // A first map for a target (data/std-windows) starts with no folders.
+    try cwd.createDirPath(c.io, try join(c.a, data_dir, "extracted"));
+    try cwd.createDirPath(c.io, try join(c.a, data_dir, "derived"));
     for (names ++ [_][]const u8{"PINNED"}) |name| {
         try cwd.copyFile(try join(c.a, stage, name), cwd, try join(c.a, data_dir, name), c.io, .{});
     }

@@ -162,8 +162,10 @@ longer"/"now", aliases and delegations that point elsewhere, became one or stopp
 items of [docs/release-diff.md](docs/release-diff.md); `zig build verify-diff -- 0.16.0 0.17.0` recomputes
 all of it independently in Python and fails on any disagreement
 (`--module std.mem` narrows it, `--only removed` picks one kind, `--tsv` is one row per finding
-with a provenance column for tools, `live` names `data/std/`). `zig build check` includes `snapshot --check`, so the
-committed folder for the current Zig can never drift from the live map. The regenerate
+with a provenance column for tools, `live` names `data/std/`). `zig build verify` includes `snapshot --check`, so the
+committed folder for the current Zig can never drift from the live map. (The gate is `verify`,
+not `check`, on purpose: tools such as zcanon's background compiler and editors take a `check`
+step to mean "type-check only, fast", and run it after every edit; this gate runs zephem.) The regenerate
 sequence for a new Zig is therefore `std → depth --commit → overlays → lookup → docs →
 snapshot`.
 

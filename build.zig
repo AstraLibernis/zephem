@@ -64,13 +64,16 @@ pub fn build(b: *std.Build) void {
     }
     Sub.add(b, exe, "smoke", "run the query smoke battery", &.{"test"});
 
-    // `zig build check` — the FAST parity gate: map + overlays + docs each prove they rebuild.
+    // `zig build verify` — the FAST parity gate: map + overlays + docs each prove they rebuild.
     // Deliberately excludes the depth sweep (two full reflection passes — machine-dependent).
-    const check = b.step("check", "fast parity gate: std --check && overlays --check && docs --check && snapshot --check");
+    // Not named `check`: tools (zcanon's background compiler, editors) take a `check` step to be
+    // a type-check only and rerun it after every edit; this gate runs zephem itself. With no
+    // `check` step here, zcanon type-checks zephem through its own wrapper like any project.
+    const verify = b.step("verify", "fast parity gate: std --check && overlays --check && docs --check && snapshot --check");
     inline for (.{ "std", "overlays", "docs", "snapshot" }) |sub| {
         const run = b.addRunArtifact(exe);
         run.addArgs(&.{ sub, "--check" });
-        check.dependOn(&run.step);
+        verify.dependOn(&run.step);
     }
     {
         const run = b.addRunArtifact(exe);

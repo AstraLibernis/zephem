@@ -90,7 +90,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 
 fn computeSubs(c: Ctx) ![]const Sub {
     const a = c.a;
-    const dir = try vars.dataDir(c);
+    const dir = try vars.docsDataDir(c);
     const nodes = try load(c, dir, "extracted/nodes.tsv");
     const attrs = try load(c, dir, "extracted/attrs.tsv");
     const edges = try load(c, dir, "extracted/edges.tsv");

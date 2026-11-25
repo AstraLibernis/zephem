@@ -31,8 +31,17 @@ frozen, verified copy of `std/` for each Zig that has been mapped (`zephem snaps
 every `SHA256SUMS*` manifest, and every file the manifests list — the READMEs are not copied,
 they describe the live format). Nothing in `versions/` is ever rewritten, so the history of std
 is a set of folders, not a set of commits: `zephem diff 0.16.0 0.17.0` (or any file tool) compares
-two of them directly. `zig build check` fails if the folder for the current Zig differs from
+two of them directly. `zig build verify` fails if the folder for the current Zig differs from
 `std/`.
+
+## std-windows/ and versions-windows/ — the Windows map
+
+The reflected layer is target-scoped: compiled on Windows, `std.c`, `std.posix`, `std.os` and
+parts of `std.Io`, `std.fs` and `std.process` resolve differently than on Linux. So Windows keeps
+its own live map in `std-windows/` and its own frozen versions in `versions-windows/`, shaped
+exactly like `std/` and `versions/`. zephem picks the pair for the OS it runs on (`$ZEPHEM_DATA`
+still overrides), so switching machines needs no step. The parsed layer is the same on both, and
+git stores those identical files once. The figures in this README always describe `std/`.
 
 ## Kind policy — who owns what, and which overlay counts it
 
