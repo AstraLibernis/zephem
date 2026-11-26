@@ -16,6 +16,7 @@
 //!   kind=const_bool detail = true|false
 //!   kind=fn         detail = the resolved fn type signature, error set included
 //!   kind=const_other detail = the value's @typeName
+//!   kind=field      detail = a struct/union field's resolved @typeName (a union's payload)
 //!
 //! Reflecting evaluates decls, so a platform-gated / @compileError ("poison") decl makes
 //! THIS process fail to compile. That is the design: one container per process, so a
@@ -96,12 +97,49 @@ fn isContainer(comptime T: type) bool {
     return declsOf(T) != null;
 }
 
+/// One struct/union field: its name as the map keys it and its resolved type.
+const Field = struct { name: []const u8, type: type };
+
+/// The fields of a struct or union (a union's payload types; `void` for a bare tag), or null
+/// for any other type. 0.17 lists parallel `field_names`/`field_types`, 0.16 lists `fields`.
+fn fieldsOf(comptime T: type) ?[]const Field {
+    return switch (@typeInfo(T)) {
+        inline .@"struct", .@"union" => |info| fieldPairs(info),
+        else => null,
+    };
+}
+
+fn fieldPairs(comptime info: anytype) []const Field {
+    const new = comptime @hasField(@TypeOf(info), "field_names");
+    const n = if (new) info.field_names.len else info.fields.len;
+    const tuple = comptime @hasField(@TypeOf(info), "is_tuple") and info.is_tuple;
+    comptime var out: [n]Field = undefined;
+    inline for (0..n) |i| {
+        const name = if (new) info.field_names[i] else info.fields[i].name;
+        // the map names a positional field `[N]` (parse/walk.zig), never `@"0"`
+        out[i] = .{
+            .name = if (tuple) std.fmt.comptimePrint("[{d}]", .{i}) else quoteId(name),
+            .type = if (new) info.field_types[i] else info.fields[i].type,
+        };
+    }
+    const frozen = out;
+    return &frozen;
+}
+
 /// Reflect one container, emitting a row per public decl. For a type decl, descend `descend`
 /// levels — but only into types that are NOT themselves map containers: at the top level a
 /// child container is in SKIP (it reflects itself); deeper, generic/alias internals are never
 /// map containers, so they descend freely. `top` gates the SKIP check to direct children.
 fn emit(w: *std.Io.Writer, comptime skip_list: []const []const u8, comptime path: []const u8, comptime T: type, comptime descend: u8, comptime top: bool) !void {
     @setEvalBranchQuota(2_000_000); // big namespaces (std, os.linux) blow past the 1000 default
+    // Field types, as the compiler resolves them: the facts the self-check holds the map's
+    // written field types against. Not in a rescue (ONLY set), which bisects DECLS: a field
+    // type that fails would fail every half.
+    if (comptime !(top and ONLY != null)) {
+        if (comptime fieldsOf(T)) |fields| inline for (fields) |f| {
+            try w.print("{s}.{s}\tfield\t{s}\n", .{ path, f.name, @typeName(f.type) });
+        };
+    }
     const decls = comptime declsOf(T) orelse return;
     inline for (decls) |d| {
         // before `@field`: an excluded decl is never evaluated, so it cannot fail the compile

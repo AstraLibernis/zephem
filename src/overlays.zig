@@ -124,8 +124,11 @@ pub fn consensus(c: Ctx, dir: []const u8) !rel.Table {
 
     const res_uniq = try rel.uniqBy(a, resolved_raw, "path");
     const rp = res_uniq.col("path");
+    const rk = res_uniq.col("kind");
     var right: std.ArrayList(rel.Row) = .empty;
     for (res_uniq.rows) |r| {
+        // a census of decls: reflected fields are dropped, as the map's fields are above
+        if (std.mem.eql(u8, r[rk], "field")) continue;
         const row = try a.alloc([]const u8, 2);
         row[0] = r[rp]; // cpath
         row[1] = normPath(a, r[rp]); // np

@@ -113,7 +113,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
     if (mode == .batched) try w.print("[L5] probe {d} ms ({d} compiles) · run {d} ms ({d} compiles) · {d} solo\n", .{ counts.probe_ms, counts.probe_compiles, counts.run_ms, counts.run_compiles, counts.solo_compiles });
     try w.flush();
 
-    if (!try verify.run(c, outdir, index_path, commit)) {
+    if (!try verify.run(c, outdir, data_dir, index_path, commit)) {
         try w.writeAll("build_depth: ✗ overlay rejected by verify_depth\n");
         try w.flush();
         std.process.exit(1);

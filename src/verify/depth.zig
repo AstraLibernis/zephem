@@ -12,6 +12,8 @@
 //!   REGISTRATION  every attempted container is a real container in index.tsv
 //!   HONEST POISON every reason is a compiler `error:` line or a `timeout after` tag
 //!   PRISTINE      no path resolves to two conflicting (kind, detail)
+//!   FIELD TYPES   every field type the map prints (lookup.fieldTypes) has the shape of the
+//!                 compiler's resolved type: no dropped slice, pointer, optional or array
 //!   COVERAGE      (--full) every index container was attempted
 const std = @import("std");
 const stdio = @import("../stdio.zig");
@@ -20,7 +22,7 @@ const rel = @import("../relation.zig");
 const util = @import("../util.zig");
 const parse = @import("parse"); // `parent`: the quote-aware one the map is built with
 
-pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool {
+pub fn run(c: Ctx, outdir: []const u8, data_dir: []const u8, index_path: []const u8, full: bool) !bool {
     const a = c.a;
     var er = stdio.stderr().writerStreaming(c.io, try a.alloc(u8, 4096));
     const w = &er.interface;
@@ -165,7 +167,10 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
         } else try w.writeAll("  ✓ no path resolves to two different values\n");
     }
 
-    // 6. COVERAGE (--full)
+    // 6. FIELD TYPES — the type the map prints for each field, held against the compiler's.
+    if (!try fieldTypesAgree(c, w, resolved, data_dir)) ok = false;
+
+    // 7. COVERAGE (--full)
     if (full) {
         var missed: usize = 0;
         for (index.rows) |r| {
@@ -182,4 +187,49 @@ pub fn run(c: Ctx, outdir: []const u8, index_path: []const u8, full: bool) !bool
     return ok;
 }
 
+/// Every reflected field whose written type the map prints must agree with the compiler
+/// (fieldtype.judge): `agrees`, or `hidden` behind a name. A `wrong` one fails the overlay, so a
+/// printer that drops part of a type cannot ship. A reflected field the map prints no type for
+/// (an arm of a per-platform const, a factory's instance) is counted, not judged.
+fn fieldTypesAgree(c: Ctx, w: *std.Io.Writer, resolved: rel.Table, data_dir: []const u8) !bool {
+    const a = c.a;
+    const attrs = try rel.load(a, c.io, try join(a, data_dir, "extracted/attrs.tsv"));
+    const printed = try lookup.fieldTypes(a, attrs);
+    const rp = resolved.col("path");
+    const rk = resolved.col("kind");
+    const rd = resolved.col("detail");
+    var n_field: usize = 0;
+    var n_agree: usize = 0;
+    var n_hidden: usize = 0;
+    var n_unprinted: usize = 0;
+    var wrong: std.ArrayList([]const u8) = .empty;
+    for (resolved.rows) |r| {
+        if (!std.mem.eql(u8, r[rk], "field")) continue;
+        n_field += 1;
+        const p = printed.get(r[rp]) orelse {
+            n_unprinted += 1;
+            continue;
+        };
+        switch (fieldtype.judge(p, r[rd])) {
+            .agrees => n_agree += 1,
+            .hidden => n_hidden += 1,
+            .wrong => try wrong.append(a, try a.print("{s}: map prints `{s}`, compiler says `{s}`", .{ r[rp], p, r[rd] })),
+        }
+    }
+    try w.print("field types:  {d} reflected fields = {d} agree + {d} behind a name + {d} wrong + {d} with no printed type\n", .{ n_field, n_agree, n_hidden, wrong.items.len, n_unprinted });
+    if (n_field == 0) {
+        try w.writeAll("  ✗ no field was reflected — the check would pass on nothing\n");
+        return false;
+    }
+    if (wrong.items.len > 0) {
+        for (wrong.items[0..@min(wrong.items.len, 10)]) |line| try w.print("  ✗ {s}\n", .{line});
+        try w.print("  ✗ {d} printed field type(s) disagree with the compiler\n", .{wrong.items.len});
+        return false;
+    }
+    try w.writeAll("  ✓ every printed field type has the compiler's shape\n");
+    return true;
+}
+
 const join = util.join;
+const lookup = @import("../lookup.zig");
+const fieldtype = @import("../fieldtype.zig");

@@ -106,7 +106,7 @@ pub fn run(c: Ctx, args: []const []const u8) !void {
 }
 
 /// The lookup table's format. Bump it when a column is added, so every older bake is rebuilt.
-const format = "zephem-lookup 4";
+const format = "zephem-lookup 5";
 
 /// What a bake from `dir` must be stamped with: the format plus every dataset manifest. A
 /// regenerated map changes a manifest, so the stamp stops matching.
@@ -233,7 +233,7 @@ fn mapRows(c: Ctx, dir: []const u8, rows: *std.ArrayList(rel.Row), examples: *st
     var doc = try attrCol(a, attrs, "doc");
     var fval = try attrCol(a, attrs, "value");
     var canon_m = try mapCol(a, canon, "path", "canon");
-    var htype = try edgeCol(a, edges, "has_type");
+    var ftype = try fieldTypes(a, attrs);
     var deleg = try edgeCol(a, edges, "delegates");
     var modm = try attrCol(a, attrs, "mod");
     // error-set members, `, `-joined per path, and every example body by anchor path
@@ -295,7 +295,7 @@ fn mapRows(c: Ctx, dir: []const u8, rows: *std.ArrayList(rel.Row), examples: *st
         row[8] = rkind.get(path) orelse "";
         row[9] = rdetail.get(path) orelse "";
         row[10] = canon_m.get(path) orelse "";
-        row[11] = if (is_fieldish) (htype.get(path) orelse "") else ""; // ftype: field/tag only
+        row[11] = if (is_fieldish) (ftype.get(path) orelse "") else ""; // ftype: field/tag only
         row[12] = fval.get(path) orelse "";
         row[13] = deleg.get(path) orelse "";
         row[14] = r[nv];
@@ -364,6 +364,14 @@ fn mapCol(a: std.mem.Allocator, t: rel.Table, key: []const u8, val: []const u8) 
         if (!gop.found_existing) gop.value_ptr.* = r[vi];
     }
     return m;
+}
+
+/// The type `look` and `map doc` print for a field (column 11, `ftype`): the type as written in
+/// source, `attrs[type]`. Not the `has_type` edge — that names only the type the field REFERS to
+/// (`[]const []const u8` → `u8`), and printing it dropped every slice, pointer and optional.
+/// The depth verifier calls this same function, so it checks exactly what is printed.
+pub fn fieldTypes(a: std.mem.Allocator, attrs: rel.Table) !std.StringHashMap([]const u8) {
+    return attrCol(a, attrs, "type");
 }
 
 /// attrs `path → value` for one attr name (first occurrence).

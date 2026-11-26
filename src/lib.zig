@@ -22,3 +22,4 @@ pub const snapshot = @import("snapshot.zig");
 pub const diff = @import("diff.zig");
 pub const depth = @import("depth.zig");
 pub const stdio = @import("stdio.zig");
+pub const fieldtype = @import("fieldtype.zig");
